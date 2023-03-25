@@ -1,0 +1,6 @@
+_temp*/
+__pycache__/
+build*/
+.vscode/
+
+*.pyc
