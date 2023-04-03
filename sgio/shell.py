@@ -1,5 +1,5 @@
-from msgd.model.general import MaterialSection
-import msgd.utils.io as utio
+from sgio.general import MaterialSection
+import sgio.utils.io as utio
 
 
 

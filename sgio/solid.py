@@ -1,4 +1,4 @@
-from msgd.model.general import MaterialSection
+from sgio.general import MaterialSection
 
 
 class MaterialProperty(MaterialSection):

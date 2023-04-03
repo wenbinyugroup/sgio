@@ -1,27 +1,41 @@
 import os
+import csv
 import traceback
 import math
-import msgd.model.sg as mms
-import msgd.model.general as mmg
-import msgd.model.beam as mmbm
-import msgd.model.shell as mmps
-import msgd.model.solid as mmsd
-import msgd.utils.io as utio
-import msgd.utils.logger as mul
+import sgio.sg as mms
+import sgio.general as mmg
+import sgio.beam as mmbm
+import sgio.shell as mmps
+import sgio.solid as mmsd
+import sgio.utils.io as utio
+import sgio.utils.logger as mul
+
+from .sg import StructureGene
 
 
-def readInputSG(fn, solver, smdim=1, logger=None):
-    sg = None
-    if solver.lower().startswith('v'):
-        sg = readVABSIn(fn, logger)
-    elif solver.lower().startswith('s'):
-        sg = readSCIn(fn, smdim, logger)
+def read(fn, file_format, smdim):
+    sg = StructureGene
+    # if solver.lower().startswith('v'):
+    #     sg = readVABSIn(fn, logger)
+    # elif solver.lower().startswith('s'):
+    #     sg = readSCIn(fn, smdim, logger)
     return sg
 
 
+def _readSGInputHead(f):
+    return
 
 
+def _readSGInputMesh(f):
+    return
 
+
+def _readSGInputNodes(f):
+    return
+
+
+def _readSGInputElements(f):
+    return
 
 
 
@@ -1598,3 +1612,90 @@ def readSGNodeElements(fn, logger=None):
 
     return node_elements
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# ====================================================================
+
+def readLoadCsv(fn, delimiter=',', nhead=1, encoding='utf-8-sig'):
+    r"""
+    load = {
+        'flight_condition_1': {
+            'fx': {
+                'a': [],
+                'r': [],
+                'v': []
+            },
+            'fy': [],
+            'fz': [],
+            'mx', [],
+            'my', [],
+            'mz', []
+        },
+        'flight_condition_2': {},
+        ...
+    }
+    """
+
+    load = {}
+    azimuth = []
+
+    with open(fn, 'r', encoding=encoding) as file:
+        cr = csv.reader(file, delimiter=delimiter)
+
+        for i, row in enumerate(cr):
+            row = [s.strip() for s in row]
+            if row[0] == '':
+                continue
+
+            if i < nhead:
+                continue
+                # # Read head
+                # for label in row:
+                #     if label.lower().startswith('rotor'):
+                #         nid = int(label.split('NODE')[1])
+                #         load['node_id'].append(nid)
+
+            else:
+                condition = str(row[0])
+                if not condition in load.keys():
+                    load[condition] = {
+                        'fx': {'a': [], 'r': [], 'v': []},
+                        'fy': {'a': [], 'r': [], 'v': []},
+                        'fz': {'a': [], 'r': [], 'v': []},
+                        'mx': {'a': [], 'r': [], 'v': []},
+                        'my': {'a': [], 'r': [], 'v': []},
+                        'mz': {'a': [], 'r': [], 'v': []}
+                    }
+
+                a, r, fx, fy, fz, mx, my, mz = list(map(float, row[1:]))
+                v = {
+                    'fx': fx, 'fy': fy, 'fz': fz,
+                    'mx': mx, 'my': my, 'mz': mz
+                }
+
+                azimuth.append(a)
+
+                for component in ['fx', 'fy', 'fz', 'mx', 'my', 'mz']:
+                    load[condition][component]['a'].append(a)
+                    load[condition][component]['r'].append(r)
+                    load[condition][component]['v'].append(v[component])
+
+    azimuth = list(set(azimuth))
+
+    return load, azimuth

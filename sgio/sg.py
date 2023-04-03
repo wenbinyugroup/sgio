@@ -1,13 +1,14 @@
-# -*- coding: utf-8 -*-
-
 import copy
 import math
 # import numpy as np
-import msgd.utils.io as mui
-import msgd.utils.logger as mul
-import msgd.utils.version as muv
+import sgio.utils.io as mui
+import sgio.utils.logger as mul
+import sgio.utils.version as muv
 
+# import meshio
+# import sgio.meshio as mpm
 
+from .meshio._mesh import Mesh
 
 
 
@@ -27,7 +28,7 @@ class StructureGene(object):
         Dimension of the space.
     """
 
-    def __init__(self, name, sgdim, smdim=None, spdim=None, logger=None):
+    def __init__(self, name:str='', sgdim:int=None, smdim:int=None, spdim:int=None, logger=None):
         #: str: Name of the SG.
         self.name = name
         #: int: Dimension of the SG.
@@ -107,6 +108,7 @@ class StructureGene(object):
 
         # Mesh
         # ------------------------------------------------------------
+        self.mesh : Mesh = None
 
         #: int: Flag of the type of elements (SC)
         self.degen_element = 0
@@ -118,19 +120,19 @@ class StructureGene(object):
         #: * 3D SG: `{nid: [y1, y2, y3], ...}`
         #: * 2D SG: `{nid: [y2, y3], ...}`
         #: * 1D SG: `{nid: [y3], ...}`
-        self.nodes = {}
+        # self.nodes = {}
         #: dict of {int, list of ints}: Elemental connectivities
         #: 
         #: `{eid: [nid1, nid2, ...], ...}`, no zeros
-        self.elements = {}
+        # self.elements = {}
         #: list of ints: Element ids
-        self.elementids = []
+        # self.elementids = []
         #: list of ints: 1D element ids
-        self.elementids1d = []
+        # self.elementids1d = []
         #: list of ints: 2D element ids
-        self.elementids2d = []
+        # self.elementids2d = []
         #: list of ints: 3D element ids
-        self.elementids3d = []
+        # self.elementids3d = []
 
         #: dict of {int, int}: Material/Combination id for each element.
         #:
@@ -367,47 +369,29 @@ class StructureGene(object):
 
 
 
-    def __writeInputSGNodes(self, fobj, sfi, sff):
+    def __writeInputSGNodes(self, f, sfi:str='8d', sff:str='16.6e'):
         ssfi = '{:' + sfi + '}'
-        # if self.sgdim == 1:
-        #     nid = self.elements[self.elementids1d[0]][0]
-        #     fobj.write(ssfi.format(nid))
-        #     mui.writeFormatFloats(fobj, self.nodes[nid])
-        #     for eid in self.elementids1d:
-        #         if len(self.elements[eid]) > 2:
-        #             # node 3
-        #             nid = self.elements[eid][2]
-        #             fobj.write(ssfi.format(nid))
-        #             mui.writeFormatFloats(fobj, self.nodes[nid], fmt=sff)
-        #         if len(self.elements[eid]) == 5:
-        #             # node 5
-        #             nid = self.elements[eid][4]
-        #             fobj.write(ssfi.format(nid))
-        #             mui.writeFormatFloats(fobj, self.nodes[nid], fmt=sff)
-        #         if len(self.elements[eid]) > 3:
-        #             # node 4
-        #             nid = self.elements[eid][3]
-        #             fobj.write(ssfi.format(nid))
-        #             mui.writeFormatFloats(fobj, self.nodes[nid], fmt=sff)
-        #         # node 2
-        #         nid = self.elements[eid][1]
-        #         fobj.write(ssfi.format(nid))
-        #         mui.writeFormatFloats(fobj, self.nodes[nid], fmt=sff)
-        # else:
-        count = 0
-        nnode = len(self.nodes)
+        # count = 0
+        # nnode = len(self.nodes)
         # for nid, ncoord in self.nodes.items():
-        for i in range(nnode):
-            count += 1
+        for i, ncoord in enumerate(self.mesh.points):
+            # count += 1
             nid = i + 1
-            ncoord = self.nodes[nid]
-            fobj.write(ssfi.format(nid))
-            mui.writeFormatFloats(fobj, ncoord, fmt=sff, newline=False)
-            if count == 1:
-                fobj.write('  # nodal coordinates')
-            fobj.write('\n')
+            # ncoord = self.nodes[nid]
+            f.write(ssfi.format(nid))
+            if self.sgdim == 1:
+                mui.writeFormatFloats(f, ncoord[2:], fmt=sff, newline=False)
+            elif self.sgdim == 2:
+                mui.writeFormatFloats(f, ncoord[1:], fmt=sff, newline=False)
+            elif self.sgdim == 3:
+                mui.writeFormatFloats(f, ncoord, fmt=sff, newline=False)
 
-        fobj.write('\n')
+            if i == 0:
+                f.write('  # nodal coordinates')
+
+            f.write('\n')
+
+        f.write('\n')
 
         return
 
@@ -419,7 +403,7 @@ class StructureGene(object):
 
 
 
-    def __writeInputSGElements(self, fobj, sfi, solver):
+    def __writeInputSGElements(self, f, solver, sfi:str='8d'):
         count = 0
         for eid in self.elementids1d:
             count += 1
@@ -429,10 +413,10 @@ class StructureGene(object):
             elem[1] = self.elem_prop[eid]  # mid/cid
             for i, nid in enumerate(self.elements[eid]):
                 elem[i+2] = nid
-            mui.writeFormatIntegers(fobj, elem, fmt=sfi, newline=False)
+            mui.writeFormatIntegers(f, elem, fmt=sfi, newline=False)
             if count == 1:
-                fobj.write('  # element connectivity')
-            fobj.write('\n')
+                f.write('  # element connectivity')
+            f.write('\n')
 
         for eid in self.elementids2d:
             count += 1
@@ -450,10 +434,10 @@ class StructureGene(object):
                     elem[i+1] = nid
             if solver.lower().startswith('s'):
                 elem.insert(1, self.elem_prop[eid])
-            mui.writeFormatIntegers(fobj, elem, fmt=sfi, newline=False)
+            mui.writeFormatIntegers(f, elem, fmt=sfi, newline=False)
             if count == 1:
-                fobj.write('  # element connectivity')
-            fobj.write('\n')
+                f.write('  # element connectivity')
+            f.write('\n')
 
         for eid in self.elementids3d:
             count += 1
@@ -469,12 +453,12 @@ class StructureGene(object):
                     elem[i+3] = nid
                 else:
                     elem[i+2] = nid
-            mui.writeFormatIntegers(fobj, elem, fmt=sfi, newline=False)
+            mui.writeFormatIntegers(f, elem, fmt=sfi, newline=False)
             if count == 1:
-                fobj.write('  # element connectivity')
-            fobj.write('\n')
+                f.write('  # element connectivity')
+            f.write('\n')
 
-        fobj.write('\n')
+        f.write('\n')
         return
 
 

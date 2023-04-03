@@ -2,113 +2,168 @@
 import traceback
 # import subprocess as sbp
 
-import msgd.utils.logger as mul
-import msgd.utils.execu as mue
+import sgio.utils.logger as mul
+import sgio.utils.execu as mue
 # import msgpi.timer as mtime
-import msgd.builder.presg as msp
-import msgd.model.io as msi
+# import msgd.builder.presg as msp
+import sgio.io as msi
 # import msgpi.utils as utils
 
-def solve(
-    sg_xml, analysis, ppcmd, solver, integrated=False,
+
+
+def run(
+    solver, input_name, analysis, smdim=2,
     aperiodic=False, output_gmsh_format=True, reduced_integration=False,
-    timeout=30, scrnout=True, logger=None, timer=None
-    ):
-    """Solve
+    scrnout=True, timeout=3600, logger=None):
+    r"""Run codes.
 
     Parameters
     ----------
-    sg_xml : str
-        File name of SG design parameters (XML format).
-    analysis : str
+    solver : str
+        solver name of VABS or SwiftComp
+    input_name : str
+        Name of the input file.
+    analysis : {0, 1, 2, 3, 4, 5, '', 'h', 'dn', 'dl', 'd', 'l', 'fi', 'f', 'fe'}
         Analysis to be carried out.
 
-        * h - homogenization
-        * d - dehomogenization/localization/recover
-        * f - initial failure strength
-        * fe - initial failure envelope
-        * fi - initial failure indices and strength ratios
-    ppcmd : str
-        Preprocessor command.
-    solver : str
-        Command of the solver.
-    integrated : bool, optional
-        Use integrated solver or not (standalone), by default False.
-    aperiodic : bool, optional
-        (SwiftComp) If the structure gene is periodic, by default False.
-    output_gmsh_format : bool, optional
-        (SwiftComp) If output dehomogenization results in Gmsh format, by default True
-    reduced_integration : bool, optional
-        (SwiftComp) If reduced integration is used for certain elements, by default False.
-    timeout : int, optional
-        Time to wait before stop, by default 30.
-    scrnout : bool, optional
-        Switch of printing solver messages, by default True.
-    logger : logging.Logger, optional
-        Logger object, by default None.
-
-    Returns
-    -------
-    various
-        Different analyses return different types of results.
+        * 0 or 'h' or '' - homogenization
+        * 1 or 'dn' - (VABS) dehomogenization (nonlinear)
+        * 2 or 'dl' or 'd' or 'l' - dehomogenization (linear)
+        * 3 or 'fi' - initial failure indices and strength ratios
+        * 4 or 'f' - (SwiftComp) initial failure strength
+        * 5 or 'fe' - (SwiftComp) initial failure envelope
+    smdim : int
+        (SwiftComp) Dimension of the macroscopic structural model.
+    aperiodic : bool
+        (SwiftComp) If the structure gene is periodic.
+    output_gmsh_format : bool
+        (SwiftComp) If output dehomogenization results in Gmsh format
+    reduced_integration : bool
+        (SwiftComp) If reduced integration is used for certain elements.
+    scrnout : bool, default True
+        Switch of printing solver messages.
+    logger : logging.Logger
+        Logger object
     """
-
     if logger is None:
         logger = mul.initLogger(__name__)
 
-    # t = mtime.Timer(logger=logger.info)
+    try:
+        if solver.lower().startswith('v'):
+            runVABS(solver, input_name, analysis, scrnout, timeout, logger)
 
-    # Preprocess
-    logger.info('preprocessing...')
+        elif solver.lower().startswith('s'):
+            runSwiftComp(
+                solver, input_name, analysis, smdim,
+                aperiodic, output_gmsh_format, reduced_integration,
+                scrnout, timeout, logger
+            )
 
-    design = {'dim': 2}
-    smdim = 1
-
-    if timer:
-        timer.start()
-    sg_in = msp.buildSG(
-        sg_xml, design, smdim,
-        builder=ppcmd, analysis=analysis, solver=solver, integrated=integrated,
-        timeout=timeout, scrnout=scrnout, logger=logger
-    )
-    if timer:
-        timer.stop()
+    except:
+        e = traceback.format_exc()
+        logger.critical(e, exc_info=1)
 
 
-    # Solve
-    if not integrated:
-        logger.info('running analysis...')
-        logger.debug('solver: ' + solver)
-        if timer:
-            timer.start()
-        run(
-            solver, sg_in, analysis, smdim,
-            aperiodic, output_gmsh_format, reduced_integration,
-            scrnout, logger=logger
-        )
-        if timer:
-            timer.stop()
+# def solve(
+#     sg_xml, analysis, ppcmd, solver, integrated=False,
+#     aperiodic=False, output_gmsh_format=True, reduced_integration=False,
+#     timeout=30, scrnout=True, logger=None, timer=None
+#     ):
+#     """Solve
+
+#     Parameters
+#     ----------
+#     sg_xml : str
+#         File name of SG design parameters (XML format).
+#     analysis : str
+#         Analysis to be carried out.
+
+#         * h - homogenization
+#         * d - dehomogenization/localization/recover
+#         * f - initial failure strength
+#         * fe - initial failure envelope
+#         * fi - initial failure indices and strength ratios
+#     ppcmd : str
+#         Preprocessor command.
+#     solver : str
+#         Command of the solver.
+#     integrated : bool, optional
+#         Use integrated solver or not (standalone), by default False.
+#     aperiodic : bool, optional
+#         (SwiftComp) If the structure gene is periodic, by default False.
+#     output_gmsh_format : bool, optional
+#         (SwiftComp) If output dehomogenization results in Gmsh format, by default True
+#     reduced_integration : bool, optional
+#         (SwiftComp) If reduced integration is used for certain elements, by default False.
+#     timeout : int, optional
+#         Time to wait before stop, by default 30.
+#     scrnout : bool, optional
+#         Switch of printing solver messages, by default True.
+#     logger : logging.Logger, optional
+#         Logger object, by default None.
+
+#     Returns
+#     -------
+#     various
+#         Different analyses return different types of results.
+#     """
+
+#     if logger is None:
+#         logger = mul.initLogger(__name__)
+
+#     # t = mtime.Timer(logger=logger.info)
+
+#     # Preprocess
+#     logger.info('preprocessing...')
+
+#     design = {'dim': 2}
+#     smdim = 1
+
+#     if timer:
+#         timer.start()
+#     sg_in = msp.buildSG(
+#         sg_xml, design, smdim,
+#         builder=ppcmd, analysis=analysis, solver=solver, integrated=integrated,
+#         timeout=timeout, scrnout=scrnout, logger=logger
+#     )
+#     if timer:
+#         timer.stop()
 
 
-    # Parse results
-    logger.info('reading results...')
+#     # Solve
+#     if not integrated:
+#         logger.info('running analysis...')
+#         logger.debug('solver: ' + solver)
+#         if timer:
+#             timer.start()
+#         run(
+#             solver, sg_in, analysis, smdim,
+#             aperiodic, output_gmsh_format, reduced_integration,
+#             scrnout, logger=logger
+#         )
+#         if timer:
+#             timer.stop()
 
-    results = None
 
-    if timer:
-        timer.start()
+#     # Parse results
+#     logger.info('reading results...')
+
+#     results = None
+
+#     if timer:
+#         timer.start()
     
-    if 'vabs' in solver.lower():
-        results = msi.readVABSOut(sg_in, analysis, scrnout, logger=logger)
+#     if 'vabs' in solver.lower():
+#         results = msi.readVABSOut(sg_in, analysis, scrnout, logger=logger)
 
-    elif 'swiftcomp' in solver.lower():
-        results = msi.readSCOut(sg_in, smdim, analysis, scrnout)
+#     elif 'swiftcomp' in solver.lower():
+#         results = msi.readSCOut(sg_in, smdim, analysis, scrnout)
 
     
-    if timer:
-        timer.stop()
+#     if timer:
+#         timer.stop()
     
-    return results
+#     return results
 
 
 
@@ -266,64 +321,3 @@ def runSwiftComp(
 
 
 
-
-
-
-
-
-def run(
-    solver, input_name, analysis, smdim=2,
-    aperiodic=False, output_gmsh_format=True, reduced_integration=False,
-    scrnout=True, timeout=3600, logger=None):
-    r"""Run codes.
-
-    Parameters
-    ----------
-    solver : str
-        solver name of VABS or SwiftComp
-    input_name : str
-        Name of the input file.
-    analysis : {0, 1, 2, 3, 4, 5, '', 'h', 'dn', 'dl', 'd', 'l', 'fi', 'f', 'fe'}
-        Analysis to be carried out.
-
-        * 0 or 'h' or '' - homogenization
-        * 1 or 'dn' - (VABS) dehomogenization (nonlinear)
-        * 2 or 'dl' or 'd' or 'l' - dehomogenization (linear)
-        * 3 or 'fi' - initial failure indices and strength ratios
-        * 4 or 'f' - (SwiftComp) initial failure strength
-        * 5 or 'fe' - (SwiftComp) initial failure envelope
-    smdim : int
-        (SwiftComp) Dimension of the macroscopic structural model.
-    aperiodic : bool
-        (SwiftComp) If the structure gene is periodic.
-    output_gmsh_format : bool
-        (SwiftComp) If output dehomogenization results in Gmsh format
-    reduced_integration : bool
-        (SwiftComp) If reduced integration is used for certain elements.
-    scrnout : bool, default True
-        Switch of printing solver messages.
-    logger : logging.Logger
-        Logger object
-    """
-    if logger is None:
-        logger = mul.initLogger(__name__)
-
-    try:
-        if solver.lower().startswith('v'):
-            runVABS(solver, input_name, analysis, scrnout, timeout, logger)
-
-        elif solver.lower().startswith('s'):
-            runSwiftComp(
-                solver, input_name, analysis, smdim,
-                aperiodic, output_gmsh_format, reduced_integration,
-                scrnout, timeout, logger
-            )
-
-    except:
-        e = traceback.format_exc()
-        logger.critical(e, exc_info=1)
-
-
-def runBatch():
-
-    return

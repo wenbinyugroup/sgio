@@ -2,7 +2,7 @@ import os
 import platform
 import signal
 import subprocess as sbp
-import msgd.utils.logger as mul
+import sgio.utils.logger as mul
 
 
 def run(cmd, timeout, scrnout, logger=None):

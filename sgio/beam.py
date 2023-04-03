@@ -1,7 +1,8 @@
 import copy
 import numpy as np
-from msgd.model.general import MaterialSection
-import msgd.utils.io as utio
+import sgio.utils.io as utio
+
+from .general import MaterialSection
 
 
 class BeamProperty(MaterialSection):
