@@ -215,8 +215,10 @@ class StructureGene(object):
         print('Structure gene dimension: {0}'.format(self.sgdim))
         print('Structure model dimension: {0}'.format(self.smdim))
         print('')
-        print('Number of nodes: {0}'.format(len(self.nodes)))
-        print('Number of elements: {0}'.format(len(self.elements)))
+        print('Mesh')
+        print(self.mesh)
+        # print('Number of nodes: {0}'.format(len(self.nodes)))
+        # print('Number of elements: {0}'.format(len(self.elements)))
         print('')
         print('Number of materials: {0}'.format(len(self.materials)))
         for mid, mp in self.materials.items():

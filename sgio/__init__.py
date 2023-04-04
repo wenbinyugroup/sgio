@@ -1,6 +1,6 @@
 from .sg import StructureGene
 
-from .io import readSGInput
+from .io import read
 
 
 from . import utils

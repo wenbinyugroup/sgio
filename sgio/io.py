@@ -11,14 +11,56 @@ import sgio.utils.io as utio
 import sgio.utils.logger as mul
 
 from .sg import StructureGene
+from .meshio import Mesh
+from .meshio import read
 
 
-def read(fn, file_format, smdim):
-    sg = StructureGene
-    # if solver.lower().startswith('v'):
-    #     sg = readVABSIn(fn, logger)
-    # elif solver.lower().startswith('s'):
-    #     sg = readSCIn(fn, smdim, logger)
+def read(fn : str, file_format : str, smdim : int, sg : StructureGene = None):
+    r"""Read SG input.
+
+    Parameters
+    ----------
+    fn : str
+        Name of the SG input file
+    file_format : str
+        Format of the SG input file
+    smdim : int
+        Dimension of the macro structural model
+    """
+
+    if file_format.startswith('v') or file_format.startswith('s'):
+        with open(fn, 'r') as f:
+            sg = readBuffer(f, file_format, smdim)
+
+    else:
+        if not sg:
+            sg = StructureGene()
+        sg.mesh = read(fn, file_format)
+
+    return sg
+
+
+def readBuffer(f, file_format : str, smdim : int):
+    r"""
+    """
+    sg = StructureGene()
+
+    line = f.readline()
+
+    while True:
+        if not line:  # EOF
+            break
+
+        line = line.strip()
+        if line == '':
+            line = f.readline()
+            continue
+
+        # Read head
+
+        # Read mesh
+        sg.mesh = _readSGInputMesh(f, file_format, smdim)
+
     return sg
 
 
@@ -26,8 +68,23 @@ def _readSGInputHead(f):
     return
 
 
-def _readSGInputMesh(f):
-    return
+def _readSGInputMesh(f, file_format : str, smdim : int, nnodes : int, nelems : int):
+    r"""
+    """
+    # Initialize the optional data fields
+    points = []
+    cells = []
+    cell_ids = []
+    point_sets = {}
+    cell_sets = {}
+    cell_sets_element = {}  # Handle cell sets defined in ELEMENT
+    cell_sets_element_order = []  # Order of keys is not preserved in Python 3.5
+    field_data = {}
+    cell_data = {}
+    point_data = {}
+    point_ids = None
+
+    return Mesh()
 
 
 def _readSGInputNodes(f):
