@@ -44,28 +44,159 @@ def readBuffer(f, file_format : str, smdim : int):
     r"""
     """
     sg = StructureGene()
+    sg.smdim = smdim
 
-    line = f.readline()
+    # line = f.readline()
 
-    while True:
-        if not line:  # EOF
-            break
+    # while True:
+    #     if not line:  # EOF
+    #         break
 
-        line = line.strip()
-        if line == '':
-            line = f.readline()
-            continue
+    #     line = line.strip()
+    #     if line == '':
+    #         line = f.readline()
+    #         continue
 
-        # Read head
+    # Read head
+    configs = _readSGInputHead(f, file_format, smdim)
+    sg.sgdim = configs['sgdim']
+    sg.physics = configs['physics']
+    sg.do_dampling = configs.get('do_damping', 0)
+    sg.use_elem_local_orient = configs.get('use_elem_local_orient', 0)
+    sg.is_temp_nonuniform = configs.get('is_temp_nonuniform', 0)
+    if smdim != 3:
+        sg.model = configs['model']
+        if smdim == 1:
+            init_curvs = configs.get('curvature', [0.0, 0.0, 0.0])
+            sg.initial_twist = init_curvs[0]
+            sg.initial_curvature = init_curvs[1:]
+        elif smdim == 2:
+            sg.initial_curvature = configs.get('curvature', [0.0, 0.0])
 
-        # Read mesh
-        sg.mesh = _readSGInputMesh(f, file_format, smdim)
+    nnodes = configs['num_nodes']
+    nelems = configs['num_elements']
+
+    # Read mesh
+    sg.mesh = _readSGInputMesh(f, file_format, smdim, nnodes, nelems)
 
     return sg
 
 
-def _readSGInputHead(f):
-    return
+def _readSGInputHead(f, file_format : str, smdim : int):
+    configs = {}
+    if file_format.startswith('v'):
+        head = 3  # at least 3 lines in the head (flag) part
+        count = 0
+        configs['sgdim'] = 2
+        while True:
+            line = f.readline().strip()
+            if line == '':  continue
+
+            count += 1
+            line = line.split()
+            if count == 1:
+                # format_flag  nlayer
+                configs['format'] = int(line[0])
+                configs['num_mat_angle3_comb'] = int(line[1])
+                continue
+            elif count == 2:
+                # timoshenko_flag  recover_flag  thermal_flag
+                configs['model'] = int(line[0])
+                configs['do_damping'] = int(line[1])
+                configs['physics'] = 1 if int(line[2]) > 0 else 0
+                continue
+            elif count == 3:
+                # curve_flag  oblique_flag  trapeze_flag  vlasov_flag
+                # line = list(map(int, line))
+                # flag_curve = line[0]
+                # flag_oblique = line[1]
+                configs['is_curve'] = int(line[0])
+                configs['is_oblique'] = int(line[1])
+                configs['model'] = 3 if line[2] == '1' else configs['model']  # trapeze
+                configs['model'] = 2 if line[3] == '1' else configs['model']  # vlasov
+                # if line[2] == 1:
+                #     sg.model = 3  # trapeze effect
+                # if line[3] == 1:
+                #     sg.model = 2  # Vlasov model
+                if configs['is_curved'] == 1:
+                    head += 1  # extra line in the head
+                if configs['is_oblique'] == 1:
+                    head += 1  # extra line in the head
+                continue
+            elif configs['is_curve'] != 0 and count <= head:
+                configs['curvature'] = list(map(float, line))  # k1, k2, k3
+                continue
+            elif configs['is_oblique'] and count <= head:
+                configs['oblique'] = list(map(float, line))  # cos11, cos21
+                continue
+            elif count == (head + 1):
+                # nnode  nelem  nmate
+                # line = list(map(int, line))
+                configs['num_nodes'] = int(line[0])
+                configs['num_elements'] = int(line[1])
+                configs['num_materials'] = int(line[2])
+                break
+
+    elif file_format.startswith('s'):
+        head = 2  # at least 3 lines in the head (flag) part
+        if smdim == 1:
+            head += 3
+        elif smdim == 2:
+            head += 2
+        count = 0
+        while True:
+            line = f.readline().strip()
+            if line == '':  continue
+
+            count += 1
+            line = line.split()
+
+            if smdim == 1:
+                if count == 1:  # model
+                    configs['model'] = int(line[0])
+                    continue
+                elif count == 2:  # initial twist/curvatures
+                    line = list(map(float, line))
+                    configs['curvature'] = list(map(float, line))
+                    # sg.initial_twist = line[0]
+                    # sg.initial_curvature = [line[1], line[2]]
+                    continue
+                elif count == 3:  # oblique
+                    # line = list(map(float, line))
+                    configs['oblique'] = list(map(float, line))
+                    continue
+            elif smdim == 2:
+                if count == 1:  # model
+                    # line = list(map(int, line))
+                    configs['model'] = int(line[0])
+                    continue
+                elif count == 2:
+                    # initial twist/curvature
+                    # line = list(map(float, line))
+                    configs['curvature'] = list(map(float, line))
+                    continue
+
+            if count == (head - 1):
+                # analysis  elem_flag  trans_flag  temp_flag
+                # line = list(map(int, line))
+                configs['physics'] = int(line[0])
+                configs['ndim_degen_elem'] = int(line[1])
+                configs['use_elem_local_orient'] = int(line[2])
+                configs['is_temp_nonuniform'] = line[3]
+                continue
+            elif count == head:
+                # nsg  nnode  nelem  nmate  nslave  nlayer
+                line = list(map(int, line))
+                # print('line =', line)
+                configs['sgdim'] = int(line[0])
+                configs['num_nodes'] = int(line[1])
+                configs['num_elements'] = int(line[2])
+                configs['num_materials'] = int(line[3])
+                configs['num_slavenodes'] = int(line[4])
+                configs['num_mat_angle3_comb'] = int(line[5])
+                break
+
+    return configs
 
 
 def _readSGInputMesh(f, file_format : str, smdim : int, nnodes : int, nelems : int):
@@ -84,7 +215,13 @@ def _readSGInputMesh(f, file_format : str, smdim : int, nnodes : int, nelems : i
     point_data = {}
     point_ids = None
 
-    return Mesh()
+    # while True:
+
+    #     if line == '':
+    #         line = f.readline()
+    #         continue
+
+    return Mesh(points, cells)
 
 
 def _readSGInputNodes(f):

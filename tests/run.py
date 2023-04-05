@@ -1,20 +1,27 @@
 import os
 import sys
 import pprint
+import sgio
 
 # import meshio
 import msgd.pkg.meshio as mpm
 
 fn = sys.argv[1]
+file_format = sys.argv[2]
+smdim = int(sys.argv[3])
+
 fn_base, fn_ext = os.path.splitext(fn)
 
-mesh = mpm.read(fn)
+sg = sgio.read(fn, file_format, smdim)
+print(sg)
 
-mesh._inspect(outstream=print)
+# mesh = mpm.read(fn)
+
+# mesh._inspect(outstream=print)
 # mesh._inspect(outstream=pprint.pprint)
 
-with open('debug.dat', 'w') as file:
-    mesh._inspect(outstream=file.write, append_newline=True)
+# with open('debug.dat', 'w') as file:
+#     mesh._inspect(outstream=file.write, append_newline=True)
 
 
 # print(mesh)
@@ -32,5 +39,5 @@ with open('debug.dat', 'w') as file:
 # print('mesh.cell_sets')
 # pprint.pprint(mesh.cell_sets)
 
-fn = '.'.join([fn_base, 'msh'])
-mesh.write(fn, file_format='gmsh22', binary=False)
+# fn = '.'.join([fn_base, 'msh'])
+# mesh.write(fn, file_format='gmsh22', binary=False)

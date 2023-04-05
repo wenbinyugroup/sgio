@@ -73,12 +73,12 @@ class StructureGene(object):
         self.geo_correct = False
 
         #: int: Flag of damping computation
-        self.damping = 0
+        self.do_dampling = 0
 
         #: int: Flag of transformation of elements
-        self.trans_element = 0
+        self.use_elem_local_orient = 0
         #: int: Flag of uniform temperature
-        self.nonuniform_temperature = 0
+        self.is_temp_nonuniform = 0
 
         self.force_flag = 0
         self.steer_flag = 0
@@ -111,7 +111,7 @@ class StructureGene(object):
         self.mesh : Mesh = None
 
         #: int: Flag of the type of elements (SC)
-        self.degen_element = 0
+        self.ndim_degen_elem = 0
         #: int: Number of slave nodes
         self.num_slavenodes = 0
 
@@ -197,37 +197,80 @@ class StructureGene(object):
             self.logger = mul.initLogger(__name__)
 
 
+    @property
+    def nnodes(self):
+        return len(self.mesh.points)
 
 
+    @property
+    def nelems(self):
+        return sum([len(cell.data) for cell in self.mesh.cells])
 
 
+    @property
+    def nmates(self):
+        return len(self.materials)
 
 
+    def __repr__(self):
+        lines = [
+            '',
+            'SUMMARY OF THE SG',
+            '=================',
+            ''
+            'Analysis',
+            '--------',
+            'Structure gene: {}D -> model: {}D'.format(self.sgdim, self.smdim),
+            'Physics: {}'.format(self.physics),
+            '',
+        ]
 
-    def summary(self):
-        """Print a brief summary of the SG.
-        """
-        print('')
-        print('SUMMARY OF THE SG')
-        print('')
-        print('Name: {0}'.format(self.name))
-        print('')
-        print('Structure gene dimension: {0}'.format(self.sgdim))
-        print('Structure model dimension: {0}'.format(self.smdim))
-        print('')
-        print('Mesh')
-        print(self.mesh)
+        if self.smdim != 3:
+            lines += [
+                'Model: {}'.format(self.model),
+            ]
+            lines.append('')
+
+        lines += [
+            'Mesh',
+            '----',
+            'Number of nodes: {}'.format(self.nnodes),
+            'Number of elements: {}'.format(self.nelems),
+            str(self.mesh),
+            '',
+        ]
+
+        lines += [
+            'Materials',
+            '---------',
+            'Number of materials: {}'.format(self.nmates),
+            '',
+        ]
+
+        lines += ['END OF SUMMARY', '']
+        # print('')
+        # print('SUMMARY OF THE SG')
+        # print('')
+        # print('Name: {0}'.format(self.name))
+        # print('')
+        # print('Structure gene dimension: {0}'.format(self.sgdim))
+        # print('Structure model dimension: {0}'.format(self.smdim))
+        # print('')
+        # print('Mesh')
+        # print(self.mesh)
         # print('Number of nodes: {0}'.format(len(self.nodes)))
         # print('Number of elements: {0}'.format(len(self.elements)))
-        print('')
-        print('Number of materials: {0}'.format(len(self.materials)))
-        for mid, mp in self.materials.items():
-            print('material:', mid)
-            mp.summary()
-            print('')
-        print('')
-        print('Number of material-orientation combinations: {0}'.format(len(self.mocombos)))
-        print('')
+        # print('')
+        # print('Number of materials: {0}'.format(len(self.materials)))
+        # for mid, mp in self.materials.items():
+        #     print('material:', mid)
+        #     mp.summary()
+        #     print('')
+        # print('')
+        # print('Number of material-orientation combinations: {0}'.format(len(self.mocombos)))
+        # print('')
+
+        return '\n'.join(lines)
 
 
 
@@ -610,7 +653,7 @@ class StructureGene(object):
             if self.physics == 1:
                 physics = 3
             mui.writeFormatIntegers(
-                fobj, [model, self.damping, physics], sfi)
+                fobj, [model, self.do_dampling, physics], sfi)
             fobj.write('\n')
 
             # curve_flag  oblique_flag  trapeze_flag  vlasov_flag
@@ -681,8 +724,8 @@ class StructureGene(object):
 
             # Head
             nums = [
-                self.physics, self.degen_element, self.trans_element,
-                self.nonuniform_temperature
+                self.physics, self.ndim_degen_elem, self.use_elem_local_orient,
+                self.is_temp_nonuniform
             ]
             cmt = '  # analysis, elem_flag, trans_flag, temp_flag'
             if version > '2.1':
@@ -819,7 +862,7 @@ class StructureGene(object):
             self.__writeInputSGNodes(fobj, sfi, sff)
             self.__writeInputSGElements(fobj, sfi, solver)
 
-            if self.trans_element != 0:
+            if self.use_elem_local_orient != 0:
                 self.__writeInputSGElementOrientations(fobj, sfi, sff, solver)
 
             if len(self.mocombos) > 0:
