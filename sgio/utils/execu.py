@@ -1,13 +1,15 @@
 import os
 import platform
 import signal
+import logging
 import subprocess as sbp
-import sgio.utils.logger as mul
+# import sgio.utils.logger as mul
 
+logger = logging.getLogger(__name__)
 
-def run(cmd, timeout, scrnout, logger=None):
-    if logger is None:
-        logger = mul.initLogger(__name__)
+def run(cmd, timeout, scrnout):
+    # if logger is None:
+    #     logger = mul.initLogger(__name__)
 
     logger.critical(' '.join(cmd))
     # proc = sbp.Popen(cmd, stdout=sbp.PIPE, stderr=sbp.PIPE)

@@ -1,10 +1,10 @@
 import os
 import sys
-import pprint
+# import pprint
 import sgio
 
 # import meshio
-import msgd.pkg.meshio as mpm
+# import msgd.pkg.meshio as mpm
 
 fn = sys.argv[1]
 file_format = sys.argv[2]

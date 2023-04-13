@@ -2,18 +2,24 @@ import os
 import csv
 import traceback
 import math
-import sgio.sg as mms
-import sgio.general as mmg
-import sgio.beam as mmbm
-import sgio.shell as mmps
-import sgio.solid as mmsd
+import logging
+
+import numpy as np
+
+import sgio.core.sg as mms
+import sgio.core.general as mmg
+import sgio.core.beam as mmbm
+import sgio.core.shell as mmps
+import sgio.core.solid as mmsd
 import sgio.utils.io as utio
-import sgio.utils.logger as mul
+# import sgio.utils.logger as mul
 
-from .sg import StructureGene
-from .meshio import Mesh
-from .meshio import read
+from sgio.core.sg import StructureGene
+from sgio.meshio import Mesh
+from sgio.meshio import read
 
+
+logger = logging.getLogger(__name__)
 
 def read(fn : str, file_format : str, smdim : int, sg : StructureGene = None):
     r"""Read SG input.
@@ -221,10 +227,26 @@ def _readSGInputMesh(f, file_format : str, smdim : int, nnodes : int, nelems : i
     #         line = f.readline()
     #         continue
 
-    return Mesh(points, cells)
+    return Mesh(
+        points,
+        cells,
+        point_data=point_data,
+        cell_data=cell_data,
+        field_data=field_data,
+        point_sets=point_sets,
+        cell_sets=cell_sets,
+    )
 
 
-def _readSGInputNodes(f):
+def _readSGInputNodes(f, nnode):
+    points = []
+    point_ids = {}
+    counter = 0
+    while counter < nnode:
+        line = f.readline()
+        if line.strip() == "":
+            continue
+
     return
 
 
@@ -234,11 +256,11 @@ def _readSGInputElements(f):
 
 
 
-def readSGOutFailureIndex(fn, solver, logger=None):
+def readSGOutFailureIndex(fn, solver):
     r"""
     """
-    if not logger:
-        logger = mul.initLogger(__name__)
+    # if not logger:
+    #     logger = mul.initLogger(__name__)
 
     logger.info('reading sg failure indices and strengh ratios: {}...'.format(fn))
 
@@ -284,7 +306,7 @@ def readSGOutFailureIndex(fn, solver, logger=None):
 
 
 
-def readVABSIn(fn_vabs_in, logger=None):
+def readVABSIn(fn_vabs_in):
     """ Read data from the VABS input file.
 
     Parameters
@@ -298,8 +320,8 @@ def readVABSIn(fn_vabs_in, logger=None):
         Structure gene object
     """
 
-    if logger is None:
-        logger = mul.initLogger(__name__)
+    # if logger is None:
+    #     logger = mul.initLogger(__name__)
 
     logger.info('reading VABS input: {0}...'.format(fn_vabs_in))
 
@@ -855,7 +877,7 @@ def readVABSOutStrengthRatio(fn_in):
 
 
 
-def readVABSOut(fn_in, analysis=0, scrnout=True, logger=None):
+def readVABSOut(fn_in, analysis=0, scrnout=True):
     """Read VABS outputs.
 
     Parameters
@@ -886,20 +908,20 @@ def readVABSOut(fn_in, analysis=0, scrnout=True, logger=None):
         pass
     elif analysis == 3 or analysis == 'fi':
         # return readVABSOutStrengthRatio(fn_in+'.fi')
-        return readSGOutFailureIndex(fn_in+'.fi', 'vabs', logger=logger)
+        return readSGOutFailureIndex(fn_in+'.fi', 'vabs')
 
 
 
 
-def readSCIn(fn_sg, smdim, logger=None):
+def readSCIn(fn_sg, smdim):
     """ Read data from the SwiftComp input file
 
     :param fn_sg: File name of the SwiftComp input file
     :type fn_sg: string
     """
 
-    if logger is None:
-        logger = mul.initLogger(__name__)
+    # if logger is None:
+    #     logger = mul.initLogger(__name__)
 
     fn_base, fn_extn = os.path.splitext(fn_sg)
     name = os.path.basename(fn_base)
@@ -1112,7 +1134,7 @@ def readSCIn(fn_sg, smdim, logger=None):
 
 
 
-def readSCOutBeamProperty(fn, scrnout=True, logger=None):
+def readSCOutBeamProperty(fn, scrnout=True):
     """Read SwiftComp homogenization results
 
     Parameters
@@ -1127,8 +1149,8 @@ def readSCOutBeamProperty(fn, scrnout=True, logger=None):
     msgpi.sg.BeamProperty
         Material/sectional properties.
     """
-    if logger is None:
-        logger = mul.initLogger(__name__)
+    # if logger is None:
+    #     logger = mul.initLogger(__name__)
 
     # sm = mms.MaterialSection(smdim = 1)
     bp = mmbm.BeamProperty()
@@ -1276,9 +1298,9 @@ def readSCOutBeamProperty(fn, scrnout=True, logger=None):
 
 
 
-def readSCOutShellProperty(fn, scrnout=True, logger=None):
-    if logger is None:
-        logger = mul.initLogger(__name__)
+def readSCOutShellProperty(fn, scrnout=True):
+    # if logger is None:
+    #     logger = mul.initLogger(__name__)
 
     # sm = mms.MaterialSection(smdim = 1)
     sp = mmps.ShellProperty()
@@ -1435,11 +1457,11 @@ def readSCOutShellProperty(fn, scrnout=True, logger=None):
 
 
 
-def readSCOutMaterialProperty(fn, scrnout=True, logger=None):
+def readSCOutMaterialProperty(fn, scrnout=True):
     r"""
     """
-    if logger is None:
-        logger = mul.initLogger(__name__)
+    # if logger is None:
+    #     logger = mul.initLogger(__name__)
 
     mp = mmsd.MaterialProperty()
 
@@ -1541,7 +1563,7 @@ def readSCOutMaterialProperty(fn, scrnout=True, logger=None):
 
 
 
-def readSCOutHomo(fn, smdim, scrnout=True, logger=None):
+def readSCOutHomo(fn, smdim, scrnout=True):
     """Read SwiftComp homogenization results.
 
     :param fn: SwiftComp output file (e.g. example.sg.k)
@@ -1550,15 +1572,15 @@ def readSCOutHomo(fn, smdim, scrnout=True, logger=None):
     :param smdim: Dimension of the structural model
     :type smdim: int
     """
-    if logger is None:
-        logger = mul.initLogger(__name__)
+    # if logger is None:
+    #     logger = mul.initLogger(__name__)
 
     if smdim == 1:
-        out = readSCOutBeamProperty(fn, scrnout, logger)
+        out = readSCOutBeamProperty(fn, scrnout)
     elif smdim == 2:
-        out = readSCOutShellProperty(fn, scrnout, logger)
+        out = readSCOutShellProperty(fn, scrnout)
     elif smdim == 3:
-        out = readSCOutMaterialProperty(fn, scrnout, logger)
+        out = readSCOutMaterialProperty(fn, scrnout)
 
 
     return out
@@ -1571,11 +1593,11 @@ def readSCOutHomo(fn, smdim, scrnout=True, logger=None):
 
 
 
-def readSCOutFailure(fn_sc_out_fi, failure_analysis, logger=None):
+def readSCOutFailure(fn_sc_out_fi, failure_analysis):
     r"""
     """
-    if not logger:
-        logger = mul.initLogger(__name__)
+    # if not logger:
+    #     logger = mul.initLogger(__name__)
 
     logger.info('reading sc failure analysis ({}) output file: {}...'.format(failure_analysis, fn_sc_out_fi))
 
@@ -1645,7 +1667,7 @@ def readSCOutFailure(fn_sc_out_fi, failure_analysis, logger=None):
 
 
 
-def readSCOut(fn_in, smdim, analysis=0, scrnout=True, logger=None):
+def readSCOut(fn_in, smdim, analysis=0, scrnout=True):
     r"""Read SwiftComp outputs.
 
     Parameters
@@ -1670,8 +1692,8 @@ def readSCOut(fn_in, smdim, analysis=0, scrnout=True, logger=None):
     various
         Different analyses return different types of results.
     """
-    if not logger:
-        logger = mul.initLogger(__name__)
+    # if not logger:
+    #     logger = mul.initLogger(__name__)
 
     logger.info('reading sc output file (smdim={}, analysis={})...'.format(smdim, analysis))
 
@@ -1679,13 +1701,13 @@ def readSCOut(fn_in, smdim, analysis=0, scrnout=True, logger=None):
         # Read homogenization results
         if not fn_in.lower()[-2:] == '.k':
             fn_in = fn_in + '.k'
-        return readSCOutHomo(fn_in, smdim, scrnout, logger)
+        return readSCOutHomo(fn_in, smdim, scrnout)
 
     elif analysis == 1 or analysis == 2 or analysis == 'dl' or analysis == 'd' or analysis == 'l':
         pass
 
     elif (analysis.startswith('f')) or (analysis >= 3):
-        return readSCOutFailure(fn_in+'.fi', analysis, logger=logger)
+        return readSCOutFailure(fn_in+'.fi', analysis)
 
 
 
@@ -1707,12 +1729,12 @@ def readSCOut(fn_in, smdim, analysis=0, scrnout=True, logger=None):
 
 # ====================================================================
 
-def readSGInterfacePairs(fn, logger=None):
+def readSGInterfacePairs(fn):
     r"""
     """
 
-    if logger is None:
-        logger = mul.initLogger(__name__)
+    # if logger is None:
+    #     logger = mul.initLogger(__name__)
 
     logger.info('reading sg interface paris: {0}...'.format(fn))
 
@@ -1744,12 +1766,12 @@ def readSGInterfacePairs(fn, logger=None):
 
 
 
-def readSGInterfaceNodes(fn, logger=None):
+def readSGInterfaceNodes(fn):
     r"""
     """
 
-    if logger is None:
-        logger = mul.initLogger(__name__)
+    # if logger is None:
+    #     logger = mul.initLogger(__name__)
 
     logger.info('reading sg interface nodes: {0}...'.format(fn))
 
@@ -1779,12 +1801,12 @@ def readSGInterfaceNodes(fn, logger=None):
 
 
 
-def readSGNodeElements(fn, logger=None):
+def readSGNodeElements(fn):
     r"""
     """
 
-    if logger is None:
-        logger = mul.initLogger(__name__)
+    # if logger is None:
+    #     logger = mul.initLogger(__name__)
 
     logger.info('reading sg node elements: {0}...'.format(fn))
 

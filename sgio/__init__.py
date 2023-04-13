@@ -1,4 +1,4 @@
-from .sg import StructureGene
+from .core.sg import StructureGene
 
 from .io import read
 

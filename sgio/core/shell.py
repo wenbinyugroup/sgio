@@ -1,4 +1,4 @@
-from sgio.general import MaterialSection
+from sgio.core.general import MaterialSection
 import sgio.utils.io as utio
 
 

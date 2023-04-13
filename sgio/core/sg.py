@@ -1,15 +1,19 @@
 import copy
 import math
+import logging
+
 # import numpy as np
 import sgio.utils.io as mui
-import sgio.utils.logger as mul
+# import sgio.utils.logger as mul
 import sgio.utils.version as muv
 
 # import meshio
 # import sgio.meshio as mpm
 
-from .meshio._mesh import Mesh
+from sgio.meshio._mesh import Mesh
 
+
+logger = logging.getLogger(__name__)
 
 
 class StructureGene(object):
@@ -28,7 +32,7 @@ class StructureGene(object):
         Dimension of the space.
     """
 
-    def __init__(self, name:str='', sgdim:int=None, smdim:int=None, spdim:int=None, logger=None):
+    def __init__(self, name:str='', sgdim:int=None, smdim:int=None, spdim:int=None):
         #: str: Name of the SG.
         self.name = name
         #: int: Dimension of the SG.
@@ -191,10 +195,10 @@ class StructureGene(object):
         #: Distributed loads for Timoshenko beam model (VABS only)
         self.global_loads_dist = []
 
-        if logger:
-            self.logger = logger
-        else:
-            self.logger = mul.initLogger(__name__)
+        # if logger:
+        #     self.logger = logger
+        # else:
+        #     self.logger = mul.initLogger(__name__)
 
 
     @property
@@ -855,7 +859,7 @@ class StructureGene(object):
         if not version is None:
             self.version = muv.Version(version)
 
-        self.logger.debug('format version: {}'.format(self.version))
+        logger.debug('format version: {}'.format(self.version))
 
         with open(fn, 'w') as fobj:
             self.__writeInputSGHeader(fobj, sfi, sff, solver, sg_fmt, version)
