@@ -1,6 +1,6 @@
 import os
 import sys
-# import pprint
+import pprint
 import sgio
 
 # import meshio
@@ -27,17 +27,21 @@ print(sg)
 # print(mesh)
 # print('-'*40)
 # print(dir(mesh))
-# print('-'*40)
-# pprint.pprint(mesh.__dict__)
-# print('-'*40)
+print('-'*40)
+print('sg.mesh.points')
+pprint.pprint(sg.mesh.points)
+print('-'*40)
 # print('mesh.cells')
 # pprint.pprint(mesh.cells)
-# print('-'*40)
-# print('mesh.cells[0].data')
-# pprint.pprint(mesh.cells[0].data)
-# print('-'*40)
-# print('mesh.cell_sets')
-# pprint.pprint(mesh.cell_sets)
+print('-'*40)
+print('sg.mesh.cells[0]')
+print('type:', sg.mesh.cells[0].type)
+pprint.pprint(sg.mesh.cells[0].data)
+print('-'*40)
+print('sg.mesh.cell_data')
+pprint.pprint(sg.mesh.cell_data)
 
-# fn = '.'.join([fn_base, 'msh'])
-# mesh.write(fn, file_format='gmsh22', binary=False)
+fn_out = fn.replace('.sg', '.inp')
+sg.mesh.write(fn_out, file_format='abaqus')
+fn_out = fn.replace('.sg', '.msh')
+sg.mesh.write(fn_out, file_format='gmsh22', binary=False)
