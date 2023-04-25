@@ -9,20 +9,20 @@ import numpy as np
 #     from collections import Iterable
 
 
-def isEqual(a, b, tol=1e-6):
-    r"""Compare two numbers with tolerance.
-    """
-    if abs(a) <= 1e-9:  # Almost zero
-        if abs(a - b) <= (1e-9 * tol):
-            return True
-        else:
-            return False
-    else:
-        if abs((a - b) / a) <= tol:
-            return True
-        else:
-            return False
-    return
+# def isEqual(a, b, tol=1e-6):
+#     r"""Compare two numbers with tolerance.
+#     """
+#     if abs(a) <= 1e-9:  # Almost zero
+#         if abs(a - b) <= (1e-9 * tol):
+#             return True
+#         else:
+#             return False
+#     else:
+#         if abs((a - b) / a) <= tol:
+#             return True
+#         else:
+#             return False
+#     return
 
 
 def tilde(v):
