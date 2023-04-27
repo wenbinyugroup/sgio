@@ -1,3 +1,6 @@
+import sgio.utils.io as sui
+
+
 class MSGDFEModel():
     r"""
     """
@@ -154,11 +157,175 @@ class MaterialSection(object):
 
 
 
-class Load():
-    r"""
-    """
-
+class SectionResponse():
     def __init__(self):
-        return
+        self.displacement = [0, 0, 0]
+        self.directional_cosine = [
+            [1, 0, 0],
+            [0, 1, 0],
+            [0, 0, 1]
+        ]
+        """
+        list of lists floats: Global rotation matrix.
+        
+        `[[C11, C12, C13], [C21, C22, C23], [C31, C32, C33]]`
+        """
+
+        self.load_type = 0
+        """
+        int: Type of the sectional response load
+
+        * 0 - generalized stresses
+        * 1 - generalized strains
+        """
+
+        self.load_tags = []
+
+        self.load = []
+        """list of list of floats: Global loads
+
+        ============================ ========================================== ============================================
+        Model                        Generalized stresses                       Generalized strains
+        ============================ ========================================== ============================================
+        Continuum                    `[s11, s22, s33, s23, s13, s12]`           `[e11, e22, e33, e23, e13, e12]`
+        Kirchhoff-Love plate/shell   `[N11, N22, N12, M11, M22, M12]`           `[e11, e22, 2e12, k11, k22, 2k12]`
+        Reissner-Mindlin plate/shell `[N11, N22, N12, M11, M22, M12, N13, N23]` `[e11, e22, 2e12, k11, k22, 2k12, g13, g23]`
+        Euler-Bernoulli beam         `[F1, M1, M2, M3]`                         `[e11, k11, k12, k13]`
+        Timoshenko beam              `[F1, F2, F3, M1, M2, M3]`                 `[e11, g12, g13, k11, k12, k13]`
+        ============================ ========================================== ============================================
+        """
+
+        self.distr_load = [0, 0, 0, 0, 0, 0]
+        self.distr_load_d1 = [0, 0, 0, 0, 0, 0]
+        self.distr_load_d2 = [0, 0, 0, 0, 0, 0]
+        self.distr_load_d3 = [0, 0, 0, 0, 0, 0]
+
+
+    def strU(self, float_format='16.6e', delimiter=','):
+        fstr = '{:'+float_format+'}'
+        return delimiter.join([fstr.format(u) for u in self.displacement])
+
+
+    def strC(self, float_format='16.6e', col_delimiter=',', row_delimiter=','):
+        fstr = '{:'+float_format+'}'
+        return row_delimiter.join(
+            [(col_delimiter.join(
+                [fstr.format(c) for c in row]
+            )) for row in self.directional_cosine]
+        )
+
+
+    def strS(self, float_format='16.6e', delimiter=','):
+        fstr = '{:'+float_format+'}'
+        return delimiter.join([fstr.format(s) for s in self.load])
+
+
+    def __repr__(self):
+        lines = ['Displacement',]
+        lines.append('\n'.join(['  u{} = {:16.6e}'.format(i+1, u) for i, u in enumerate(self.displacement)]))
+        lines.append('Rotation (directional cosine)')
+        lines.append('\n'.join(
+            [('  ' + ', '.join(
+                ['c{}{} = {:16.6e}'.format(i+1, j+1, c) for j, c in enumerate(row)]
+            )) for i, row in enumerate(self.directional_cosine)]
+        ))
+        lines.append('Load')
+        lines.append('\n'.join(['  {} = {:16.6e}'.format(t, s) for t, s in zip(self.load_tags, self.load)]))
+        return '\n'.join(lines)
+
+
+    def writeSGInputGlbU(self, file, float_format='16.6e'):
+        sui.writeFormatFloats(file, self.displacement, float_format)
+        file.write('\n')
+
+
+    def writeSGInputGlbC(self, file, float_format='16.6e'):
+        sui.writeFormatFloatsMatrix(file, self.directional_cosine, float_format)
+        file.write('\n')
+
+
+    def writeSGInputGlbS(self, file, file_format, int_format='8d', float_format='16.6e'):
+        if file_format.lower().startswith('v'):
+            if len(self.load) == 4:
+                sui.writeFormatFloats(file, self.load)
+            elif len(self.load) == 6:
+                sui.writeFormatFloats(file, [self.load[i] for i in [0, 3, 4, 5]], float_format)
+                sui.writeFormatFloats(file, [self.load[i] for i in [1, 2]], float_format)
+                file.write('\n')
+                sui.writeFormatFloats(file, self.distr_load, float_format)
+                sui.writeFormatFloats(file, self.distr_load_d1, float_format)
+                sui.writeFormatFloats(file, self.distr_load_d2, float_format)
+                sui.writeFormatFloats(file, self.distr_load_d3, float_format)
+        elif file_format.lower().startswith('s'):
+            sui.writeFormatIntegers(file, [self.load_type,], int_format)
+            # for load_case in self.global_loads:
+            sui.writeFormatFloats(file, self.load, float_format)
+        file.write('\n')
+
+
+
+
+class StructureResponseCases():
+    def __init__(self):
+        self.loc_tags = []
+
+        self.cond_tags = []
+        # """Response condition IDs
+
+        # [
+        #   {
+        #     tag1: value1,
+        #     tag2: value2,
+        #     ...
+        #   },
+        #   {...},
+        # ]
+        # """
+
+        self.responses = []
+        """Responses
+
+        [
+            {
+                'loc_tag1': loc_value1,
+                'loc_tag2': loc_value2,
+                ...,
+                'condition_tag1': condition_value1,
+                'condition_tag2': condition_value2,
+                ...,
+                'response': SectionResponse
+            },
+            {...},
+            ...
+        ]
+        """
+
+    def __repr__(self):
+        lines = []
+        for _resp in self.responses:
+            lines.append('-'*20)
+            lines.append('Location:')
+            lines.append('\n'.join(['  {} = {}'.format(t, _resp[t]) for t in self.loc_tags]))
+            lines.append('Condition:')
+            lines.append('\n'.join(['  {} = {}'.format(t, _resp[t]) for t in self.cond_tags]))
+            lines.append(str(_resp['response']))
+        lines.append('-'*20)
+        return '\n'.join(lines)
+
+    def getResponsesByLocCond(self, **kwargs):
+        resps = []
+
+        for _resp in self.responses:
+            # resp = _resp
+            found = True
+            for _k, _v in kwargs.items():
+                if _v != _resp[_k]:
+                    found = False
+                    break
+            if found:
+                resps.append(_resp)
+
+        return resps
+
 
 

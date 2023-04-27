@@ -332,6 +332,20 @@ def _readSGInputElements(f, file_format:str, nelems:int, point_ids):
 
 
 
+
+
+
+
+
+def readOutput(fn_in:str, solver:str, smdim:int, analysis=0):
+    if solver.startswith('s'):
+        return readSCOut(fn_in, smdim, analysis)
+    elif solver.startswith('v'):
+        return readVABSOut(fn_in, analysis)
+    return
+
+
+
 def readSGOutFailureIndex(fn, solver):
     r"""
     """
