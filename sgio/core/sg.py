@@ -3,11 +3,12 @@ import math
 import logging
 
 import numpy as np
+from numpy.typing import ArrayLike
 
 import sgio.core.solid as scs
-import sgio.utils.io as mui
+import sgio.utils.io as sui
 # import sgio.utils.logger as mul
-import sgio.utils.version as muv
+import sgio.utils.version as suv
 
 # import meshio
 # import sgio.meshio as mpm
@@ -349,7 +350,7 @@ class StructureGene(object):
             if self.spdim == 2:
                 ncoords.insert(0, 0.0)
                 ncoords = [ncoords[i] + loc[i] for i in range(3)]
-            mui.writeFormatFloats(fo, ncoords)
+            sui.writeFormatFloats(fo, ncoords)
 
 
 
@@ -370,7 +371,7 @@ class StructureGene(object):
                 line = [i+eid_begin, elem_type, 2, self.elem_prop[eid], self.elem_prop[eid]]
                 econnct = [nid + nid_begin - 1 for nid in econnct]
             line = line + econnct
-            mui.writeFormatIntegers(fo, line)
+            sui.writeFormatIntegers(fo, line)
 
 
 
@@ -431,11 +432,11 @@ class StructureGene(object):
             # ncoord = self.nodes[nid]
             f.write(ssfi.format(nid))
             if self.sgdim == 1:
-                mui.writeFormatFloats(f, ncoord[2:], fmt=sff, newline=False)
+                sui.writeFormatFloats(f, ncoord[2:], fmt=sff, newline=False)
             elif self.sgdim == 2:
-                mui.writeFormatFloats(f, ncoord[1:], fmt=sff, newline=False)
+                sui.writeFormatFloats(f, ncoord[1:], fmt=sff, newline=False)
             elif self.sgdim == 3:
-                mui.writeFormatFloats(f, ncoord, fmt=sff, newline=False)
+                sui.writeFormatFloats(f, ncoord, fmt=sff, newline=False)
 
             if i == 0:
                 f.write('  # nodal coordinates')
@@ -454,60 +455,116 @@ class StructureGene(object):
 
 
 
+    def _meshio_to_sg_order(self, cell_type:str, idx:ArrayLike):
+        idx = np.asarray(idx)
+        idx_sg = copy.deepcopy(idx) + 1
+
+        idx_to_insert = None
+        if cell_type == 'triangle6':
+            idx_to_insert = 3
+        elif cell_type == 'tetra10':
+            idx_to_insert = 4
+        elif cell_type == 'wedge15':
+            idx_to_insert = 6
+
+        max_nodes = idx_sg.shape[1]
+        if cell_type.startswith('line'):
+            max_nodes = 5
+        elif cell_type.startswith('triangle') or cell_type.startswith('quad'):
+            max_nodes = 9
+        elif cell_type.startswith('tetra') or cell_type.startswith('wedge') or cell_type.startswith('hexahedron'):
+            max_nodes = 20
+
+        # Insert 0 for some types of cells
+        if idx_to_insert:
+            idx_sg = np.insert(idx_sg, idx_to_insert, 0, axis=1)
+
+        # Fill the remaining location with 0s
+        pad_width = max_nodes - idx_sg.shape[1]
+        logger.debug('pad width = {}'.format(pad_width))
+        idx_sg = np.pad(idx_sg, ((0, 0), (0, pad_width)), 'constant', constant_values=0)
+
+        return idx_sg
+
+
     def __writeInputSGElements(self, f, solver, sfi:str='8d'):
-        count = 0
-        for eid in self.elementids1d:
-            count += 1
-            # elem = np.zeros(7, dtype=int)
-            elem = [0,]*7
-            elem[0] = eid
-            elem[1] = self.elem_prop[eid]  # mid/cid
-            for i, nid in enumerate(self.elements[eid]):
-                elem[i+2] = nid
-            mui.writeFormatIntegers(f, elem, fmt=sfi, newline=False)
-            if count == 1:
-                f.write('  # element connectivity')
-            f.write('\n')
 
-        for eid in self.elementids2d:
-            count += 1
-            # elem = np.zeros(11, dtype=int)
-            elem = [0,]*10
-            elem[0] = eid
-            # elem[1] = self.elem_prop[eid]
-            elem_type = 'quad'
-            if (len(self.elements[eid]) == 3) or (len(self.elements[eid]) == 6):
-                elem_type = 'tri'
-            for i, nid in enumerate(self.elements[eid]):
-                if (i >= 3) and (elem_type == 'tri'):
-                    elem[i+2] = nid
-                else:
-                    elem[i+1] = nid
-            if solver.lower().startswith('s'):
-                elem.insert(1, self.elem_prop[eid])
-            mui.writeFormatIntegers(f, elem, fmt=sfi, newline=False)
-            if count == 1:
-                f.write('  # element connectivity')
-            f.write('\n')
+        consecutive_index = 0
+        for k, cell_block in enumerate(self.mesh.cells):
+            cell_type = cell_block.type
+            node_idcs = self._meshio_to_sg_order(cell_type, cell_block.data)
 
-        for eid in self.elementids3d:
-            count += 1
-            # elem = np.zeros(22, dtype=int)
-            elem = [0,]*22
-            elem[0] = eid
-            elem[1] = self.elem_prop[eid]
-            elem_type = 'hexa'
-            if (len(self.elements[eid]) == 4) or (len(self.elements[eid]) == 10):
-                elem_type = 'tetra'
-            for i, nid in enumerate(self.elements[eid]):
-                if (i >= 4) and (elem_type == 'tetra'):
-                    elem[i+3] = nid
-                else:
-                    elem[i+2] = nid
-            mui.writeFormatIntegers(f, elem, fmt=sfi, newline=False)
-            if count == 1:
-                f.write('  # element connectivity')
-            f.write('\n')
+            for i, c in enumerate(node_idcs):
+                _eid = consecutive_index + i + 1
+                _nums = [_eid,]  # Element id
+
+                if solver.lower().startswith('s'):
+                    _nums.append(self.elem_prop[_eid])
+
+                _nums.extend(c.tolist())
+
+                # Write the numbers
+                logger.debug('sfi = {}'.format(sfi))
+                sui.writeFormatIntegers(f, _nums, fmt=sfi, newline=False)
+                if k == 0 and i == 0:
+                    f.write('  # element connectivity')
+                f.write('\n')
+
+            consecutive_index += len(node_idcs)
+
+        # count = 0
+        # for eid in self.elementids1d:
+        #     count += 1
+        #     # elem = np.zeros(7, dtype=int)
+        #     elem = [0,]*7
+        #     elem[0] = eid
+        #     elem[1] = self.elem_prop[eid]  # mid/cid
+        #     for i, nid in enumerate(self.elements[eid]):
+        #         elem[i+2] = nid
+        #     sui.writeFormatIntegers(f, elem, fmt=sfi, newline=False)
+        #     if count == 1:
+        #         f.write('  # element connectivity')
+        #     f.write('\n')
+
+        # for eid in self.elementids2d:
+        #     count += 1
+        #     # elem = np.zeros(11, dtype=int)
+        #     elem = [0,]*10
+        #     elem[0] = eid
+        #     # elem[1] = self.elem_prop[eid]
+        #     elem_type = 'quad'
+        #     if (len(self.elements[eid]) == 3) or (len(self.elements[eid]) == 6):
+        #         elem_type = 'tri'
+        #     for i, nid in enumerate(self.elements[eid]):
+        #         if (i >= 3) and (elem_type == 'tri'):
+        #             elem[i+2] = nid
+        #         else:
+        #             elem[i+1] = nid
+        #     if solver.lower().startswith('s'):
+        #         elem.insert(1, self.elem_prop[eid])
+        #     sui.writeFormatIntegers(f, elem, fmt=sfi, newline=False)
+        #     if count == 1:
+        #         f.write('  # element connectivity')
+        #     f.write('\n')
+
+        # for eid in self.elementids3d:
+        #     count += 1
+        #     # elem = np.zeros(22, dtype=int)
+        #     elem = [0,]*22
+        #     elem[0] = eid
+        #     elem[1] = self.elem_prop[eid]
+        #     elem_type = 'hexa'
+        #     if (len(self.elements[eid]) == 4) or (len(self.elements[eid]) == 10):
+        #         elem_type = 'tetra'
+        #     for i, nid in enumerate(self.elements[eid]):
+        #         if (i >= 4) and (elem_type == 'tetra'):
+        #             elem[i+3] = nid
+        #         else:
+        #             elem[i+2] = nid
+        #     sui.writeFormatIntegers(f, elem, fmt=sfi, newline=False)
+        #     if count == 1:
+        #         f.write('  # element connectivity')
+        #     f.write('\n')
 
         f.write('\n')
         return
@@ -536,10 +593,10 @@ class StructureGene(object):
             for eid, orient in self.elem_orient.items():
                 count += 1
                 fobj.write(ssfi.format(eid))
-                # mui.writeFormatFloats(fobj, np.hstack(orient))
-                mui.writeFormatFloats(fobj, orient[0], sff, False)
-                mui.writeFormatFloats(fobj, orient[1], sff, False)
-                mui.writeFormatFloats(fobj, orient[2], sff, False)
+                # sui.writeFormatFloats(fobj, np.hstack(orient))
+                sui.writeFormatFloats(fobj, orient[0], sff, False)
+                sui.writeFormatFloats(fobj, orient[1], sff, False)
+                sui.writeFormatFloats(fobj, orient[2], sff, False)
                 if count == 1:
                     fobj.write('  # element orientation')
                 fobj.write('\n')
@@ -589,26 +646,26 @@ class StructureGene(object):
             # print(anisotropy)
 
             if solver.lower().startswith('v'):
-                mui.writeFormatIntegers(fobj, (mid, anisotropy), sfi)
+                sui.writeFormatIntegers(fobj, (mid, anisotropy), sfi)
             elif solver.lower().startswith('s'):
-                mui.writeFormatIntegers(fobj, (mid, anisotropy, 1), sfi)
-                mui.writeFormatFloats(fobj, (0, m.density), sff)
+                sui.writeFormatIntegers(fobj, (mid, anisotropy, 1), sfi)
+                sui.writeFormatFloats(fobj, (0, m.density), sff)
 
             # Write elastic properties
             if anisotropy == 0:
                 # mpc = m.constants
-                mui.writeFormatFloats(fobj, [m.e1, m.nu12], sff)
+                sui.writeFormatFloats(fobj, [m.e1, m.nu12], sff)
 
             elif anisotropy == 1:
                 # mpc = m.constants
-                mui.writeFormatFloats(fobj, [m.e1, m.e2, m.e3], sff)
-                mui.writeFormatFloats(fobj, [m.g12, m.g13, m.g23], sff)
-                mui.writeFormatFloats(fobj, [m.nu12, m.nu13, m.nu23], sff)
+                sui.writeFormatFloats(fobj, [m.e1, m.e2, m.e3], sff)
+                sui.writeFormatFloats(fobj, [m.g12, m.g13, m.g23], sff)
+                sui.writeFormatFloats(fobj, [m.nu12, m.nu13, m.nu23], sff)
 
 
             elif anisotropy == 2:
                 for i in range(6):
-                    mui.writeFormatFloats(fobj, m.stff[i][i:], sff)
+                    sui.writeFormatFloats(fobj, m.stff[i][i:], sff)
                     # for j in range(i, 6):
                     #     fobj.write(sff.format(m.stff[i][j]))
                     # fobj.write('\n')
@@ -617,12 +674,12 @@ class StructureGene(object):
             # print('m.cte =', m.cte)
             # print('m.specific_heat =', m.specific_heat)
             if self.physics in [1, 4, 6]:
-                mui.writeFormatFloats(fobj, m.cte+[m.specific_heat,], sff)
+                sui.writeFormatFloats(fobj, m.cte+[m.specific_heat,], sff)
 
             fobj.write('\n')
 
             if solver.lower().startswith('v'):
-                mui.writeFormatFloats(fobj, (m.density,), sff)
+                sui.writeFormatFloats(fobj, (m.density,), sff)
 
         fobj.write('\n')
         return
@@ -635,13 +692,13 @@ class StructureGene(object):
 
 
 
-    def __writeInputSGHeader(self, fobj, sfi, sff, solver, sg_fmt, version=None):
+    def __writeInputSGHeader(self, fobj, solver, sfi, sff, sg_fmt, version=None):
         ssfi = '{:' + sfi + '}'
 
         # VABS
         if solver.lower().startswith('v'):
             # format_flag  nlayer
-            mui.writeFormatIntegers(fobj, [sg_fmt, len(self.mocombos)])
+            sui.writeFormatIntegers(fobj, [sg_fmt, len(self.mocombos)])
             fobj.write('\n')
 
             # timoshenko_flag  damping_flag  thermal_flag
@@ -658,7 +715,7 @@ class StructureGene(object):
             physics = 0
             if self.physics == 1:
                 physics = 3
-            mui.writeFormatIntegers(
+            sui.writeFormatIntegers(
                 fobj, [model, self.do_dampling, physics], sfi)
             fobj.write('\n')
 
@@ -668,12 +725,12 @@ class StructureGene(object):
                 line[0] = 1
             if (self.oblique[0] != 1.0) or (self.oblique[1] != 0.0):
                 line[1] = 1
-            mui.writeFormatIntegers(fobj, line, sfi)
+            sui.writeFormatIntegers(fobj, line, sfi)
             fobj.write('\n')
 
             # k1  k2  k3
             if line[0] == 1:
-                mui.writeFormatFloats(
+                sui.writeFormatFloats(
                     fobj,
                     [self.initial_twist, self.initial_curvature[0], self.initial_curvature[1]],
                     sff
@@ -682,11 +739,11 @@ class StructureGene(object):
             
             # oblique1  oblique2
             if line[1] == 1:
-                mui.writeFormatFloats(fobj, self.oblique, sff)
+                sui.writeFormatFloats(fobj, self.oblique, sff)
                 fobj.write('\n')
             
             # nnode  nelem  nmate
-            mui.writeFormatIntegers(
+            sui.writeFormatIntegers(
                 fobj, [len(self.nodes), len(self.elements), len(self.materials)], sfi)
             fobj.write('\n')
 
@@ -703,7 +760,7 @@ class StructureGene(object):
                 if self.smdim == 1:  # beam
                     # initial twist/curvatures
                     # fobj.write((sff * 3 + '\n').format(0., 0., 0.))
-                    mui.writeFormatFloats(
+                    sui.writeFormatFloats(
                         fobj,
                         [self.initial_twist, self.initial_curvature[0], self.initial_curvature[1]],
                         sff, newline=False
@@ -712,19 +769,19 @@ class StructureGene(object):
                     fobj.write('\n')
                     # oblique cross section
                     # fobj.write((sff * 2 + '\n').format(1., 0.))
-                    mui.writeFormatFloats(fobj, self.oblique, sff)
+                    sui.writeFormatFloats(fobj, self.oblique, sff)
 
                 elif self.smdim == 2:  # shell
                     # initial twist/curvatures
                     # fobj.write((sff * 2 + '\n').format(
                     #     self.initial_curvature[0], self.initial_curvature[1]
                     # ))
-                    mui.writeFormatFloats(fobj, self.initial_curvature, sff, newline=False)
+                    sui.writeFormatFloats(fobj, self.initial_curvature, sff, newline=False)
                     fobj.write('  # initial curvatures k12, k21\n')
                     # if self.geo_correct:
                     # if self.initial_curvature[0] != 0 or self.initial_curvature[1] != 0:
                     if version > '2.1':
-                        mui.writeFormatFloats(fobj, self.lame_params, sff, newline=False)
+                        sui.writeFormatFloats(fobj, self.lame_params, sff, newline=False)
                         fobj.write('  # Lame parameters\n')
                 fobj.write('\n')
 
@@ -737,7 +794,7 @@ class StructureGene(object):
             if version > '2.1':
                 nums += [self.force_flag, self.steer_flag]
                 cmt = cmt + ', force_flag, steer_flag'
-            mui.writeFormatIntegers(fobj, nums, sfi, newline=False)
+            sui.writeFormatIntegers(fobj, nums, sfi, newline=False)
             fobj.write(cmt)
             fobj.write('\n\n')
             # fobj.write((sfi * 6 + '\n').format(
@@ -748,11 +805,11 @@ class StructureGene(object):
             #     self.num_slavenodes,
             #     len(self.mocombos)
             # ))
-            mui.writeFormatIntegers(fobj, [
+            sui.writeFormatIntegers(fobj, [
                 self.sgdim,
-                len(self.nodes),
-                len(self.elements),
-                len(self.materials),
+                self.nnodes,
+                self.nelems,
+                self.nmates,
                 self.num_slavenodes,
                 len(self.mocombos)
             ], sfi, newline=False)
@@ -797,16 +854,16 @@ class StructureGene(object):
                 elif m.failure_criterion == 5:
                     pass
 
-            mui.writeFormatIntegers(
+            sui.writeFormatIntegers(
                 fobj,
                 # (m.strength['criterion'], len(m.strength['constants'])),
                 [m.failure_criterion, len(strength)],
                 sfi
             )
             # fobj.write((sff+'\n').format(m.strength['chara_len']))
-            mui.writeFormatFloats(fobj, [m.char_len,], sff)
-            # mui.writeFormatFloats(fobj, m.strength['constants'], sff[2:-1])
-            mui.writeFormatFloats(fobj, strength, sff)
+            sui.writeFormatFloats(fobj, [m.char_len,], sff)
+            # sui.writeFormatFloats(fobj, m.strength['constants'], sff[2:-1])
+            sui.writeFormatFloats(fobj, strength, sff)
         return
 
 
@@ -818,8 +875,8 @@ class StructureGene(object):
 
 
     def __writeInputDisplacements(self, fobj, sff):
-        mui.writeFormatFloats(fobj, self.global_displacements, sff[2:-1])
-        mui.writeFormatFloatsMatrix(fobj, self.global_rotations, sff[2:-1])
+        sui.writeFormatFloats(fobj, self.global_displacements, sff[2:-1])
+        sui.writeFormatFloatsMatrix(fobj, self.global_rotations, sff[2:-1])
 
 
 
@@ -832,19 +889,19 @@ class StructureGene(object):
     def __writeInputLoads(self, fobj, sfi, sff, solver):
         if solver.lower().startswith('v'):
             if self.model == 0:
-                mui.writeFormatFloats(fobj, self.global_loads)
+                sui.writeFormatFloats(fobj, self.global_loads)
             else:
-                mui.writeFormatFloats(fobj, [self.global_loads[i] for i in [0, 3, 4, 5]])
-                mui.writeFormatFloats(fobj, [self.global_loads[i] for i in [1, 2]])
+                sui.writeFormatFloats(fobj, [self.global_loads[i] for i in [0, 3, 4, 5]])
+                sui.writeFormatFloats(fobj, [self.global_loads[i] for i in [1, 2]])
                 fobj.write('\n')
-                mui.writeFormatFloats(fobj, self.global_loads_dist[0])
-                mui.writeFormatFloats(fobj, self.global_loads_dist[1])
-                mui.writeFormatFloats(fobj, self.global_loads_dist[2])
-                mui.writeFormatFloats(fobj, self.global_loads_dist[3])
+                sui.writeFormatFloats(fobj, self.global_loads_dist[0])
+                sui.writeFormatFloats(fobj, self.global_loads_dist[1])
+                sui.writeFormatFloats(fobj, self.global_loads_dist[2])
+                sui.writeFormatFloats(fobj, self.global_loads_dist[3])
         elif solver.lower().startswith('s'):
             # fobj.write((sfi+'\n').format(self.global_loads_type))
             for load_case in self.global_loads:
-                mui.writeFormatFloats(fobj, load_case, sff)
+                sui.writeFormatFloats(fobj, load_case, sff)
         fobj.write('\n')
         return
 
@@ -859,14 +916,14 @@ class StructureGene(object):
     def writeInputSG(self, fn, sfi, sff, solver, sg_fmt, version=None):
         ssff = '{:' + sff + '}'
         if not version is None:
-            self.version = muv.Version(version)
+            self.version = suv.Version(version)
 
         logger.debug('format version: {}'.format(self.version))
 
         with open(fn, 'w') as fobj:
-            self.__writeInputSGHeader(fobj, sfi, sff, solver, sg_fmt, version)
+            self.__writeInputSGHeader(fobj, solver, sfi, sff, sg_fmt, version)
             self.__writeInputSGNodes(fobj, sfi, sff)
-            self.__writeInputSGElements(fobj, sfi, solver)
+            self.__writeInputSGElements(fobj, solver, sfi)
 
             if self.use_elem_local_orient != 0:
                 self.__writeInputSGElementOrientations(fobj, sfi, sff, solver)
@@ -899,7 +956,7 @@ class StructureGene(object):
 
             if solver.lower().startswith('s'):
                 # fobj.write((sfi+'\n').format(self.global_loads_type))
-                mui.writeFormatIntegers(fobj, [self.global_loads_type, ], sfi)
+                sui.writeFormatIntegers(fobj, [self.global_loads_type, ], sfi)
 
             if analysis != 'f':
                 self.__writeInputLoads(fobj, sfi, sff, solver)
@@ -909,13 +966,13 @@ class StructureGene(object):
     #     with open(fn, 'w') as fobj:
     #         # Addtional material properties
     #         for i, m in self.materials.items():
-    #             mui.writeFormatIntegers(
+    #             sui.writeFormatIntegers(
     #                 fobj,
     #                 (m.strength['criterion'], len(m.strength['constants'])),
     #                 sfi[2:-1]
     #             )
     #             fobj.write((sff+'\n').format(m.strength['chara_len']))
-    #             mui.writeFormatFloats(fobj, m.strength['constants'], sff[2:-1])
+    #             sui.writeFormatFloats(fobj, m.strength['constants'], sff[2:-1])
 
     #         # Load type
     #         fobj.write((sfi+'\n').format(self.global_loads_type))
@@ -923,7 +980,7 @@ class StructureGene(object):
     #         # (fe) Axes
 
     #         # (fi) Loads
-    #         mui.writeFormatFloats(fobj, self.global_loads, sff[2:-1])
+    #         sui.writeFormatFloats(fobj, self.global_loads, sff[2:-1])
 
 
 

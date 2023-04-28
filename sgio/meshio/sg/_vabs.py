@@ -12,7 +12,7 @@ from .common import (
     _fast_forward_over_blank_lines,
     _fast_forward_to_end_block,
     _meshio_to_gmsh_order,
-    _meshio_to_gmsh_type,
+    # _meshio_to_gmsh_type,
     _read_data,
     _read_physical_names,
     _write_data,
@@ -65,8 +65,8 @@ def write(filename, mesh, float_fmt=".16e", binary=True):
 
         _write_nodes(fh, mesh.points, float_fmt, binary)
         _write_elements(fh, mesh.cells, tag_data, binary)
-        if mesh.gmsh_periodic is not None:
-            _write_periodic(fh, mesh.gmsh_periodic, float_fmt)
+        # if mesh.gmsh_periodic is not None:
+        #     _write_periodic(fh, mesh.gmsh_periodic, float_fmt)
 
         for name, dat in point_data.items():
             _write_data(fh, "NodeData", name, dat, binary)
@@ -120,8 +120,8 @@ def _write_elements(fh, cells: list[CellBlock], tag_data, binary: bool):
 
         if binary:
             # header
-            header = [_meshio_to_gmsh_type[cell_type], node_idcs.shape[0], fcd.shape[1]]
-            np.array(header, dtype=c_int).tofile(fh)
+            # header = [_meshio_to_gmsh_type[cell_type], node_idcs.shape[0], fcd.shape[1]]
+            # np.array(header, dtype=c_int).tofile(fh)
             # actual data
             a = np.arange(len(node_idcs), dtype=c_int)[:, np.newaxis]
             a += 1 + consecutive_index
@@ -132,7 +132,7 @@ def _write_elements(fh, cells: list[CellBlock], tag_data, binary: bool):
         else:
             form = (
                 "{} "
-                + str(_meshio_to_gmsh_type[cell_type])
+                # + str(_meshio_to_gmsh_type[cell_type])
                 + " "
                 + str(fcd.shape[1])
                 + " {} {}\n"

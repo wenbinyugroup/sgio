@@ -90,6 +90,7 @@ def _read_data(f, tag, data_dict, data_size, is_ascii):
 
 
 def _gmsh_to_meshio_order(cell_type: str, idx: ArrayLike) -> np.ndarray:
+    # TODO
     # Gmsh cells are mostly ordered like VTK, with a few exceptions:
     meshio_ordering = {
         # fmt: off
@@ -115,49 +116,54 @@ def _gmsh_to_meshio_order(cell_type: str, idx: ArrayLike) -> np.ndarray:
     return idx[:, meshio_ordering[cell_type]]
 
 
-def _meshio_to_gmsh_order(cell_type: str, idx: ArrayLike) -> np.ndarray:
-    # Gmsh cells are mostly ordered like VTK, with a few exceptions:
-    gmsh_ordering = {
-        # fmt: off
-        "tetra10": [0, 1, 2, 3, 4, 5, 6, 7, 9, 8],
-        "hexahedron20": [
-            0, 1, 2, 3, 4, 5, 6, 7, 8, 11, 16,
-            9, 17, 10, 18, 19, 12, 15, 13, 14,
-        ],
-        "hexahedron27": [
-            0, 1, 2, 3, 4, 5, 6, 7, 8, 11, 16,
-            9, 17, 10, 18, 19, 12, 15, 13, 14,
-            24, 22, 20, 21, 23, 25, 26,
-        ],
-        "wedge15": [
-            0, 1, 2, 3, 4, 5, 6, 8, 12, 7, 13, 14, 9, 11, 10,
-        ],
-        "pyramid13": [0, 1, 2, 3, 4, 5, 8, 9, 6, 10, 7, 11, 12],
-        # fmt: on
-    }
-    idx = np.asarray(idx)
-    if cell_type not in gmsh_ordering:
-        return idx
-    return idx[:, gmsh_ordering[cell_type]]
+def _meshio_to_sg_order(cell_type:str, idx:ArrayLike):
+    idx_sg = np.asarray(idx) + 1
+
+    idx_to_insert = None
+    if cell_type == 'triangle6':
+        idx_to_insert = 3
+    elif cell_type == 'tetra10':
+        idx_to_insert = 4
+    elif cell_type == 'wedge15':
+        idx_to_insert = 6
+
+    max_nodes = idx_sg.shape[1]
+    if cell_type.startswith('line'):
+        max_nodes = 5
+    elif cell_type.startswith('triangle') or cell_type.startswith('quad'):
+        max_nodes = 9
+    elif cell_type.startswith('tetra') or cell_type.startswith('wedge') or cell_type.startswith('hexahedron'):
+        max_nodes = 20
+
+    # Insert 0 for some types of cells
+    if idx_to_insert:
+        idx_sg = np.insert(idx_sg, idx_to_insert, 0, axis=1)
+
+    # Fill the remaining location with 0s
+    pad_width = max_nodes - idx_sg.shape[1]
+    # logger.debug('pad width = {}'.format(pad_width))
+    idx_sg = np.pad(idx_sg, ((0, 0), (0, pad_width)), 'constant', constant_values=0)
+
+    return idx_sg
 
 
-def _write_physical_names(fh, field_data):
-    # Write physical names
-    entries = []
-    for phys_name in field_data:
-        try:
-            phys_num, phys_dim = field_data[phys_name]
-            phys_num, phys_dim = int(phys_num), int(phys_dim)
-            entries.append((phys_dim, phys_num, phys_name))
-        except (ValueError, TypeError):
-            warn("Field data contains entry that cannot be processed.")
-    entries.sort()
-    if entries:
-        fh.write(b"$PhysicalNames\n")
-        fh.write(f"{len(entries)}\n".encode())
-        for entry in entries:
-            fh.write('{} {} "{}"\n'.format(*entry).encode())
-        fh.write(b"$EndPhysicalNames\n")
+# def _write_physical_names(fh, field_data):
+#     # Write physical names
+#     entries = []
+#     for phys_name in field_data:
+#         try:
+#             phys_num, phys_dim = field_data[phys_name]
+#             phys_num, phys_dim = int(phys_num), int(phys_dim)
+#             entries.append((phys_dim, phys_num, phys_name))
+#         except (ValueError, TypeError):
+#             warn("Field data contains entry that cannot be processed.")
+#     entries.sort()
+#     if entries:
+#         fh.write(b"$PhysicalNames\n")
+#         fh.write(f"{len(entries)}\n".encode())
+#         for entry in entries:
+#             fh.write('{} {} "{}"\n'.format(*entry).encode())
+#         fh.write(b"$EndPhysicalNames\n")
 
 
 def _write_data(fh, tag, name, data, binary):

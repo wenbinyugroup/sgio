@@ -5,6 +5,10 @@ import yaml
 
 import sgio
 
+import logging
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
+
 
 fn = sys.argv[1]
 
@@ -20,6 +24,7 @@ smdim = 2
 # params = sg_input['parameters']
 layup = sg_input['design']
 model = sg_input['model']['md2']
+version = model.get('version', '2.2')
 sgdb = {}
 for sg in raw_input['sg']:
     if sg['type'] == 'material':
@@ -43,6 +48,6 @@ sg = sgio.buildSG1D(
 print(sg)
 
 fn_sg = '{}.sg'.format(name)
-sg.writeInput(fn_sg, 's', version='2.2')
+sg.writeInput(fn_sg, 's', version=version)
 
 

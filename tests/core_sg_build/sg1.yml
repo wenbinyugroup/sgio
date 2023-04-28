@@ -28,6 +28,7 @@ sg:
         k11: _k11
         k22: _k22
         element_type: 3
+        version: '2.1'
   - name: "m1"
     type: "material"
     property:

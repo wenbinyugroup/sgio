@@ -23,8 +23,8 @@ def read(filename):
     """Reads a SG file."""
     filename = pathlib.Path(filename)
     with open_file(filename, "r") as f:
-        out = read_buffer(f)
-    return out
+        mesh = read_buffer(f)
+    return mesh
 
 
 def read_buffer(f):
@@ -134,15 +134,20 @@ def merge(
 
 
 def write(
-    filename, mesh: Mesh, int_fmt: str = "8d", float_fmt: str = ".16e"
+    filename, mesh: Mesh, file_format, int_fmt: str = "8d", float_fmt: str = ".16e"
 ) -> None:
     with open_file(filename, "at") as f:
-        write_buffer(f, mesh, int_fmt, float_fmt)
+        write_buffer(f, mesh, file_format, int_fmt, float_fmt)
 
 def write_buffer(
-    file, mesh: Mesh, int_fmt: str = "8d", float_fmt: str = ".16e"
+    file, mesh: Mesh, file_format, int_fmt: str = "8d", float_fmt: str = ".16e"
 ) -> None:
     pass
 
-register_format("sg", [".sg"], read, {"sg": write})
+
+
+
+
+register_format(
+    "vabs", [".sg"], read, {"vabs": write})
 
