@@ -1191,12 +1191,16 @@ def buildSG1D(
     nid1 = 1
     eid = 0
     yprev = -ht - pan
-    sg.nodes[nid1] = [yprev, ]
+    # sg.nodes[nid1] = [yprev, ]
+    points.append([0, 0, yprev])  # First point
+
+    cell_type = 'line{}'.format(elem_type) if elem_type > 2 else 'line'
+
     for lyr in layers:
         ne = 0
         t = lyr['ply_thickness'] * lyr['number_of_plies']
 
-        _lyr_glo = lyr.get(['global_orientation'], copy.copy(glb_orientation))
+        _lyr_glo = lyr.get('global_orientation', copy.copy(glb_orientation))
         # try:
         #     _lyr_glo = lyr['global_orientation']
         # except KeyError:
@@ -1211,50 +1215,71 @@ def buildSG1D(
         if ne == 0:
             ne += 1
         # lyr['nelem'] = ne
-        ns = np.linspace(yprev, yprev+t, ne+1)
+        ns = np.linspace(yprev, yprev+t, ne+1)  # end points of elements
 
         for i in range(ne):
-            nid2 = nid1 + elem_type - 1
-            sg.nodes[nid2] = [ns[i+1], ]
+            _y3 = ns[i+1]
+            points.append([0, 0, _y3])
+            cells.append([len(points)-2, len(points)-1])
+
+            # nid2 = nid1 + elem_type - 1
+            # sg.nodes[nid2] = [ns[i+1], ]
             eid = eid + 1
-            sg.elements[eid] = [nid1, nid2]
+            # sg.elements[eid] = [nid1, nid2]
+
             sg.elem_prop[eid] = lyr['mocombo']
             sg.prop_elem[lyr['mocombo']].append(eid)
             sg.elem_orient[eid] = [_lyr_glo['a'], _lyr_glo['b'], _lyr_glo['c']]
-            sg.elementids1d.append(eid)
-            nid1 = nid2
+            # sg.elementids1d.append(eid)
+
+            # nid1 = nid2
 
         yprev = yprev + t
 
     # Change the order of each element
     if elem_type > 2:
-        for eid in sg.elements.keys():
-            nid1 = sg.elements[eid][0]
-            nid2 = sg.elements[eid][1]
-            nq0y3 = sg.nodes[nid1][0]
-            nq4y3 = sg.nodes[nid2][0]
-            nid3 = nid1 + 1
-            sg.elements[eid].append(nid3)
+        # for eid in sg.elements.keys():
+        for _ei in range(len(cells)):
+            _n1i = cells[_ei][0]
+            _n2i = cells[_ei][1]
+            _y3n1 = points[_n1i][2]
+            _y3n2 = points[_n2i][2]
+            # nid3 = nid1 + 1
+            # sg.elements[eid].append(nid3)
             if elem_type == 4:
                 pass
             else:
-                nq2y3 = (nq0y3 + nq4y3) / 2.0
-                nq1y3 = (nq0y3 + nq2y3) / 2.0
-                nq3y3 = (nq2y3 + nq4y3) / 2.0
+                _y3q2 = (_y3n1 + _y3n2) / 2.0
+                _y3q1 = (_y3n1 + _y3q2) / 2.0
+                _y3q3 = (_y3q2 + _y3n2) / 2.0
                 if elem_type == 5:
+                    # node 3
+                    points.append([0, 0, _y3q1])
+                    cells[_ei].append(len(points)-1)
+                    # node 4
+                    points.append([0, 0, _y3q3])
+                    cells[_ei].append(len(points)-1)
+                    # node 5
+                    points.append([0, 0, _y3q2])
+                    cells[_ei].append(len(points)-1)
                     # nid = nid + 1
-                    nid5 = nid3 + 1
-                    nid4 = nid5 + 1
-                    sg.nodes[nid3] = [nq1y3, ]
-                    sg.nodes[nid5] = [nq2y3, ]
-                    sg.nodes[nid4] = [nq3y3, ]
+                    # nid5 = nid3 + 1
+                    # nid4 = nid5 + 1
+                    # sg.nodes[nid3] = [nq1y3, ]
+                    # sg.nodes[nid5] = [nq2y3, ]
+                    # sg.nodes[nid4] = [nq3y3, ]
                     # sg.elements[eid].append(nid3)
-                    sg.elements[eid].append(nid4)
-                    sg.elements[eid].append(nid5)
+                    # sg.elements[eid].append(nid4)
+                    # sg.elements[eid].append(nid5)
                 else:
-                    sg.nodes[nid3] = [nq2y3, ]
+                    # node 3
+                    points.append([0, 0, _y3q2])
+                    cells[_ei].append(len(points)-1)
+                    # sg.nodes[nid3] = [nq2y3, ]
 
     # sg.summary()
+
+    cells = [(cell_type, cells)]
 
     sg.mesh = Mesh(points, cells)
 

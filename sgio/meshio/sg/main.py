@@ -6,16 +6,22 @@ from itertools import count
 
 import numpy as np
 
-from ..__about__ import __version__
-from .._common import num_nodes_per_cell
-from .._exceptions import ReadError
+# from ..__about__ import __version__
+# from .._common import num_nodes_per_cell
+# from .._exceptions import ReadError
 from .._files import open_file
 from .._helpers import register_format
 from .._mesh import CellBlock, Mesh
 
+from . import _vabs, _swiftcomp
+
+_readers = {"vabs": _vabs, "swiftcomp": _swiftcomp, "sc": _swiftcomp}
+_writers = {"vabs": _vabs, "swiftcomp": _swiftcomp, "sc": _swiftcomp}
+
 
 def read(filename):
-    """Reads a Abaqus inp file."""
+    """Reads a SG file."""
+    filename = pathlib.Path(filename)
     with open_file(filename, "r") as f:
         out = read_buffer(f)
     return out
@@ -128,12 +134,15 @@ def merge(
 
 
 def write(
-    filename, mesh: Mesh, int_fmt: str = "8d", float_fmt: str = ".16e",
-    translate_cell_names: bool = True
+    filename, mesh: Mesh, int_fmt: str = "8d", float_fmt: str = ".16e"
 ) -> None:
     with open_file(filename, "at") as f:
-        fmt = ", ".join(["{}"] + ["{:" + float_fmt + "}"] * mesh.points.shape[1]) + "\n"
+        write_buffer(f, mesh, int_fmt, float_fmt)
 
+def write_buffer(
+    file, mesh: Mesh, int_fmt: str = "8d", float_fmt: str = ".16e"
+) -> None:
+    pass
 
 register_format("sg", [".sg"], read, {"sg": write})
 

@@ -1,0 +1,7 @@
+       0  # structural model (0: classical, 1: shear refined)
+
+    0.000000e+00    0.000000e+00  # initial curvatures k12, k21
+    1.000000e+00    1.000000e+00  # Lame parameters
+
+       0       0       0       0       0       0  # analysis, elem_flag, trans_flag, temp_flag, force_flag, steer_flag
+

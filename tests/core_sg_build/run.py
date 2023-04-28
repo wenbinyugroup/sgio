@@ -19,7 +19,7 @@ sgdim = 1
 smdim = 2
 # params = sg_input['parameters']
 layup = sg_input['design']
-# model = sg_input['model']['d2']
+model = sg_input['model']['md2']
 sgdb = {}
 for sg in raw_input['sg']:
     if sg['type'] == 'material':
@@ -31,8 +31,13 @@ for sg in raw_input['sg']:
 # mas.substituteParams(model, params)
 # print(model)
 
+elem_type = model.get('element_type', 2)
+
 # sg = mbp.buildSG(1, name, design=layup, model=model, sgdb=sgdb)
-sg = sgio.buildSG1D(name, layup, sgdb, smdim)
+sg = sgio.buildSG1D(
+    name, layup, sgdb, smdim,
+    elem_type=elem_type
+)
 
 # sg.summary()
 print(sg)

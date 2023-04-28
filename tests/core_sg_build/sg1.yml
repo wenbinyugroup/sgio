@@ -27,6 +27,7 @@ sg:
         mesh_size: -1
         k11: _k11
         k22: _k22
+        element_type: 3
   - name: "m1"
     type: "material"
     property:
