@@ -341,16 +341,16 @@ class StructureGene(object):
 
 
 
-    def writeGmshNodes(self, fo, nid_begin=1, loc=[0, 0, 0]):
-        for i in range(len(self.nodes)):
-            nid = i + 1
-            ncoords = copy.deepcopy(self.nodes[nid])
-            fo.write('{0:8d}'.format(i+nid_begin))
-            # if self.sgdim == 2:
-            if self.spdim == 2:
-                ncoords.insert(0, 0.0)
-                ncoords = [ncoords[i] + loc[i] for i in range(3)]
-            sui.writeFormatFloats(fo, ncoords)
+    # def writeGmshNodes(self, fo, nid_begin=1, loc=[0, 0, 0]):
+    #     for i in range(len(self.nodes)):
+    #         nid = i + 1
+    #         ncoords = copy.deepcopy(self.nodes[nid])
+    #         fo.write('{0:8d}'.format(i+nid_begin))
+    #         # if self.sgdim == 2:
+    #         if self.spdim == 2:
+    #             ncoords.insert(0, 0.0)
+    #             ncoords = [ncoords[i] + loc[i] for i in range(3)]
+    #         sui.writeFormatFloats(fo, ncoords)
 
 
 
@@ -360,18 +360,18 @@ class StructureGene(object):
 
 
 
-    def writeGmshElements(self, fo, nid_begin=1, eid_begin=1):
-        for i in range(len(self.elements)):
-            eid = i + 1
-            econnct = copy.deepcopy(self.elements[eid])
-            if self.sgdim == 2:
-                elem_type = 2
-                if len(econnct) == 4:
-                    elem_type = 3
-                line = [i+eid_begin, elem_type, 2, self.elem_prop[eid], self.elem_prop[eid]]
-                econnct = [nid + nid_begin - 1 for nid in econnct]
-            line = line + econnct
-            sui.writeFormatIntegers(fo, line)
+    # def writeGmshElements(self, fo, nid_begin=1, eid_begin=1):
+    #     for i in range(len(self.elements)):
+    #         eid = i + 1
+    #         econnct = copy.deepcopy(self.elements[eid])
+    #         if self.sgdim == 2:
+    #             elem_type = 2
+    #             if len(econnct) == 4:
+    #                 elem_type = 3
+    #             line = [i+eid_begin, elem_type, 2, self.elem_prop[eid], self.elem_prop[eid]]
+    #             econnct = [nid + nid_begin - 1 for nid in econnct]
+    #         line = line + econnct
+    #         sui.writeFormatIntegers(fo, line)
 
 
 
@@ -381,37 +381,37 @@ class StructureGene(object):
 
 
 
-    def writeGmshMsh(self, fo, nid_begin=1, eid_begin=1, loc=[0, 0, 0], *args, **kwargs):
-        # if fn == '':
-        #     fn = self.name + '.msh'
+    # def writeGmshMsh(self, fo, nid_begin=1, eid_begin=1, loc=[0, 0, 0], *args, **kwargs):
+    #     # if fn == '':
+    #     #     fn = self.name + '.msh'
 
-        # with open(self.fn_gmsh_msh, 'w') as fo:
-        fo.write('$MeshFormat\n')
-        fo.write('2.2  0  8\n')
-        fo.write('$EndMeshFormat\n')
-        fo.write('\n')
+    #     # with open(self.fn_gmsh_msh, 'w') as fo:
+    #     fo.write('$MeshFormat\n')
+    #     fo.write('2.2  0  8\n')
+    #     fo.write('$EndMeshFormat\n')
+    #     fo.write('\n')
 
 
-        # Write nodes
-        fo.write('$Nodes\n')
-        fo.write(str(len(self.nodes))+'\n')
+    #     # Write nodes
+    #     fo.write('$Nodes\n')
+    #     fo.write(str(len(self.nodes))+'\n')
 
-        self.writeGmshNodes(fo, nid_begin, loc)
+    #     self.writeGmshNodes(fo, nid_begin, loc)
 
-        fo.write('$EndNodes\n')
-        fo.write('\n')
+    #     fo.write('$EndNodes\n')
+    #     fo.write('\n')
 
 
-        # Write Elements
-        fo.write('$Elements\n')
-        fo.write(str(len(self.elements))+'\n')
+    #     # Write Elements
+    #     fo.write('$Elements\n')
+    #     fo.write(str(len(self.elements))+'\n')
 
-        self.writeGmshElements(fo, nid_begin, eid_begin)
+    #     self.writeGmshElements(fo, nid_begin, eid_begin)
 
-        fo.write('$EndElements\n')
-        fo.write('\n')
+    #     fo.write('$EndElements\n')
+    #     fo.write('\n')
 
-        return
+    #     return
 
 
 
@@ -421,153 +421,153 @@ class StructureGene(object):
 
 
 
-    def __writeInputSGNodes(self, f, sfi:str='8d', sff:str='16.6e'):
-        ssfi = '{:' + sfi + '}'
-        # count = 0
-        # nnode = len(self.nodes)
-        # for nid, ncoord in self.nodes.items():
-        for i, ncoord in enumerate(self.mesh.points):
-            # count += 1
-            nid = i + 1
-            # ncoord = self.nodes[nid]
-            f.write(ssfi.format(nid))
-            if self.sgdim == 1:
-                sui.writeFormatFloats(f, ncoord[2:], fmt=sff, newline=False)
-            elif self.sgdim == 2:
-                sui.writeFormatFloats(f, ncoord[1:], fmt=sff, newline=False)
-            elif self.sgdim == 3:
-                sui.writeFormatFloats(f, ncoord, fmt=sff, newline=False)
+    # def __writeInputSGNodes(self, f, sfi:str='8d', sff:str='16.6e'):
+    #     ssfi = '{:' + sfi + '}'
+    #     # count = 0
+    #     # nnode = len(self.nodes)
+    #     # for nid, ncoord in self.nodes.items():
+    #     for i, ncoord in enumerate(self.mesh.points):
+    #         # count += 1
+    #         nid = i + 1
+    #         # ncoord = self.nodes[nid]
+    #         f.write(ssfi.format(nid))
+    #         if self.sgdim == 1:
+    #             sui.writeFormatFloats(f, ncoord[2:], fmt=sff, newline=False)
+    #         elif self.sgdim == 2:
+    #             sui.writeFormatFloats(f, ncoord[1:], fmt=sff, newline=False)
+    #         elif self.sgdim == 3:
+    #             sui.writeFormatFloats(f, ncoord, fmt=sff, newline=False)
 
-            if i == 0:
-                f.write('  # nodal coordinates')
+    #         if i == 0:
+    #             f.write('  # nodal coordinates')
 
-            f.write('\n')
+    #         f.write('\n')
 
-        f.write('\n')
+    #     f.write('\n')
 
-        return
-
+    #     return
+
 
 
 
-
-
-
-
-
-    def _meshio_to_sg_order(self, cell_type:str, idx:ArrayLike):
-        idx = np.asarray(idx)
-        idx_sg = copy.deepcopy(idx) + 1
-
-        idx_to_insert = None
-        if cell_type == 'triangle6':
-            idx_to_insert = 3
-        elif cell_type == 'tetra10':
-            idx_to_insert = 4
-        elif cell_type == 'wedge15':
-            idx_to_insert = 6
-
-        max_nodes = idx_sg.shape[1]
-        if cell_type.startswith('line'):
-            max_nodes = 5
-        elif cell_type.startswith('triangle') or cell_type.startswith('quad'):
-            max_nodes = 9
-        elif cell_type.startswith('tetra') or cell_type.startswith('wedge') or cell_type.startswith('hexahedron'):
-            max_nodes = 20
-
-        # Insert 0 for some types of cells
-        if idx_to_insert:
-            idx_sg = np.insert(idx_sg, idx_to_insert, 0, axis=1)
-
-        # Fill the remaining location with 0s
-        pad_width = max_nodes - idx_sg.shape[1]
-        logger.debug('pad width = {}'.format(pad_width))
-        idx_sg = np.pad(idx_sg, ((0, 0), (0, pad_width)), 'constant', constant_values=0)
-
-        return idx_sg
-
-
-    def __writeInputSGElements(self, f, solver, sfi:str='8d'):
-
-        consecutive_index = 0
-        for k, cell_block in enumerate(self.mesh.cells):
-            cell_type = cell_block.type
-            node_idcs = self._meshio_to_sg_order(cell_type, cell_block.data)
-
-            for i, c in enumerate(node_idcs):
-                _eid = consecutive_index + i + 1
-                _nums = [_eid,]  # Element id
-
-                if solver.lower().startswith('s'):
-                    _nums.append(self.elem_prop[_eid])
-
-                _nums.extend(c.tolist())
-
-                # Write the numbers
-                logger.debug('sfi = {}'.format(sfi))
-                sui.writeFormatIntegers(f, _nums, fmt=sfi, newline=False)
-                if k == 0 and i == 0:
-                    f.write('  # element connectivity')
-                f.write('\n')
-
-            consecutive_index += len(node_idcs)
-
-        # count = 0
-        # for eid in self.elementids1d:
-        #     count += 1
-        #     # elem = np.zeros(7, dtype=int)
-        #     elem = [0,]*7
-        #     elem[0] = eid
-        #     elem[1] = self.elem_prop[eid]  # mid/cid
-        #     for i, nid in enumerate(self.elements[eid]):
-        #         elem[i+2] = nid
-        #     sui.writeFormatIntegers(f, elem, fmt=sfi, newline=False)
-        #     if count == 1:
-        #         f.write('  # element connectivity')
-        #     f.write('\n')
-
-        # for eid in self.elementids2d:
-        #     count += 1
-        #     # elem = np.zeros(11, dtype=int)
-        #     elem = [0,]*10
-        #     elem[0] = eid
-        #     # elem[1] = self.elem_prop[eid]
-        #     elem_type = 'quad'
-        #     if (len(self.elements[eid]) == 3) or (len(self.elements[eid]) == 6):
-        #         elem_type = 'tri'
-        #     for i, nid in enumerate(self.elements[eid]):
-        #         if (i >= 3) and (elem_type == 'tri'):
-        #             elem[i+2] = nid
-        #         else:
-        #             elem[i+1] = nid
-        #     if solver.lower().startswith('s'):
-        #         elem.insert(1, self.elem_prop[eid])
-        #     sui.writeFormatIntegers(f, elem, fmt=sfi, newline=False)
-        #     if count == 1:
-        #         f.write('  # element connectivity')
-        #     f.write('\n')
-
-        # for eid in self.elementids3d:
-        #     count += 1
-        #     # elem = np.zeros(22, dtype=int)
-        #     elem = [0,]*22
-        #     elem[0] = eid
-        #     elem[1] = self.elem_prop[eid]
-        #     elem_type = 'hexa'
-        #     if (len(self.elements[eid]) == 4) or (len(self.elements[eid]) == 10):
-        #         elem_type = 'tetra'
-        #     for i, nid in enumerate(self.elements[eid]):
-        #         if (i >= 4) and (elem_type == 'tetra'):
-        #             elem[i+3] = nid
-        #         else:
-        #             elem[i+2] = nid
-        #     sui.writeFormatIntegers(f, elem, fmt=sfi, newline=False)
-        #     if count == 1:
-        #         f.write('  # element connectivity')
-        #     f.write('\n')
-
-        f.write('\n')
-        return
+
+
+
+
+
+    # def _meshio_to_sg_order(self, cell_type:str, idx:ArrayLike):
+    #     idx = np.asarray(idx)
+    #     idx_sg = copy.deepcopy(idx) + 1
+
+    #     idx_to_insert = None
+    #     if cell_type == 'triangle6':
+    #         idx_to_insert = 3
+    #     elif cell_type == 'tetra10':
+    #         idx_to_insert = 4
+    #     elif cell_type == 'wedge15':
+    #         idx_to_insert = 6
+
+    #     max_nodes = idx_sg.shape[1]
+    #     if cell_type.startswith('line'):
+    #         max_nodes = 5
+    #     elif cell_type.startswith('triangle') or cell_type.startswith('quad'):
+    #         max_nodes = 9
+    #     elif cell_type.startswith('tetra') or cell_type.startswith('wedge') or cell_type.startswith('hexahedron'):
+    #         max_nodes = 20
+
+    #     # Insert 0 for some types of cells
+    #     if idx_to_insert:
+    #         idx_sg = np.insert(idx_sg, idx_to_insert, 0, axis=1)
+
+    #     # Fill the remaining location with 0s
+    #     pad_width = max_nodes - idx_sg.shape[1]
+    #     logger.debug('pad width = {}'.format(pad_width))
+    #     idx_sg = np.pad(idx_sg, ((0, 0), (0, pad_width)), 'constant', constant_values=0)
+
+    #     return idx_sg
+
+
+    # def __writeInputSGElements(self, f, solver, sfi:str='8d'):
+
+    #     consecutive_index = 0
+    #     for k, cell_block in enumerate(self.mesh.cells):
+    #         cell_type = cell_block.type
+    #         node_idcs = self._meshio_to_sg_order(cell_type, cell_block.data)
+
+    #         for i, c in enumerate(node_idcs):
+    #             _eid = consecutive_index + i + 1
+    #             _nums = [_eid,]  # Element id
+
+    #             if solver.lower().startswith('s'):
+    #                 _nums.append(self.elem_prop[_eid])
+
+    #             _nums.extend(c.tolist())
+
+    #             # Write the numbers
+    #             logger.debug('sfi = {}'.format(sfi))
+    #             sui.writeFormatIntegers(f, _nums, fmt=sfi, newline=False)
+    #             if k == 0 and i == 0:
+    #                 f.write('  # element connectivity')
+    #             f.write('\n')
+
+    #         consecutive_index += len(node_idcs)
+
+    #     # count = 0
+    #     # for eid in self.elementids1d:
+    #     #     count += 1
+    #     #     # elem = np.zeros(7, dtype=int)
+    #     #     elem = [0,]*7
+    #     #     elem[0] = eid
+    #     #     elem[1] = self.elem_prop[eid]  # mid/cid
+    #     #     for i, nid in enumerate(self.elements[eid]):
+    #     #         elem[i+2] = nid
+    #     #     sui.writeFormatIntegers(f, elem, fmt=sfi, newline=False)
+    #     #     if count == 1:
+    #     #         f.write('  # element connectivity')
+    #     #     f.write('\n')
+
+    #     # for eid in self.elementids2d:
+    #     #     count += 1
+    #     #     # elem = np.zeros(11, dtype=int)
+    #     #     elem = [0,]*10
+    #     #     elem[0] = eid
+    #     #     # elem[1] = self.elem_prop[eid]
+    #     #     elem_type = 'quad'
+    #     #     if (len(self.elements[eid]) == 3) or (len(self.elements[eid]) == 6):
+    #     #         elem_type = 'tri'
+    #     #     for i, nid in enumerate(self.elements[eid]):
+    #     #         if (i >= 3) and (elem_type == 'tri'):
+    #     #             elem[i+2] = nid
+    #     #         else:
+    #     #             elem[i+1] = nid
+    #     #     if solver.lower().startswith('s'):
+    #     #         elem.insert(1, self.elem_prop[eid])
+    #     #     sui.writeFormatIntegers(f, elem, fmt=sfi, newline=False)
+    #     #     if count == 1:
+    #     #         f.write('  # element connectivity')
+    #     #     f.write('\n')
+
+    #     # for eid in self.elementids3d:
+    #     #     count += 1
+    #     #     # elem = np.zeros(22, dtype=int)
+    #     #     elem = [0,]*22
+    #     #     elem[0] = eid
+    #     #     elem[1] = self.elem_prop[eid]
+    #     #     elem_type = 'hexa'
+    #     #     if (len(self.elements[eid]) == 4) or (len(self.elements[eid]) == 10):
+    #     #         elem_type = 'tetra'
+    #     #     for i, nid in enumerate(self.elements[eid]):
+    #     #         if (i >= 4) and (elem_type == 'tetra'):
+    #     #             elem[i+3] = nid
+    #     #         else:
+    #     #             elem[i+2] = nid
+    #     #     sui.writeFormatIntegers(f, elem, fmt=sfi, newline=False)
+    #     #     if count == 1:
+    #     #         f.write('  # element connectivity')
+    #     #     f.write('\n')
+
+    #     f.write('\n')
+    #     return
 
 
 
@@ -922,8 +922,11 @@ class StructureGene(object):
 
         with open(fn, 'w') as fobj:
             self.__writeInputSGHeader(fobj, solver, sfi, sff, sg_fmt, version)
-            self.__writeInputSGNodes(fobj, sfi, sff)
-            self.__writeInputSGElements(fobj, solver, sfi)
+
+            # Write mesh
+            # self.__writeInputSGNodes(fobj, sfi, sff)
+            # self.__writeInputSGElements(fobj, solver, sfi)
+            self.mesh.write(fobj, file_format=solver, sgdim=self.sgdim, int_fmt=sfi, float_fmt=sff)
 
             if self.use_elem_local_orient != 0:
                 self.__writeInputSGElementOrientations(fobj, sfi, sff, solver)
@@ -986,7 +989,7 @@ class StructureGene(object):
 
 
     def writeInput(
-        self, fn, solver, analysis='h', sg_fmt=1, sfi='8d', sff='16.6e', version=None
+        self, fn, solver, analysis='h', sg_fmt=1, sfi='8d', sff='20.9e', version=None
         ):
         """Write analysis input
 
@@ -1244,6 +1247,8 @@ def buildSG1D(
 
     points = []
     cells = []
+    point_data = {}
+    cell_data = []
 
     nid1 = 1
     eid = 0
@@ -1278,13 +1283,14 @@ def buildSG1D(
             _y3 = ns[i+1]
             points.append([0, 0, _y3])
             cells.append([len(points)-2, len(points)-1])
+            cell_data.append(lyr['mocombo'])
 
             # nid2 = nid1 + elem_type - 1
             # sg.nodes[nid2] = [ns[i+1], ]
             eid = eid + 1
             # sg.elements[eid] = [nid1, nid2]
 
-            sg.elem_prop[eid] = lyr['mocombo']
+            # sg.elem_prop[eid] = lyr['mocombo']
             sg.prop_elem[lyr['mocombo']].append(eid)
             sg.elem_orient[eid] = [_lyr_glo['a'], _lyr_glo['b'], _lyr_glo['c']]
             # sg.elementids1d.append(eid)
@@ -1337,8 +1343,12 @@ def buildSG1D(
     # sg.summary()
 
     cells = [(cell_type, cells)]
+    cell_data = {'property_id': [cell_data,]}
 
-    sg.mesh = Mesh(points, cells)
+    sg.mesh = Mesh(
+        points, cells,
+        point_data=point_data, cell_data=cell_data
+    )
 
     if analysis == 'fi' or analysis == 'fe':
         sg.global_loads = load_cases

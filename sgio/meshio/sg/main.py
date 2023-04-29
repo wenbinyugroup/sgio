@@ -8,8 +8,8 @@ import numpy as np
 
 # from ..__about__ import __version__
 # from .._common import num_nodes_per_cell
-# from .._exceptions import ReadError
-from .._files import open_file
+from .._exceptions import ReadError, WriteError
+from .._files import is_buffer, open_file
 from .._helpers import register_format
 from .._mesh import CellBlock, Mesh
 
@@ -20,134 +20,119 @@ _writers = {"vabs": _vabs, "swiftcomp": _swiftcomp, "sc": _swiftcomp}
 
 
 def read(filename):
-    """Reads a SG file."""
-    filename = pathlib.Path(filename)
-    with open_file(filename, "r") as f:
-        mesh = read_buffer(f)
+    """Reads a Gmsh msh file."""
+    if is_buffer(filename, 'r'):
+        mesh = read_buffer(filename, mesh, sgdim, int_fmt, float_fmt)
+    else:
+        with open(filename, 'r') as file:
+            mesh = read_buffer(file, mesh, sgdim, int_fmt, float_fmt)
     return mesh
 
 
 def read_buffer(f):
-    # Initialize the optional data fields
-    points = []
-    cells = []
-    cell_ids = []
-    point_sets = {}
-    cell_sets = {}
-    cell_sets_element = {}  # Handle cell sets defined in ELEMENT
-    cell_sets_element_order = []  # Order of keys is not preserved in Python 3.5
-    field_data = {}
-    cell_data = {}
-    point_data = {}
-    point_ids = None
+    # The various versions of the format are specified at
+    # <http://gmsh.info/doc/texinfo/gmsh.html#File-formats>.
+    line = f.readline().decode().strip()
 
-    line = f.readline()
-    while True:
-        if not line:  # EOF
-            break
+    # skip any $Comments/$EndComments sections
+    while line == "$Comments":
+        _fast_forward_to_end_block(f, "Comments")
+        line = f.readline().decode().strip()
 
-        # Comments
-        if line.startswith("**"):
-            line = f.readline()
-            continue
+    if line != "$MeshFormat":
+        raise ReadError()
+    fmt_version, data_size, is_ascii = _read_header(f)
 
-    # Parse cell sets defined in ELEMENT
-    for i, name in enumerate(cell_sets_element_order):
-        # Not sure whether this case would ever happen
-        if name in cell_sets.keys():
-            cell_sets[name][i] = cell_sets_element[name]
-        else:
-            cell_sets[name] = []
-            for ic in range(len(cells)):
-                cell_sets[name].append(
-                    cell_sets_element[name] if i == ic else np.array([], dtype="int32")
+    try:
+        reader = _readers[fmt_version]
+    except KeyError:
+        try:
+            reader = _readers[fmt_version.split(".")[0]]
+        except KeyError:
+            raise ValueError(
+                "Need mesh format in {} (got {})".format(
+                    sorted(_readers.keys()), fmt_version
                 )
-
-    return Mesh(
-        points,
-        cells,
-        point_data=point_data,
-        cell_data=cell_data,
-        field_data=field_data,
-        point_sets=point_sets,
-        cell_sets=cell_sets,
-    )
+            )
+    return reader.read_buffer(f, is_ascii, data_size)
 
 
-def _read_nodes(f):
-    return
+# def merge(
+#     mesh, points, cells, point_data, cell_data, field_data, point_sets, cell_sets
+# ):
+#     """
+#     Merge Mesh object into existing containers for points, cells, sets, etc..
 
+#     :param mesh:
+#     :param points:
+#     :param cells:
+#     :param point_data:
+#     :param cell_data:
+#     :param field_data:
+#     :param point_sets:
+#     :param cell_sets:
+#     :type mesh: Mesh
+#     """
+#     ext_points = np.array([p for p in mesh.points])
 
-def _read_cells(f):
-    return
+#     if len(points) > 0:
+#         new_point_id = points.shape[0]
+#         # new_cell_id = len(cells) + 1
+#         points = np.concatenate([points, ext_points])
+#     else:
+#         # new_cell_id = 0
+#         new_point_id = 0
+#         points = ext_points
 
+#     cnt = 0
+#     for c in mesh.cells:
+#         new_data = np.array([d + new_point_id for d in c.data])
+#         cells.append(CellBlock(c.type, new_data))
+#         cnt += 1
 
-def merge(
-    mesh, points, cells, point_data, cell_data, field_data, point_sets, cell_sets
-):
-    """
-    Merge Mesh object into existing containers for points, cells, sets, etc..
+#     # The following aren't currently included in the abaqus parser, and are therefore
+#     # excluded?
+#     # point_data.update(mesh.point_data)
+#     # cell_data.update(mesh.cell_data)
+#     # field_data.update(mesh.field_data)
 
-    :param mesh:
-    :param points:
-    :param cells:
-    :param point_data:
-    :param cell_data:
-    :param field_data:
-    :param point_sets:
-    :param cell_sets:
-    :type mesh: Mesh
-    """
-    ext_points = np.array([p for p in mesh.points])
+#     # Update point and cell sets to account for change in cell and point ids
+#     for key, val in mesh.point_sets.items():
+#         point_sets[key] = [x + new_point_id for x in val]
 
-    if len(points) > 0:
-        new_point_id = points.shape[0]
-        # new_cell_id = len(cells) + 1
-        points = np.concatenate([points, ext_points])
-    else:
-        # new_cell_id = 0
-        new_point_id = 0
-        points = ext_points
+#     # Todo: Add support for merging cell sets
+#     # cellblockref = [[] for i in range(cnt-new_cell_id)]
+#     # for key, val in mesh.cell_sets.items():
+#     #     cell_sets[key] = cellblockref + [np.array([x for x in val[0]])]
 
-    cnt = 0
-    for c in mesh.cells:
-        new_data = np.array([d + new_point_id for d in c.data])
-        cells.append(CellBlock(c.type, new_data))
-        cnt += 1
-
-    # The following aren't currently included in the abaqus parser, and are therefore
-    # excluded?
-    # point_data.update(mesh.point_data)
-    # cell_data.update(mesh.cell_data)
-    # field_data.update(mesh.field_data)
-
-    # Update point and cell sets to account for change in cell and point ids
-    for key, val in mesh.point_sets.items():
-        point_sets[key] = [x + new_point_id for x in val]
-
-    # Todo: Add support for merging cell sets
-    # cellblockref = [[] for i in range(cnt-new_cell_id)]
-    # for key, val in mesh.cell_sets.items():
-    #     cell_sets[key] = cellblockref + [np.array([x for x in val[0]])]
-
-    return points, cells
+#     return points, cells
 
 
 def write(
-    filename, mesh: Mesh, file_format, int_fmt: str = "8d", float_fmt: str = ".16e"
+    filename, mesh: Mesh, file_format, sgdim,
+    int_fmt:str="8d", float_fmt:str="20.9e"
 ) -> None:
-    with open_file(filename, "at") as f:
-        write_buffer(f, mesh, file_format, int_fmt, float_fmt)
+    try:
+        writer = _writers[file_format]
+    except KeyError:
+        raise WriteError(
+            "Need mesh format in {} (got {})".format(
+                sorted(_writers.keys()), file_format
+            )
+        )
 
-def write_buffer(
-    file, mesh: Mesh, file_format, int_fmt: str = "8d", float_fmt: str = ".16e"
-) -> None:
-    pass
+    writer.write(filename, mesh, sgdim, int_fmt=int_fmt, float_fmt=float_fmt)
+
 
 
 
 
 
 register_format(
-    "vabs", [".sg"], read, {"vabs": write})
+    "vabs", [".vabs", ".sg"], read,
+    {"vabs": lambda f, m, **kwargs: write(f, m, 'vabs', **kwargs)})
+
+register_format(
+    "sc", [".sc", ".sg"], read,
+    {"sc": lambda f, m, **kwargs: write(f, m, 'sc', **kwargs)})
 
