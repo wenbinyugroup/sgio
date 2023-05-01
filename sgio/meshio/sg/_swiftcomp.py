@@ -27,8 +27,19 @@ from .common import (
 # c_int = np.dtype("i")
 # c_double = np.dtype("d")
 
+def read(filename, sgdim:int, nnodes:int, nelems:int):
+    """Reads a Gmsh msh file."""
+    if is_buffer(filename, 'r'):
+        mesh = read_buffer(filename, sgdim, nnodes, nelems)
+    else:
+        with open(filename, 'r') as file:
+            mesh = read_buffer(file, sgdim, nnodes, nelems)
+    return mesh
 
-def read_buffer(f):
+
+def read_buffer(f, sgdim:int, nnodes:int, nelems:int):
+    """
+    """
     # Initialize the optional data fields
     points = []
     cells = []
@@ -42,27 +53,26 @@ def read_buffer(f):
     point_data = {}
     point_ids = None
 
-    line = f.readline()
-    while True:
-        if not line:  # EOF
-            break
+    # while True:
 
-        # Comments
-        if line.startswith("**"):
-            line = f.readline()
-            continue
+    #     if line == '':
+    #         line = f.readline()
+    #         continue
 
-    # Parse cell sets defined in ELEMENT
-    for i, name in enumerate(cell_sets_element_order):
-        # Not sure whether this case would ever happen
-        if name in cell_sets.keys():
-            cell_sets[name][i] = cell_sets_element[name]
-        else:
-            cell_sets[name] = []
-            for ic in range(len(cells)):
-                cell_sets[name].append(
-                    cell_sets_element[name] if i == ic else np.array([], dtype="int32")
-                )
+    points, point_ids, line = _read_nodes(f, nnodes, sgdim)
+
+    cells_dict, prop_ids, ids, line = _read_elements(f, nelems, point_ids)
+    cell_type_to_id = {}
+    for _cell_type, _cell_points in cells_dict.items():
+        cells.append(CellBlock(_cell_type, _cell_points))
+        cell_type_to_id[_cell_type] = len(cells) - 1
+
+    _cd = []
+    for _cb in cells:
+        _ct = _cb.type
+        _cd.append(prop_ids[_ct])
+    # cell_data['property'] = np.array(_cd)
+    cell_data['gmsh:physical'] = np.array(_cd)
 
     return Mesh(
         points,
@@ -75,8 +85,72 @@ def read_buffer(f):
     )
 
 
+def _read_elements(f, nelems:int, point_ids):
+    cells = {}
+    prop_ids = {}  # property id for each element; will update cell_data (swiftcomp)
+    cell_ids = {}
+    counter = 0
+    while counter < nelems:
+        line = f.readline()
+        if line.strip() == "":
+            continue
+
+        line = line.strip().split()
+        # if file_format.lower().startswith('v'):
+        #     cell_id, node_ids = line[0], line[1:]
+        # elif file_format.lower().startswith('s'):
+        cell_id, prop_id, node_ids = line[0], line[1], line[2:]
+
+        # Check element type
+        cell_type = ''
+        if len(node_ids) == 5:  # 1d elements
+            node_ids = [int(_i) for _i in node_ids if _i != '0']
+            if len(node_ids) == 2:
+                cell_type = 'line'
+            else:
+                cell_type = 'line{}'.format(len(node_ids))
+        elif len(node_ids) == 9:  # 2d elements
+            if node_ids[3] == '0':  # triangle
+                node_ids = [int(_i) for _i in node_ids if _i != '0']
+                cell_type = {3: 'triangle', 6: 'triangle6'}[len(node_ids)]
+            else:  # quadrilateral
+                node_ids = [int(_i) for _i in node_ids if _i != '0']
+                cell_type = {4: 'quad', 8: 'quad8', 9: 'quad9'}[len(node_ids)]
+        elif len(node_ids) == 20:  # 3d elements
+            if node_ids[4] == '0':  # tetrahedral
+                node_ids = [int(_i) for _i in node_ids if _i != '0']
+                cell_type = {4: 'tetra', 10: 'tetra10'}[len(node_ids)]
+            elif node_ids[6] == '0':  # wedge
+                node_ids = [int(_i) for _i in node_ids if _i != '0']
+                cell_type = {6: 'wedge', 15: 'tetra15'}[len(node_ids)]
+            else:  # hexahedron
+                node_ids = [int(_i) for _i in node_ids if _i != '0']
+                cell_type = {8: 'hexahedron', 20: 'hexahedron20'}[len(node_ids)]
 
 
+        if not cell_type in cells.keys():
+            cells[cell_type] = []
+            cell_ids[cell_type] = {}
+            prop_ids[cell_type] = []
+
+        cells[cell_type].append([point_ids[_i] for _i in node_ids])
+        cell_ids[cell_type][int(cell_id)] = len(cell_ids[cell_type]) - 1
+        # if file_format.lower().startswith('s'):
+        prop_ids[cell_type].append(int(prop_id))
+
+        counter += 1
+
+    return cells, prop_ids, cell_ids, line
+
+
+
+
+
+
+
+
+
+# ====================================================================
 
 def write(filename, mesh, sgdim, int_fmt='8d', float_fmt="20.9e"):
     """

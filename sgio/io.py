@@ -16,7 +16,8 @@ import sgio.utils.io as utio
 
 from sgio.core.sg import StructureGene
 from sgio.meshio import CellBlock, Mesh
-from sgio.meshio import read
+# from sgio.meshio import read
+import sgio.meshio as sm
 
 
 logger = logging.getLogger(__name__)
@@ -83,7 +84,7 @@ def readBuffer(f, file_format : str, smdim : int):
     nelems = configs['num_elements']
 
     # Read mesh
-    sg.mesh = _readSGInputMesh(f, file_format, nnodes, nelems, smdim, sg.sgdim)
+    sg.mesh = sm.read(f, file_format, sg.sgdim, nnodes, nelems)
 
     return sg
 
@@ -205,129 +206,129 @@ def _readSGInputHead(f, file_format:str, smdim:int):
     return configs
 
 
-def _readSGInputMesh(f, file_format:str, nnodes:int, nelems:int, smdim:int, sgdim:int=3):
-    r"""
-    """
-    # Initialize the optional data fields
-    points = []
-    cells = []
-    cell_ids = []
-    point_sets = {}
-    cell_sets = {}
-    cell_sets_element = {}  # Handle cell sets defined in ELEMENT
-    cell_sets_element_order = []  # Order of keys is not preserved in Python 3.5
-    field_data = {}
-    cell_data = {}
-    point_data = {}
-    point_ids = None
+# def _readSGInputMesh(f, file_format:str, nnodes:int, nelems:int, smdim:int, sgdim:int=3):
+#     r"""
+#     """
+#     # Initialize the optional data fields
+#     points = []
+#     cells = []
+#     cell_ids = []
+#     point_sets = {}
+#     cell_sets = {}
+#     cell_sets_element = {}  # Handle cell sets defined in ELEMENT
+#     cell_sets_element_order = []  # Order of keys is not preserved in Python 3.5
+#     field_data = {}
+#     cell_data = {}
+#     point_data = {}
+#     point_ids = None
 
-    # while True:
+#     # while True:
 
-    #     if line == '':
-    #         line = f.readline()
-    #         continue
+#     #     if line == '':
+#     #         line = f.readline()
+#     #         continue
 
-    points, point_ids, line = _readSGInputNodes(f, nnodes, sgdim)
+#     points, point_ids, line = _readSGInputNodes(f, nnodes, sgdim)
 
-    cells_dict, prop_ids, ids, line = _readSGInputElements(f, file_format, nelems, point_ids)
-    cell_type_to_id = {}
-    for _cell_type, _cell_points in cells_dict.items():
-        cells.append(CellBlock(_cell_type, _cell_points))
-        cell_type_to_id[_cell_type] = len(cells) - 1
+#     cells_dict, prop_ids, ids, line = _readSGInputElements(f, file_format, nelems, point_ids)
+#     cell_type_to_id = {}
+#     for _cell_type, _cell_points in cells_dict.items():
+#         cells.append(CellBlock(_cell_type, _cell_points))
+#         cell_type_to_id[_cell_type] = len(cells) - 1
 
-    if file_format.lower().startswith('s'):
-        _cd = []
-        for _cb in cells:
-            _ct = _cb.type
-            _cd.append(prop_ids[_ct])
-        # cell_data['property'] = np.array(_cd)
-        cell_data['gmsh:physical'] = np.array(_cd)
+#     if file_format.lower().startswith('s'):
+#         _cd = []
+#         for _cb in cells:
+#             _ct = _cb.type
+#             _cd.append(prop_ids[_ct])
+#         # cell_data['property'] = np.array(_cd)
+#         cell_data['gmsh:physical'] = np.array(_cd)
 
-    return Mesh(
-        points,
-        cells,
-        point_data=point_data,
-        cell_data=cell_data,
-        field_data=field_data,
-        point_sets=point_sets,
-        cell_sets=cell_sets,
-    )
-
-
-def _readSGInputNodes(f, nnodes:int, sgdim:int=3):
-    points = []
-    point_ids = {}
-    counter = 0
-    while counter < nnodes:
-        line = f.readline()
-        if line.strip() == "":
-            continue
-
-        line = line.strip().split()
-        point_id, coords = line[0], line[1:]
-        point_ids[int(point_id)] = counter
-        points.append([0.0,]*(3-sgdim)+[float(x) for x in coords])
-        counter += 1
-
-    return np.array(points, dtype=float), point_ids, line
+#     return Mesh(
+#         points,
+#         cells,
+#         point_data=point_data,
+#         cell_data=cell_data,
+#         field_data=field_data,
+#         point_sets=point_sets,
+#         cell_sets=cell_sets,
+#     )
 
 
-def _readSGInputElements(f, file_format:str, nelems:int, point_ids):
-    cells = {}
-    prop_ids = {}  # property id for each element; will update cell_data (swiftcomp)
-    cell_ids = {}
-    counter = 0
-    while counter < nelems:
-        line = f.readline()
-        if line.strip() == "":
-            continue
+# def _readSGInputNodes(f, nnodes:int, sgdim:int=3):
+#     points = []
+#     point_ids = {}
+#     counter = 0
+#     while counter < nnodes:
+#         line = f.readline()
+#         if line.strip() == "":
+#             continue
 
-        line = line.strip().split()
-        if file_format.lower().startswith('v'):
-            cell_id, node_ids = line[0], line[1:]
-        elif file_format.lower().startswith('s'):
-            cell_id, prop_id, node_ids = line[0], line[1], line[2:]
+#         line = line.strip().split()
+#         point_id, coords = line[0], line[1:]
+#         point_ids[int(point_id)] = counter
+#         points.append([0.0,]*(3-sgdim)+[float(x) for x in coords])
+#         counter += 1
 
-        # Check element type
-        cell_type = ''
-        if len(node_ids) == 5:  # 1d elements
-            node_ids = [int(_i) for _i in node_ids if _i != '0']
-            if len(node_ids) == 2:
-                cell_type = 'line'
-            else:
-                cell_type = 'line{}'.format(len(node_ids))
-        elif len(node_ids) == 9:  # 2d elements
-            if node_ids[3] == '0':  # triangle
-                node_ids = [int(_i) for _i in node_ids if _i != '0']
-                cell_type = {3: 'triangle', 6: 'triangle6'}[len(node_ids)]
-            else:  # quadrilateral
-                node_ids = [int(_i) for _i in node_ids if _i != '0']
-                cell_type = {4: 'quad', 8: 'quad8', 9: 'quad9'}[len(node_ids)]
-        elif len(node_ids) == 20:  # 3d elements
-            if node_ids[4] == '0':  # tetrahedral
-                node_ids = [int(_i) for _i in node_ids if _i != '0']
-                cell_type = {4: 'tetra', 10: 'tetra10'}[len(node_ids)]
-            elif node_ids[6] == '0':  # wedge
-                node_ids = [int(_i) for _i in node_ids if _i != '0']
-                cell_type = {6: 'wedge', 15: 'tetra15'}[len(node_ids)]
-            else:  # hexahedron
-                node_ids = [int(_i) for _i in node_ids if _i != '0']
-                cell_type = {8: 'hexahedron', 20: 'hexahedron20'}[len(node_ids)]
+#     return np.array(points, dtype=float), point_ids, line
 
 
-        if not cell_type in cells.keys():
-            cells[cell_type] = []
-            cell_ids[cell_type] = {}
-            prop_ids[cell_type] = []
+# def _readSGInputElements(f, file_format:str, nelems:int, point_ids):
+#     cells = {}
+#     prop_ids = {}  # property id for each element; will update cell_data (swiftcomp)
+#     cell_ids = {}
+#     counter = 0
+#     while counter < nelems:
+#         line = f.readline()
+#         if line.strip() == "":
+#             continue
 
-        cells[cell_type].append([point_ids[_i] for _i in node_ids])
-        cell_ids[cell_type][int(cell_id)] = len(cell_ids[cell_type]) - 1
-        if file_format.lower().startswith('s'):
-            prop_ids[cell_type].append(int(prop_id))
+#         line = line.strip().split()
+#         if file_format.lower().startswith('v'):
+#             cell_id, node_ids = line[0], line[1:]
+#         elif file_format.lower().startswith('s'):
+#             cell_id, prop_id, node_ids = line[0], line[1], line[2:]
 
-        counter += 1
+#         # Check element type
+#         cell_type = ''
+#         if len(node_ids) == 5:  # 1d elements
+#             node_ids = [int(_i) for _i in node_ids if _i != '0']
+#             if len(node_ids) == 2:
+#                 cell_type = 'line'
+#             else:
+#                 cell_type = 'line{}'.format(len(node_ids))
+#         elif len(node_ids) == 9:  # 2d elements
+#             if node_ids[3] == '0':  # triangle
+#                 node_ids = [int(_i) for _i in node_ids if _i != '0']
+#                 cell_type = {3: 'triangle', 6: 'triangle6'}[len(node_ids)]
+#             else:  # quadrilateral
+#                 node_ids = [int(_i) for _i in node_ids if _i != '0']
+#                 cell_type = {4: 'quad', 8: 'quad8', 9: 'quad9'}[len(node_ids)]
+#         elif len(node_ids) == 20:  # 3d elements
+#             if node_ids[4] == '0':  # tetrahedral
+#                 node_ids = [int(_i) for _i in node_ids if _i != '0']
+#                 cell_type = {4: 'tetra', 10: 'tetra10'}[len(node_ids)]
+#             elif node_ids[6] == '0':  # wedge
+#                 node_ids = [int(_i) for _i in node_ids if _i != '0']
+#                 cell_type = {6: 'wedge', 15: 'tetra15'}[len(node_ids)]
+#             else:  # hexahedron
+#                 node_ids = [int(_i) for _i in node_ids if _i != '0']
+#                 cell_type = {8: 'hexahedron', 20: 'hexahedron20'}[len(node_ids)]
 
-    return cells, prop_ids, cell_ids, line
+
+#         if not cell_type in cells.keys():
+#             cells[cell_type] = []
+#             cell_ids[cell_type] = {}
+#             prop_ids[cell_type] = []
+
+#         cells[cell_type].append([point_ids[_i] for _i in node_ids])
+#         cell_ids[cell_type][int(cell_id)] = len(cell_ids[cell_type]) - 1
+#         if file_format.lower().startswith('s'):
+#             prop_ids[cell_type].append(int(prop_id))
+
+#         counter += 1
+
+#     return cells, prop_ids, cell_ids, line
 
 
 

@@ -19,42 +19,48 @@ _readers = {"vabs": _vabs, "swiftcomp": _swiftcomp, "sc": _swiftcomp}
 _writers = {"vabs": _vabs, "swiftcomp": _swiftcomp, "sc": _swiftcomp}
 
 
-def read(filename):
-    """Reads a Gmsh msh file."""
-    if is_buffer(filename, 'r'):
-        mesh = read_buffer(filename, mesh, sgdim, int_fmt, float_fmt)
-    else:
-        with open(filename, 'r') as file:
-            mesh = read_buffer(file, mesh, sgdim, int_fmt, float_fmt)
-    return mesh
-
-
-def read_buffer(f):
-    # The various versions of the format are specified at
-    # <http://gmsh.info/doc/texinfo/gmsh.html#File-formats>.
-    line = f.readline().decode().strip()
-
-    # skip any $Comments/$EndComments sections
-    while line == "$Comments":
-        _fast_forward_to_end_block(f, "Comments")
-        line = f.readline().decode().strip()
-
-    if line != "$MeshFormat":
-        raise ReadError()
-    fmt_version, data_size, is_ascii = _read_header(f)
-
+def read(
+    filename, file_format, sgdim:int, nnodes:int, nelems:int
+) -> None:
     try:
-        reader = _readers[fmt_version]
+        reader = _readers[file_format]
     except KeyError:
-        try:
-            reader = _readers[fmt_version.split(".")[0]]
-        except KeyError:
-            raise ValueError(
-                "Need mesh format in {} (got {})".format(
-                    sorted(_readers.keys()), fmt_version
-                )
+        raise WriteError(
+            "Need mesh format in {} (got {})".format(
+                sorted(_readers.keys()), file_format
             )
-    return reader.read_buffer(f, is_ascii, data_size)
+        )
+
+    return reader.read(filename, sgdim, nnodes, nelems)
+
+
+# def read(filename, **kwargs):
+#     """Reads a Gmsh msh file."""
+#     if is_buffer(filename, 'r'):
+#         mesh = read_buffer(filename, **kwargs)
+#     else:
+#         with open(filename, 'r') as file:
+#             mesh = read_buffer(file, **kwargs)
+#     return mesh
+
+
+# def read_buffer(f, **kwargs):
+#     # The various versions of the format are specified at
+#     # <http://gmsh.info/doc/texinfo/gmsh.html#File-formats>.
+#     line = f.readline().decode().strip()
+
+#     try:
+#         reader = _readers[fmt_version]
+#     except KeyError:
+#         try:
+#             reader = _readers[fmt_version.split(".")[0]]
+#         except KeyError:
+#             raise ValueError(
+#                 "Need mesh format in {} (got {})".format(
+#                     sorted(_readers.keys()), fmt_version
+#                 )
+#             )
+#     return reader.read_buffer(f, is_ascii, data_size)
 
 
 # def merge(
@@ -129,10 +135,14 @@ def write(
 
 
 register_format(
-    "vabs", [".vabs", ".sg"], read,
-    {"vabs": lambda f, m, **kwargs: write(f, m, 'vabs', **kwargs)})
+    "vabs", [".vabs", ".sg"],
+    {"vabs": lambda f, **kwargs: read(f, 'vabs', **kwargs)},
+    {"vabs": lambda f, m, **kwargs: write(f, m, 'vabs', **kwargs)}
+)
 
 register_format(
-    "sc", [".sc", ".sg"], read,
-    {"sc": lambda f, m, **kwargs: write(f, m, 'sc', **kwargs)})
+    "sc", [".sc", ".sg"],
+    {"sc": lambda f, **kwargs: read(f, 'sc', **kwargs)},
+    {"sc": lambda f, m, **kwargs: write(f, m, 'sc', **kwargs)}
+)
 
