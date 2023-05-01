@@ -4,10 +4,10 @@ import traceback
 import math
 import logging
 
-import numpy as np
+# import numpy as np
 
 import sgio.core.sg as mms
-import sgio.core.general as mmg
+# import sgio.core.general as mmg
 import sgio.core.beam as mmbm
 import sgio.core.shell as mmps
 import sgio.core.solid as mmsd
@@ -15,14 +15,14 @@ import sgio.utils.io as utio
 # import sgio.utils.logger as mul
 
 from sgio.core.sg import StructureGene
-from sgio.meshio import CellBlock, Mesh
+# from sgio.meshio import CellBlock, Mesh
 # from sgio.meshio import read
 import sgio.meshio as sm
 
 
 logger = logging.getLogger(__name__)
 
-def read(fn : str, file_format : str, smdim : int, sg : StructureGene = None):
+def read(fn:str, file_format:str, smdim:int, sg:StructureGene=None):
     r"""Read SG input.
 
     Parameters
@@ -47,7 +47,14 @@ def read(fn : str, file_format : str, smdim : int, sg : StructureGene = None):
     return sg
 
 
-def readBuffer(f, file_format : str, smdim : int):
+
+
+
+
+
+
+
+def readBuffer(f, file_format:str, smdim:int):
     r"""
     """
     sg = StructureGene()
@@ -80,16 +87,36 @@ def readBuffer(f, file_format : str, smdim : int):
         elif smdim == 2:
             sg.initial_curvature = configs.get('curvature', [0.0, 0.0])
 
-    nnodes = configs['num_nodes']
-    nelems = configs['num_elements']
+    nnode = configs['num_nodes']
+    nelem = configs['num_elements']
 
     # Read mesh
-    sg.mesh = sm.read(f, file_format, sg.sgdim, nnodes, nelems)
+    sg.mesh = _readMesh(f, file_format, sg.sgdim, nnode, nelem)
+
+    # Read material in-plane angle combinations
+    nma_comb = configs['num_mat_angle3_comb']
+    sg.mocombos = _readMaterialRotationCombinations(f, nma_comb)
+
+    # Read materials
+    nmate = configs['num_materials']
+    sg.materials = _readMaterials(f, file_format, nmate)
 
     return sg
 
 
+
+
+
+
+
+
+
 def _readSGInputHead(f, file_format:str, smdim:int):
+    """
+    """
+
+    logger.debug('reading header...')
+
     configs = {}
     if file_format.startswith('v'):
         head = 3  # at least 3 lines in the head (flag) part
@@ -204,6 +231,169 @@ def _readSGInputHead(f, file_format:str, smdim:int):
                 break
 
     return configs
+
+
+
+
+
+
+
+
+
+def _readMesh(f, file_format:str, sgdim:int, nnode:int, nelem:int):
+    """
+    """
+
+    logger.debug('reading mesh...')
+
+    mesh = sm.read(f, file_format, sgdim, nnode, nelem)
+    return mesh
+
+
+
+
+
+
+
+
+
+def _readMaterialRotationCombinations(file, ncomb):
+    """
+    """
+
+    logger.debug('reading combinations of material and in-plane rotations...')
+
+    combinations = {}
+
+    counter = 0
+    while counter < ncomb:
+        line = file.readline().strip()
+        while line == '':
+            line = file.readline().strip()
+
+        line = line.split()
+        comb_id = int(line[0])
+        mate_id = int(line[1])
+        ip_ratation = float(line[2])
+
+        combinations[comb_id] = [mate_id, ip_ratation]
+
+        counter += 1
+
+    return combinations
+
+
+
+
+
+
+
+
+
+def _readMaterials(file, file_format:str, nmate:int):
+    """
+    """
+
+    logger.debug('reading materials...')
+
+    materials = {}
+
+    counter = 0
+    while counter < nmate:
+        line = file.readline().strip()
+        while line == '':
+            line = file.readline().strip()
+
+        line = line.split()
+
+        # Read material id, isotropy
+        if file_format.lower().startswith('s'):
+            mate_id, isotropy, ntemp = list(map(int, line))
+        elif file_format.lower().startswith('v'):
+            mate_id, isotropy = list(map(int, line))
+            ntemp = 1
+            # material, line = _readMaterial(file, file_format, isotropy)
+
+        material, line = _readMaterial(file, file_format, isotropy, ntemp)
+
+        materials[mate_id] = material
+
+        counter += 1
+
+    return materials
+
+
+
+
+def _readMaterial(file, file_format:str, isotropy:int, ntemp:int=1):
+    """
+    """
+
+    mp = mmsd.MaterialProperty()
+    mp.isotropy = isotropy
+
+    temp_counter = 0
+    while temp_counter < ntemp:
+
+        if file_format.lower().startswith('s'):
+            line = file.readline().strip()
+            while line == '':
+                line = file.readline().strip()
+            line = line.split()
+            temperature, density = list(map(float, line))
+            mp.temperature = temperature
+
+        # Read conductivity properties
+        if file_format.lower().startswith('s'):
+            pass
+
+        # Read elastic properties
+        elastic_props = _readElasticProperty(file, isotropy)
+        mp.setElasticProperty(elastic_props, isotropy)
+
+        if file_format.lower().startswith('v'):
+            line = file.readline().strip()
+            while line == '':
+                line = file.readline().strip()
+            density = float(line)
+
+        mp.density = density
+
+        # Read thermal properties
+
+        temp_counter += 1
+
+    return mp
+
+
+
+
+
+
+
+
+
+def _readElasticProperty(file, isotropy:int):
+    """
+    """
+
+    constants = []
+
+    if isotropy == 0:
+        nrow = 1
+    elif isotropy == 1:
+        nrow = 3
+    elif isotropy == 2:
+        nrow = 6
+
+    for i in range(nrow):
+        line = file.readline().strip()
+        while line == '':
+            line = file.readline().strip()
+        constants.extend(list(map(float, line.split())))
+
+    return constants
+
 
 
 # def _readSGInputMesh(f, file_format:str, nnodes:int, nelems:int, smdim:int, sgdim:int=3):

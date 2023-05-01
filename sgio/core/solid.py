@@ -27,7 +27,7 @@ class MaterialProperty(MaterialSection):
 
         #: int: (continuum model) Isotropy type.
         #: Isotropic (0), orthotropic (1), anisotropic (2).
-        self.anisotropy = None
+        self.isotropy = None
 
         self.e1 = None
         self.e2 = None
@@ -51,14 +51,14 @@ class MaterialProperty(MaterialSection):
     def summary(self):
         stype = 'isotropic'
         sprop = [['e = {0}'.format(self.e1),], ['nu = {0}'.format(self.nu12),]]
-        if self.anisotropy == 1:
+        if self.isotropy == 1:
             stype = 'orthotropic'
             sprop = [
                 ['e1 = {0}'.format(self.e1), 'e2 = {0}'.format(self.e2), 'e3 = {0}'.format(self.e3)],
                 ['g12 = {0}'.format(self.g12), 'g13 = {0}'.format(self.g13), 'g23 = {0}'.format(self.g23)],
                 ['nu12 = {0}'.format(self.nu12), 'nu13 = {0}'.format(self.nu13), 'nu23 = {0}'.format(self.nu23)]
             ]
-        elif self.anisotropy == 2:
+        elif self.isotropy == 2:
             stype = 'anisotropic'
         print('type:', stype)
         print('density =', self.density)
@@ -88,23 +88,23 @@ class MaterialProperty(MaterialSection):
 
     def assignConstants(self, consts):
         if len(consts) == 2:
-            self.anisotropy = 0
+            self.isotropy = 0
             self.e1 = float(consts[0])
             self.nu12 = float(consts[1])
         elif len(consts) == 9:
-            self.anisotropy = 1
+            self.isotropy = 1
             self.e1, self.e2, self.e3 = list(map(float, consts[:3]))
             self.g12, self.g13, self.g23 = list(map(float, consts[3:6]))
             self.nu12, self.nu13, self.nu23 = list(map(float, consts[6:]))
 
 
     def setElasticProperty(self, consts, ctype):
-        if ctype == 'isotropic':
-            self.anisotropy = 0
+        if ctype == 'isotropic' or ctype == 0:
+            self.isotropy = 0
             self.e1 = float(consts[0])
             self.nu12 = float(consts[1])
         elif ctype == 'lamina':
-            self.anisotropy = 1
+            self.isotropy = 1
             self.e1 = float(consts[0])
             self.e2 = float(consts[1])
             self.g12 = float(consts[2])
@@ -114,15 +114,15 @@ class MaterialProperty(MaterialSection):
             self.nu13 = self.nu12
             self.nu23 = 0.3
             self.g23 = self.e3 / (2.0 * (1 + self.nu23))
-        elif ctype == 'engineering':
-            self.anisotropy = 1
+        elif ctype == 'engineering' or ctype == 1:
+            self.isotropy = 1
             self.e1, self.e2, self.e3 = list(map(float, consts[:3]))
             self.g12, self.g13, self.g23 = list(map(float, consts[3:6]))
             self.nu12, self.nu13, self.nu23 = list(map(float, consts[6:]))
         elif ctype == 'orthotropic':
-            self.anisotropy = 1
-        elif ctype == 'anisotropic':
-            self.anisotropy = 1
+            self.isotropy = 1
+        elif ctype == 'anisotropic' or ctype == 2:
+            self.isotropy = 2
 
         return
 

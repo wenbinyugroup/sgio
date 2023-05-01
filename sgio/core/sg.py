@@ -215,6 +215,11 @@ class StructureGene(object):
 
 
     @property
+    def nma_combs(self):
+        return len(self.mocombos)
+
+
+    @property
     def nmates(self):
         return len(self.materials)
 
