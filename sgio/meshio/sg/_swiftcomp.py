@@ -27,17 +27,19 @@ from .common import (
 # c_int = np.dtype("i")
 # c_double = np.dtype("d")
 
-def read(filename, sgdim:int, nnodes:int, nelems:int):
+def read(filename, sgdim:int, nnode:int, nelem:int, read_local_frame):
     """Reads a Gmsh msh file."""
     if is_buffer(filename, 'r'):
-        mesh = read_buffer(filename, sgdim, nnodes, nelems)
+        mesh = read_buffer(filename, sgdim, nnode, nelem, read_local_frame)
     else:
         with open(filename, 'r') as file:
-            mesh = read_buffer(file, sgdim, nnodes, nelems)
+            mesh = read_buffer(file, sgdim, nnode, nelem, read_local_frame)
     return mesh
 
 
-def read_buffer(f, sgdim:int, nnodes:int, nelems:int):
+
+
+def read_buffer(f, sgdim:int, nnode:int, nelem:int, read_local_frame):
     """
     """
     # Initialize the optional data fields
@@ -53,26 +55,27 @@ def read_buffer(f, sgdim:int, nnodes:int, nelems:int):
     point_data = {}
     point_ids = None
 
-    # while True:
+    # Read nodes
+    points, point_ids, line = _read_nodes(f, nnode, sgdim)
 
-    #     if line == '':
-    #         line = f.readline()
-    #         continue
-
-    points, point_ids, line = _read_nodes(f, nnodes, sgdim)
-
-    cells_dict, prop_ids, ids, line = _read_elements(f, nelems, point_ids)
-    cell_type_to_id = {}
-    for _cell_type, _cell_points in cells_dict.items():
-        cells.append(CellBlock(_cell_type, _cell_points))
-        cell_type_to_id[_cell_type] = len(cells) - 1
+    # Read elements
+    cells, prop_ids, cell_ids, line = _read_elements(f, nelem, point_ids)
+    # cell_type_to_id = {}
+    # for _cell_type, _cell_points in cells_dict.items():
+    #     cells.append(CellBlock(_cell_type, _cell_points))
+    #     cell_type_to_id[_cell_type] = len(cells) - 1
 
     _cd = []
     for _cb in cells:
-        _ct = _cb.type
+        _ct = _cb[0]
         _cd.append(prop_ids[_ct])
     # cell_data['property'] = np.array(_cd)
-    cell_data['gmsh:physical'] = np.array(_cd)
+    cell_data['property_id'] = np.array(_cd)
+
+    if read_local_frame:
+        # Read local coordinate system for sectional properties
+        cell_csys = _read_property_ref_csys(f, nelem, cells, cell_ids)
+        cell_data['property_ref_csys'] = np.asarray(cell_csys)
 
     return Mesh(
         points,
@@ -85,17 +88,19 @@ def read_buffer(f, sgdim:int, nnodes:int, nelems:int):
     )
 
 
-def _read_elements(f, nelems:int, point_ids):
-    cells = {}
+
+
+def _read_elements(f, nelem:int, point_ids):
+    cells = []
+    cell_type_to_index = {}
     prop_ids = {}  # property id for each element; will update cell_data (swiftcomp)
     cell_ids = {}
     counter = 0
-    while counter < nelems:
-        line = f.readline()
-        if line.strip() == "":
-            continue
+    while counter < nelem:
+        line = f.readline().strip()
+        if line == "": continue
 
-        line = line.strip().split()
+        line = line.split()
         # if file_format.lower().startswith('v'):
         #     cell_id, node_ids = line[0], line[1:]
         # elif file_format.lower().startswith('s'):
@@ -128,19 +133,65 @@ def _read_elements(f, nelems:int, point_ids):
                 cell_type = {8: 'hexahedron', 20: 'hexahedron20'}[len(node_ids)]
 
 
-        if not cell_type in cells.keys():
-            cells[cell_type] = []
-            cell_ids[cell_type] = {}
+        if not cell_type in cell_type_to_index.keys():
+            # cells[cell_type] = []
+            cells.append([cell_type, []])
+            cell_type_to_index[cell_type] = len(cells) - 1
+            # cell_ids[cell_type] = {}
             prop_ids[cell_type] = []
 
-        cells[cell_type].append([point_ids[_i] for _i in node_ids])
-        cell_ids[cell_type][int(cell_id)] = len(cell_ids[cell_type]) - 1
+        cells[cell_type_to_index[cell_type]][1].append([point_ids[_i] for _i in node_ids])
+        cell_ids[int(cell_id)] = (
+            cell_type_to_index[cell_type],
+            len(cells[cell_type_to_index[cell_type]][1])-1
+        )
         # if file_format.lower().startswith('s'):
         prop_ids[cell_type].append(int(prop_id))
 
         counter += 1
 
     return cells, prop_ids, cell_ids, line
+
+
+
+
+
+
+
+
+
+def _read_property_ref_csys(file, nelem, cells, cell_ids):
+    """
+    """
+
+    cell_csys = []
+    # print(cells)
+    # print(cell_ids)
+
+    counter = 0
+    while counter < nelem:
+        line = file.readline().strip()
+        if line == "": continue
+
+        line = line.split()
+
+        elem_id = int(line[0])
+        elem_csys = list(map(float, line[1:]))
+
+        cell_block_id, cell_id = cell_ids[elem_id]
+
+        if cell_block_id > len(cell_csys) - 1:
+            _ncell = len(cells[cell_block_id][1])
+            print('_ncell =', _ncell)
+            cell_csys.append(np.zeros((_ncell, 9)))
+
+        # print(cell_csys[cell_block_id][cell_id])
+
+        cell_csys[cell_block_id][cell_id] = elem_csys
+
+        counter += 1
+
+    return cell_csys
 
 
 
@@ -205,7 +256,14 @@ def write_buffer(file, mesh, sgdim, int_fmt='8d', float_fmt="20.9e"):
     #     _write_physical_names(fh, mesh.field_data)
 
     _write_nodes(file, mesh.points, sgdim, int_fmt, float_fmt)
-    _write_elements(file, mesh.cells, mesh.cell_data['property_id'], int_fmt)
+    cell_id_to_elem_id = _write_elements(file, mesh.cells, mesh.cell_data['property_id'], int_fmt)
+    if 'property_ref_csys' in mesh.cell_data.keys():
+        _write_property_ref_csys(
+            file,
+            mesh.cell_data['property_ref_csys'],
+            cell_id_to_elem_id,
+            int_fmt, float_fmt
+        )
     # if mesh.gmsh_periodic is not None:
     #     _write_periodic(fh, mesh.gmsh_periodic, float_fmt)
 
@@ -241,12 +299,16 @@ def write_buffer(file, mesh, sgdim, int_fmt='8d', float_fmt="20.9e"):
 def _write_elements(f, cells, cell_prop_ids, int_fmt:str='8d'):
     """
     """
+    cell_id_to_elem_id = []
+
     sfi = '{:' + int_fmt + '}'
 
     consecutive_index = 0
     for k, cell_block in enumerate(cells):
         cell_type = cell_block.type
         node_idcs = _meshio_to_sg_order(cell_type, cell_block.data)
+
+        _cid_to_eid = []
 
         for i, c in enumerate(node_idcs):
             _eid = consecutive_index + i + 1
@@ -265,7 +327,35 @@ def _write_elements(f, cells, cell_prop_ids, int_fmt:str='8d'):
                 f.write('  # element connectivity')
             f.write('\n')
 
+            _cid_to_eid.append(_eid)
+
+        cell_id_to_elem_id.append(_cid_to_eid)
+
         consecutive_index += len(node_idcs)
 
     f.write('\n')
+    return cell_id_to_elem_id
+
+
+
+
+def _write_property_ref_csys(file, cell_csys, cell_id_to_elem_id, int_fmt:str='8d', float_fmt:str='20.12e'):
+    """
+    """
+
+    sfi = '{:' + int_fmt + '}'
+    sff = ''.join(['{:' + float_fmt + '}', ]*9)
+
+    for i, block_data in enumerate(cell_csys):
+        for j, csys in enumerate(block_data):
+            elem_id = cell_id_to_elem_id[i][j]
+
+            file.write(sfi.format(elem_id))
+            file.write(sff.format(*csys))
+            file.write('\n')
+
+    file.write('\n')
     return
+
+
+

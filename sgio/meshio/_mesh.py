@@ -126,7 +126,7 @@ class Mesh:
     def __init__(
         self,
         points: ArrayLike,
-        cells: dict[str, ArrayLike] | list[tuple[str, ArrayLike] | CellBlock],
+        cells: dict[str, ArrayLike] | list[tuple[str, ArrayLike] | CellBlock] | list[list[str, ArrayLike] | CellBlock],
         point_data: dict[str, ArrayLike] | None = None,
         cell_data: dict[str, list[ArrayLike]] | None = None,
         field_data=None,
@@ -165,7 +165,7 @@ class Mesh:
         """
 
         for cell_block in cells:
-            if isinstance(cell_block, tuple):
+            if isinstance(cell_block, tuple) or isinstance(cell_block, list):
                 cell_type, data = cell_block
                 cell_block = CellBlock(
                     cell_type,

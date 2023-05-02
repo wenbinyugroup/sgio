@@ -178,7 +178,9 @@ def _meshio_to_sg_order(cell_type:str, idx:ArrayLike):
 
 def _write_nodes(f, points, sgdim, int_fmt:str='8d', float_fmt:str='20.9e'):
     sfi = '{:' + int_fmt + '}'
-    sff = '{:' + float_fmt + '}'
+    sff = ''.join(['{:' + float_fmt + '}', ]*sgdim)
+    # print('sff =', sff)
+    # sff = ''.join([sff]*sgdim)
     # count = 0
     # nnode = len(self.nodes)
     # for nid, ncoord in self.nodes.items():
@@ -187,7 +189,7 @@ def _write_nodes(f, points, sgdim, int_fmt:str='8d', float_fmt:str='20.9e'):
         nid = i + 1
         f.write(sfi.format(nid))
 
-        sff = ''.join([sff]*sgdim)
+        # print(ncoord[-sgdim:])
         f.write(sff.format(*ncoord[-sgdim:]))
         # if sgdim == 1:
         #     sui.writeFormatFloats(f, ncoord[2:], fmt=sff, newline=False)

@@ -71,18 +71,18 @@ class MaterialSection(object):
         #: Keys: `e1`, `e2`, `e3`, `nu12`, `nu13`, `nu23`, `g12`, `g13`, `g23`
         self.constants = {}
         #: list of lists of floats: Stiffness matrix.
-        self.stiffness = None
         self.stff = None
+        # self.stiffness = None
         #: list of lists floats: Compliance matrix.
-        self.compliance = None
         self.cmpl = None
+        # self.compliance = None
 
         #: list of lists of floats:
         #: (beam/plate/shell models) Refined stiffness matrix
-        self.stiffness_refined = None
+        # self.stiffness_refined = None
         #: list of lists of floats:
         #: (beam/plate/shell models) Refined compliance matrix
-        self.compliance_refined = None
+        # self.compliance_refined = None
 
         #: list of floats: Mass center. [x1, x2, x3]
         self.mass_center = None
@@ -115,7 +115,7 @@ class MaterialSection(object):
         #     'constants': []
         # }
 
-    def __str__(self):
+    def __repr__(self):
         s = '\n'
         s = s + 'Effective properties of the SG\n'
         s = s + 'Structure model dimension: {0}\n'.format(self.smdim)

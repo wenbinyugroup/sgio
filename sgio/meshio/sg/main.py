@@ -20,7 +20,7 @@ _writers = {"vabs": _vabs, "swiftcomp": _swiftcomp, "sc": _swiftcomp}
 
 
 def read(
-    filename, file_format, sgdim:int, nnodes:int, nelems:int
+    filename, file_format, sgdim:int, nnode:int, nelem:int, read_local_frame
 ) -> None:
     try:
         reader = _readers[file_format]
@@ -31,7 +31,7 @@ def read(
             )
         )
 
-    return reader.read(filename, sgdim, nnodes, nelems)
+    return reader.read(filename, sgdim, nnode, nelem, read_local_frame)
 
 
 # def read(filename, **kwargs):
@@ -136,13 +136,13 @@ def write(
 
 register_format(
     "vabs", [".vabs", ".sg"],
-    {"vabs": lambda f, **kwargs: read(f, 'vabs', **kwargs)},
+    lambda f, **kwargs: read(f, 'vabs', **kwargs),
     {"vabs": lambda f, m, **kwargs: write(f, m, 'vabs', **kwargs)}
 )
 
 register_format(
     "sc", [".sc", ".sg"],
-    {"sc": lambda f, **kwargs: read(f, 'sc', **kwargs)},
+    lambda f, **kwargs: read(f, 'sc', **kwargs),
     {"sc": lambda f, m, **kwargs: write(f, m, 'sc', **kwargs)}
 )
 

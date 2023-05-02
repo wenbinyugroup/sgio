@@ -11,7 +11,7 @@ import sgio.core.sg as mms
 import sgio.core.beam as mmbm
 import sgio.core.shell as mmps
 import sgio.core.solid as mmsd
-import sgio.utils.io as utio
+import sgio.utils.io as sui
 # import sgio.utils.logger as mul
 
 from sgio.core.sg import StructureGene
@@ -60,19 +60,8 @@ def readBuffer(f, file_format:str, format_version:str, smdim:int):
     sg = StructureGene()
     sg.smdim = smdim
 
-    # line = f.readline()
-
-    # while True:
-    #     if not line:  # EOF
-    #         break
-
-    #     line = line.strip()
-    #     if line == '':
-    #         line = f.readline()
-    #         continue
-
     # Read head
-    configs = _readSGInputHead(f, file_format, format_version, smdim)
+    configs = _readHeader(f, file_format, format_version, smdim)
     sg.sgdim = configs['sgdim']
     sg.physics = configs['physics']
     sg.do_dampling = configs.get('do_damping', 0)
@@ -91,7 +80,7 @@ def readBuffer(f, file_format:str, format_version:str, smdim:int):
     nelem = configs['num_elements']
 
     # Read mesh
-    sg.mesh = _readMesh(f, file_format, sg.sgdim, nnode, nelem)
+    sg.mesh = _readMesh(f, file_format, sg.sgdim, nnode, nelem, sg.use_elem_local_orient)
 
     # Read material in-plane angle combinations
     nma_comb = configs['num_mat_angle3_comb']
@@ -111,124 +100,86 @@ def readBuffer(f, file_format:str, format_version:str, smdim:int):
 
 
 
-def _readSGInputHead(file, file_format:str, format_version:str, smdim:int):
+def _readHeader(file, file_format:str, format_version:str, smdim:int):
     """
     """
 
     logger.debug('reading header...')
 
     configs = {}
-    if file_format.startswith('v'):
-        head = 3  # at least 3 lines in the head (flag) part
-        count = 0
-        configs['sgdim'] = 2
-        while True:
-            line = file.readline().strip()
-            if line == '':  continue
 
-            count += 1
-            line = line.split()
-            if count == 1:
-                # format_flag  nlayer
-                configs['format'] = int(line[0])
-                configs['num_mat_angle3_comb'] = int(line[1])
-                continue
-            elif count == 2:
-                # timoshenko_flag  recover_flag  thermal_flag
-                configs['model'] = int(line[0])
-                configs['do_damping'] = int(line[1])
-                configs['physics'] = 1 if int(line[2]) > 0 else 0
-                continue
-            elif count == 3:
-                # curve_flag  oblique_flag  trapeze_flag  vlasov_flag
-                # line = list(map(int, line))
-                # flag_curve = line[0]
-                # flag_oblique = line[1]
-                configs['is_curve'] = int(line[0])
-                configs['is_oblique'] = int(line[1])
-                configs['model'] = 3 if line[2] == '1' else configs['model']  # trapeze
-                configs['model'] = 2 if line[3] == '1' else configs['model']  # vlasov
-                # if line[2] == 1:
-                #     sg.model = 3  # trapeze effect
-                # if line[3] == 1:
-                #     sg.model = 2  # Vlasov model
-                if configs['is_curved'] == 1:
-                    head += 1  # extra line in the head
-                if configs['is_oblique'] == 1:
-                    head += 1  # extra line in the head
-                continue
-            elif configs['is_curve'] != 0 and count <= head:
-                configs['curvature'] = list(map(float, line))  # k1, k2, k3
-                continue
-            elif configs['is_oblique'] and count <= head:
-                configs['oblique'] = list(map(float, line))  # cos11, cos21
-                continue
-            elif count == (head + 1):
-                # nnode  nelem  nmate
-                # line = list(map(int, line))
-                configs['num_nodes'] = int(line[0])
-                configs['num_elements'] = int(line[1])
-                configs['num_materials'] = int(line[2])
-                break
-
-    elif file_format.startswith('s'):
-        head = 2  # at least 3 lines in the head (flag) part
+    if file_format.lower().startswith('s'):
         if smdim == 1:
-            head += 3
+            line = sui.readNextNonEmptyLine(file)
+            configs['model'] = int(line.split()[0])
+            line = sui.readNextNonEmptyLine(file)
+            configs['curvature'] = list(map(float, line.split()[:3]))
+            line = sui.readNextNonEmptyLine(file)
+            configs['oblique'] = list(map(float, line.split()[:2]))
         elif smdim == 2:
-            head += 2
-        count = 0
-        while True:
-            line = file.readline().strip()
-            if line == '':  continue
+            line = sui.readNextNonEmptyLine(file)
+            configs['model'] = int(line.split()[0])
+            line = sui.readNextNonEmptyLine(file)
+            configs['curvature'] = list(map(float, line.split()[:2]))
+            if format_version >= '2.2':
+                line = sui.readNextNonEmptyLine(file)
+                configs['lame'] = list(map(float, line.split()[:2]))
 
-            count += 1
+        line = sui.readNextNonEmptyLine(file)
+        line = line.split()
+        configs['physics'] = int(line[0])
+        configs['ndim_degen_elem'] = int(line[1])
+        configs['use_elem_local_orient'] = int(line[2])
+        configs['is_temp_nonuniform'] = int(line[3])
+        if format_version >= '2.2':
+            configs['force_flag'] = int(line[4])
+            configs['steer_flag'] = int(line[5])
+
+        line = sui.readNextNonEmptyLine(file)
+        line = line.split()
+        configs['sgdim'] = int(line[0])
+        configs['num_nodes'] = int(line[1])
+        configs['num_elements'] = int(line[2])
+        configs['num_materials'] = int(line[3])
+        configs['num_slavenodes'] = int(line[4])
+        configs['num_mat_angle3_comb'] = int(line[5])
+
+    elif file_format.lower().startswith('v'):
+        configs['sgdim'] = 2
+
+        line = sui.readNextNonEmptyLine(file)
+        line = line.split()
+        configs['format'] = int(line[0])
+        configs['num_mat_angle3_comb'] = int(line[1])
+
+        line = sui.readNextNonEmptyLine(file)
+        line = line.split()
+        configs['model'] = int(line[0])
+        configs['do_damping'] = int(line[1])
+        configs['physics'] = 1 if int(line[2]) > 0 else 0
+
+        line = sui.readNextNonEmptyLine(file)
+        line = line.split()
+        configs['is_curve'] = int(line[0])
+        configs['is_oblique'] = int(line[1])
+        configs['model'] = 3 if line[2] == '1' else configs['model']  # trapeze
+        configs['model'] = 2 if line[3] == '1' else configs['model']  # vlasov
+
+        if configs['is_curve'] == 1:
+            line = sui.readNextNonEmptyLine(file)
             line = line.split()
+            configs['curvature'] = list(map(float, line[:3]))
 
-            if smdim == 1:
-                if count == 1:  # model
-                    configs['model'] = int(line[0])
-                    continue
-                elif count == 2:  # initial twist/curvatures
-                    line = list(map(float, line))
-                    configs['curvature'] = list(map(float, line))
-                    # sg.initial_twist = line[0]
-                    # sg.initial_curvature = [line[1], line[2]]
-                    continue
-                elif count == 3:  # oblique
-                    # line = list(map(float, line))
-                    configs['oblique'] = list(map(float, line))
-                    continue
-            elif smdim == 2:
-                if count == 1:  # model
-                    # line = list(map(int, line))
-                    configs['model'] = int(line[0])
-                    continue
-                elif count == 2:
-                    # initial twist/curvature
-                    # line = list(map(float, line))
-                    configs['curvature'] = list(map(float, line))
-                    continue
+        if configs['is_oblique'] == 1:
+            line = sui.readNextNonEmptyLine(file)
+            line = line.split()
+            configs['oblique'] = list(map(float, line[:2]))
 
-            if count == (head - 1):
-                # analysis  elem_flag  trans_flag  temp_flag
-                # line = list(map(int, line))
-                configs['physics'] = int(line[0])
-                configs['ndim_degen_elem'] = int(line[1])
-                configs['use_elem_local_orient'] = int(line[2])
-                configs['is_temp_nonuniform'] = line[3]
-                continue
-            elif count == head:
-                # nsg  nnode  nelem  nmate  nslave  nlayer
-                line = list(map(int, line))
-                # print('line =', line)
-                configs['sgdim'] = int(line[0])
-                configs['num_nodes'] = int(line[1])
-                configs['num_elements'] = int(line[2])
-                configs['num_materials'] = int(line[3])
-                configs['num_slavenodes'] = int(line[4])
-                configs['num_mat_angle3_comb'] = int(line[5])
-                break
+        line = sui.readNextNonEmptyLine(file)
+        line = line.split()
+        configs['num_nodes'] = int(line[0])
+        configs['num_elements'] = int(line[1])
+        configs['num_materials'] = int(line[2])
 
     return configs
 
@@ -240,13 +191,146 @@ def _readSGInputHead(file, file_format:str, format_version:str, smdim:int):
 
 
 
-def _readMesh(file, file_format:str, sgdim:int, nnode:int, nelem:int):
+# def _readSGInputHead(file, file_format:str, format_version:str, smdim:int):
+#     """
+#     """
+
+#     logger.debug('reading header...')
+
+#     configs = {}
+#     if file_format.startswith('v'):
+#         head = 3  # at least 3 lines in the head (flag) part
+#         count = 0
+#         configs['sgdim'] = 2
+#         while True:
+#             line = file.readline().strip()
+#             if line == '':  continue
+
+#             count += 1
+#             line = line.split()
+#             if count == 1:
+#                 # format_flag  nlayer
+#                 configs['format'] = int(line[0])
+#                 configs['num_mat_angle3_comb'] = int(line[1])
+#                 continue
+#             elif count == 2:
+#                 # timoshenko_flag  recover_flag  thermal_flag
+#                 configs['model'] = int(line[0])
+#                 configs['do_damping'] = int(line[1])
+#                 configs['physics'] = 1 if int(line[2]) > 0 else 0
+#                 continue
+#             elif count == 3:
+#                 # curve_flag  oblique_flag  trapeze_flag  vlasov_flag
+#                 # line = list(map(int, line))
+#                 # flag_curve = line[0]
+#                 # flag_oblique = line[1]
+#                 configs['is_curve'] = int(line[0])
+#                 configs['is_oblique'] = int(line[1])
+#                 configs['model'] = 3 if line[2] == '1' else configs['model']  # trapeze
+#                 configs['model'] = 2 if line[3] == '1' else configs['model']  # vlasov
+#                 # if line[2] == 1:
+#                 #     sg.model = 3  # trapeze effect
+#                 # if line[3] == 1:
+#                 #     sg.model = 2  # Vlasov model
+#                 if configs['is_curved'] == 1:
+#                     head += 1  # extra line in the head
+#                 if configs['is_oblique'] == 1:
+#                     head += 1  # extra line in the head
+#                 continue
+#             elif configs['is_curve'] != 0 and count <= head:
+#                 configs['curvature'] = list(map(float, line))  # k1, k2, k3
+#                 continue
+#             elif configs['is_oblique'] and count <= head:
+#                 configs['oblique'] = list(map(float, line))  # cos11, cos21
+#                 continue
+#             elif count == (head + 1):
+#                 # nnode  nelem  nmate
+#                 # line = list(map(int, line))
+#                 configs['num_nodes'] = int(line[0])
+#                 configs['num_elements'] = int(line[1])
+#                 configs['num_materials'] = int(line[2])
+#                 break
+
+#     elif file_format.startswith('s'):
+#         head = 2  # at least 3 lines in the head (flag) part
+#         if smdim == 1:
+#             head += 3
+#         elif smdim == 2:
+#             head += 2
+#         count = 0
+#         while True:
+#             line = file.readline().strip()
+#             if line == '':  continue
+
+#             count += 1
+#             line = line.split()
+
+#             if smdim == 1:
+#                 if count == 1:  # model
+#                     configs['model'] = int(line[0])
+#                     continue
+#                 elif count == 2:  # initial twist/curvatures
+#                     line = list(map(float, line))
+#                     configs['curvature'] = list(map(float, line))
+#                     # sg.initial_twist = line[0]
+#                     # sg.initial_curvature = [line[1], line[2]]
+#                     continue
+#                 elif count == 3:  # oblique
+#                     # line = list(map(float, line))
+#                     configs['oblique'] = list(map(float, line))
+#                     continue
+#             elif smdim == 2:
+#                 if count == 1:  # model
+#                     # line = list(map(int, line))
+#                     configs['model'] = int(line[0])
+#                     continue
+#                 elif count == 2:
+#                     # initial twist/curvature
+#                     # line = list(map(float, line))
+#                     configs['curvature'] = list(map(float, line))
+#                     continue
+
+#             if count == (head - 1):
+#                 # analysis  elem_flag  trans_flag  temp_flag
+#                 # line = list(map(int, line))
+#                 configs['physics'] = int(line[0])
+#                 configs['ndim_degen_elem'] = int(line[1])
+#                 configs['use_elem_local_orient'] = int(line[2])
+#                 configs['is_temp_nonuniform'] = line[3]
+#                 continue
+#             elif count == head:
+#                 # nsg  nnode  nelem  nmate  nslave  nlayer
+#                 line = list(map(int, line))
+#                 # print('line =', line)
+#                 configs['sgdim'] = int(line[0])
+#                 configs['num_nodes'] = int(line[1])
+#                 configs['num_elements'] = int(line[2])
+#                 configs['num_materials'] = int(line[3])
+#                 configs['num_slavenodes'] = int(line[4])
+#                 configs['num_mat_angle3_comb'] = int(line[5])
+#                 break
+
+#     return configs
+
+
+
+
+
+
+
+
+
+def _readMesh(file, file_format:str, sgdim:int, nnode:int, nelem:int, read_local_frame):
     """
     """
 
     logger.debug('reading mesh...')
 
-    mesh = sm.read(file, file_format, sgdim, nnode, nelem)
+    mesh = sm.read(
+        file, file_format,
+        sgdim=sgdim, nnode=nnode, nelem=nelem, read_local_frame=read_local_frame
+    )
+
     return mesh
 
 
@@ -314,7 +398,7 @@ def _readMaterials(file, file_format:str, nmate:int):
             ntemp = 1
             # material, line = _readMaterial(file, file_format, isotropy)
 
-        material, line = _readMaterial(file, file_format, isotropy, ntemp)
+        material = _readMaterial(file, file_format, isotropy, ntemp)
 
         materials[mate_id] = material
 
@@ -961,11 +1045,11 @@ def readVABSOutHomo(fn, scrnout=True):
 
 
     ln = keywordsIndex['mass']
-    bp.mass = utio.textToMatrix(linesRead[ln + 2:ln + 8])
+    bp.mass = sui.textToMatrix(linesRead[ln + 2:ln + 8])
 
     if 'mass_mc' in keywordsIndex.keys():
         ln = keywordsIndex['mass_mc']
-        bp.mass_cs = utio.textToMatrix(linesRead[ln + 2:ln + 8])
+        bp.mass_cs = sui.textToMatrix(linesRead[ln + 2:ln + 8])
 
     #check whether the analysis is Vlasov or timoshenko
     #Read stiffness matrix and compliance matrix
@@ -1028,7 +1112,7 @@ def readVABSOutHomo(fn, scrnout=True):
     else:
         try:
             ln = keywordsIndex['csm']
-            bp.stff = utio.textToMatrix(linesRead[ln + 2:ln + 6])
+            bp.stff = sui.textToMatrix(linesRead[ln + 2:ln + 6])
             #old dic method to save classical stiffness
             # sm.eff_props[1]['stiffness']['classical'] = utl.textToMatrix(linesRead[ln + 3:ln + 7])
         except KeyError:
@@ -1039,7 +1123,7 @@ def readVABSOutHomo(fn, scrnout=True):
 
         try:
             ln = keywordsIndex['cfm']
-            bp.cmpl = utio.textToMatrix(linesRead[ln + 2:ln + 6])
+            bp.cmpl = sui.textToMatrix(linesRead[ln + 2:ln + 6])
             #old dic method to save classical compliance
             # sm.eff_props[1]['compliance']['classical'] = utl.textToMatrix(linesRead[ln + 3:ln + 7])
         except KeyError:
@@ -1050,7 +1134,7 @@ def readVABSOutHomo(fn, scrnout=True):
 
         try:
             ln = keywordsIndex['tsm']
-            bp.stff_t = utio.textToMatrix(linesRead[ln + 2:ln + 8])
+            bp.stff_t = sui.textToMatrix(linesRead[ln + 2:ln + 8])
             #old dic method to save refined stiffness matrix
             # sm.eff_props[1]['stiffness']['refined'] = utl.textToMatrix(linesRead[ln + 3:ln + 9])
         except KeyError:
@@ -1060,7 +1144,7 @@ def readVABSOutHomo(fn, scrnout=True):
                 pass
         try:
             ln = keywordsIndex['tfm']
-            bp.cmpl_t = utio.textToMatrix(linesRead[ln + 2:ln + 8])
+            bp.cmpl_t = sui.textToMatrix(linesRead[ln + 2:ln + 8])
             #old dic method to save refined compliance matrix
             # sm.eff_props[1]['compliance']['refined'] = utl.textToMatrix(linesRead[ln + 3:ln + 9])
         except KeyError:
@@ -1520,7 +1604,7 @@ def readSCOutBeamProperty(fn, scrnout=True):
 
 
     ln = keywordsIndex['mass']
-    bp.mass = utio.textToMatrix(linesRead[ln + 2:ln + 8])
+    bp.mass = sui.textToMatrix(linesRead[ln + 2:ln + 8])
 
     #check whether the analysis is Vlasov or timoshenko
     #Read stiffness matrix and compliance matrix
@@ -1530,7 +1614,7 @@ def readSCOutBeamProperty(fn, scrnout=True):
     else:
         try:
             ln = keywordsIndex['csm']
-            bp.stff = utio.textToMatrix(linesRead[ln + 2:ln + 6])
+            bp.stff = sui.textToMatrix(linesRead[ln + 2:ln + 6])
         except KeyError:
             if scrnout:
                 print('No classical stiffness matrix found.')
@@ -1539,7 +1623,7 @@ def readSCOutBeamProperty(fn, scrnout=True):
 
         try:
             ln = keywordsIndex['cfm']
-            bp.cmpl = utio.textToMatrix(linesRead[ln + 2:ln + 6])
+            bp.cmpl = sui.textToMatrix(linesRead[ln + 2:ln + 6])
         except KeyError:
             if scrnout:
                 print('No classical flexibility matrix found.')
@@ -1548,7 +1632,7 @@ def readSCOutBeamProperty(fn, scrnout=True):
 
         try:
             ln = keywordsIndex['tsm']
-            bp.stff_t = utio.textToMatrix(linesRead[ln + 2:ln + 8])
+            bp.stff_t = sui.textToMatrix(linesRead[ln + 2:ln + 8])
         except KeyError:
             if scrnout:
                 print('No Timoshenko stiffness matrix found.')
@@ -1556,7 +1640,7 @@ def readSCOutBeamProperty(fn, scrnout=True):
                 pass
         try:
             ln = keywordsIndex['tfm']
-            bp.cmpl_t = utio.textToMatrix(linesRead[ln + 2:ln + 8])
+            bp.cmpl_t = sui.textToMatrix(linesRead[ln + 2:ln + 8])
         except KeyError:
             if scrnout:
                 print('No Timoshenko flexibility matrix found.')
@@ -1684,7 +1768,7 @@ def readSCOutShellProperty(fn, scrnout=True):
 
     try:
         ln = keywordsIndex['mass']
-        sp.mass = utio.textToMatrix(linesRead[ln + 2:ln + 8])
+        sp.mass = sui.textToMatrix(linesRead[ln + 2:ln + 8])
     except KeyError:
         if scrnout:
             print('No mass matrix found.')
@@ -1693,7 +1777,7 @@ def readSCOutShellProperty(fn, scrnout=True):
 
     try:
         ln = keywordsIndex['stff']
-        sp.stff = utio.textToMatrix(linesRead[ln + 2:ln + 8])
+        sp.stff = sui.textToMatrix(linesRead[ln + 2:ln + 8])
     except KeyError:
         if scrnout:
             print('No classical stiffness matrix found.')
@@ -1702,7 +1786,7 @@ def readSCOutShellProperty(fn, scrnout=True):
 
     try:
         ln = keywordsIndex['cmpl']
-        sp.cmpl = utio.textToMatrix(linesRead[ln + 2:ln + 8])
+        sp.cmpl = sui.textToMatrix(linesRead[ln + 2:ln + 8])
     except KeyError:
         if scrnout:
             print('No classical flexibility matrix found.')
@@ -1711,7 +1795,7 @@ def readSCOutShellProperty(fn, scrnout=True):
 
     try:
         ln = keywordsIndex['geo_to_stff']
-        sp.geo_correction_stff = utio.textToMatrix(linesRead[ln + 2:ln + 8])
+        sp.geo_correction_stff = sui.textToMatrix(linesRead[ln + 2:ln + 8])
     except KeyError:
         if scrnout:
             print('No geometric correction matrix found.')
@@ -1720,7 +1804,7 @@ def readSCOutShellProperty(fn, scrnout=True):
 
     try:
         ln = keywordsIndex['stff_geo']
-        sp.stff_geo = utio.textToMatrix(linesRead[ln + 2:ln + 8])
+        sp.stff_geo = sui.textToMatrix(linesRead[ln + 2:ln + 8])
     except KeyError:
         if scrnout:
             print('No geometric corrected stiffness matrix found.')
@@ -1802,7 +1886,7 @@ def readSCOutMaterialProperty(fn, scrnout=True):
 
     try:
         ln = keywordsIndex['stff']
-        mp.stff = utio.textToMatrix(linesRead[ln + 2:ln + 8])
+        mp.stff = sui.textToMatrix(linesRead[ln + 2:ln + 8])
     except KeyError:
         if scrnout:
             print('No classical stiffness matrix found.')
@@ -1811,7 +1895,7 @@ def readSCOutMaterialProperty(fn, scrnout=True):
 
     try:
         ln = keywordsIndex['cmpl']
-        mp.cmpl = utio.textToMatrix(linesRead[ln + 2:ln + 8])
+        mp.cmpl = sui.textToMatrix(linesRead[ln + 2:ln + 8])
     except KeyError:
         if scrnout:
             print('No classical flexibility matrix found.')

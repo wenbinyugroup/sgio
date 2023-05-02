@@ -227,11 +227,11 @@ class StructureGene(object):
     def __repr__(self):
         lines = [
             '',
+            '='*40,
             'SUMMARY OF THE SG',
-            '=================',
             ''
-            'Analysis',
-            '--------',
+            '-'*30,
+            'ANALYSIS',
             'Structure gene: {}D -> model: {}D'.format(self.sgdim, self.smdim),
             'Physics: {}'.format(self.physics),
             '',
@@ -244,8 +244,8 @@ class StructureGene(object):
             lines.append('')
 
         lines += [
-            'Mesh',
-            '----',
+            '-'*30,
+            'MESH',
             'Number of nodes: {}'.format(self.nnodes),
             'Number of elements: {}'.format(self.nelems),
             str(self.mesh),
@@ -253,13 +253,13 @@ class StructureGene(object):
         ]
 
         lines += [
-            'Materials',
-            '---------',
+            '-'*30,
+            'MATERIALS',
             'Number of materials: {}'.format(self.nmates),
             '',
         ]
 
-        lines += ['END OF SUMMARY', '']
+        lines += ['END OF SUMMARY', '='*40, '']
         # print('')
         # print('SUMMARY OF THE SG')
         # print('')
@@ -337,6 +337,109 @@ class StructureGene(object):
             if (self.materials[mo[0]].name == name) and (mo[1] == angle):
                 return i
         return 0
+    
+
+
+
+
+
+
+
+
+    def write(
+        self, fn, solver, analysis='h', sg_fmt=1, sfi='8d', sff='20.12e', version=None
+        ):
+        """Write analysis input
+
+        Parameters
+        ----------
+        fn : str
+            Name of the input file
+        solver : {'vabs' (or 'v'), 'swfitcomp' (or 'sc', 's')}
+            Solver of the analysis
+        analysis : {0, 1, 2, 3, '', 'h', 'dn', 'dl', 'd', 'l', 'fi'}, optional
+            Analysis type, by default 'h'
+        sg_fmt : {0, 1}, optional
+            Format for the VABS input, by default 1
+
+        Returns
+        -------
+        str
+            Name of the input file
+        """
+
+
+        # string format
+        # sfi = '8d'
+        # sff = '16.6e'
+
+        if analysis.lower().startswith('h'):
+            self.writeInput(fn, sfi, sff, solver, sg_fmt, version)
+        elif (analysis.lower().startswith('d')) or (analysis.lower().startswith('l')) or (analysis.lower().startswith('f')):
+            self.writeInputGlobal(fn+'.glb', sfi, sff, solver, analysis, version)
+
+        return fn
+    
+
+
+
+
+
+
+
+
+    def writeInput(self, fn, sfi, sff, solver, sg_fmt, version=None):
+        """
+        """
+
+        logger.debug(f'writing sg input {fn}...')
+
+        ssff = '{:' + sff + '}'
+        if not version is None:
+            self.version = suv.Version(version)
+
+        logger.debug('format version: {}'.format(self.version))
+
+        with open(fn, 'w') as fobj:
+            self.__writeInputSGHeader(fobj, solver, sfi, sff, sg_fmt, version)
+
+            # Write mesh
+            # self.__writeInputSGNodes(fobj, sfi, sff)
+            # self.__writeInputSGElements(fobj, solver, sfi)
+            self._writeMesh(fobj, file_format=solver, sgdim=self.sgdim, int_fmt=sfi, float_fmt=sff)
+
+            if self.use_elem_local_orient != 0:
+                self.__writeInputSGElementOrientations(fobj, sfi, sff, solver)
+
+            if len(self.mocombos) > 0:
+                self.__writeInputSGMOCombos(fobj, sfi, sff)
+
+            self.__writeInputSGMaterials(fobj, sfi, sff, solver)
+
+            if solver.lower().startswith('s'):
+                fobj.write((ssff + '\n').format(self.omega))
+                # fobj.write('\n')
+
+            # fobj.write('\n')
+
+        return
+    
+
+
+
+
+
+
+
+
+    def _writeMesh(self, file, file_format, sgdim, int_fmt, float_fmt):
+        """
+        """
+        logger.debug('writing mesh...')
+
+        self.mesh.write(file, file_format, sgdim=sgdim, int_fmt=int_fmt, float_fmt=float_fmt)
+
+        return
 
 
 
@@ -638,6 +741,11 @@ class StructureGene(object):
 
 
     def __writeInputSGMaterials(self, fobj, sfi, sff, solver):
+        """
+        """
+
+        logger.debug('writing materials...')
+
         for mid, m in self.materials.items():
 
             # print('writing material {}'.format(mid))
@@ -645,7 +753,7 @@ class StructureGene(object):
             if m.stff:
                 anisotropy = 2
             else:
-                anisotropy = m.anisotropy
+                anisotropy = m.isotropy
 
             # print(m.stff)
             # print(anisotropy)
@@ -918,34 +1026,34 @@ class StructureGene(object):
 
 
 
-    def writeInputSG(self, fn, sfi, sff, solver, sg_fmt, version=None):
-        ssff = '{:' + sff + '}'
-        if not version is None:
-            self.version = suv.Version(version)
+    # def writeInputSG(self, fn, sfi, sff, solver, sg_fmt, version=None):
+    #     ssff = '{:' + sff + '}'
+    #     if not version is None:
+    #         self.version = suv.Version(version)
 
-        logger.debug('format version: {}'.format(self.version))
+    #     logger.debug('format version: {}'.format(self.version))
 
-        with open(fn, 'w') as fobj:
-            self.__writeInputSGHeader(fobj, solver, sfi, sff, sg_fmt, version)
+    #     with open(fn, 'w') as fobj:
+    #         self.__writeInputSGHeader(fobj, solver, sfi, sff, sg_fmt, version)
 
-            # Write mesh
-            # self.__writeInputSGNodes(fobj, sfi, sff)
-            # self.__writeInputSGElements(fobj, solver, sfi)
-            self.mesh.write(fobj, file_format=solver, sgdim=self.sgdim, int_fmt=sfi, float_fmt=sff)
+    #         # Write mesh
+    #         # self.__writeInputSGNodes(fobj, sfi, sff)
+    #         # self.__writeInputSGElements(fobj, solver, sfi)
+    #         self.mesh.write(fobj, file_format=solver, sgdim=self.sgdim, int_fmt=sfi, float_fmt=sff)
 
-            if self.use_elem_local_orient != 0:
-                self.__writeInputSGElementOrientations(fobj, sfi, sff, solver)
+    #         if self.use_elem_local_orient != 0:
+    #             self.__writeInputSGElementOrientations(fobj, sfi, sff, solver)
 
-            if len(self.mocombos) > 0:
-                self.__writeInputSGMOCombos(fobj, sfi, sff)
+    #         if len(self.mocombos) > 0:
+    #             self.__writeInputSGMOCombos(fobj, sfi, sff)
 
-            self.__writeInputSGMaterials(fobj, sfi, sff, solver)
+    #         self.__writeInputSGMaterials(fobj, sfi, sff, solver)
 
-            if solver.lower().startswith('s'):
-                fobj.write((ssff + '\n').format(self.omega))
-                # fobj.write('\n')
+    #         if solver.lower().startswith('s'):
+    #             fobj.write((ssff + '\n').format(self.omega))
+    #             # fobj.write('\n')
 
-            # fobj.write('\n')
+    #         # fobj.write('\n')
 
 
 
@@ -993,39 +1101,39 @@ class StructureGene(object):
 
 
 
-    def writeInput(
-        self, fn, solver, analysis='h', sg_fmt=1, sfi='8d', sff='20.9e', version=None
-        ):
-        """Write analysis input
+    # def writeInput(
+    #     self, fn, solver, analysis='h', sg_fmt=1, sfi='8d', sff='20.9e', version=None
+    #     ):
+    #     """Write analysis input
 
-        Parameters
-        ----------
-        fn : str
-            Name of the input file
-        solver : {'vabs' (or 'v'), 'swfitcomp' (or 'sc', 's')}
-            Solver of the analysis
-        analysis : {0, 1, 2, 3, '', 'h', 'dn', 'dl', 'd', 'l', 'fi'}, optional
-            Analysis type, by default 'h'
-        sg_fmt : {0, 1}, optional
-            Format for the VABS input, by default 1
+    #     Parameters
+    #     ----------
+    #     fn : str
+    #         Name of the input file
+    #     solver : {'vabs' (or 'v'), 'swfitcomp' (or 'sc', 's')}
+    #         Solver of the analysis
+    #     analysis : {0, 1, 2, 3, '', 'h', 'dn', 'dl', 'd', 'l', 'fi'}, optional
+    #         Analysis type, by default 'h'
+    #     sg_fmt : {0, 1}, optional
+    #         Format for the VABS input, by default 1
 
-        Returns
-        -------
-        str
-            Name of the input file
-        """
+    #     Returns
+    #     -------
+    #     str
+    #         Name of the input file
+    #     """
 
 
-        # string format
-        # sfi = '8d'
-        # sff = '16.6e'
+    #     # string format
+    #     # sfi = '8d'
+    #     # sff = '16.6e'
 
-        if analysis.lower().startswith('h'):
-            self.writeInputSG(fn, sfi, sff, solver, sg_fmt, version)
-        elif (analysis.lower().startswith('d')) or (analysis.lower().startswith('l')) or (analysis.lower().startswith('f')):
-            self.writeInputGlobal(fn+'.glb', sfi, sff, solver, analysis, version)
+    #     if analysis.lower().startswith('h'):
+    #         self.writeInputSG(fn, sfi, sff, solver, sg_fmt, version)
+    #     elif (analysis.lower().startswith('d')) or (analysis.lower().startswith('l')) or (analysis.lower().startswith('f')):
+    #         self.writeInputGlobal(fn+'.glb', sfi, sff, solver, analysis, version)
 
-        return fn
+    #     return fn
 
 
 

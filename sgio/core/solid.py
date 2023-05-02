@@ -48,6 +48,30 @@ class MaterialProperty(MaterialSection):
         self.f_eff = 0
 
 
+    def __repr__(self):
+        s = [
+            f'density = {self.density}',
+        ]
+
+        if self.isotropy == 0:
+            s.append('isotropic')
+            s.append(f'E = {self.e1}, v = {self.nu12}')
+        elif self.isotropy == 1:
+            s.append('orthotropic')
+            s.append(f'E1 = {self.e1}, E2 = {self.e2}, E3 = {self.e3}')
+            s.append(f'G12 = {self.g12}, G13 = {self.g13}, G23 = {self.g23}')
+            s.append(f'v12 = {self.nu12}, v13 = {self.nu13}, v23 = {self.nu23}')
+        elif self.isotropy == 2:
+            s.append('anisotropic')
+            for i in range(6):
+                _row = []
+                for j in range(i, 6):
+                    _row.append(f'C{i+1}{j+1} = {self.stff[i][j]}')
+                s.append(', '.join(_row))
+
+        return '\n'.join(s)
+
+
     def summary(self):
         stype = 'isotropic'
         sprop = [['e = {0}'.format(self.e1),], ['nu = {0}'.format(self.nu12),]]
