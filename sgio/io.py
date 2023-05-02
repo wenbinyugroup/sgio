@@ -22,7 +22,7 @@ import sgio.meshio as sm
 
 logger = logging.getLogger(__name__)
 
-def read(fn:str, file_format:str, smdim:int, sg:StructureGene=None):
+def read(fn:str, file_format:str, format_version:str, smdim:int, sg:StructureGene=None):
     r"""Read SG input.
 
     Parameters
@@ -37,7 +37,7 @@ def read(fn:str, file_format:str, smdim:int, sg:StructureGene=None):
 
     if file_format.lower().startswith('v') or file_format.lower().startswith('s'):
         with open(fn, 'r') as f:
-            sg = readBuffer(f, file_format, smdim)
+            sg = readBuffer(f, file_format, format_version, smdim)
 
     else:
         if not sg:
@@ -54,7 +54,7 @@ def read(fn:str, file_format:str, smdim:int, sg:StructureGene=None):
 
 
 
-def readBuffer(f, file_format:str, smdim:int):
+def readBuffer(f, file_format:str, format_version:str, smdim:int):
     r"""
     """
     sg = StructureGene()
@@ -72,7 +72,7 @@ def readBuffer(f, file_format:str, smdim:int):
     #         continue
 
     # Read head
-    configs = _readSGInputHead(f, file_format, smdim)
+    configs = _readSGInputHead(f, file_format, format_version, smdim)
     sg.sgdim = configs['sgdim']
     sg.physics = configs['physics']
     sg.do_dampling = configs.get('do_damping', 0)
@@ -111,7 +111,7 @@ def readBuffer(f, file_format:str, smdim:int):
 
 
 
-def _readSGInputHead(f, file_format:str, smdim:int):
+def _readSGInputHead(file, file_format:str, format_version:str, smdim:int):
     """
     """
 
@@ -123,7 +123,7 @@ def _readSGInputHead(f, file_format:str, smdim:int):
         count = 0
         configs['sgdim'] = 2
         while True:
-            line = f.readline().strip()
+            line = file.readline().strip()
             if line == '':  continue
 
             count += 1
@@ -179,7 +179,7 @@ def _readSGInputHead(f, file_format:str, smdim:int):
             head += 2
         count = 0
         while True:
-            line = f.readline().strip()
+            line = file.readline().strip()
             if line == '':  continue
 
             count += 1
@@ -240,13 +240,13 @@ def _readSGInputHead(f, file_format:str, smdim:int):
 
 
 
-def _readMesh(f, file_format:str, sgdim:int, nnode:int, nelem:int):
+def _readMesh(file, file_format:str, sgdim:int, nnode:int, nelem:int):
     """
     """
 
     logger.debug('reading mesh...')
 
-    mesh = sm.read(f, file_format, sgdim, nnode, nelem)
+    mesh = sm.read(file, file_format, sgdim, nnode, nelem)
     return mesh
 
 
