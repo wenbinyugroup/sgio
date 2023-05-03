@@ -401,20 +401,20 @@ class StructureGene(object):
         logger.debug('format version: {}'.format(self.version))
 
         with open(fn, 'w') as fobj:
-            self.__writeInputSGHeader(fobj, solver, sfi, sff, sg_fmt, version)
+            self._writeHeader(fobj, solver, sfi, sff, sg_fmt, version)
 
             # Write mesh
             # self.__writeInputSGNodes(fobj, sfi, sff)
             # self.__writeInputSGElements(fobj, solver, sfi)
             self._writeMesh(fobj, file_format=solver, sgdim=self.sgdim, int_fmt=sfi, float_fmt=sff)
 
-            if self.use_elem_local_orient != 0:
-                self.__writeInputSGElementOrientations(fobj, sfi, sff, solver)
+            # if self.use_elem_local_orient != 0:
+            #     self.__writeInputSGElementOrientations(fobj, sfi, sff, solver)
 
             if len(self.mocombos) > 0:
                 self.__writeInputSGMOCombos(fobj, sfi, sff)
 
-            self.__writeInputSGMaterials(fobj, sfi, sff, solver)
+            self._writeMaterials(fobj, sfi, sff, solver)
 
             if solver.lower().startswith('s'):
                 fobj.write((ssff + '\n').format(self.omega))
@@ -685,31 +685,31 @@ class StructureGene(object):
 
 
 
-    def __writeInputSGElementOrientations(self, fobj, sfi, sff, solver):
-        ssfi = '{:' + sfi + '}'
-        ssff = '{:' + sff + '}'
-        count = 0
-        if solver.lower().startswith('v'):
-            for eid, orient in self.elem_orient.items():
-                fobj.write(ssfi.format(eid))
-                fobj.write(ssfi.format(self.elem_prop[eid]))
-                # theta1 = np.arctan2(orient[1][2], orient[1][1])
-                theta1 = math.degrees(math.atan2(orient[1][2], orient[1][1]))
-                fobj.write(ssff.format(theta1))
-                fobj.write('\n')
-        elif solver.lower().startswith('s'):
-            for eid, orient in self.elem_orient.items():
-                count += 1
-                fobj.write(ssfi.format(eid))
-                # sui.writeFormatFloats(fobj, np.hstack(orient))
-                sui.writeFormatFloats(fobj, orient[0], sff, False)
-                sui.writeFormatFloats(fobj, orient[1], sff, False)
-                sui.writeFormatFloats(fobj, orient[2], sff, False)
-                if count == 1:
-                    fobj.write('  # element orientation')
-                fobj.write('\n')
-        fobj.write('\n')
-        return
+    # def __writeInputSGElementOrientations(self, fobj, sfi, sff, solver):
+    #     ssfi = '{:' + sfi + '}'
+    #     ssff = '{:' + sff + '}'
+    #     count = 0
+    #     if solver.lower().startswith('v'):
+    #         for eid, orient in self.elem_orient.items():
+    #             fobj.write(ssfi.format(eid))
+    #             fobj.write(ssfi.format(self.elem_prop[eid]))
+    #             # theta1 = np.arctan2(orient[1][2], orient[1][1])
+    #             theta1 = math.degrees(math.atan2(orient[1][2], orient[1][1]))
+    #             fobj.write(ssff.format(theta1))
+    #             fobj.write('\n')
+    #     elif solver.lower().startswith('s'):
+    #         for eid, orient in self.elem_orient.items():
+    #             count += 1
+    #             fobj.write(ssfi.format(eid))
+    #             # sui.writeFormatFloats(fobj, np.hstack(orient))
+    #             sui.writeFormatFloats(fobj, orient[0], sff, False)
+    #             sui.writeFormatFloats(fobj, orient[1], sff, False)
+    #             sui.writeFormatFloats(fobj, orient[2], sff, False)
+    #             if count == 1:
+    #                 fobj.write('  # element orientation')
+    #             fobj.write('\n')
+    #     fobj.write('\n')
+    #     return
 
 
 
@@ -740,12 +740,13 @@ class StructureGene(object):
 
 
 
-    def __writeInputSGMaterials(self, fobj, sfi, sff, solver):
+    def _writeMaterials(self, fobj, sfi, sff, solver):
         """
         """
 
         logger.debug('writing materials...')
 
+        counter = 0
         for mid, m in self.materials.items():
 
             # print('writing material {}'.format(mid))
@@ -759,10 +760,16 @@ class StructureGene(object):
             # print(anisotropy)
 
             if solver.lower().startswith('v'):
-                sui.writeFormatIntegers(fobj, (mid, anisotropy), sfi)
+                sui.writeFormatIntegers(fobj, (mid, anisotropy), sfi, newline=False)
+                if counter == 0:
+                    fobj.write('  # materials')
+                fobj.write('\n')
             elif solver.lower().startswith('s'):
-                sui.writeFormatIntegers(fobj, (mid, anisotropy, 1), sfi)
-                sui.writeFormatFloats(fobj, (0, m.density), sff)
+                sui.writeFormatIntegers(fobj, (mid, anisotropy, 1), sfi, newline=False)
+                if counter == 0:
+                    fobj.write('  # materials')
+                fobj.write('\n')
+                sui.writeFormatFloats(fobj, (m.temperature, m.density), sff)
 
             # Write elastic properties
             if anisotropy == 0:
@@ -789,10 +796,12 @@ class StructureGene(object):
             if self.physics in [1, 4, 6]:
                 sui.writeFormatFloats(fobj, m.cte+[m.specific_heat,], sff)
 
-            fobj.write('\n')
-
             if solver.lower().startswith('v'):
                 sui.writeFormatFloats(fobj, (m.density,), sff)
+
+            fobj.write('\n')
+            
+            counter += 1
 
         fobj.write('\n')
         return
@@ -805,7 +814,7 @@ class StructureGene(object):
 
 
 
-    def __writeInputSGHeader(self, fobj, solver, sfi, sff, sg_fmt, version=None):
+    def _writeHeader(self, fobj, solver, sfi, sff, sg_fmt, version=None):
         ssfi = '{:' + sfi + '}'
 
         # VABS
@@ -829,8 +838,8 @@ class StructureGene(object):
             if self.physics == 1:
                 physics = 3
             sui.writeFormatIntegers(
-                fobj, [model, self.do_dampling, physics], sfi)
-            fobj.write('\n')
+                fobj, [model, self.do_dampling, physics], sfi, newline=False)
+            fobj.write('  # model_flag, damping_flag, thermal_flag\n\n')
 
             # curve_flag  oblique_flag  trapeze_flag  vlasov_flag
             line = [0, 0, trapeze, vlasov]
@@ -838,27 +847,27 @@ class StructureGene(object):
                 line[0] = 1
             if (self.oblique[0] != 1.0) or (self.oblique[1] != 0.0):
                 line[1] = 1
-            sui.writeFormatIntegers(fobj, line, sfi)
-            fobj.write('\n')
+            sui.writeFormatIntegers(fobj, line, sfi, newline=False)
+            fobj.write('  # curve_flag, oblique_flag, trapeze_flag, vlasov_flag\n\n')
 
             # k1  k2  k3
             if line[0] == 1:
                 sui.writeFormatFloats(
                     fobj,
                     [self.initial_twist, self.initial_curvature[0], self.initial_curvature[1]],
-                    sff
+                    sff, newline=False
                 )
-                fobj.write('\n')
+                fobj.write('  # k11, k12, k13 (initial curvatures)\n\n')
             
             # oblique1  oblique2
             if line[1] == 1:
-                sui.writeFormatFloats(fobj, self.oblique, sff)
-                fobj.write('\n')
+                sui.writeFormatFloats(fobj, self.oblique, sff, newline=False)
+                fobj.write('  # cos11, cos21 (obliqueness)\n\n')
             
             # nnode  nelem  nmate
             sui.writeFormatIntegers(
-                fobj, [len(self.nodes), len(self.elements), len(self.materials)], sfi)
-            fobj.write('\n')
+                fobj, [self.nnodes, self.nelems, self.nmates], sfi, newline=False)
+            fobj.write('  # nnode, nelem, nmate\n\n')
 
 
         # SwiftComp
@@ -1034,7 +1043,7 @@ class StructureGene(object):
     #     logger.debug('format version: {}'.format(self.version))
 
     #     with open(fn, 'w') as fobj:
-    #         self.__writeInputSGHeader(fobj, solver, sfi, sff, sg_fmt, version)
+    #         self._writeHeader(fobj, solver, sfi, sff, sg_fmt, version)
 
     #         # Write mesh
     #         # self.__writeInputSGNodes(fobj, sfi, sff)
@@ -1047,7 +1056,7 @@ class StructureGene(object):
     #         if len(self.mocombos) > 0:
     #             self.__writeInputSGMOCombos(fobj, sfi, sff)
 
-    #         self.__writeInputSGMaterials(fobj, sfi, sff, solver)
+    #         self._writeMaterials(fobj, sfi, sff, solver)
 
     #         if solver.lower().startswith('s'):
     #             fobj.write((ssff + '\n').format(self.omega))

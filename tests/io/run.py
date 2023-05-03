@@ -13,12 +13,17 @@ logger = logging.getLogger(__name__)
 fn = sys.argv[1]
 file_format = sys.argv[2]
 format_version = sys.argv[3]
-smdim = int(sys.argv[4])
 
-fn_base, fn_ext = os.path.splitext(fn)
+if file_format.lower().startswith('s'):
+    smdim = int(sys.argv[4])
+else:
+    smdim = 1
 
 sg = sgio.read(fn, file_format, format_version, smdim)
 print(sg)
+
+# fn_base, fn_ext = os.path.splitext(fn)
+
 
 # mesh = mpm.read(fn)
 

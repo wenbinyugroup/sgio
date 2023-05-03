@@ -20,7 +20,7 @@ _writers = {"vabs": _vabs, "swiftcomp": _swiftcomp, "sc": _swiftcomp}
 
 
 def read(
-    filename, file_format, sgdim:int, nnode:int, nelem:int, read_local_frame
+    filename, file_format:str, sgdim:int, nnode:int, nelem:int, **kwargs
 ) -> None:
     try:
         reader = _readers[file_format]
@@ -31,7 +31,10 @@ def read(
             )
         )
 
-    return reader.read(filename, sgdim, nnode, nelem, read_local_frame)
+    if file_format.lower().startswith('s'):
+        return reader.read(filename, sgdim, nnode, nelem, kwargs['read_local_frame'])
+    elif file_format.lower().startswith('v'):
+        return reader.read(filename, sgdim, nnode, nelem)
 
 
 # def read(filename, **kwargs):
