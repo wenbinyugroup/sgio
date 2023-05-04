@@ -1,0 +1,134 @@
+
+# ====================================================================
+
+environment
+  output_file = 'multi_cs_tm_opt_soga_win.out'
+  write_restart = 'multi_cs_tm_opt_soga_win.rst'
+  error_file = 'multi_cs_tm_opt_soga_win.err'
+  tabular_data
+    tabular_data_file = 'multi_cs_tm_opt_soga_win_tabular.dat'
+  results_output
+    results_output_file = 'multi_cs_tm_opt_soga_win_results'
+    # hdf5
+
+# ====================================================================
+
+method
+  id_method = 'MET_soga'
+  output
+    silent
+  soga
+    max_iterations = 100
+    max_function_evaluations = 10
+    population_size = 5
+    seed = 1027
+    convergence_type
+      average_fitness_tracker
+        percent_change = 0.1
+        num_generations = 10
+    replacement_type
+      # elitist
+      favor_feasible
+    crossover_type
+      # multi_point_parameterized_binary
+      shuffle_random
+        num_parents = 4
+        num_offspring = 4
+      crossover_rate = 0.8
+    mutation_type
+      replace_uniform
+      mutation_rate = 0.2
+    print_each_pop
+    log_file = 'multi_cs_tm_opt_soga.log'
+
+# ====================================================================
+
+model
+  id_model = 'MOD_soga'
+  single
+
+# ====================================================================
+
+variables
+  active design
+
+  continuous_design = 11
+    descriptors     =  'wl_a2_sta1'  'wt_a2_sta1'  'pnsmc_a2_sta1'
+                       'wl_a2_stam'  'wt_a2_stam'  'pnsmc_a2_stam'
+                       'wl_a2_sta4'  'wt_a2_sta4'  'pnsmc_a2_sta4'
+                       'nsmr'    'r_stam'
+    upper_bounds    =   -0.10    -0.30       -0.015
+                        -0.10    -0.30       -0.015
+                        -0.10    -0.30       -0.015
+                         0.01     0.80
+    lower_bounds    =   -0.20    -0.50       -0.05
+                        -0.20    -0.50       -0.05
+                        -0.20    -0.50       -0.05
+                         0.001    0.30
+
+  discrete_design_range = 15
+    descriptors  = 'mi_spar_1'  'mi_le'  'mi_te'
+                   'np_spar_seg1'  'np_le_seg1'  'np_te_seg1'
+                   'np_spar_seg2'  'np_le_seg2'  'np_te_seg2'
+                   'fo_spar_1'  'fo_spar_2'  'fo_spar_3'  'fo_spar_4'  'fo_le'  'fo_te'
+    upper_bounds =      4   4   4
+                       20  20  20
+                       20  20  20
+                       90  90  90  90  90  90
+    lower_bounds =      1   1   1
+                        1   1   1
+                        1   1   1
+                      -90 -90 -90 -90 -90 -90
+
+  discrete_state_set
+    real = 14
+      descriptors =  'r_sta1'  'r_sta2'  'r_sta3'  'r_sta4'
+                     'chord_sta1'  'chord_sta2'
+                     'chord_sta3'  'chord_sta4'
+                     'oa2'        'oa3'
+                     'mesh_size'  'mesh_size_fill'
+                     'pnsmc_a3'   'pfte2_a2'
+      elements    =   0.25  0.65  0.70  0.86
+                      20.76        20.76
+                      21.11        21.62
+                       0.25         0.0
+                       0.04         0.3
+                       0           -0.9
+
+# ====================================================================
+
+interface
+  id_interface = 'INT_soga'
+  analysis_driver = 'python interface.py interface_args.json'
+    fork
+      parameters_file = 'input.in'
+      results_file = 'output.out'
+      file_save
+      work_directory
+        named = 'evals/eval'
+        directory_tag
+        directory_save
+        copy_file = 'interface.py'
+                    'interface_args.json'
+                    'data_proc_funcs.py'
+                    'design/*'
+  # asynchronous
+  #   evaluation_concurrency = 2
+  # failure_capture
+  #   recover = 38*inf
+
+# ====================================================================
+
+responses
+  descriptors = 'diff'
+                'sr_s1c0'  'sr_s1c1'  'sr_s2c0'  'sr_s2c1'
+                # 'total_mass_c'
+  objective_functions = 1
+    sense = 'min'
+    nonlinear_inequality_constraints = 4
+      upper_bounds =  1e12  1e12  1e12  1e12
+                      # 0.255
+      lower_bounds =  1  1  1  1
+                      # 0.179
+  no_gradients
+  no_hessians

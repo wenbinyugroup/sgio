@@ -1241,7 +1241,7 @@ def buildSG1D(
                 # print(sgdb)
                 # mprop = sgdb[_lyr_m_name][0]['property']['md3']
                 # mprop = muc.getValueByKey(sgdb[_lyr_m_name][0], 'prop')
-                mprop = sgdb[_lyr_m_name]['property']['md3']
+                mprop = sgdb[_lyr_m_name][0]['property']['md3']
                 # mprop = mprop['md3']
 
                 m.density = float(mprop['density'])

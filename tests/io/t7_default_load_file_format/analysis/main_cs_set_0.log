@@ -1,0 +1,10 @@
+2023-04-07 15:57:41 [info] prevabs start
+2023-04-07 15:57:41 [info]   - dehomogenizing...
+2023-04-07 15:57:41 [info]       - reading main input file: main_cs_set_0.xml
+2023-04-07 15:57:41 [info]         - reading airfoil data file: SC1095.dat
+2023-04-07 15:57:41 [info]         - reading materials file: C:\Users\tian50\sall\s99-exe\MaterialDB.xml
+2023-04-07 15:57:41 [info]         - reading materials file: material_database_us_ft.xml
+2023-04-07 15:57:41 [info]       - reading main input data: main_cs_set_0.xml
+2023-04-07 15:57:41 [info]     - writing glb file: main_cs_set_0.sg.glb
+2023-04-07 15:57:41 [info] prevabs finished
+2023-04-07 15:57:41 [info] total running time: 0.039 sec
