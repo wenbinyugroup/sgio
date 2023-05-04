@@ -1,13 +1,13 @@
 StructureGene
 =============
 
-.. currentmodule:: msgd.model.sg
+.. currentmodule:: sgio.core.sg
 
 .. highlight:: python
 
 ::
 
-    msgd.model.sg.StructureGene
+    sgio.core.sg.StructureGene
 
 
 ..  autoclass:: StructureGene

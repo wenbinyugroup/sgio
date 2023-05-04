@@ -4,7 +4,7 @@ import logging
 # import subprocess as sbp
 
 # import sgio.utils.logger as mul
-import sgio.utils.execu as mue
+import sgio.utils.execu as sue
 # import msgpi.timer as mtime
 # import msgd.builder.presg as msp
 # import sgio.io as msi
@@ -215,7 +215,7 @@ def runVABS(command, input_name, analysis, scrnout=True, timeout=3600):
 
         # logger.info(' '.join(cmd))
 
-        mue.run(cmd, timeout, scrnout)
+        sue.run(cmd, timeout)
 
         # if scrnout:
         #     sbp.call(cmd)
@@ -307,7 +307,7 @@ def runSwiftComp(
 
         # logger.info(' '.join(cmd))
 
-        mue.run(cmd, timeout, scrnout)
+        sue.run(cmd, timeout)
 
         # if scrnout:
         #     sbp.call(cmd)

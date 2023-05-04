@@ -671,235 +671,235 @@ def readSGOutFailureIndex(fn, solver):
 
 
 
-def readVABSIn(fn_vabs_in):
-    """ Read data from the VABS input file.
+# def readVABSIn(fn_vabs_in):
+#     """ Read data from the VABS input file.
 
-    Parameters
-    ----------
-    fn_vabs_in : str
-        File name of the VABS input file.
+#     Parameters
+#     ----------
+#     fn_vabs_in : str
+#         File name of the VABS input file.
 
-    Returns
-    -------
-    msgpi.sg.StructureGene
-        Structure gene object
-    """
+#     Returns
+#     -------
+#     msgpi.sg.StructureGene
+#         Structure gene object
+#     """
 
-    # if logger is None:
-    #     logger = mul.initLogger(__name__)
+#     # if logger is None:
+#     #     logger = mul.initLogger(__name__)
 
-    logger.info('reading VABS input: {0}...'.format(fn_vabs_in))
+#     logger.info('reading VABS input: {0}...'.format(fn_vabs_in))
 
-    try:
-        fn_base, fn_extn = os.path.splitext(fn_vabs_in)
-        name = os.path.basename(fn_base)
-        sg = mms.StructureGene(name, 2, 1)
+#     try:
+#         fn_base, fn_extn = os.path.splitext(fn_vabs_in)
+#         name = os.path.basename(fn_base)
+#         sg = mms.StructureGene(name, 2, 1)
 
-        flag_curve = 0
-        flag_oblique = 0
+#         flag_curve = 0
+#         flag_oblique = 0
 
-        count = 0
-        count_node = 1
-        count_element = 1
-        count_layertype = 1
-        count_material = 1
-        line_material = 0
-        head = 3  # at least 3 lines in the head (flag) part
-        with open(fn_vabs_in, 'r') as fin:
-            for li, line in enumerate(fin):
-                line = line.strip()
-                if line == '\n' or line == '':
-                    continue
+#         count = 0
+#         count_node = 1
+#         count_element = 1
+#         count_layertype = 1
+#         count_material = 1
+#         line_material = 0
+#         head = 3  # at least 3 lines in the head (flag) part
+#         with open(fn_vabs_in, 'r') as fin:
+#             for li, line in enumerate(fin):
+#                 line = line.strip()
+#                 if line == '\n' or line == '':
+#                     continue
 
-                count += 1
-                line = line.split()
-                if count == 1:
-                    # format_flag  nlayer
-                    line = list(map(int, line))
-                    flag_format = line[0]
-                    num_layertypes = line[1]
-                    continue
-                elif count == 2:
-                    # timoshenko_flag  recover_flag  thermal_flag
-                    line = list(map(int, line))
-                    sg.model = line[0]
-                    sg.damping = line[1]
-                    sg.physics = line[2]
-                    if sg.physics > 0:
-                        sg.physics == 1
-                    continue
-                elif count == 3:
-                    # curve_flag  oblique_flag  trapeze_flag  vlasov_flag
-                    line = list(map(int, line))
-                    flag_curve = line[0]
-                    flag_oblique = line[1]
-                    if line[2] == 1:
-                        sg.model = 3  # trapeze effect
-                    if line[3] == 1:
-                        sg.model = 2  # Vlasov model
-                    if flag_curve == 1:
-                        head += 1  # extra line in the head
-                    if flag_oblique == 1:
-                        head += 1  # extra line in the head
-                    continue
-                elif flag_curve != 0 and count <= head:
-                    pass
-                elif flag_oblique != 0 and count <= head:
-                    pass
-                elif count == (head + 1):
-                    # nnode  nelem  nmate
-                    line = list(map(int, line))
-                    num_nodes = line[0]
-                    num_elements = line[1]
-                    num_materials = line[2]
-                    continue
-                elif count_node <= num_nodes:
-                    # Read nodal coordinates
-                    sg.nodes[int(line[0])] = [
-                        float(line[1]), float(line[2])]
-                    count_node += 1
-                    continue
-                elif count_element <= num_elements:
-                    # Read element connectivities
-                    eid = int(line[0])
-                    sg.elementids.append(eid)
-                    temp = [int(i) for i in line[1:] if i != '0']
-                    sg.elements[eid] = temp
-                    sg.elementids2d.append(eid)
-                    count_element += 1
-                    continue
-                elif count_element <= (2 * num_elements):
-                    sg.trans_element = 1
-                    # Read element theta1
-                    if flag_format == 1:
-                        # new format
-                        eid = int(line[0])
-                        lyrtp = int(line[1])
-                        theta1 = float(line[2])
-                    else:
-                        # old format
-                        eid = int(line[0])
-                        mid = int(line[1])
-                        theta3 = float(line[2])
-                        theta1 = float(line[3])
-                        lyrtp = 0
-                        for k, v in sg.mocombos.items():
-                            if (mid == v[0]) and (theta3 == v[1]):
-                                lyrtp = k
-                                break
-                        if lyrtp == 0:
-                            lyrtp = len(sg.mocombos) + 1
-                            sg.mocombos[lyrtp] = [mid, theta3]
+#                 count += 1
+#                 line = line.split()
+#                 if count == 1:
+#                     # format_flag  nlayer
+#                     line = list(map(int, line))
+#                     flag_format = line[0]
+#                     num_layertypes = line[1]
+#                     continue
+#                 elif count == 2:
+#                     # timoshenko_flag  recover_flag  thermal_flag
+#                     line = list(map(int, line))
+#                     sg.model = line[0]
+#                     sg.damping = line[1]
+#                     sg.physics = line[2]
+#                     if sg.physics > 0:
+#                         sg.physics == 1
+#                     continue
+#                 elif count == 3:
+#                     # curve_flag  oblique_flag  trapeze_flag  vlasov_flag
+#                     line = list(map(int, line))
+#                     flag_curve = line[0]
+#                     flag_oblique = line[1]
+#                     if line[2] == 1:
+#                         sg.model = 3  # trapeze effect
+#                     if line[3] == 1:
+#                         sg.model = 2  # Vlasov model
+#                     if flag_curve == 1:
+#                         head += 1  # extra line in the head
+#                     if flag_oblique == 1:
+#                         head += 1  # extra line in the head
+#                     continue
+#                 elif flag_curve != 0 and count <= head:
+#                     pass
+#                 elif flag_oblique != 0 and count <= head:
+#                     pass
+#                 elif count == (head + 1):
+#                     # nnode  nelem  nmate
+#                     line = list(map(int, line))
+#                     num_nodes = line[0]
+#                     num_elements = line[1]
+#                     num_materials = line[2]
+#                     continue
+#                 elif count_node <= num_nodes:
+#                     # Read nodal coordinates
+#                     sg.nodes[int(line[0])] = [
+#                         float(line[1]), float(line[2])]
+#                     count_node += 1
+#                     continue
+#                 elif count_element <= num_elements:
+#                     # Read element connectivities
+#                     eid = int(line[0])
+#                     sg.elementids.append(eid)
+#                     temp = [int(i) for i in line[1:] if i != '0']
+#                     sg.elements[eid] = temp
+#                     sg.elementids2d.append(eid)
+#                     count_element += 1
+#                     continue
+#                 elif count_element <= (2 * num_elements):
+#                     sg.trans_element = 1
+#                     # Read element theta1
+#                     if flag_format == 1:
+#                         # new format
+#                         eid = int(line[0])
+#                         lyrtp = int(line[1])
+#                         theta1 = float(line[2])
+#                     else:
+#                         # old format
+#                         eid = int(line[0])
+#                         mid = int(line[1])
+#                         theta3 = float(line[2])
+#                         theta1 = float(line[3])
+#                         lyrtp = 0
+#                         for k, v in sg.mocombos.items():
+#                             if (mid == v[0]) and (theta3 == v[1]):
+#                                 lyrtp = k
+#                                 break
+#                         if lyrtp == 0:
+#                             lyrtp = len(sg.mocombos) + 1
+#                             sg.mocombos[lyrtp] = [mid, theta3]
 
-                    if lyrtp not in sg.prop_elem.keys():
-                        sg.prop_elem[lyrtp] = []
-                    sg.prop_elem[lyrtp].append(eid)
-                    sg.elem_prop[eid] = lyrtp
-                    # self.elem_angle[eid] = theta1
-                    sg.elem_orient[eid] = [
-                        [1.0, 0.0, 0.0],
-                        [0.0, 1.0, 0.0],
-                        [0.0, 0.0, 0.0]
-                    ]
-                    sg.elem_orient[eid][1][1] = math.cos(math.radians(theta1))
-                    sg.elem_orient[eid][1][2] = math.sin(math.radians(theta1))
-                    count_element += 1
-                    continue
-                elif (flag_format == 1) and (count_layertype <= num_layertypes):
-                    # Read layer types
-                    ltid = int(line[0])
-                    mid = int(line[1])
-                    theta3 = float(line[2])
-                    # print('theta3 =', theta3)
-                    sg.mocombos[ltid] = [mid, theta3]
-                    count_layertype += 1
-                    continue
-                elif count_material <= num_materials:
-                    # Read materials
-                    if line_material == 0:
-                        mid = int(line[0])
-                        # mtype = int(line[1])
-                        mp = mmsd.MaterialProperty()
-                        mp.anisotropy = int(line[1])
-                        # sg.materials[mid].eff_props[3]['type'] = mtype
-                        line_material += 1
-                        continue
+#                     if lyrtp not in sg.prop_elem.keys():
+#                         sg.prop_elem[lyrtp] = []
+#                     sg.prop_elem[lyrtp].append(eid)
+#                     sg.elem_prop[eid] = lyrtp
+#                     # self.elem_angle[eid] = theta1
+#                     sg.elem_orient[eid] = [
+#                         [1.0, 0.0, 0.0],
+#                         [0.0, 1.0, 0.0],
+#                         [0.0, 0.0, 0.0]
+#                     ]
+#                     sg.elem_orient[eid][1][1] = math.cos(math.radians(theta1))
+#                     sg.elem_orient[eid][1][2] = math.sin(math.radians(theta1))
+#                     count_element += 1
+#                     continue
+#                 elif (flag_format == 1) and (count_layertype <= num_layertypes):
+#                     # Read layer types
+#                     ltid = int(line[0])
+#                     mid = int(line[1])
+#                     theta3 = float(line[2])
+#                     # print('theta3 =', theta3)
+#                     sg.mocombos[ltid] = [mid, theta3]
+#                     count_layertype += 1
+#                     continue
+#                 elif count_material <= num_materials:
+#                     # Read materials
+#                     if line_material == 0:
+#                         mid = int(line[0])
+#                         # mtype = int(line[1])
+#                         mp = mmsd.MaterialProperty()
+#                         mp.anisotropy = int(line[1])
+#                         # sg.materials[mid].eff_props[3]['type'] = mtype
+#                         line_material += 1
+#                         continue
 
-                    if mp.anisotropy == 0:
-                        # isotropic
-                        if line_material == 1:
-                            e = float(line[0])
-                            nu = float(line[1])
-                            consts = [e, nu]
-                            # sg.materials[mid].eff_props[3]['constants']['e'] = e
-                            # sg.materials[mid].eff_props[3]['constants']['nu'] = nu
-                            line_material = 99
-                            continue
-                    elif mp.anisotropy == 1:
-                        # print('line =', line)
-                        # print('line_material =', line_material)
-                        # orthotropic
-                        # consts = []
-                        if line_material == 1:
-                            # pe = []
-                            e = list(map(float, line))
-                            consts = e
-                            # sg.materials[mid].eff_props[3]['constants']['e1'] = e[0]
-                            # sg.materials[mid].eff_props[3]['constants']['e2'] = e[1]
-                            # sg.materials[mid].eff_props[3]['constants']['e3'] = e[2]
-                            # for ei in e:
-                            #     pe.append(ei)
-                            # sg.materials[mid].property_elastic += e
-                            line_material += 1
-                            continue
-                        elif line_material == 2:
-                            g = list(map(float, line))
-                            consts.append(g[0])
-                            consts.append(g[1])
-                            consts.append(g[2])
-                            # sg.materials[mid].eff_props[3]['constants']['g12'] = g[0]
-                            # sg.materials[mid].eff_props[3]['constants']['g13'] = g[1]
-                            # sg.materials[mid].eff_props[3]['constants']['g23'] = g[2]
-                            # for gi in g:
-                            #     pe.append(gi)
-                            # self.materials[mid].property_elastic += g
-                            line_material += 1
-                            continue
-                        elif line_material == 3:
-                            nu = list(map(float, line))
-                            consts.append(nu[0])
-                            consts.append(nu[1])
-                            consts.append(nu[2])
-                            # sg.materials[mid].eff_props[3]['constants']['nu12'] = nu[0]
-                            # sg.materials[mid].eff_props[3]['constants']['nu13'] = nu[1]
-                            # sg.materials[mid].eff_props[3]['constants']['nu23'] = nu[2]
-                            # for nui in nu:
-                            #     pe.append(nui)
-                            # sg.materials[mid].property_elastic.append(pe)
-                            line_material = 99
-                            continue
-                    elif mp.anisotropy == 2:
-                        # anisotropic
-                        continue
+#                     if mp.anisotropy == 0:
+#                         # isotropic
+#                         if line_material == 1:
+#                             e = float(line[0])
+#                             nu = float(line[1])
+#                             consts = [e, nu]
+#                             # sg.materials[mid].eff_props[3]['constants']['e'] = e
+#                             # sg.materials[mid].eff_props[3]['constants']['nu'] = nu
+#                             line_material = 99
+#                             continue
+#                     elif mp.anisotropy == 1:
+#                         # print('line =', line)
+#                         # print('line_material =', line_material)
+#                         # orthotropic
+#                         # consts = []
+#                         if line_material == 1:
+#                             # pe = []
+#                             e = list(map(float, line))
+#                             consts = e
+#                             # sg.materials[mid].eff_props[3]['constants']['e1'] = e[0]
+#                             # sg.materials[mid].eff_props[3]['constants']['e2'] = e[1]
+#                             # sg.materials[mid].eff_props[3]['constants']['e3'] = e[2]
+#                             # for ei in e:
+#                             #     pe.append(ei)
+#                             # sg.materials[mid].property_elastic += e
+#                             line_material += 1
+#                             continue
+#                         elif line_material == 2:
+#                             g = list(map(float, line))
+#                             consts.append(g[0])
+#                             consts.append(g[1])
+#                             consts.append(g[2])
+#                             # sg.materials[mid].eff_props[3]['constants']['g12'] = g[0]
+#                             # sg.materials[mid].eff_props[3]['constants']['g13'] = g[1]
+#                             # sg.materials[mid].eff_props[3]['constants']['g23'] = g[2]
+#                             # for gi in g:
+#                             #     pe.append(gi)
+#                             # self.materials[mid].property_elastic += g
+#                             line_material += 1
+#                             continue
+#                         elif line_material == 3:
+#                             nu = list(map(float, line))
+#                             consts.append(nu[0])
+#                             consts.append(nu[1])
+#                             consts.append(nu[2])
+#                             # sg.materials[mid].eff_props[3]['constants']['nu12'] = nu[0]
+#                             # sg.materials[mid].eff_props[3]['constants']['nu13'] = nu[1]
+#                             # sg.materials[mid].eff_props[3]['constants']['nu23'] = nu[2]
+#                             # for nui in nu:
+#                             #     pe.append(nui)
+#                             # sg.materials[mid].property_elastic.append(pe)
+#                             line_material = 99
+#                             continue
+#                     elif mp.anisotropy == 2:
+#                         # anisotropic
+#                         continue
 
-                    if line_material == 99:
-                        mp.density = float(line[0])
-                        # print(consts)
-                        mp.assignConstants(consts)
-                        # sg.materials[mid].eff_props[3]['density'] = dens
-                        # self.mate_propt[mid].append(dens)
-                        # mp.summary()
-                        sg.materials[mid] = mp
-                        line_material = 0
-                        count_material += 1  # next material
-                        continue
-                    continue
-    except:
-        # e = sys.exc_info()[0]
-        e = traceback.format_exc()
-        print(e)
+#                     if line_material == 99:
+#                         mp.density = float(line[0])
+#                         # print(consts)
+#                         mp.assignConstants(consts)
+#                         # sg.materials[mid].eff_props[3]['density'] = dens
+#                         # self.mate_propt[mid].append(dens)
+#                         # mp.summary()
+#                         sg.materials[mid] = mp
+#                         line_material = 0
+#                         count_material += 1  # next material
+#                         continue
+#                     continue
+#     except:
+#         # e = sys.exc_info()[0]
+#         e = traceback.format_exc()
+#         print(e)
 
-    return sg
+#     return sg
 
 
 
@@ -1278,223 +1278,223 @@ def readVABSOut(fn_in, analysis=0, scrnout=True):
 
 
 
-def readSCIn(fn_sg, smdim):
-    """ Read data from the SwiftComp input file
+# def readSCIn(fn_sg, smdim):
+#     """ Read data from the SwiftComp input file
 
-    :param fn_sg: File name of the SwiftComp input file
-    :type fn_sg: string
-    """
+#     :param fn_sg: File name of the SwiftComp input file
+#     :type fn_sg: string
+#     """
 
-    # if logger is None:
-    #     logger = mul.initLogger(__name__)
+#     # if logger is None:
+#     #     logger = mul.initLogger(__name__)
 
-    fn_base, fn_extn = os.path.splitext(fn_sg)
-    name = os.path.basename(fn_base)
-    sg = mms.StructureGene(name, 3, smdim)
+#     fn_base, fn_extn = os.path.splitext(fn_sg)
+#     name = os.path.basename(fn_base)
+#     sg = mms.StructureGene(name, 3, smdim)
 
-    count = 0
-    count_node = 1
-    count_element = 1
-    count_layertype = 1
-    count_material = 1
-    line_material = 0
-    extra_head = 0
-    if smdim == 1:
-        extra_head = 3
-    elif smdim == 2:
-        extra_head = 2
-    head = 2  # at least 3 lines in the head (flag) part
-    with open(fn_sg, 'r') as fin:
-        for li, line in enumerate(fin):
-            line = line.strip()
-            if line == '\n' or line == '':
-                continue
+#     count = 0
+#     count_node = 1
+#     count_element = 1
+#     count_layertype = 1
+#     count_material = 1
+#     line_material = 0
+#     extra_head = 0
+#     if smdim == 1:
+#         extra_head = 3
+#     elif smdim == 2:
+#         extra_head = 2
+#     head = 2  # at least 3 lines in the head (flag) part
+#     with open(fn_sg, 'r') as fin:
+#         for li, line in enumerate(fin):
+#             line = line.strip()
+#             if line == '\n' or line == '':
+#                 continue
 
-            count += 1
-            line = line.split()
-            if count <= (extra_head + head):
-                # Read head
-                if count == 1:
-                    logger.debug('- reading head...')
+#             count += 1
+#             line = line.split()
+#             if count <= (extra_head + head):
+#                 # Read head
+#                 if count == 1:
+#                     logger.debug('- reading head...')
 
-                if smdim == 1:
-                    if count == 1:
-                        # model
-                        line = list(map(int, line))
-                        sg.model = line[0]
-                    elif count == 2:
-                        # initial twist/curvatures
-                        line = list(map(float, line))
-                        sg.initial_twist = line[0]
-                        sg.initial_curvature = [line[1], line[2]]
-                    elif count == 3:
-                        # oblique
-                        line = list(map(float, line))
-                        sg.oblique = line
-                elif smdim == 2:
-                    if count == 1:
-                        # model
-                        line = list(map(int, line))
-                        sg.model = line[0]
-                    elif count == 2:
-                        # initial twist/curvature
-                        line = list(map(float, line))
-                        sg.initial_curvature = line
+#                 if smdim == 1:
+#                     if count == 1:
+#                         # model
+#                         line = list(map(int, line))
+#                         sg.model = line[0]
+#                     elif count == 2:
+#                         # initial twist/curvatures
+#                         line = list(map(float, line))
+#                         sg.initial_twist = line[0]
+#                         sg.initial_curvature = [line[1], line[2]]
+#                     elif count == 3:
+#                         # oblique
+#                         line = list(map(float, line))
+#                         sg.oblique = line
+#                 elif smdim == 2:
+#                     if count == 1:
+#                         # model
+#                         line = list(map(int, line))
+#                         sg.model = line[0]
+#                     elif count == 2:
+#                         # initial twist/curvature
+#                         line = list(map(float, line))
+#                         sg.initial_curvature = line
 
-                if count == (extra_head + head - 1):
-                    # analysis  elem_flag  trans_flag  temp_flag
-                    line = list(map(int, line))
-                    sg.analysis = line[0]
-                    sg.degen_element = line[1]
-                    sg.trans_element = line[2]
-                    sg.nonuniform_temperature = line[3]
-                elif count == (extra_head + head):
-                    # nsg  nnode  nelem  nmate  nslave  nlayer
-                    line = list(map(int, line))
-                    # print('line =', line)
-                    sg.sgdim = line[0]
-                    num_nodes = line[1]
-                    num_elements = line[2]
-                    num_materials = line[3]
-                    num_slavenodes = line[4]
-                    sg.num_slavenodes = num_slavenodes
-                    num_layertypes = line[5]
-                continue
-            elif count_node <= num_nodes:
-                # Read nodal coordinates
-                if count_node == 1:
-                    logger.debug('- reading nodal coordinates...')
-                sg.nodes[int(line[0])] = list(map(float, line[1:]))
-                count_node += 1
-                continue
-            elif count_element <= num_elements:
-                # Read element material/layer connectivities
-                if count_element == 1:
-                    logger.debug('- reading elemental connectivities...')
-                line = list(map(int, line))
-                eid = line[0]
-                lyrtp = line[1]
+#                 if count == (extra_head + head - 1):
+#                     # analysis  elem_flag  trans_flag  temp_flag
+#                     line = list(map(int, line))
+#                     sg.analysis = line[0]
+#                     sg.degen_element = line[1]
+#                     sg.trans_element = line[2]
+#                     sg.nonuniform_temperature = line[3]
+#                 elif count == (extra_head + head):
+#                     # nsg  nnode  nelem  nmate  nslave  nlayer
+#                     line = list(map(int, line))
+#                     # print('line =', line)
+#                     sg.sgdim = line[0]
+#                     num_nodes = line[1]
+#                     num_elements = line[2]
+#                     num_materials = line[3]
+#                     num_slavenodes = line[4]
+#                     sg.num_slavenodes = num_slavenodes
+#                     num_layertypes = line[5]
+#                 continue
+#             elif count_node <= num_nodes:
+#                 # Read nodal coordinates
+#                 if count_node == 1:
+#                     logger.debug('- reading nodal coordinates...')
+#                 sg.nodes[int(line[0])] = list(map(float, line[1:]))
+#                 count_node += 1
+#                 continue
+#             elif count_element <= num_elements:
+#                 # Read element material/layer connectivities
+#                 if count_element == 1:
+#                     logger.debug('- reading elemental connectivities...')
+#                 line = list(map(int, line))
+#                 eid = line[0]
+#                 lyrtp = line[1]
 
-                sg.elementids.append(eid)
-                sg.elements[eid] = [i for i in line[2:] if i != 0]
-                sg.elementids2d.append(eid)
+#                 sg.elementids.append(eid)
+#                 sg.elements[eid] = [i for i in line[2:] if i != 0]
+#                 sg.elementids2d.append(eid)
 
-                if lyrtp not in sg.prop_elem.keys():
-                    sg.prop_elem[lyrtp] = []
-                sg.prop_elem[lyrtp].append(eid)
-                sg.elem_prop[eid] = lyrtp
+#                 if lyrtp not in sg.prop_elem.keys():
+#                     sg.prop_elem[lyrtp] = []
+#                 sg.prop_elem[lyrtp].append(eid)
+#                 sg.elem_prop[eid] = lyrtp
 
-                count_element += 1
-                continue
-            elif (sg.trans_element != 0) and (count_element <= (2 * num_elements)):
-                # Read element orientation (a b c)
-                if count_element == (num_elements + 1):
-                    logger.debug('- reading elemental orientations...')
-                eid = int(line[0])
-                a = list(map(float, line[1:4]))
-                b = list(map(float, line[4:7]))
-                c = list(map(float, line[7:10]))
-                sg.elem_orient[eid] = [a, b, c]
+#                 count_element += 1
+#                 continue
+#             elif (sg.trans_element != 0) and (count_element <= (2 * num_elements)):
+#                 # Read element orientation (a b c)
+#                 if count_element == (num_elements + 1):
+#                     logger.debug('- reading elemental orientations...')
+#                 eid = int(line[0])
+#                 a = list(map(float, line[1:4]))
+#                 b = list(map(float, line[4:7]))
+#                 c = list(map(float, line[7:10]))
+#                 sg.elem_orient[eid] = [a, b, c]
 
-                count_element += 1
-                continue
-            elif count_layertype <= num_layertypes:
-                # Read layer types
-                if count_layertype == 1:
-                    logger.debug('- reading layer types...')
-                ltid = int(line[0])
-                mid = int(line[1])
-                theta3 = float(line[2])
-                sg.mocombos[ltid] = [mid, theta3]
-                count_layertype += 1
-                continue
-            elif count_material <= num_materials:
-                # Read materials
-                if count_material == 1:
-                    logger.debug('- reading materials...')
-                if line_material == 0:
-                    line = list(map(int, line))
-                    mid = line[0]
-                    mtype = line[1]
-                    num_temp = line[2]
-                    mp = mmsd.MaterialProperty()
-                    # sg.materials[mid].eff_props[3]['type'] = mtype
-                    mp.anisotropy = mtype
-                    line_material += 1
-                    continue
-                elif line_material == 1:
-                    # line = list(map(float, line))
-                    # sg.materials[mid].eff_props[3]['density'] = float(line[1])
-                    mp.density = float(line[1])
-                    line_material += 1
-                    continue
+#                 count_element += 1
+#                 continue
+#             elif count_layertype <= num_layertypes:
+#                 # Read layer types
+#                 if count_layertype == 1:
+#                     logger.debug('- reading layer types...')
+#                 ltid = int(line[0])
+#                 mid = int(line[1])
+#                 theta3 = float(line[2])
+#                 sg.mocombos[ltid] = [mid, theta3]
+#                 count_layertype += 1
+#                 continue
+#             elif count_material <= num_materials:
+#                 # Read materials
+#                 if count_material == 1:
+#                     logger.debug('- reading materials...')
+#                 if line_material == 0:
+#                     line = list(map(int, line))
+#                     mid = line[0]
+#                     mtype = line[1]
+#                     num_temp = line[2]
+#                     mp = mmsd.MaterialProperty()
+#                     # sg.materials[mid].eff_props[3]['type'] = mtype
+#                     mp.anisotropy = mtype
+#                     line_material += 1
+#                     continue
+#                 elif line_material == 1:
+#                     # line = list(map(float, line))
+#                     # sg.materials[mid].eff_props[3]['density'] = float(line[1])
+#                     mp.density = float(line[1])
+#                     line_material += 1
+#                     continue
 
-                if mtype == 0:
-                    # isotropic
-                    if line_material == 2:
-                        e = float(line[0])
-                        nu = float(line[1])
-                        consts = [e, nu]
-                        # sg.materials[mid].eff_props[3]['constants']['e'] = e
-                        # sg.materials[mid].eff_props[3]['constants']['nu'] = nu
-                        line_material = 99
-                        continue
-                elif mtype == 1:
-                    # orthotropic
-                    if line_material == 2:
-                        # pe = []
-                        e = list(map(float, line))
-                        consts = e
-                        # sg.materials[mid].eff_props[3]['constants']['e1'] = e[0]
-                        # sg.materials[mid].eff_props[3]['constants']['e2'] = e[1]
-                        # sg.materials[mid].eff_props[3]['constants']['e3'] = e[2]
-                        # for ei in e:
-                        #     pe.append(ei)
-                        # sg.materials[mid].property_elastic += e
-                        line_material += 1
-                        continue
-                    elif line_material == 3:
-                        g = list(map(float, line))
-                        consts.append(g[0])
-                        consts.append(g[1])
-                        consts.append(g[2])
-                        # sg.materials[mid].eff_props[3]['constants']['g12'] = g[0]
-                        # sg.materials[mid].eff_props[3]['constants']['g13'] = g[1]
-                        # sg.materials[mid].eff_props[3]['constants']['g23'] = g[2]
-                        # for gi in g:
-                        #     pe.append(gi)
-                        # self.materials[mid].property_elastic += g
-                        line_material += 1
-                        continue
-                    elif line_material == 4:
-                        nu = list(map(float, line))
-                        consts.append(nu[0])
-                        consts.append(nu[1])
-                        consts.append(nu[2])
-                        # sg.materials[mid].eff_props[3]['constants']['nu12'] = nu[0]
-                        # sg.materials[mid].eff_props[3]['constants']['nu13'] = nu[1]
-                        # sg.materials[mid].eff_props[3]['constants']['nu23'] = nu[2]
-                        # for nui in nu:
-                        #     pe.append(nui)
-                        # sg.materials[mid].property_elastic.append(pe)
-                        line_material = 99
-                        continue
-                elif mtype == 2:
-                    # anisotropic
-                    continue
+#                 if mtype == 0:
+#                     # isotropic
+#                     if line_material == 2:
+#                         e = float(line[0])
+#                         nu = float(line[1])
+#                         consts = [e, nu]
+#                         # sg.materials[mid].eff_props[3]['constants']['e'] = e
+#                         # sg.materials[mid].eff_props[3]['constants']['nu'] = nu
+#                         line_material = 99
+#                         continue
+#                 elif mtype == 1:
+#                     # orthotropic
+#                     if line_material == 2:
+#                         # pe = []
+#                         e = list(map(float, line))
+#                         consts = e
+#                         # sg.materials[mid].eff_props[3]['constants']['e1'] = e[0]
+#                         # sg.materials[mid].eff_props[3]['constants']['e2'] = e[1]
+#                         # sg.materials[mid].eff_props[3]['constants']['e3'] = e[2]
+#                         # for ei in e:
+#                         #     pe.append(ei)
+#                         # sg.materials[mid].property_elastic += e
+#                         line_material += 1
+#                         continue
+#                     elif line_material == 3:
+#                         g = list(map(float, line))
+#                         consts.append(g[0])
+#                         consts.append(g[1])
+#                         consts.append(g[2])
+#                         # sg.materials[mid].eff_props[3]['constants']['g12'] = g[0]
+#                         # sg.materials[mid].eff_props[3]['constants']['g13'] = g[1]
+#                         # sg.materials[mid].eff_props[3]['constants']['g23'] = g[2]
+#                         # for gi in g:
+#                         #     pe.append(gi)
+#                         # self.materials[mid].property_elastic += g
+#                         line_material += 1
+#                         continue
+#                     elif line_material == 4:
+#                         nu = list(map(float, line))
+#                         consts.append(nu[0])
+#                         consts.append(nu[1])
+#                         consts.append(nu[2])
+#                         # sg.materials[mid].eff_props[3]['constants']['nu12'] = nu[0]
+#                         # sg.materials[mid].eff_props[3]['constants']['nu13'] = nu[1]
+#                         # sg.materials[mid].eff_props[3]['constants']['nu23'] = nu[2]
+#                         # for nui in nu:
+#                         #     pe.append(nui)
+#                         # sg.materials[mid].property_elastic.append(pe)
+#                         line_material = 99
+#                         continue
+#                 elif mtype == 2:
+#                     # anisotropic
+#                     continue
 
-                if line_material == 99:
-                    mp.assignConstants(consts)
-                    sg.materials[mid] = mp
-                    line_material = 0
-                    count_material += 1  # next material
-                    continue
-                continue
-            else:
-                # omega
-                sg.omega = float(line[0])
+#                 if line_material == 99:
+#                     mp.assignConstants(consts)
+#                     sg.materials[mid] = mp
+#                     line_material = 0
+#                     count_material += 1  # next material
+#                     continue
+#                 continue
+#             else:
+#                 # omega
+#                 sg.omega = float(line[0])
 
-    return sg
+#     return sg
 
 
 

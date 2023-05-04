@@ -1,13 +1,13 @@
 MaterialSection
 ===============
 
-.. currentmodule:: msgd.model.general
+.. currentmodule:: sgio.core.general
 
 .. highlight:: python
 
 ::
 
-    msgd.model.general.MaterialSection
+    sgio.core.general.MaterialSection
 
 
 ..  autoclass:: MaterialSection

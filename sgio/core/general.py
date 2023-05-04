@@ -1,30 +1,30 @@
 import sgio.utils.io as sui
 
 
-class MSGDFEModel():
-    r"""
-    """
+# class MSGDFEModel():
+#     r"""
+#     """
 
-    def __init__(self, name=''):
-        self.name = name
+#     def __init__(self, name=''):
+#         self.name = name
 
-        self.nodes = {}
-        self.elements = {}
-        self.node_sets = {}
-        self.element_sets = {}
+#         self.nodes = {}
+#         self.elements = {}
+#         self.node_sets = {}
+#         self.element_sets = {}
 
-    def summary(self):
-        print('Nodes')
-        print(self.nodes)
-        print()
-        print('Node sets')
-        print(self.node_sets)
-        print()
-        print('Elements')
-        print(self.elements)
-        print()
-        print('Element sets')
-        print(self.element_sets)
+#     def summary(self):
+#         print('Nodes')
+#         print(self.nodes)
+#         print()
+#         print('Node sets')
+#         print(self.node_sets)
+#         print()
+#         print('Elements')
+#         print(self.elements)
+#         print()
+#         print('Element sets')
+#         print(self.element_sets)
 
 
 

@@ -9,19 +9,6 @@ if "%SPHINXBUILD%" == "" (
 )
 set SOURCEDIR=source
 set BUILDDIR=build
-set CONFDIR=source
-
-if "%1" == "" goto help
-
-if "%2" == "ivabs" (
-	set BUILDDIR=build_ivabs
-	set CONFDIR=source\ivabs
-)
-
-if "%2" == "dev" (
-	set BUILDDIR=build_dev
-	set CONFDIR=source\conf_dev
-)
 
 %SPHINXBUILD% >NUL 2>NUL
 if errorlevel 9009 (
@@ -32,11 +19,13 @@ if errorlevel 9009 (
 	echo.may add the Sphinx directory to PATH.
 	echo.
 	echo.If you don't have Sphinx installed, grab it from
-	echo.http://sphinx-doc.org/
+	echo.https://www.sphinx-doc.org/
 	exit /b 1
 )
 
-%SPHINXBUILD% -b %1 -c %CONFDIR% %SOURCEDIR% %BUILDDIR% %SPHINXOPTS% %O%
+if "%1" == "" goto help
+
+%SPHINXBUILD% -M %1 %SOURCEDIR% %BUILDDIR% %SPHINXOPTS% %O%
 goto end
 
 :help
