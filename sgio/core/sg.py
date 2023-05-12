@@ -1,8 +1,8 @@
-# import copy
+import copy
 # import math
 import logging
 
-# import numpy as np
+import numpy as np
 # from numpy.typing import ArrayLike
 
 # import sgio.core.solid as scs
@@ -266,7 +266,16 @@ class StructureGene(object):
 
 
 
+    def copy(self):
+        return copy.deepcopy(self)
+    
 
+    
+
+    def translate(self, v):
+        v = np.asarray(v)
+        self.mesh.points += v
+        return
 
 
 
@@ -326,7 +335,7 @@ class StructureGene(object):
 
 
     def write(
-        self, fn, solver, analysis='h', sg_fmt=1, sfi='8d', sff='20.12e', version=None
+        self, fn, file_format, analysis='h', sg_fmt=1, sfi='8d', sff='20.12e', version=None
         ):
         """Write analysis input
 
@@ -353,9 +362,9 @@ class StructureGene(object):
         # sff = '16.6e'
 
         if analysis.lower().startswith('h'):
-            self.writeInput(fn, sfi, sff, solver, sg_fmt, version)
+            self.writeInput(fn, sfi, sff, file_format, sg_fmt, version)
         elif (analysis.lower().startswith('d')) or (analysis.lower().startswith('l')) or (analysis.lower().startswith('f')):
-            self.writeInputGlobal(fn+'.glb', sfi, sff, solver, analysis, version)
+            self.writeInputGlobal(fn+'.glb', sfi, sff, file_format, analysis, version)
 
         return fn
     

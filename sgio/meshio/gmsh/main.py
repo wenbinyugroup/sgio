@@ -85,21 +85,21 @@ def _read_header(f):
 
 # Gmsh ASCII output uses `%.16g` for floating point values,
 # meshio uses same precision but exponential notation `%.16e`.
-def write(filename, mesh, fmt_version="4.1", binary=True, float_fmt=".16e"):
+def write(filename, mesh, fmt_version="4.1", binary=True, float_fmt=".16e", **kwargs):
     """Writes a Gmsh msh file."""
+    # try:
+    #     writer = _writers[fmt_version]
+    # except KeyError:
     try:
         writer = _writers[fmt_version]
     except KeyError:
-        try:
-            writer = _writers[fmt_version]
-        except KeyError:
-            raise WriteError(
-                "Need mesh format in {} (got {})".format(
-                    sorted(_writers.keys()), fmt_version
-                )
+        raise WriteError(
+            "Need mesh format in {} (got {})".format(
+                sorted(_writers.keys()), fmt_version
             )
+        )
 
-    writer.write(filename, mesh, binary=binary, float_fmt=float_fmt)
+    writer.write(filename, mesh, binary=binary, float_fmt=float_fmt, **kwargs)
 
 
 register_format(

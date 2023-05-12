@@ -235,7 +235,7 @@ def _read_periodic(f, is_ascii):
     return periodic
 
 
-def write(filename, mesh: Mesh, float_fmt: str = ".16e", binary: bool = True) -> None:
+def write(filename, mesh: Mesh, float_fmt: str = ".16e", binary: bool = True, **kwargs) -> None:
     """Writes msh files, cf.
     <http://gmsh.info//doc/texinfo/gmsh.html#MSH-ASCII-file-format>.
     """

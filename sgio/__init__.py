@@ -4,6 +4,7 @@ from .core.general import MaterialSection, SectionResponse, StructureResponseCas
 from .core.solid import MaterialProperty
 from .core.shell import ShellProperty
 from .core.beam import BeamProperty
+from .core.merge import mergeSG
 
 from .io import read, readOutput, readLoadCsv
 
