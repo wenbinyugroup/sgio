@@ -1,4 +1,5 @@
-from .core.sg import StructureGene, buildSG1D
+from .core.sg import StructureGene
+from .core.builder import buildSG1D
 from .core.general import MaterialSection, SectionResponse, StructureResponseCases
 from .core.solid import MaterialProperty
 from .core.shell import ShellProperty

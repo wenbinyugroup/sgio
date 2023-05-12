@@ -1,12 +1,12 @@
 # import os
 # import platform
 # import signal
-import logging
 import subprocess as sbp
 # import msgd.utils.logger as mul
 from .._global import *
 
 
+import logging
 logger = logging.getLogger(__name__)
 
 
@@ -106,75 +106,6 @@ def run(cmd, timeout):
     except VABSError as e:
         logger.error('Something wrong with VABS...', exc_info=e)
 
-    # if platform.system() == 'Windows':
-    #     # if scrnout:
-    #     #     # sbp.call(cmd)
-    #     #     proc = sbp.Popen(cmd)
-    #     # else:
-    #     #     # proc = sbp.Popen(cmd, stdout=sbp.DEVNULL, stderr=sbp.STDOUT)
-    #     #     proc = sbp.Popen(cmd, stdout=sbp.PIPE, stderr=sbp.STDOUT)
-
-    #     try:
-    #         # stdout, stderr = proc.communicate(timeout=timeout)
-    #         out = sbp.run(
-    #             cmd,
-    #             capture_output=True, timeout=timeout, encoding='UTF-8'
-    #         )
-    #         print(out.stdout)
-    #         # print('exit code:', proc.returncode)
-    #         # print(stdout)
-    #         # if logger:
-    #             # logger.debug(f'exit code: {proc.returncode}')
-    #         logger.debug('exit code: {0}'.format(out.returncode))
-    #         # logger.info(stdout)
-    #             # logger.debug(stdout.decode())
-    #     except sbp.TimeoutExpired as e:
-    #         # print('exit code:', proc.returncode)
-    #         # print(stderr)
-    #         # if logger:
-    #             # logger.debug(f'exit code: {proc.returncode}')
-    #         logger.debug('exit code: {0}'.format(out.returncode))
-    #             # logger.debug(stdout.decode())
-    #             # logger.debug(stderr.decode())
-
-    #         logger.critical('TimeoutExpired')
-    #         # proc.kill()
-    #         logger.critical('Process killed')
-
-
-    # elif platform.system() == 'Linux':
-    #     # sbp.run(["$PATH"])
-
-    #     # if scrnout:
-    #     #     # sbp.call(cmd)
-    #     #     proc = sbp.Popen(cmd)
-    #     # else:
-    #     #     # proc = sbp.Popen(cmd, stdout=sbp.DEVNULL, stderr=sbp.STDOUT, preexec_fn=os.setsid)
-    #     #     proc = sbp.Popen(cmd, stdout=sbp.PIPE, stderr=sbp.STDOUT, preexec_fn=os.setsid)
-
-    #     try:
-    #         sbp.run(cmd, timeout=timeout)
-    #         # stdout, stderr = proc.communicate(timeout=timeout)
-    #         # print('exit code:', proc.returncode)
-    #         # print(stdout)
-    #         # if logger:
-    #         #     # logger.debug(f'exit code: {proc.returncode}')
-    #         #     logger.debug('exit code: {0}'.format(proc.returncode))
-    #         #     logger.debug(stdout)
-    #         #     # logger.debug(stdout.decode())
-    #     except sbp.TimeoutExpired as e:
-    #         # print('exit code:', proc.returncode)
-    #         # print(stderr)
-    #         # if logger:
-    #         #     # logger.debug(f'exit code: {proc.returncode}')
-    #         #     logger.debug('exit code: {0}'.format(proc.returncode))
-    #         #     # logger.debug(stdout.decode())
-    #         #     # logger.debug(stderr.decode())
-
-    #         logger.critical('TimeoutExpired')
-    #         # os.killpg(os.getpgid(proc.pid), signal.SIGTERM)
-    #         logger.critical('Process killed')
-
 
 
 
@@ -195,26 +126,26 @@ def getScVabsMessage(code, stdout):
 
 
 
-def importFunction(module_name, func_name):
-    r"""
-    """
+# def importFunction(module_name, func_name):
+#     r"""
+#     """
 
-    try:
-        import_str = 'import {}'.format(module_name)
-        logger.info(import_str)
-        exec(import_str)
-        func_str = '{}.{}'.format(module_name, func_name)
-        logger.info('evaluating user function: {}'.format(func_str))
-        func_obj = eval(func_str)
-    except ImportError:
-        try:
-            import_str = 'from {} import {}'.format(module_name, func_name)
-            logger.info(import_str)
-            exec(import_str)
-            logger.info('evaluating user function: {}'.format(func_name))
-            func_obj = eval(func_str)
-        except ImportError:
-            print('something wrong when importing module:', module_name)
+#     try:
+#         import_str = 'import {}'.format(module_name)
+#         logger.info(import_str)
+#         exec(import_str)
+#         func_str = '{}.{}'.format(module_name, func_name)
+#         logger.info('evaluating user function: {}'.format(func_str))
+#         func_obj = eval(func_str)
+#     except ImportError:
+#         try:
+#             import_str = 'from {} import {}'.format(module_name, func_name)
+#             logger.info(import_str)
+#             exec(import_str)
+#             logger.info('evaluating user function: {}'.format(func_name))
+#             func_obj = eval(func_str)
+#         except ImportError:
+#             print('something wrong when importing module:', module_name)
 
 
-    return func_obj
+#     return func_obj
