@@ -28,6 +28,8 @@ def run(cmd, timeout):
             capture_output=True, timeout=timeout, encoding='UTF-8'
         )
 
+        # print(out.stdout)
+
         logger.debug(f'return code: {out.returncode}')
         logger.debug(f'stdout:\n{out.stdout}')
         logger.debug(f'stderr:{out.stderr}')
@@ -61,7 +63,8 @@ def run(cmd, timeout):
                     raise VABSIOError(err_message)
 
             else:
-                err_message = f'Something wrong with {MSG_COMMAND_TO_NAME[cmd_name]}'
+                scmd = ' '.join(cmd)
+                err_message = f'Something wrong with <{scmd}>...'
                 if cmd[0].lower().startswith('s'):
                     raise SwiftCompError(err_message)
                 elif cmd[0].lower().startswith('v'):
@@ -101,10 +104,10 @@ def run(cmd, timeout):
         logger.error('Something wrong in the VABS input...', exc_info=e)
 
     except SwiftCompError as e:
-        logger.error('Something wrong with SwiftComp...', exc_info=e)
+        logger.error('', exc_info=e)
 
     except VABSError as e:
-        logger.error('Something wrong with VABS...', exc_info=e)
+        logger.error('', exc_info=e)
 
 
 
