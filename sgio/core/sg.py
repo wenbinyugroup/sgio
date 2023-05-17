@@ -325,7 +325,7 @@ class StructureGene(object):
             if (self.materials[mo[0]].name == name) and (mo[1] == angle):
                 return i
         return 0
-    
+
 
 
 
@@ -335,7 +335,8 @@ class StructureGene(object):
 
 
     def write(
-        self, fn, file_format, analysis='h', sg_fmt=1, sfi='8d', sff='20.12e', version=None
+        self, fn, file_format:str, analysis='h', sg_fmt:int=1,
+        sfi:str='8d', sff:str='20.12e', version=None, mesh_only=False
         ):
         """Write analysis input
 
@@ -343,8 +344,8 @@ class StructureGene(object):
         ----------
         fn : str
             Name of the input file
-        solver : {'vabs' (or 'v'), 'swfitcomp' (or 'sc', 's')}
-            Solver of the analysis
+        file_format : {'vabs' (or 'v'), 'swfitcomp' (or 'sc', 's')}
+            file_format of the analysis
         analysis : {0, 1, 2, 3, '', 'h', 'dn', 'dl', 'd', 'l', 'fi'}, optional
             Analysis type, by default 'h'
         sg_fmt : {0, 1}, optional
@@ -361,13 +362,15 @@ class StructureGene(object):
         # sfi = '8d'
         # sff = '16.6e'
 
+        _file_format = file_format.lower()
+
         if analysis.lower().startswith('h'):
-            self.writeInput(fn, sfi, sff, file_format, sg_fmt, version)
+            self.writeInput(fn, _file_format, sfi, sff, sg_fmt, version, mesh_only)
+
         elif (analysis.lower().startswith('d')) or (analysis.lower().startswith('l')) or (analysis.lower().startswith('f')):
-            self.writeInputGlobal(fn+'.glb', sfi, sff, file_format, analysis, version)
+            self.writeInputGlobal(fn+'.glb', _file_format, sfi, sff, analysis, version)
 
         return fn
-    
 
 
 
@@ -376,7 +379,8 @@ class StructureGene(object):
 
 
 
-    def writeInput(self, fn, sfi, sff, solver, sg_fmt, version=None):
+
+    def writeInput(self, fn, file_format, sfi, sff, sg_fmt, version=None, mesh_only=False):
         """
         """
 
@@ -388,30 +392,23 @@ class StructureGene(object):
 
         logger.debug('format version: {}'.format(self.version))
 
-        with open(fn, 'w') as fobj:
-            self._writeHeader(fobj, solver, sfi, sff, sg_fmt, version)
+        with open(fn, 'w') as file:
+            if not mesh_only:
+                self._writeHeader(file, file_format, sfi, sff, sg_fmt, version)
 
-            # Write mesh
-            # self.__writeInputSGNodes(fobj, sfi, sff)
-            # self.__writeInputSGElements(fobj, solver, sfi)
-            self._writeMesh(fobj, file_format=solver, sgdim=self.sgdim, int_fmt=sfi, float_fmt=sff)
+            self._writeMesh(file, file_format=file_format, sgdim=self.sgdim, int_fmt=sfi, float_fmt=sff)
 
-            # if self.use_elem_local_orient != 0:
-            #     self.__writeInputSGElementOrientations(fobj, sfi, sff, solver)
+            if not mesh_only:
+                self._writeMOCombos(file, file_format, sfi, sff)
 
-            if len(self.mocombos) > 0:
-                self.__writeInputSGMOCombos(fobj, sfi, sff)
+            if not mesh_only:
+                self._writeMaterials(file, file_format, sfi, sff)
 
-            self._writeMaterials(fobj, sfi, sff, solver)
-
-            if solver.lower().startswith('s'):
-                fobj.write((ssff + '\n').format(self.omega))
-                # fobj.write('\n')
-
-            # fobj.write('\n')
+            if file_format.startswith('s'):
+                file.write((ssff + '\n').format(self.omega))
 
         return
-    
+
 
 
 
@@ -437,17 +434,17 @@ class StructureGene(object):
 
 
 
-    def __writeInputSGMOCombos(self, fobj, sfi, sff):
+    def _writeMOCombos(self, file, file_format, sfi, sff):
         ssfi = '{:' + sfi + '}'
         ssff = '{:' + sff + '}'
         count = 0
         for cid, combo in self.mocombos.items():
             count += 1
-            fobj.write((ssfi + ssfi + ssff).format(cid, combo[0], combo[1]))
+            file.write((ssfi + ssfi + ssff).format(cid, combo[0], combo[1]))
             if count == 1:
-                fobj.write('  # combination id, material id, in-plane rotation angle')
-            fobj.write('\n')
-        fobj.write('\n')
+                file.write('  # combination id, material id, in-plane rotation angle')
+            file.write('\n')
+        file.write('\n')
         return
 
 
@@ -458,7 +455,7 @@ class StructureGene(object):
 
 
 
-    def _writeMaterials(self, fobj, sfi, sff, solver):
+    def _writeMaterials(self, file, file_format, sfi, sff):
         """
         """
 
@@ -477,51 +474,51 @@ class StructureGene(object):
             # print(m.stff)
             # print(anisotropy)
 
-            if solver.lower().startswith('v'):
-                sui.writeFormatIntegers(fobj, (mid, anisotropy), sfi, newline=False)
+            if file_format.startswith('v'):
+                sui.writeFormatIntegers(file, (mid, anisotropy), sfi, newline=False)
                 if counter == 0:
-                    fobj.write('  # materials')
-                fobj.write('\n')
-            elif solver.lower().startswith('s'):
-                sui.writeFormatIntegers(fobj, (mid, anisotropy, 1), sfi, newline=False)
+                    file.write('  # materials')
+                file.write('\n')
+            elif file_format.startswith('s'):
+                sui.writeFormatIntegers(file, (mid, anisotropy, 1), sfi, newline=False)
                 if counter == 0:
-                    fobj.write('  # materials')
-                fobj.write('\n')
-                sui.writeFormatFloats(fobj, (m.temperature, m.density), sff)
+                    file.write('  # materials')
+                file.write('\n')
+                sui.writeFormatFloats(file, (m.temperature, m.density), sff)
 
             # Write elastic properties
             if anisotropy == 0:
                 # mpc = m.constants
-                sui.writeFormatFloats(fobj, [m.e1, m.nu12], sff)
+                sui.writeFormatFloats(file, [m.e1, m.nu12], sff)
 
             elif anisotropy == 1:
                 # mpc = m.constants
-                sui.writeFormatFloats(fobj, [m.e1, m.e2, m.e3], sff)
-                sui.writeFormatFloats(fobj, [m.g12, m.g13, m.g23], sff)
-                sui.writeFormatFloats(fobj, [m.nu12, m.nu13, m.nu23], sff)
+                sui.writeFormatFloats(file, [m.e1, m.e2, m.e3], sff)
+                sui.writeFormatFloats(file, [m.g12, m.g13, m.g23], sff)
+                sui.writeFormatFloats(file, [m.nu12, m.nu13, m.nu23], sff)
 
 
             elif anisotropy == 2:
                 for i in range(6):
-                    sui.writeFormatFloats(fobj, m.stff[i][i:], sff)
+                    sui.writeFormatFloats(file, m.stff[i][i:], sff)
                     # for j in range(i, 6):
-                    #     fobj.write(sff.format(m.stff[i][j]))
-                    # fobj.write('\n')
+                    #     file.write(sff.format(m.stff[i][j]))
+                    # file.write('\n')
 
             # print('self.physics =', self.physics)
             # print('m.cte =', m.cte)
             # print('m.specific_heat =', m.specific_heat)
             if self.physics in [1, 4, 6]:
-                sui.writeFormatFloats(fobj, m.cte+[m.specific_heat,], sff)
+                sui.writeFormatFloats(file, m.cte+[m.specific_heat,], sff)
 
-            if solver.lower().startswith('v'):
-                sui.writeFormatFloats(fobj, (m.density,), sff)
+            if file_format.lower().startswith('v'):
+                sui.writeFormatFloats(file, (m.density,), sff)
 
-            fobj.write('\n')
+            file.write('\n')
             
             counter += 1
 
-        fobj.write('\n')
+        file.write('\n')
         return
 
 
@@ -532,14 +529,14 @@ class StructureGene(object):
 
 
 
-    def _writeHeader(self, fobj, solver, sfi, sff, sg_fmt, version=None):
+    def _writeHeader(self, file, file_format, sfi, sff, sg_fmt, version=None):
         ssfi = '{:' + sfi + '}'
 
         # VABS
-        if solver.lower().startswith('v'):
+        if file_format.startswith('v'):
             # format_flag  nlayer
-            sui.writeFormatIntegers(fobj, [sg_fmt, len(self.mocombos)])
-            fobj.write('\n')
+            sui.writeFormatIntegers(file, [sg_fmt, len(self.mocombos)])
+            file.write('\n')
 
             # timoshenko_flag  damping_flag  thermal_flag
             model = 0
@@ -556,8 +553,8 @@ class StructureGene(object):
             if self.physics == 1:
                 physics = 3
             sui.writeFormatIntegers(
-                fobj, [model, self.do_dampling, physics], sfi, newline=False)
-            fobj.write('  # model_flag, damping_flag, thermal_flag\n\n')
+                file, [model, self.do_dampling, physics], sfi, newline=False)
+            file.write('  # model_flag, damping_flag, thermal_flag\n\n')
 
             # curve_flag  oblique_flag  trapeze_flag  vlasov_flag
             line = [0, 0, trapeze, vlasov]
@@ -565,65 +562,65 @@ class StructureGene(object):
                 line[0] = 1
             if (self.oblique[0] != 1.0) or (self.oblique[1] != 0.0):
                 line[1] = 1
-            sui.writeFormatIntegers(fobj, line, sfi, newline=False)
-            fobj.write('  # curve_flag, oblique_flag, trapeze_flag, vlasov_flag\n\n')
+            sui.writeFormatIntegers(file, line, sfi, newline=False)
+            file.write('  # curve_flag, oblique_flag, trapeze_flag, vlasov_flag\n\n')
 
             # k1  k2  k3
             if line[0] == 1:
                 sui.writeFormatFloats(
-                    fobj,
+                    file,
                     [self.initial_twist, self.initial_curvature[0], self.initial_curvature[1]],
                     sff, newline=False
                 )
-                fobj.write('  # k11, k12, k13 (initial curvatures)\n\n')
+                file.write('  # k11, k12, k13 (initial curvatures)\n\n')
             
             # oblique1  oblique2
             if line[1] == 1:
-                sui.writeFormatFloats(fobj, self.oblique, sff, newline=False)
-                fobj.write('  # cos11, cos21 (obliqueness)\n\n')
+                sui.writeFormatFloats(file, self.oblique, sff, newline=False)
+                file.write('  # cos11, cos21 (obliqueness)\n\n')
             
             # nnode  nelem  nmate
             sui.writeFormatIntegers(
-                fobj, [self.nnodes, self.nelems, self.nmates], sfi, newline=False)
-            fobj.write('  # nnode, nelem, nmate\n\n')
+                file, [self.nnodes, self.nelems, self.nmates], sfi, newline=False)
+            file.write('  # nnode, nelem, nmate\n\n')
 
 
         # SwiftComp
-        elif solver.lower().startswith('s'):
+        elif file_format.startswith('s'):
             # Extra inputs for dimensionally reducible structures
             if (self.smdim == 1) or (self.smdim == 2):
                 # model (0: classical, 1: shear refined)
-                fobj.write(ssfi.format(self.model))
-                fobj.write('  # structural model (0: classical, 1: shear refined)')
-                fobj.write('\n\n')
+                file.write(ssfi.format(self.model))
+                file.write('  # structural model (0: classical, 1: shear refined)')
+                file.write('\n\n')
 
                 if self.smdim == 1:  # beam
                     # initial twist/curvatures
-                    # fobj.write((sff * 3 + '\n').format(0., 0., 0.))
+                    # file.write((sff * 3 + '\n').format(0., 0., 0.))
                     sui.writeFormatFloats(
-                        fobj,
+                        file,
                         [self.initial_twist, self.initial_curvature[0], self.initial_curvature[1]],
                         sff, newline=False
                     )
-                    fobj.write('  # initial curvatures k11, k12, k13\n')
-                    fobj.write('\n')
+                    file.write('  # initial curvatures k11, k12, k13\n')
+                    file.write('\n')
                     # oblique cross section
-                    # fobj.write((sff * 2 + '\n').format(1., 0.))
-                    sui.writeFormatFloats(fobj, self.oblique, sff)
+                    # file.write((sff * 2 + '\n').format(1., 0.))
+                    sui.writeFormatFloats(file, self.oblique, sff)
 
                 elif self.smdim == 2:  # shell
                     # initial twist/curvatures
-                    # fobj.write((sff * 2 + '\n').format(
+                    # file.write((sff * 2 + '\n').format(
                     #     self.initial_curvature[0], self.initial_curvature[1]
                     # ))
-                    sui.writeFormatFloats(fobj, self.initial_curvature, sff, newline=False)
-                    fobj.write('  # initial curvatures k12, k21\n')
+                    sui.writeFormatFloats(file, self.initial_curvature, sff, newline=False)
+                    file.write('  # initial curvatures k12, k21\n')
                     # if self.geo_correct:
                     # if self.initial_curvature[0] != 0 or self.initial_curvature[1] != 0:
                     if version > '2.1':
-                        sui.writeFormatFloats(fobj, self.lame_params, sff, newline=False)
-                        fobj.write('  # Lame parameters\n')
-                fobj.write('\n')
+                        sui.writeFormatFloats(file, self.lame_params, sff, newline=False)
+                        file.write('  # Lame parameters\n')
+                file.write('\n')
 
             # Head
             nums = [
@@ -634,10 +631,10 @@ class StructureGene(object):
             if version > '2.1':
                 nums += [self.force_flag, self.steer_flag]
                 cmt = cmt + ', force_flag, steer_flag'
-            sui.writeFormatIntegers(fobj, nums, sfi, newline=False)
-            fobj.write(cmt)
-            fobj.write('\n\n')
-            # fobj.write((sfi * 6 + '\n').format(
+            sui.writeFormatIntegers(file, nums, sfi, newline=False)
+            file.write(cmt)
+            file.write('\n\n')
+            # file.write((sfi * 6 + '\n').format(
             #     self.sgdim,
             #     len(self.nodes),
             #     len(self.elements),
@@ -645,7 +642,7 @@ class StructureGene(object):
             #     self.num_slavenodes,
             #     len(self.mocombos)
             # ))
-            sui.writeFormatIntegers(fobj, [
+            sui.writeFormatIntegers(file, [
                 self.sgdim,
                 self.nnodes,
                 self.nelems,
@@ -653,8 +650,8 @@ class StructureGene(object):
                 self.num_slavenodes,
                 len(self.mocombos)
             ], sfi, newline=False)
-            fobj.write('  # nsg, nnode, nelem, nmate, nslave, nlayer')
-            fobj.write('\n\n')
+            file.write('  # nsg, nnode, nelem, nmate, nslave, nlayer')
+            file.write('\n\n')
 
         return
 
@@ -666,13 +663,13 @@ class StructureGene(object):
 
 
 
-    def __writeInputMaterialStrength(self, fobj, sfi, sff):
+    def _writeInputMaterialStrength(self, file, file_format, sfi, sff):
         for i, m in self.materials.items():
             # print(m.strength)
             # print(m.failure_criterion)
             # print(m.char_len)
 
-            # fobj.write('{} {}'.format(m.failure_criterion, len(m.strength)))
+            # file.write('{} {}'.format(m.failure_criterion, len(m.strength)))
 
             strength = []
             if m.type == 0:
@@ -695,15 +692,15 @@ class StructureGene(object):
                     pass
 
             sui.writeFormatIntegers(
-                fobj,
+                file,
                 # (m.strength['criterion'], len(m.strength['constants'])),
                 [m.failure_criterion, len(strength)],
                 sfi
             )
-            # fobj.write((sff+'\n').format(m.strength['chara_len']))
-            sui.writeFormatFloats(fobj, [m.char_len,], sff)
-            # sui.writeFormatFloats(fobj, m.strength['constants'], sff[2:-1])
-            sui.writeFormatFloats(fobj, strength, sff)
+            # file.write((sff+'\n').format(m.strength['chara_len']))
+            sui.writeFormatFloats(file, [m.char_len,], sff)
+            # sui.writeFormatFloats(file, m.strength['constants'], sff[2:-1])
+            sui.writeFormatFloats(file, strength, sff)
         return
 
 
@@ -714,9 +711,9 @@ class StructureGene(object):
 
 
 
-    def __writeInputDisplacements(self, fobj, sff):
-        sui.writeFormatFloats(fobj, self.global_displacements, sff[2:-1])
-        sui.writeFormatFloatsMatrix(fobj, self.global_rotations, sff[2:-1])
+    def _writeInputDisplacements(self, file, file_format, sff):
+        sui.writeFormatFloats(file, self.global_displacements, sff[2:-1])
+        sui.writeFormatFloatsMatrix(file, self.global_rotations, sff[2:-1])
 
 
 
@@ -726,23 +723,23 @@ class StructureGene(object):
 
 
 
-    def __writeInputLoads(self, fobj, sfi, sff, solver):
-        if solver.lower().startswith('v'):
+    def _writeInputLoads(self, file, file_format, sfi, sff):
+        if file_format.startswith('v'):
             if self.model == 0:
-                sui.writeFormatFloats(fobj, self.global_loads)
+                sui.writeFormatFloats(file, self.global_loads)
             else:
-                sui.writeFormatFloats(fobj, [self.global_loads[i] for i in [0, 3, 4, 5]])
-                sui.writeFormatFloats(fobj, [self.global_loads[i] for i in [1, 2]])
-                fobj.write('\n')
-                sui.writeFormatFloats(fobj, self.global_loads_dist[0])
-                sui.writeFormatFloats(fobj, self.global_loads_dist[1])
-                sui.writeFormatFloats(fobj, self.global_loads_dist[2])
-                sui.writeFormatFloats(fobj, self.global_loads_dist[3])
-        elif solver.lower().startswith('s'):
-            # fobj.write((sfi+'\n').format(self.global_loads_type))
+                sui.writeFormatFloats(file, [self.global_loads[i] for i in [0, 3, 4, 5]])
+                sui.writeFormatFloats(file, [self.global_loads[i] for i in [1, 2]])
+                file.write('\n')
+                sui.writeFormatFloats(file, self.global_loads_dist[0])
+                sui.writeFormatFloats(file, self.global_loads_dist[1])
+                sui.writeFormatFloats(file, self.global_loads_dist[2])
+                sui.writeFormatFloats(file, self.global_loads_dist[3])
+        elif file_format.startswith('s'):
+            # file.write((sfi+'\n').format(self.global_loads_type))
             for load_case in self.global_loads:
-                sui.writeFormatFloats(fobj, load_case, sff)
-        fobj.write('\n')
+                sui.writeFormatFloats(file, load_case, sff)
+        file.write('\n')
         return
 
 
@@ -753,17 +750,17 @@ class StructureGene(object):
 
 
 
-    def writeInputGlobal(self, fn, sfi, sff, solver, analysis, version=None):
-        with open(fn, 'w') as fobj:
-            if analysis.lower().startswith('d') or analysis.lower().startswith('l'):
-                self.__writeInputDisplacements(fobj, sff)
-            elif analysis.lower().startswith('f'):
-                self.__writeInputMaterialStrength(fobj, sfi, sff)
+    def writeInputGlobal(self, fn, file_format, sfi, sff, analysis, version=None):
+        with open(fn, 'w') as file:
+            if analysis.startswith('d') or analysis.lower().startswith('l'):
+                self._writeInputDisplacements(file, file_format, sff)
+            elif analysis.startswith('f'):
+                self._writeInputMaterialStrength(file, file_format, sfi, sff)
 
-            if solver.lower().startswith('s'):
-                # fobj.write((sfi+'\n').format(self.global_loads_type))
-                sui.writeFormatIntegers(fobj, [self.global_loads_type, ], sfi)
+            if file_format.startswith('s'):
+                # file.write((sfi+'\n').format(self.global_loads_type))
+                sui.writeFormatIntegers(file, [self.global_loads_type, ], sfi)
 
             if analysis != 'f':
-                self.__writeInputLoads(fobj, sfi, sff, solver)
+                self._writeInputLoads(file, file_format, sfi, sff)
 

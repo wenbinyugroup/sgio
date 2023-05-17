@@ -98,7 +98,7 @@ def read_buffer(f):
     return Mesh(points, cells, point_data=point_data, cell_data=cell_data)
 
 
-def write(filename, mesh):
+def write(filename, mesh, **kwargs):
     for c in mesh.cells:
         if c.type not in ["triangle", "quad", "polygon"]:
             raise WriteError(
