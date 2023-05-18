@@ -1,41 +1,9 @@
 import sgio.utils.io as sui
-
-
-# class MSGDFEModel():
-#     r"""
-#     """
-
-#     def __init__(self, name=''):
-#         self.name = name
-
-#         self.nodes = {}
-#         self.elements = {}
-#         self.node_sets = {}
-#         self.element_sets = {}
-
-#     def summary(self):
-#         print('Nodes')
-#         print(self.nodes)
-#         print()
-#         print('Node sets')
-#         print(self.node_sets)
-#         print()
-#         print('Elements')
-#         print(self.elements)
-#         print()
-#         print('Element sets')
-#         print(self.element_sets)
-
-
-
-
-
-
-
+# import sgio.model as sm
 
 
 class MaterialSection(object):
-    r""" A macroscopic structure model. Stores material or structural
+    """A macroscopic structure model. Stores material or structural
     properties.
 
     Parameters
@@ -52,6 +20,8 @@ class MaterialSection(object):
         #: str: Name of the material/structure.
         self.name = ''
 
+        # Mass property
+        # -------------
         #: list of lists of floats: Mass matrix at the origin.
         self.mass_origin = None
         #: list of lists of floats: Mass matrix at the mass center.
@@ -62,11 +32,23 @@ class MaterialSection(object):
         self.mmoi = [0, 0, 0]
         #: float: Mass-weighted radius of gyration.
         self.mwrg = None
+        #: list of floats: Mass center. [x1, x2, x3]
+        self.mass_center = None
+
+        # Geometry property
+        # -----------------
         #: float: Geometric center
         self.gc = None
+
+        # Constitutive property
+        self.constitutive = None
+
+
+        # Elastic property
+        # ----------------
         #: int: (continuum model) Isotropy type.
         #: Isotropic (0), orthotropic (1), anisotropic (2).
-        self.type = None
+        # self.type = None
         #: dict of {str, float}: Engineering constants.
         #: Keys: `e1`, `e2`, `e3`, `nu12`, `nu13`, `nu23`, `g12`, `g13`, `g23`
         self.constants = {}
@@ -83,14 +65,13 @@ class MaterialSection(object):
         #: list of lists of floats:
         #: (beam/plate/shell models) Refined compliance matrix
         # self.compliance_refined = None
-
-        #: list of floats: Mass center. [x1, x2, x3]
-        self.mass_center = None
         #: list of floats: (beam model) Neutral axes/Tension center. [x1, x2, x3]
         self.tension_center = None
         #: list of floats: (beam model) Elastic axis/Shear center. [x1, x2, x3]
         self.shear_center = None
 
+        # Strength property
+        # -----------------
         #: int: Failure criterion.
         self.failure_criterion = None
         #: dict: Strength properties.
@@ -109,11 +90,6 @@ class MaterialSection(object):
 
         self.char_len = 0
 
-        # self.strength = {
-        #     'criterion': 0,
-        #     'chara_len': 0,
-        #     'constants': []
-        # }
 
     def __repr__(self):
         s = '\n'

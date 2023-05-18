@@ -9,6 +9,20 @@ MSG_COMMAND_TO_NAME = {
     'vabs': 'VABS',
 }
 
+FAILURE_CRITERION_NAME_TO_ID = {
+    'max_principal_stress': 1,
+    'max_principal_strain': 2,
+    'max_shear_stress': 3,
+    'tresca': 3,
+    'max_shear_strain': 4,
+    'mises': 5,
+    'max_stress': 1,
+    'max_strain': 2,
+    'tsai-hill': 3,
+    'tsai-wu': 4,
+    'hashin': 5
+}
+
 class SwiftCompLicenseError(Exception):
     pass
 

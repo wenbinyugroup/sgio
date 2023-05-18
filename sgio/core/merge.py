@@ -11,9 +11,16 @@ def mergeSG(sg1:StructureGene, sg2:StructureGene) -> StructureGene:
     sg1c = copy.deepcopy(sg1)
     sg2c = copy.deepcopy(sg2)
 
+    sg1_nnode = sg1c.nnodes
+    sg1_nelem = sg1c.nelems
+    sg1_nmate = sg1c.nmates
+    sg1_nma_comb = sg1c.nma_combs
+
+    sg2_mate_id2new = []
+    sg2_macomb_id2new = []
+
     # Combine mesh
     # Nodes
-    sg1_nnode = sg1c.nnodes
     sg1c.mesh.points = np.concatenate((
         sg1c.mesh.points, sg2c.mesh.points
     ))
@@ -44,5 +51,7 @@ def mergeSG(sg1:StructureGene, sg2:StructureGene) -> StructureGene:
         else:
             sg1.mesh.cells.append(_cb)
             sg1_cell_types.append(sg2type)
+
+    # Merge materials
 
     return sg1c
