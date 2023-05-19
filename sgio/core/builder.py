@@ -2,8 +2,9 @@ import copy
 import numpy as np
 
 from .sg import StructureGene
-from .solid import MaterialProperty
+from sgio.model.solid import MaterialProperty
 from sgio.meshio._mesh import Mesh
+import sgio.model as smdl
 
 import logging
 logger = logging.getLogger(__name__)

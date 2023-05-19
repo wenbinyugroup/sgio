@@ -1,4 +1,4 @@
 from .general import *
-from .solid import Cauchy
+from .solid import Cauchy, MaterialProperty
 
 

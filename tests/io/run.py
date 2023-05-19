@@ -10,16 +10,16 @@ logger = logging.getLogger(__name__)
 # import meshio
 # import msgd.pkg.meshio as mpm
 
-fn = sys.argv[1]
-file_format = sys.argv[2]
-format_version = sys.argv[3]
+fn_in = 'sg23_tri6_sc.sg'
+file_format_in = 'sc'
+format_version_in = '2.1'
+fn_out = 'sg23_tri6_sc_write.sg'
+file_format_out = 'sc'
+format_version_out = '2.1'
+smdim = 3
 
-if file_format.lower().startswith('s'):
-    smdim = int(sys.argv[4])
-else:
-    smdim = 1
 
-sg = sgio.read(fn, file_format, format_version, smdim)
+sg = sgio.read(fn_in, file_format_in, format_version_in, smdim)
 print(sg)
 
 # fn_base, fn_ext = os.path.splitext(fn)
@@ -60,9 +60,4 @@ for i, mp in sg.materials.items():
     print(mp)
 
 
-fn_out = fn.split('.')
-fn_out[-2] += '_write'
-fn_out = '.'.join(fn_out)
-ver_out = '2.1'
-# sg.write(fn_out, file_format, version=ver_out)
-sgio.write(sg, fn_out, file_format, version=ver_out)
+sgio.write(sg, fn_out, file_format_out, version=format_version_out)

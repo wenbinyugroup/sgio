@@ -4,8 +4,8 @@ import logging
 
 from sgio.core.sg import StructureGene
 
-import _swiftcomp
-import _vabs
+import sgio.io._swiftcomp as _swiftcomp
+import sgio.io._vabs as _vabs
 
 
 logger = logging.getLogger(__name__)
@@ -26,7 +26,7 @@ def read(fn:str, file_format:str, format_version:str, smdim:int, sg:StructureGen
     if file_format.lower() in ['vabs', 'sc', 'swiftcomp']:
         with open(fn, 'r') as file:
             if file_format.startswith('s'):
-                sg = _swiftcomp.readBuffer(file, file_format, format_version, smdim)
+                sg = _swiftcomp.readInputBuffer(file, format_version, smdim)
             elif file_format.startswith('v'):
                 sg = _vabs.readBuffer(file, file_format, format_version, smdim)
 
@@ -78,7 +78,7 @@ def write(
 
     _file_format = file_format.lower()
 
-    with open(fn, 'r') as file:
+    with open(fn, 'w', encoding='utf-8') as file:
         if mesh_only:
             sg.mesh.write(
                 file, file_format, sgdim=sg.sgdim,
