@@ -64,4 +64,5 @@ fn_out = fn.split('.')
 fn_out[-2] += '_write'
 fn_out = '.'.join(fn_out)
 ver_out = '2.1'
-sg.write(fn_out, file_format, version=ver_out)
+# sg.write(fn_out, file_format, version=ver_out)
+sgio.write(sg, fn_out, file_format, version=ver_out)

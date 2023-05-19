@@ -6,9 +6,9 @@ import numpy as np
 # from numpy.typing import ArrayLike
 
 # import sgio.core.solid as scs
-import sgio.utils.io as sui
+# import sgio.utils.io as sui
 # import sgio.utils.logger as mul
-import sgio.utils.version as suv
+# import sgio.utils.version as suv
 
 # import meshio
 # import sgio.meshio as mpm
@@ -264,20 +264,15 @@ class StructureGene(object):
         return '\n'.join(lines)
 
 
-
-
     def copy(self):
         return copy.deepcopy(self)
     
 
-    
 
     def translate(self, v):
         v = np.asarray(v)
         self.mesh.points += v
         return
-
-
 
 
     def findMaterialByName(self, name):
@@ -297,13 +292,6 @@ class StructureGene(object):
             if m.name == name:
                 return i
         return 0
-
-
-
-
-
-
-
 
 
     def findComboByMaterialOrientation(self, name, angle):
@@ -334,433 +322,42 @@ class StructureGene(object):
 
 
 
-    def write(
-        self, fn, file_format:str, analysis='h', sg_fmt:int=1,
-        sfi:str='8d', sff:str='20.12e', version=None, mesh_only=False
-        ):
-        """Write analysis input
+    # def write(
+    #     self, fn, file_format:str, analysis='h', sg_fmt:int=1,
+    #     sfi:str='8d', sff:str='20.12e', version=None, mesh_only=False
+    #     ):
+    #     """Write analysis input
+
+    #     Parameters
+    #     ----------
+    #     fn : str
+    #         Name of the input file
+    #     file_format : {'vabs' (or 'v'), 'swfitcomp' (or 'sc', 's')}
+    #         file_format of the analysis
+    #     analysis : {0, 1, 2, 3, '', 'h', 'dn', 'dl', 'd', 'l', 'fi'}, optional
+    #         Analysis type, by default 'h'
+    #     sg_fmt : {0, 1}, optional
+    #         Format for the VABS input, by default 1
+
+    #     Returns
+    #     -------
+    #     str
+    #         Name of the input file
+    #     """
+
+
+    #     # string format
+    #     # sfi = '8d'
+    #     # sff = '16.6e'
+
+    #     _file_format = file_format.lower()
+
+    #     if analysis.lower().startswith('h'):
+    #         self.writeInput(fn, _file_format, sfi, sff, sg_fmt, version, mesh_only)
+
+    #     elif (analysis.lower().startswith('d')) or (analysis.lower().startswith('l')) or (analysis.lower().startswith('f')):
+    #         self.writeInputGlobal(fn+'.glb', _file_format, sfi, sff, analysis, version)
+
+    #     return fn
 
-        Parameters
-        ----------
-        fn : str
-            Name of the input file
-        file_format : {'vabs' (or 'v'), 'swfitcomp' (or 'sc', 's')}
-            file_format of the analysis
-        analysis : {0, 1, 2, 3, '', 'h', 'dn', 'dl', 'd', 'l', 'fi'}, optional
-            Analysis type, by default 'h'
-        sg_fmt : {0, 1}, optional
-            Format for the VABS input, by default 1
-
-        Returns
-        -------
-        str
-            Name of the input file
-        """
-
-
-        # string format
-        # sfi = '8d'
-        # sff = '16.6e'
-
-        _file_format = file_format.lower()
-
-        if analysis.lower().startswith('h'):
-            self.writeInput(fn, _file_format, sfi, sff, sg_fmt, version, mesh_only)
-
-        elif (analysis.lower().startswith('d')) or (analysis.lower().startswith('l')) or (analysis.lower().startswith('f')):
-            self.writeInputGlobal(fn+'.glb', _file_format, sfi, sff, analysis, version)
-
-        return fn
-
-
-
-
-
-
-
-
-
-    def writeInput(self, fn, file_format, sfi, sff, sg_fmt, version=None, mesh_only=False):
-        """
-        """
-
-        logger.debug(f'writing sg input {fn}...')
-
-        ssff = '{:' + sff + '}'
-        if not version is None:
-            self.version = suv.Version(version)
-
-        logger.debug('format version: {}'.format(self.version))
-
-        with open(fn, 'w') as file:
-            if not mesh_only:
-                self._writeHeader(file, file_format, sfi, sff, sg_fmt, version)
-
-            self._writeMesh(file, file_format=file_format, sgdim=self.sgdim, int_fmt=sfi, float_fmt=sff)
-
-            if not mesh_only:
-                self._writeMOCombos(file, file_format, sfi, sff)
-
-            if not mesh_only:
-                self._writeMaterials(file, file_format, sfi, sff)
-
-            if file_format.startswith('s'):
-                file.write((ssff + '\n').format(self.omega))
-
-        return
-
-
-
-
-
-
-
-
-
-    def _writeMesh(self, file, file_format, sgdim, int_fmt, float_fmt):
-        """
-        """
-        logger.debug('writing mesh...')
-
-        self.mesh.write(file, file_format, sgdim=sgdim, int_fmt=int_fmt, float_fmt=float_fmt)
-
-        return
-
-
-
-
-
-
-
-
-
-    def _writeMOCombos(self, file, file_format, sfi, sff):
-        ssfi = '{:' + sfi + '}'
-        ssff = '{:' + sff + '}'
-        count = 0
-        for cid, combo in self.mocombos.items():
-            count += 1
-            file.write((ssfi + ssfi + ssff).format(cid, combo[0], combo[1]))
-            if count == 1:
-                file.write('  # combination id, material id, in-plane rotation angle')
-            file.write('\n')
-        file.write('\n')
-        return
-
-
-
-
-
-
-
-
-
-    def _writeMaterials(self, file, file_format, sfi, sff):
-        """
-        """
-
-        logger.debug('writing materials...')
-
-        counter = 0
-        for mid, m in self.materials.items():
-
-            # print('writing material {}'.format(mid))
-
-            if m.stff:
-                anisotropy = 2
-            else:
-                anisotropy = m.isotropy
-
-            # print(m.stff)
-            # print(anisotropy)
-
-            if file_format.startswith('v'):
-                sui.writeFormatIntegers(file, (mid, anisotropy), sfi, newline=False)
-                if counter == 0:
-                    file.write('  # materials')
-                file.write('\n')
-            elif file_format.startswith('s'):
-                sui.writeFormatIntegers(file, (mid, anisotropy, 1), sfi, newline=False)
-                if counter == 0:
-                    file.write('  # materials')
-                file.write('\n')
-                sui.writeFormatFloats(file, (m.temperature, m.density), sff)
-
-            # Write elastic properties
-            if anisotropy == 0:
-                # mpc = m.constants
-                sui.writeFormatFloats(file, [m.e1, m.nu12], sff)
-
-            elif anisotropy == 1:
-                # mpc = m.constants
-                sui.writeFormatFloats(file, [m.e1, m.e2, m.e3], sff)
-                sui.writeFormatFloats(file, [m.g12, m.g13, m.g23], sff)
-                sui.writeFormatFloats(file, [m.nu12, m.nu13, m.nu23], sff)
-
-
-            elif anisotropy == 2:
-                for i in range(6):
-                    sui.writeFormatFloats(file, m.stff[i][i:], sff)
-                    # for j in range(i, 6):
-                    #     file.write(sff.format(m.stff[i][j]))
-                    # file.write('\n')
-
-            # print('self.physics =', self.physics)
-            # print('m.cte =', m.cte)
-            # print('m.specific_heat =', m.specific_heat)
-            if self.physics in [1, 4, 6]:
-                sui.writeFormatFloats(file, m.cte+[m.specific_heat,], sff)
-
-            if file_format.lower().startswith('v'):
-                sui.writeFormatFloats(file, (m.density,), sff)
-
-            file.write('\n')
-            
-            counter += 1
-
-        file.write('\n')
-        return
-
-
-
-
-
-
-
-
-
-    def _writeHeader(self, file, file_format, sfi, sff, sg_fmt, version=None):
-        ssfi = '{:' + sfi + '}'
-
-        # VABS
-        if file_format.startswith('v'):
-            # format_flag  nlayer
-            sui.writeFormatIntegers(file, [sg_fmt, len(self.mocombos)])
-            file.write('\n')
-
-            # timoshenko_flag  damping_flag  thermal_flag
-            model = 0
-            trapeze = 0
-            vlasov = 0
-            if self.model == 1:
-                model = 1
-            elif self.model == 2:
-                model = 1
-                vlasov = 1
-            elif self.model == 3:
-                trapeze = 1
-            physics = 0
-            if self.physics == 1:
-                physics = 3
-            sui.writeFormatIntegers(
-                file, [model, self.do_dampling, physics], sfi, newline=False)
-            file.write('  # model_flag, damping_flag, thermal_flag\n\n')
-
-            # curve_flag  oblique_flag  trapeze_flag  vlasov_flag
-            line = [0, 0, trapeze, vlasov]
-            if (self.initial_twist != 0.0) or (self.initial_curvature[0] != 0.0) or (self.initial_curvature[1] != 0.0):
-                line[0] = 1
-            if (self.oblique[0] != 1.0) or (self.oblique[1] != 0.0):
-                line[1] = 1
-            sui.writeFormatIntegers(file, line, sfi, newline=False)
-            file.write('  # curve_flag, oblique_flag, trapeze_flag, vlasov_flag\n\n')
-
-            # k1  k2  k3
-            if line[0] == 1:
-                sui.writeFormatFloats(
-                    file,
-                    [self.initial_twist, self.initial_curvature[0], self.initial_curvature[1]],
-                    sff, newline=False
-                )
-                file.write('  # k11, k12, k13 (initial curvatures)\n\n')
-            
-            # oblique1  oblique2
-            if line[1] == 1:
-                sui.writeFormatFloats(file, self.oblique, sff, newline=False)
-                file.write('  # cos11, cos21 (obliqueness)\n\n')
-            
-            # nnode  nelem  nmate
-            sui.writeFormatIntegers(
-                file, [self.nnodes, self.nelems, self.nmates], sfi, newline=False)
-            file.write('  # nnode, nelem, nmate\n\n')
-
-
-        # SwiftComp
-        elif file_format.startswith('s'):
-            # Extra inputs for dimensionally reducible structures
-            if (self.smdim == 1) or (self.smdim == 2):
-                # model (0: classical, 1: shear refined)
-                file.write(ssfi.format(self.model))
-                file.write('  # structural model (0: classical, 1: shear refined)')
-                file.write('\n\n')
-
-                if self.smdim == 1:  # beam
-                    # initial twist/curvatures
-                    # file.write((sff * 3 + '\n').format(0., 0., 0.))
-                    sui.writeFormatFloats(
-                        file,
-                        [self.initial_twist, self.initial_curvature[0], self.initial_curvature[1]],
-                        sff, newline=False
-                    )
-                    file.write('  # initial curvatures k11, k12, k13\n')
-                    file.write('\n')
-                    # oblique cross section
-                    # file.write((sff * 2 + '\n').format(1., 0.))
-                    sui.writeFormatFloats(file, self.oblique, sff)
-
-                elif self.smdim == 2:  # shell
-                    # initial twist/curvatures
-                    # file.write((sff * 2 + '\n').format(
-                    #     self.initial_curvature[0], self.initial_curvature[1]
-                    # ))
-                    sui.writeFormatFloats(file, self.initial_curvature, sff, newline=False)
-                    file.write('  # initial curvatures k12, k21\n')
-                    # if self.geo_correct:
-                    # if self.initial_curvature[0] != 0 or self.initial_curvature[1] != 0:
-                    if version > '2.1':
-                        sui.writeFormatFloats(file, self.lame_params, sff, newline=False)
-                        file.write('  # Lame parameters\n')
-                file.write('\n')
-
-            # Head
-            nums = [
-                self.physics, self.ndim_degen_elem, self.use_elem_local_orient,
-                self.is_temp_nonuniform
-            ]
-            cmt = '  # analysis, elem_flag, trans_flag, temp_flag'
-            if version > '2.1':
-                nums += [self.force_flag, self.steer_flag]
-                cmt = cmt + ', force_flag, steer_flag'
-            sui.writeFormatIntegers(file, nums, sfi, newline=False)
-            file.write(cmt)
-            file.write('\n\n')
-            # file.write((sfi * 6 + '\n').format(
-            #     self.sgdim,
-            #     len(self.nodes),
-            #     len(self.elements),
-            #     len(self.materials),
-            #     self.num_slavenodes,
-            #     len(self.mocombos)
-            # ))
-            sui.writeFormatIntegers(file, [
-                self.sgdim,
-                self.nnodes,
-                self.nelems,
-                self.nmates,
-                self.num_slavenodes,
-                len(self.mocombos)
-            ], sfi, newline=False)
-            file.write('  # nsg, nnode, nelem, nmate, nslave, nlayer')
-            file.write('\n\n')
-
-        return
-
-
-
-
-
-
-
-
-
-    def _writeInputMaterialStrength(self, file, file_format, sfi, sff):
-        for i, m in self.materials.items():
-            # print(m.strength)
-            # print(m.failure_criterion)
-            # print(m.char_len)
-
-            # file.write('{} {}'.format(m.failure_criterion, len(m.strength)))
-
-            strength = []
-            if m.type == 0:
-                pass
-            else:
-                if m.failure_criterion == 1:
-                    pass
-                elif m.failure_criterion == 2:
-                    pass
-                elif m.failure_criterion == 3:
-                    pass
-                elif m.failure_criterion == 4:
-                    # Tsai-Wu
-                    strength = [
-                        m.strength_constants['xt'], m.strength_constants['yt'], m.strength_constants['zt'],
-                        m.strength_constants['xc'], m.strength_constants['yc'], m.strength_constants['zc'],
-                        m.strength_constants['r'], m.strength_constants['t'], m.strength_constants['s'],
-                    ]
-                elif m.failure_criterion == 5:
-                    pass
-
-            sui.writeFormatIntegers(
-                file,
-                # (m.strength['criterion'], len(m.strength['constants'])),
-                [m.failure_criterion, len(strength)],
-                sfi
-            )
-            # file.write((sff+'\n').format(m.strength['chara_len']))
-            sui.writeFormatFloats(file, [m.char_len,], sff)
-            # sui.writeFormatFloats(file, m.strength['constants'], sff[2:-1])
-            sui.writeFormatFloats(file, strength, sff)
-        return
-
-
-
-
-
-
-
-
-
-    def _writeInputDisplacements(self, file, file_format, sff):
-        sui.writeFormatFloats(file, self.global_displacements, sff[2:-1])
-        sui.writeFormatFloatsMatrix(file, self.global_rotations, sff[2:-1])
-
-
-
-
-
-
-
-
-
-    def _writeInputLoads(self, file, file_format, sfi, sff):
-        if file_format.startswith('v'):
-            if self.model == 0:
-                sui.writeFormatFloats(file, self.global_loads)
-            else:
-                sui.writeFormatFloats(file, [self.global_loads[i] for i in [0, 3, 4, 5]])
-                sui.writeFormatFloats(file, [self.global_loads[i] for i in [1, 2]])
-                file.write('\n')
-                sui.writeFormatFloats(file, self.global_loads_dist[0])
-                sui.writeFormatFloats(file, self.global_loads_dist[1])
-                sui.writeFormatFloats(file, self.global_loads_dist[2])
-                sui.writeFormatFloats(file, self.global_loads_dist[3])
-        elif file_format.startswith('s'):
-            # file.write((sfi+'\n').format(self.global_loads_type))
-            for load_case in self.global_loads:
-                sui.writeFormatFloats(file, load_case, sff)
-        file.write('\n')
-        return
-
-
-
-
-
-
-
-
-
-    def writeInputGlobal(self, fn, file_format, sfi, sff, analysis, version=None):
-        with open(fn, 'w') as file:
-            if analysis.startswith('d') or analysis.lower().startswith('l'):
-                self._writeInputDisplacements(file, file_format, sff)
-            elif analysis.startswith('f'):
-                self._writeInputMaterialStrength(file, file_format, sfi, sff)
-
-            if file_format.startswith('s'):
-                # file.write((sfi+'\n').format(self.global_loads_type))
-                sui.writeFormatIntegers(file, [self.global_loads_type, ], sfi)
-
-            if analysis != 'f':
-                self._writeInputLoads(file, file_format, sfi, sff)
 
