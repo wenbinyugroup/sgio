@@ -8,7 +8,7 @@ class Cauchy:
 
     #: Isotropy type.
     #: Isotropic (0), orthotropic (1), anisotropic (2).
-    isotropy: int
+    isotropy: int = None
 
     #: Stiffness matrix
     c: List[List[float]] = None
@@ -25,7 +25,7 @@ class Cauchy:
     nu13: float = None
     nu23: float = None
 
-    cte: List[float] = []
+    cte: List[float] = None
     specific_heat: float = 0
 
     d_thetatheta: float = 0

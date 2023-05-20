@@ -16,19 +16,21 @@ with open(fn, 'r') as fobj:
     raw_input = yaml.safe_load(fobj)
 
 sg_input = raw_input['sg'][0]
-print(sg_input)
+# print(sg_input)
 
 name = 'sg1'
 sgdim = 1
 smdim = 2
 # params = sg_input['parameters']
-layup = sg_input['design']
+layup_design = sg_input['design']
 model = sg_input['model']['md2']
 version = model.get('version', '2.2')
 sgdb = {}
 for sg in raw_input['sg']:
     if sg['type'] == 'material':
-        sgdb[sg['name']] = sg
+        sgdb[sg['name']] = [
+            {'property': sg['property']},
+        ]
 
 
 # mas.substituteParams(layup, params)
@@ -38,16 +40,19 @@ for sg in raw_input['sg']:
 
 elem_type = model.get('element_type', 2)
 
-# sg = mbp.buildSG(1, name, design=layup, model=model, sgdb=sgdb)
+# layer_list = sgio.core.builder.generateLayerList(layup_design)
+# print(layer_list)
+
 sg = sgio.buildSG1D(
-    name, layup, sgdb, smdim,
+    name, layup_design, sgdb, smdim,
     elem_type=elem_type
 )
+
 
 # sg.summary()
 print(sg)
 
 fn_sg = '{}.sg'.format(name)
-sg.writeInput(fn_sg, 'sc', version=version)
+sgio.write(sg, fn_sg, 'sc', version=version)
 
 

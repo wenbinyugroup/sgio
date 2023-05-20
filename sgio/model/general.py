@@ -14,11 +14,11 @@ class MaterialSection(object):
         Defualt to 3.
     """
 
-    def __init__(self, smdim=3):
+    def __init__(self, name:str='', smdim:int=3):
         #: int: Dimension of material/structure model.
         self.smdim = smdim
         #: str: Name of the material/structure.
-        self.name = ''
+        self.name = name
 
         # Mass property
         # -------------
@@ -93,8 +93,9 @@ class MaterialSection(object):
 
     def __repr__(self):
         s = '\n'
-        s = s + 'Effective properties of the SG\n'
-        s = s + 'Structure model dimension: {0}\n'.format(self.smdim)
+        s += f'name: {self.name}\n'
+        s += 'effective properties\n'
+        s += f'structural model dimension: {self.smdim}\n'
         if self.smdim == 3:
             pass
         elif self.smdim == 2:
