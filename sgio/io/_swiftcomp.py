@@ -280,8 +280,6 @@ def _readOutputH(file, smdim):
     :param smdim: Dimension of the structural model
     :type smdim: int
     """
-    # if logger is None:
-    #     logger = mul.initLogger(__name__)
 
     if smdim == 1:
         out = _readOutputBeamModel(file)
@@ -453,12 +451,9 @@ def _readOutputBeamModel(file):
 
 
 def _readOutputShellModel(file):
-    # if logger is None:
-    #     logger = mul.initLogger(__name__)
 
-    # sm = mms.MaterialSection(smdim = 1)
-    # sp = mmps.ShellProperty()
-    sp = smdl.MaterialSection()
+    sp = smdl.ShellProperty()
+    # sp = smdl.MaterialSection()
 
     linesRead = []
     keywordsIndex = {}

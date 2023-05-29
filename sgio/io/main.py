@@ -40,10 +40,14 @@ def read(fn:str, file_format:str, format_version:str, smdim:int, sg:StructureGen
 
 
 
-def readOutput(fn:str, file_format:str, smdim:int, analysis=0, sg:StructureGene=None):
+def readOutput(fn:str, file_format:str, analysis=0, smdim:int=1, sg:StructureGene=None):
+    # print('fn =', fn)
+    # print('file_format =', file_format)
+    # print('smdim =', smdim)
+    # print('analysis =', analysis)
     with open(fn, 'r') as file:
         if file_format.startswith('s'):
-            return _swiftcomp.readOutputBuffer(file, smdim, analysis, sg)
+            return _swiftcomp.readOutputBuffer(file, analysis, smdim, sg)
 
         elif file_format.startswith('v'):
             return _vabs.readOutput(file, analysis, sg)

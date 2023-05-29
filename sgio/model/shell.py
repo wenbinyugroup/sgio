@@ -9,7 +9,7 @@ class ShellProperty(MaterialSection):
     """A plate/shell property class (smdim = 2)
     """
     def __init__(self):
-        MaterialSection.__init__(self, smdim=1)
+        MaterialSection.__init__(self, smdim=2)
 
         self.mass = []
 
