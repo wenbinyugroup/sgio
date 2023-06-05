@@ -274,25 +274,25 @@ class Mesh:
         else:
             lines.append("  No cells.")
 
-        if self.point_sets:
-            names = ", ".join(self.point_sets.keys())
-            lines.append(f"  Point sets: {names}")
+        # if self.point_sets:
+        names = ", ".join(self.point_sets.keys())
+        lines.append(f"  Point sets: {names}")
 
-        if self.cell_sets:
-            names = ", ".join(self.cell_sets.keys())
-            lines.append(f"  Cell sets: {names}")
+        # if self.cell_sets:
+        names = ", ".join(self.cell_sets.keys())
+        lines.append(f"  Cell sets: {names}")
 
-        if self.point_data:
-            names = ", ".join(self.point_data.keys())
-            lines.append(f"  Point data: {names}")
+        # if self.point_data:
+        names = ", ".join(self.point_data.keys())
+        lines.append(f"  Point data: {names}")
 
-        if self.cell_data:
-            names = ", ".join(self.cell_data.keys())
-            lines.append(f"  Cell data: {names}")
+        # if self.cell_data:
+        names = ", ".join(self.cell_data.keys())
+        lines.append(f"  Cell data: {names}")
 
-        if self.field_data:
-            names = ", ".join(self.field_data.keys())
-            lines.append(f"  Field data: {names}")
+        # if self.field_data:
+        names = ", ".join(self.field_data.keys())
+        lines.append(f"  Field data: {names}")
 
         return "\n".join(lines)
 

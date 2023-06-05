@@ -6,11 +6,13 @@ from sgio.core.sg import StructureGene
 
 import sgio.io._swiftcomp as _swiftcomp
 import sgio.io._vabs as _vabs
+import sgio.meshio as meshio
+import sgio._global as GLOBAL
 
 
 logger = logging.getLogger(__name__)
 
-def read(fn:str, file_format:str, format_version:str, smdim:int, sg:StructureGene=None):
+def read(fn:str, file_format:str, format_version:str='', sgdim:int=3, smdim:int=3, sg:StructureGene=None):
     """Read SG input.
 
     Parameters
@@ -32,8 +34,8 @@ def read(fn:str, file_format:str, format_version:str, smdim:int, sg:StructureGen
 
     else:
         if not sg:
-            sg = StructureGene()
-        sg.mesh = read(fn, file_format)
+            sg = StructureGene(sgdim=sgdim, smdim=smdim)
+        sg.mesh = meshio.read(fn, file_format)
 
     return sg
 
@@ -90,9 +92,13 @@ def write(
 
         else:
             if _file_format.startswith('s'):
+                if not version:
+                    version = GLOBAL.SC_VERSION_DEFAULT
                 _swiftcomp.writeBuffer(sg, file, file_format, analysis, sg_fmt, sfi, sff, version, mesh_only)
 
             elif _file_format.startswith('v'):
+                if not version:
+                    version = GLOBAL.VABS_VERSION_DEFAULT
                 _vabs.readOutput(file, analysis, sg)
 
     return fn

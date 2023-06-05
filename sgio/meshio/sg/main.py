@@ -149,3 +149,9 @@ register_format(
     {"sc": lambda f, m, **kwargs: write(f, m, 'sc', **kwargs)}
 )
 
+register_format(
+    "swiftcomp", [".sc", ".sg"],
+    lambda f, **kwargs: read(f, 'sc', **kwargs),
+    {"swiftcomp": lambda f, m, **kwargs: write(f, m, 'sc', **kwargs)}
+)
+

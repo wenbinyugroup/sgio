@@ -1,4 +1,7 @@
 
+SC_VERSION_DEFAULT = '2.1'
+VABS_VERSION_DEFAULT = '4.0'
+
 MSG_COMMANDS = (
     'swiftcomp', 'sc', 'vabs'
 )
