@@ -103,7 +103,7 @@ meshio_to_abaqus_type = {v: k for k, v in abaqus_to_meshio_type.items()}
 def read(filename):
     """Reads a Abaqus inp file."""
     if is_buffer(filename, 'r'):
-        out = read_buffer(f)
+        out = read_buffer(filename)
     else:
         with open_file(filename, "r") as f:
             out = read_buffer(f)
@@ -128,6 +128,9 @@ def read_buffer(f):
     in_instance = False  # s.t.
     in_assembly = False  # s.t.
     in_step = False  # s.t.
+
+    sections = []
+    materials = []
 
     line = f.readline()
     while True:
@@ -197,13 +200,14 @@ def read_buffer(f):
                         raise ReadError(f"Unknown cell set '{set_name}'")
 
         elif keyword == "DISTRIBUTION":
+            _default = [1, 0, 0, 0, 1, 0]
             if not 'property_ref_csys' in cell_data.keys():
                 cell_data['property_ref_csys'] = []
                 for _i in range(len(cell_ids)):
-                    cell_data['property_ref_csys'].append([None,]*len(cell_ids[_i]))
+                    cell_data['property_ref_csys'].append([_default,]*len(cell_ids[_i]))
 
             params_map = get_param_map(line)
-            print(params_map)
+            # print(params_map)
             # print(cell_ids)
             _dict_cell_data, line = _read_distribution(f, params_map)
             # _name = params_map['NAME']
@@ -218,8 +222,29 @@ def read_buffer(f):
 
                 cell_data['property_ref_csys'][_i][_j] = _edata
 
+        elif keyword.split()[-1] == "SECTION":
+            # print(line)
+            params_map = get_param_map(line, required_keys=['ELSET', 'MATERIAL'])
+            _section = {
+                'elset': params_map['ELSET'],
+                'material': params_map['MATERIAL']
+            }
+            try:
+                _section['orientation'] = params_map['ORIENTATION']
+            except KeyError:
+                pass
+            line = f.readline()
+            line = f.readline()
+            sections.append(_section)
+
         elif keyword == "MATERIAL":
             params_map = get_param_map(line, required_keys=['NAME'])
+            _material = _read_material(f)
+            materials.append({
+                'name': params_map['NAME'],
+                'property': _material
+            })
+            line = f.readline()
 
         elif keyword == "INCLUDE":
             # Splitting line to get external input file path (example: *INCLUDE,INPUT=wInclude_bulk.inp)
@@ -263,9 +288,9 @@ def read_buffer(f):
 
     for _key in cell_data.keys():
         cell_data[_key] = np.asarray(cell_data[_key])
-    print(cell_data)
+    # print(cell_data)
 
-    return Mesh(
+    mesh = Mesh(
         points,
         cells,
         point_data=point_data,
@@ -274,6 +299,8 @@ def read_buffer(f):
         point_sets=point_sets,
         cell_sets=cell_sets,
     )
+
+    return mesh, sections, materials
 
 
 
@@ -479,9 +506,46 @@ def _read_distribution(f, params_map):
         line = line.strip().strip(",").split(",")
         # cell_ids.append(int(line[0]))
         # cell_data.append(list(map(float, line[1:])))
-        cell_data[int(line[0])] = list(map(float, line[1:]))
+        cell_data[int(line[0])] = list(map(float, line[1:]+[0, 0, 0]))
 
     return cell_data, line
+
+
+
+
+def _read_material(f):
+    material = {}
+    while True:
+        line = f.readline()
+        if not line:
+            break
+        if line.startswith("**"):
+            continue
+        if line.strip() == "":
+            continue
+
+        # print(line)
+        keyword = line.partition(",")[0].strip().replace("*", "").upper()
+
+        if keyword == 'ELASTIC':
+            _elastic = []
+            params_map = get_param_map(line)
+            # print(params_map)
+            _type = params_map.get('TYPE', 'ISOTROPIC')
+            if _type == 'ISOTROPIC':
+                material['type'] = 'isotropic'
+                line = f.readline()
+                _elastic += list(map(float, line.split(',')))
+            elif _type == 'ENGINEERING CONSTANTS':
+                material['type'] = 'engineering_constants'
+                line = f.readline()
+                _elastic.append(float(line.strip().strip(',')))
+            material['elastic'] = _elastic
+            break
+
+    # print(material)
+
+    return material
 
 
 

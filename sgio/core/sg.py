@@ -83,7 +83,7 @@ class StructureGene(object):
         self.do_dampling = 0
 
         #: int: Flag of transformation of elements
-        self.use_elem_local_orient = 0
+        # self.use_elem_local_orient = 0
         #: int: Flag of uniform temperature
         self.is_temp_nonuniform = 0
 
@@ -222,6 +222,14 @@ class StructureGene(object):
     @property
     def nmates(self):
         return len(self.materials)
+
+
+    @property
+    def use_elem_local_orient(self):
+        if 'property_ref_csys' in self.mesh.cell_data.keys():
+            return 1
+        else:
+            return 0
 
 
     def __repr__(self):

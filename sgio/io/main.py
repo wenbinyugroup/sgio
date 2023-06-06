@@ -1,16 +1,17 @@
-import csv
-
 import logging
+logger = logging.getLogger(__name__)
+
+import csv
 
 from sgio.core.sg import StructureGene
 
+import sgio.io._abaqus as _abaqus
 import sgio.io._swiftcomp as _swiftcomp
 import sgio.io._vabs as _vabs
 import sgio.meshio as meshio
 import sgio._global as GLOBAL
 
 
-logger = logging.getLogger(__name__)
 
 def read(fn:str, file_format:str, format_version:str='', sgdim:int=3, smdim:int=3, sg:StructureGene=None):
     """Read SG input.
@@ -25,12 +26,18 @@ def read(fn:str, file_format:str, format_version:str='', sgdim:int=3, smdim:int=
         Dimension of the macro structural model
     """
 
-    if file_format.lower() in ['vabs', 'sc', 'swiftcomp']:
+    file_format = file_format.lower()
+
+    # if file_format.lower() in ['vabs', 'sc', 'swiftcomp']:
+    if file_format in ['sc', 'swiftcomp']:
         with open(fn, 'r') as file:
-            if file_format.startswith('s'):
-                sg = _swiftcomp.readInputBuffer(file, format_version, smdim)
-            elif file_format.startswith('v'):
-                sg = _vabs.readBuffer(file, file_format, format_version, smdim)
+            sg = _swiftcomp.readInputBuffer(file, format_version, smdim)
+    elif file_format == 'vabs':
+        with open(fn, 'r') as file:
+            sg = _vabs.readBuffer(file, file_format, format_version, smdim)
+    elif file_format == 'abaqus':
+        with open(fn, 'r') as file:
+            sg = _abaqus.readInputBuffer(file, smdim=smdim)
 
     else:
         if not sg:
