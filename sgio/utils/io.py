@@ -1,5 +1,12 @@
 import xml.etree.ElementTree as et
 
+def readNextNonEmptyLine(file):
+    line = file.readline().strip()
+    while line == '':
+        line = file.readline().strip()
+    return line
+
+
 def listToString(flist, delimiter='', fmt=''):
     sfmt = '{0:' + fmt + '}'
     s = ''

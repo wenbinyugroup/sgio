@@ -9,7 +9,7 @@ import numpy as np
 from ..__about__ import __version__
 from .._common import num_nodes_per_cell
 from .._exceptions import ReadError
-from .._files import open_file
+from .._files import open_file, is_buffer
 from .._helpers import register_format
 from .._mesh import CellBlock, Mesh
 
@@ -102,8 +102,11 @@ meshio_to_abaqus_type = {v: k for k, v in abaqus_to_meshio_type.items()}
 
 def read(filename):
     """Reads a Abaqus inp file."""
-    with open_file(filename, "r") as f:
-        out = read_buffer(f)
+    if is_buffer(filename, 'r'):
+        out = read_buffer(filename)
+    else:
+        with open_file(filename, "r") as f:
+            out = read_buffer(f)
     return out
 
 
@@ -111,7 +114,7 @@ def read_buffer(f):
     # Initialize the optional data fields
     points = []
     cells = []
-    cell_ids = []
+    cell_ids = []  # Map the real element id to the CellBlock index and row index
     point_sets = {}
     cell_sets = {}
     cell_sets_element = {}  # Handle cell sets defined in ELEMENT
@@ -125,6 +128,9 @@ def read_buffer(f):
     in_instance = False  # s.t.
     in_assembly = False  # s.t.
     in_step = False  # s.t.
+
+    sections = []
+    materials = []
 
     line = f.readline()
     while True:
@@ -146,6 +152,7 @@ def read_buffer(f):
 
         if keyword == "NODE" and in_part:
             points, point_ids, line = _read_nodes(f)
+
         elif keyword == "ELEMENT":
             if point_ids is None:
                 raise ReadError("Expected NODE before ELEMENT")
@@ -158,6 +165,7 @@ def read_buffer(f):
             if sets:
                 cell_sets_element.update(sets)
                 cell_sets_element_order += list(sets.keys())
+
         elif keyword == "NSET":
             params_map = get_param_map(line, required_keys=["NSET"])
             set_ids, _, line = _read_set(f, params_map)
@@ -165,6 +173,7 @@ def read_buffer(f):
             point_sets[name] = np.array(
                 [point_ids[point_id] for point_id in set_ids], dtype="int32"
             )
+
         elif keyword == "ELSET":
             params_map = get_param_map(line, required_keys=["ELSET"])
             set_ids, set_names, line = _read_set(f, params_map)
@@ -189,6 +198,54 @@ def read_buffer(f):
                         cell_sets[name].append(cell_sets_element[set_name])
                     else:
                         raise ReadError(f"Unknown cell set '{set_name}'")
+
+        elif keyword == "DISTRIBUTION":
+            _default = [1, 0, 0, 0, 1, 0]
+            if not 'property_ref_csys' in cell_data.keys():
+                cell_data['property_ref_csys'] = []
+                for _i in range(len(cell_ids)):
+                    cell_data['property_ref_csys'].append([_default,]*len(cell_ids[_i]))
+
+            params_map = get_param_map(line)
+            # print(params_map)
+            # print(cell_ids)
+            _dict_cell_data, line = _read_distribution(f, params_map)
+            # _name = params_map['NAME']
+
+            for _eid, _edata in _dict_cell_data.items():
+                for _i, _block in enumerate(cell_ids):
+                    try:
+                        _j = _block[_eid]
+                        break
+                    except KeyError:
+                        continue
+
+                cell_data['property_ref_csys'][_i][_j] = _edata
+
+        elif keyword.split()[-1] == "SECTION":
+            # print(line)
+            params_map = get_param_map(line, required_keys=['ELSET', 'MATERIAL'])
+            _section = {
+                'elset': params_map['ELSET'],
+                'material': params_map['MATERIAL']
+            }
+            try:
+                _section['orientation'] = params_map['ORIENTATION']
+            except KeyError:
+                pass
+            line = f.readline()
+            line = f.readline()
+            sections.append(_section)
+
+        elif keyword == "MATERIAL":
+            params_map = get_param_map(line, required_keys=['NAME'])
+            _material = _read_material(f)
+            materials.append({
+                'name': params_map['NAME'],
+                'property': _material
+            })
+            line = f.readline()
+
         elif keyword == "INCLUDE":
             # Splitting line to get external input file path (example: *INCLUDE,INPUT=wInclude_bulk.inp)
             ext_input_file = pathlib.Path(line.split("=")[-1].strip())
@@ -229,7 +286,11 @@ def read_buffer(f):
                     cell_sets_element[name] if i == ic else np.array([], dtype="int32")
                 )
 
-    return Mesh(
+    for _key in cell_data.keys():
+        cell_data[_key] = np.asarray(cell_data[_key])
+    # print(cell_data)
+
+    mesh = Mesh(
         points,
         cells,
         point_data=point_data,
@@ -238,6 +299,10 @@ def read_buffer(f):
         point_sets=point_sets,
         cell_sets=cell_sets,
     )
+
+    return mesh, sections, materials
+
+
 
 
 def _read_nodes(f):
@@ -258,6 +323,8 @@ def _read_nodes(f):
         counter += 1
 
     return np.array(points, dtype=float), point_ids, line
+
+
 
 
 def _read_cells(f, params_map, point_ids):
@@ -294,6 +361,8 @@ def _read_cells(f, params_map, point_ids):
     )
 
     return cell_type, cells, cell_ids, cell_sets, line
+
+
 
 
 def merge(
@@ -347,6 +416,8 @@ def merge(
     return points, cells
 
 
+
+
 def get_param_map(word, required_keys=None):
     """
     get the optional arguments on a line
@@ -386,6 +457,8 @@ def get_param_map(word, required_keys=None):
     return param_map
 
 
+
+
 def _read_set(f, params_map):
     set_ids = []
     set_names = []
@@ -409,6 +482,80 @@ def _read_set(f, params_map):
         set_ids = np.arange(set_ids[0], set_ids[1] + 1, set_ids[2], dtype="int32")
     return set_ids, set_names, line
 
+
+
+
+def _read_distribution(f, params_map):
+    # cell_ids = []
+    cell_data = {}
+    count = 0
+    while True:
+        line = f.readline()
+        if not line:
+            break
+        if line.startswith("**"):
+            continue
+        elif line.startswith("*"):
+            break
+        if line.strip() == "":
+            continue
+
+        count += 1
+        if count == 1: continue  # First line, ref frame (global)
+
+        line = line.strip().strip(",").split(",")
+        # cell_ids.append(int(line[0]))
+        # cell_data.append(list(map(float, line[1:])))
+        cell_data[int(line[0])] = list(map(float, line[1:]+[0, 0, 0]))
+
+    return cell_data, line
+
+
+
+
+def _read_material(f):
+    material = {}
+    while True:
+        line = f.readline()
+        if not line:
+            break
+        if line.startswith("**"):
+            continue
+        if line.strip() == "":
+            continue
+
+        # print(line)
+        keyword = line.partition(",")[0].strip().replace("*", "").upper()
+
+        if keyword == 'ELASTIC':
+            _elastic = []
+            params_map = get_param_map(line)
+            # print(params_map)
+            _type = params_map.get('TYPE', 'ISOTROPIC')
+            if _type == 'ISOTROPIC':
+                material['type'] = 'isotropic'
+                line = f.readline()
+                _elastic += list(map(float, line.split(',')))
+            elif _type == 'ENGINEERING CONSTANTS':
+                material['type'] = 'engineering_constants'
+                line = f.readline()
+                _elastic.append(float(line.strip().strip(',')))
+            material['elastic'] = _elastic
+            break
+
+    # print(material)
+
+    return material
+
+
+
+
+
+
+
+
+
+# ====================================================================
 
 def write(
     filename, mesh: Mesh, float_fmt: str = ".16e", translate_cell_names: bool = True

@@ -1,20 +1,23 @@
 # import os
 import traceback
+import logging
 # import subprocess as sbp
 
-import sgio.utils.logger as mul
-import sgio.utils.execu as mue
+# import sgio.utils.logger as mul
+import sgio.utils.execu as sue
 # import msgpi.timer as mtime
 # import msgd.builder.presg as msp
-import sgio.io as msi
+# import sgio.io as msi
 # import msgpi.utils as utils
 
+
+logger = logging.getLogger(__name__)
 
 
 def run(
     solver, input_name, analysis, smdim=2,
     aperiodic=False, output_gmsh_format=True, reduced_integration=False,
-    scrnout=True, timeout=3600, logger=None):
+    scrnout=True, timeout=3600):
     r"""Run codes.
 
     Parameters
@@ -45,18 +48,18 @@ def run(
     logger : logging.Logger
         Logger object
     """
-    if logger is None:
-        logger = mul.initLogger(__name__)
+    # if logger is None:
+    #     logger = mul.initLogger(__name__)
 
     try:
         if solver.lower().startswith('v'):
-            runVABS(solver, input_name, analysis, scrnout, timeout, logger)
+            runVABS(solver, input_name, analysis, scrnout, timeout)
 
         elif solver.lower().startswith('s'):
             runSwiftComp(
                 solver, input_name, analysis, smdim,
                 aperiodic, output_gmsh_format, reduced_integration,
-                scrnout, timeout, logger
+                scrnout, timeout
             )
 
     except:
@@ -173,7 +176,7 @@ def run(
 
 
 
-def runVABS(command, input_name, analysis, scrnout=True, timeout=3600, logger=None):
+def runVABS(command, input_name, analysis, scrnout=True, timeout=3600):
     r"""Run VABS.
 
     Parameters
@@ -195,8 +198,8 @@ def runVABS(command, input_name, analysis, scrnout=True, timeout=3600, logger=No
         Logger object
     """
 
-    if logger is None:
-        logger = mul.initLogger(__name__)
+    # if logger is None:
+    #     logger = mul.initLogger(__name__)
 
     try:
         cmd = [command, input_name]
@@ -212,7 +215,7 @@ def runVABS(command, input_name, analysis, scrnout=True, timeout=3600, logger=No
 
         # logger.info(' '.join(cmd))
 
-        mue.run(cmd, timeout, scrnout, logger=logger)
+        sue.run(cmd, timeout)
 
         # if scrnout:
         #     sbp.call(cmd)
@@ -237,7 +240,7 @@ def runVABS(command, input_name, analysis, scrnout=True, timeout=3600, logger=No
 def runSwiftComp(
     command, input_name, analysis, smdim,
     aperiodic=False, output_gmsh_format=True, reduced_integration=False,
-    scrnout=True, timeout=3600, logger=None):
+    scrnout=True, timeout=3600):
     r"""Run SwiftComp.
 
     Parameters
@@ -268,8 +271,8 @@ def runSwiftComp(
         Logger object
     """
 
-    if logger is None:
-        logger = mul.initLogger(__name__)
+    # if logger is None:
+    #     logger = mul.initLogger(__name__)
 
     try:
         cmd = [command, input_name]
@@ -304,7 +307,7 @@ def runSwiftComp(
 
         # logger.info(' '.join(cmd))
 
-        mue.run(cmd, timeout, scrnout, logger=logger)
+        sue.run(cmd, timeout)
 
         # if scrnout:
         #     sbp.call(cmd)

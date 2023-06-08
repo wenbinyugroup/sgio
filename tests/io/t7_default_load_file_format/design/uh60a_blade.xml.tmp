@@ -1,0 +1,257 @@
+<beam name="uh60a">
+
+  <design>
+    <length></length>
+  
+    <points>
+      <point name="p0">0  0  0</point>
+      <point name="p1">{r_sta1}  0  0</point>
+      <point name="p2">{r_sta2}  0  0</point>
+      <point name="p3">{r_sta3}  0  0</point>
+      <point name="p4">{r_sta4}  0  0</point>
+    </points>
+
+
+
+    <segments>
+      <segment name="seg1">
+
+        <begin>
+          <location>p1</location>
+          <cross_section template="uh60a_sc1095_box.xml.tmp">
+            uh60a_seg1_cs0
+          </cross_section>
+        </begin>
+        <end>
+          <location>p2</location>
+          <cross_section template="uh60a_sc1095_box.xml.tmp">
+            uh60a_seg1_cs1
+          </cross_section>
+        </end>
+
+        <parameter>
+          <name>chord</name>
+          <value apply="begin">{chord_sta1}</value>
+          <value apply="end">{chord_sta2}</value>
+        </parameter>
+        <parameter>
+          <name>wl_a2</name>
+          <value apply="begin">{wl_a2_sta1}</value>
+          <value apply="end">{wl_a2_sta2}</value>
+        </parameter>
+        <parameter>
+          <name>wt_a2</name>
+          <value apply="begin">{wt_a2_sta1}</value>
+          <value apply="end">{wt_a2_sta2}</value>
+        </parameter>
+        <parameter>
+          <name>pnsmc_a2</name>
+          <value apply="begin">{pnsmc_a2_sta1}</value>
+          <value apply="end">{pnsmc_a2_sta2}</value>
+        </parameter>
+
+        <parameter>
+          <name>np_spar</name>
+          <value apply="begin">{np_spar_seg1}</value>
+          <value apply="end">{np_spar_seg1}</value>
+        </parameter>
+        <parameter>
+          <name>np_le</name>
+          <value apply="begin">{np_le_seg1}</value>
+          <value apply="end">{np_le_seg1}</value>
+        </parameter>
+        <parameter>
+          <name>np_te</name>
+          <value apply="begin">{np_te_seg1}</value>
+          <value apply="end">{np_te_seg1}</value>
+        </parameter>
+
+        <parameter>
+          <name>fx</name>
+          <value apply="begin">{fx_sta1}</value>
+          <value apply="end">{fx_sta2}</value>
+        </parameter>
+        <parameter>
+          <name>fy</name>
+          <value apply="begin">{fy_sta1}</value>
+          <value apply="end">{fy_sta2}</value>
+        </parameter>
+        <parameter>
+          <name>fz</name>
+          <value apply="begin">{fz_sta1}</value>
+          <value apply="end">{fz_sta2}</value>
+        </parameter>
+        <parameter>
+          <name>mx</name>
+          <value apply="begin">{mx_sta1}</value>
+          <value apply="end">{mx_sta2}</value>
+        </parameter>
+        <parameter>
+          <name>my</name>
+          <value apply="begin">{my_sta1}</value>
+          <value apply="end">{my_sta2}</value>
+        </parameter>
+        <parameter>
+          <name>mz</name>
+          <value apply="begin">{mz_sta1}</value>
+          <value apply="end">{mz_sta2}</value>
+        </parameter>
+
+      </segment>
+
+
+
+      <segment name="seg2">
+        <begin>
+          <location>p3</location>
+          <cross_section template="uh60a_sc1095_box.xml.tmp">
+            uh60a_seg2_cs0
+          </cross_section>
+        </begin>
+        <end>
+          <location>p4</location>
+          <cross_section template="uh60a_sc1095_box.xml.tmp">
+            uh60a_seg2_cs1
+          </cross_section>
+        </end>
+        <parameter>
+          <name>chord</name>
+          <value apply="begin">{chord_sta3}</value>
+          <value apply="end">{chord_sta4}</value>
+        </parameter>
+        <parameter>
+          <name>wl_a2</name>
+          <value apply="begin">{wl_a2_sta3}</value>
+          <value apply="end">{wl_a2_sta4}</value>
+        </parameter>
+        <parameter>
+          <name>wt_a2</name>
+          <value apply="begin">{wt_a2_sta3}</value>
+          <value apply="end">{wt_a2_sta4}</value>
+        </parameter>
+        <parameter>
+          <name>pnsmc_a2</name>
+          <value apply="begin">{pnsmc_a2_sta3}</value>
+          <value apply="end">{pnsmc_a2_sta4}</value>
+        </parameter>
+
+        <parameter>
+          <name>np_spar</name>
+          <value apply="begin">{np_spar_seg2}</value>
+          <value apply="end">{np_spar_seg2}</value>
+        </parameter>
+        <parameter>
+          <name>np_le</name>
+          <value apply="begin">{np_le_seg2}</value>
+          <value apply="end">{np_le_seg2}</value>
+        </parameter>
+        <parameter>
+          <name>np_te</name>
+          <value apply="begin">{np_te_seg2}</value>
+          <value apply="end">{np_te_seg2}</value>
+        </parameter>
+
+        <parameter>
+          <name>fx</name>
+          <value apply="begin">{fx_sta3}</value>
+          <value apply="end">{fx_sta4}</value>
+        </parameter>
+        <parameter>
+          <name>fy</name>
+          <value apply="begin">{fy_sta3}</value>
+          <value apply="end">{fy_sta4}</value>
+        </parameter>
+        <parameter>
+          <name>fz</name>
+          <value apply="begin">{fz_sta3}</value>
+          <value apply="end">{fz_sta4}</value>
+        </parameter>
+        <parameter>
+          <name>mx</name>
+          <value apply="begin">{mx_sta3}</value>
+          <value apply="end">{mx_sta4}</value>
+        </parameter>
+        <parameter>
+          <name>my</name>
+          <value apply="begin">{my_sta3}</value>
+          <value apply="end">{my_sta4}</value>
+        </parameter>
+        <parameter>
+          <name>mz</name>
+          <value apply="begin">{mz_sta3}</value>
+          <value apply="end">{mz_sta4}</value>
+        </parameter>
+
+      </segment>
+
+    </segments>
+
+
+    <distributions>
+
+      <distribution>
+        <parameter>fo_spar_1</parameter>
+        <function>ff1</function>
+      </distribution>
+
+      <distribution>
+        <parameter>fo_spar_2</parameter>
+        <function>ff2</function>
+      </distribution>
+
+      <distribution>
+        <parameter>fo_spar_3</parameter>
+        <function>ff3</function>
+      </distribution>
+
+      <distribution>
+        <parameter>fo_spar_4</parameter>
+        <function>ff4</function>
+      </distribution>
+
+      <distribution>
+        <parameter>fo_le</parameter>
+        <function>ff5</function>
+      </distribution>
+
+      <distribution>
+        <parameter>fo_te</parameter>
+        <function>ff6</function>
+      </distribution>
+
+    </distributions>
+
+  </design>
+
+
+
+
+  <functions>
+
+    <function name="ff1" type="polynomial">
+      <coefficients>{fo_spar_1}</coefficients>
+    </function>
+
+    <function name="ff2" type="polynomial">
+      <coefficients>{fo_spar_2}</coefficients>
+    </function>
+
+    <function name="ff3" type="polynomial">
+      <coefficients>{fo_spar_3}</coefficients>
+    </function>
+
+    <function name="ff4" type="polynomial">
+      <coefficients>{fo_spar_4}</coefficients>
+    </function>
+
+    <function name="ff5" type="polynomial">
+      <coefficients>{fo_le}</coefficients>
+    </function>
+
+    <function name="ff6" type="polynomial">
+      <coefficients>{fo_te}</coefficients>
+    </function>
+
+  </functions>
+
+</beam>

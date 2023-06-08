@@ -180,7 +180,7 @@ def _read_binary(f, num_triangles: int):
     return Mesh(points, cells)
 
 
-def write(filename, mesh, binary=False):
+def write(filename, mesh, binary=False, **kwargs):
     if "triangle" not in {block.type for block in mesh.cells}:
         warn("STL can only write triangle cells. No triangle cells found.")
     if len(mesh.cells) > 1:

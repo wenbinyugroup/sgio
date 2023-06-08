@@ -1,0 +1,146 @@
+INFO     [2023-04-07 22:31:46] msgd.run :: version = 0.8 
+INFO     [2023-04-07 22:31:46] msgd.run :: product variant = ivabs 
+INFO     [2023-04-07 22:31:46] msgd.readMDAOEvalIn :: reading mdao input... 
+INFO     [2023-04-07 22:31:46] msgd.updateData :: updating current design... 
+DEBUG    [2023-04-07 22:31:46] msgd.updateData :: cs1 
+DEBUG    [2023-04-07 22:31:46] msgd.updateData :: step 1 
+DEBUG    [2023-04-07 22:31:46] msgd.updateData :: step 2 
+DEBUG    [2023-04-07 22:31:46] msgd.writeInput :: writing input file: curr_design.yml... 
+INFO     [2023-04-07 22:31:46] msgd.analyze_v2 ::  analysis start 
+INFO     [2023-04-07 22:31:46] msgd.analyze_v2 ::  going through steps... 
+CRITICAL [2023-04-07 22:31:46] msgd.analyze_v2 :: ==================== 
+CRITICAL [2023-04-07 22:31:46] msgd.analyze_v2 :: running script step: convert global response file 
+DEBUG    [2023-04-07 22:31:46] msgd.analyze_v2 :: step config: {'step': 'convert global response file', 'type': 'script', 'file': 'data_process', 'function': 'convertGlobalResponseFileFormat', 'kwargs': {'undeform_data': 'undeformed.csv', 'deformed_data': ['config_a_aoa_2_1mm_data.csv', 'config_a_aoa_5_1mm_data.csv', 'config_a_aoa_8_1mm_data.csv'], 'condition_tags': 'aoa', 'conditions': [2.0, 5.0, 8.0], 'location_tag': 'node_id', 'output_file': 'test2.csv'}} 
+INFO     [2023-04-07 22:31:46] msgd.analyze_v2 :: import data_process as user_mod 
+INFO     [2023-04-07 22:31:47] msgd.analyze_v2 :: evaluating user function: user_mod.convertGlobalResponseFileFormat 
+DEBUG    [2023-04-07 22:31:47] msgd.analyze_v2 :: design_analysis.data['main'] = {} 
+CRITICAL [2023-04-07 22:31:47] msgd.analyze_v2 :: ==================== 
+CRITICAL [2023-04-07 22:31:47] msgd.analyze_v2 :: running cs step: recovery 
+DEBUG    [2023-04-07 22:31:47] msgd.analyze_v2 :: step config: {'step': 'recovery', 'type': 'cs', 'analysis': 'd,fi', 'input': {'load_case': {'data_form': 'file', 'file_name': 'test2.csv', 'location_tags': 'node_id', 'condition_tags': 'aoa', 'location_value_types': 'int', 'condition_value_types': 'float', 'case': [{'node_id': 30}]}}} 
+DEBUG    [2023-04-07 22:31:47] msgd.analyze_v2 :: structure_data = {'name': 'uh60_blade_1', 'parameter': {'a2p1': 0.8, 'a2p3': 0.6}, 'design': {'cs_assignment': {'set_0': 'main_cs'}}, 'cs': {'main_cs': {'base': 'cs1', 'model': 'md1', 'model_dim': 1, 'model_name': 't'}}, 'css_data': {}} 
+INFO     [2023-04-07 22:31:47] sg.runSGenomeDesignAnalysis :: running cs design d,fi analysis... 
+INFO     [2023-04-07 22:31:47] io.readLoadCsv :: reading structural response file test2.csv... 
+CRITICAL [2023-04-07 22:31:47] sg.runSGDesignAnalysisDF :: running cs dehomogenization/failure analysis: main_cs_set_0... 
+CRITICAL [2023-04-07 22:31:47] msgd.run :: Traceback (most recent call last):
+  File "C:\Users\unita\sall\s02-study\s3-develop\msg-design\scripts\msgd\msgd.py", line 685, in run
+    self.analyze_v2()
+  File "C:\Users\unita\sall\s02-study\s3-develop\msg-design\scripts\msgd\msgd.py", line 1197, in analyze_v2
+    prop = mas.runSGenomeDesignAnalysis(
+  File "C:\Users\unita\sall\s02-study\s3-develop\msg-design\scripts\msgd\analysis\sg.py", line 384, in runSGenomeDesignAnalysis
+    _d_result, _f_result = runSGDesignAnalysisDF(
+  File "C:\Users\unita\sall\s02-study\s3-develop\msg-design\scripts\msgd\analysis\sg.py", line 1051, in runSGDesignAnalysisDF
+    _cs_xml_tree = et.parse(_fn_xml)
+  File "C:\Users\unita\anaconda3\envs\rnd_py38\lib\xml\etree\ElementTree.py", line 1202, in parse
+    tree.parse(source, parser)
+  File "C:\Users\unita\anaconda3\envs\rnd_py38\lib\xml\etree\ElementTree.py", line 584, in parse
+    source = open(source, "rb")
+FileNotFoundError: [Errno 2] No such file or directory: 'main_cs_set_0.xml'
+ 
+Traceback (most recent call last):
+  File "C:\Users\unita\sall\s02-study\s3-develop\msg-design\scripts\msgd\msgd.py", line 685, in run
+    self.analyze_v2()
+  File "C:\Users\unita\sall\s02-study\s3-develop\msg-design\scripts\msgd\msgd.py", line 1197, in analyze_v2
+    prop = mas.runSGenomeDesignAnalysis(
+  File "C:\Users\unita\sall\s02-study\s3-develop\msg-design\scripts\msgd\analysis\sg.py", line 384, in runSGenomeDesignAnalysis
+    _d_result, _f_result = runSGDesignAnalysisDF(
+  File "C:\Users\unita\sall\s02-study\s3-develop\msg-design\scripts\msgd\analysis\sg.py", line 1051, in runSGDesignAnalysisDF
+    _cs_xml_tree = et.parse(_fn_xml)
+  File "C:\Users\unita\anaconda3\envs\rnd_py38\lib\xml\etree\ElementTree.py", line 1202, in parse
+    tree.parse(source, parser)
+  File "C:\Users\unita\anaconda3\envs\rnd_py38\lib\xml\etree\ElementTree.py", line 584, in parse
+    source = open(source, "rb")
+FileNotFoundError: [Errno 2] No such file or directory: 'main_cs_set_0.xml'
+INFO     [2023-04-07 22:31:47] msgd.writeMDAOEvalOut :: writing output files... 
+INFO     [2023-04-07 22:32:25] msgd.run :: version = 0.8 
+INFO     [2023-04-07 22:32:25] msgd.run :: product variant = ivabs 
+INFO     [2023-04-07 22:32:25] msgd.readMDAOEvalIn :: reading mdao input... 
+INFO     [2023-04-07 22:32:25] msgd.updateData :: updating current design... 
+DEBUG    [2023-04-07 22:32:25] msgd.updateData :: cs1 
+DEBUG    [2023-04-07 22:32:25] msgd.updateData :: step 1 
+DEBUG    [2023-04-07 22:32:25] msgd.updateData :: step 2 
+DEBUG    [2023-04-07 22:32:25] msgd.writeInput :: writing input file: curr_design.yml... 
+INFO     [2023-04-07 22:32:25] msgd.analyze_v2 ::  analysis start 
+INFO     [2023-04-07 22:32:25] msgd.analyze_v2 ::  going through steps... 
+CRITICAL [2023-04-07 22:32:25] msgd.analyze_v2 :: ==================== 
+CRITICAL [2023-04-07 22:32:25] msgd.analyze_v2 :: running script step: convert global response file 
+DEBUG    [2023-04-07 22:32:25] msgd.analyze_v2 :: step config: {'step': 'convert global response file', 'type': 'script', 'file': 'data_process', 'function': 'convertGlobalResponseFileFormat', 'kwargs': {'undeform_data': 'undeformed.csv', 'deformed_data': ['config_a_aoa_2_1mm_data.csv', 'config_a_aoa_5_1mm_data.csv', 'config_a_aoa_8_1mm_data.csv'], 'condition_tags': 'aoa', 'conditions': [2.0, 5.0, 8.0], 'location_tag': 'node_id', 'output_file': 'test2.csv'}} 
+INFO     [2023-04-07 22:32:25] msgd.analyze_v2 :: import data_process as user_mod 
+INFO     [2023-04-07 22:32:26] msgd.analyze_v2 :: evaluating user function: user_mod.convertGlobalResponseFileFormat 
+DEBUG    [2023-04-07 22:32:26] msgd.analyze_v2 :: design_analysis.data['main'] = {} 
+CRITICAL [2023-04-07 22:32:26] msgd.analyze_v2 :: ==================== 
+CRITICAL [2023-04-07 22:32:26] msgd.analyze_v2 :: running cs step: recovery 
+DEBUG    [2023-04-07 22:32:26] msgd.analyze_v2 :: step config: {'step': 'recovery', 'type': 'cs', 'analysis': 'd,fi', 'input': {'load_case': {'data_form': 'file', 'file_name': 'test2.csv', 'location_tags': 'node_id', 'condition_tags': 'aoa', 'location_value_types': 'int', 'condition_value_types': 'float', 'case': [{'node_id': 30}]}}} 
+DEBUG    [2023-04-07 22:32:26] msgd.analyze_v2 :: structure_data = {'name': 'uh60_blade_1', 'parameter': {'a2p1': 0.8, 'a2p3': 0.6}, 'design': {'cs_assignment': {'set_0': 'main_cs'}}, 'cs': {'main_cs': {'base': 'cs1', 'model': 'md1', 'model_dim': 1, 'model_name': 't'}}, 'css_data': {}} 
+INFO     [2023-04-07 22:32:26] sg.runSGenomeDesignAnalysis :: running cs design d,fi analysis... 
+INFO     [2023-04-07 22:32:26] io.readLoadCsv :: reading structural response file test2.csv... 
+CRITICAL [2023-04-07 22:32:26] sg.runSGDesignAnalysisDF :: running cs dehomogenization/failure analysis: main_cs_set_0... 
+INFO     [2023-04-07 22:32:26] execu.solve :: preprocessing... 
+INFO     [2023-04-07 22:32:26] presg.buildSG :: building 2D SG: main_cs_set_0.xml... 
+CRITICAL [2023-04-07 22:32:26] execu.run :: prevabs -i main_cs_set_0.xml -vabs -d 
+DEBUG    [2023-04-07 22:32:27] execu.run :: exit code: 0 
+DEBUG    [2023-04-07 22:32:27] execu.run :: None 
+INFO     [2023-04-07 22:32:27] execu.solve :: running analysis... 
+DEBUG    [2023-04-07 22:32:27] execu.solve :: solver: vabs 
+CRITICAL [2023-04-07 22:32:27] execu.run :: vabs main_cs_set_0.sg 2 
+DEBUG    [2023-04-07 22:32:33] execu.run :: exit code: 0 
+DEBUG    [2023-04-07 22:32:33] execu.run :: None 
+INFO     [2023-04-07 22:32:33] execu.solve :: reading results... 
+INFO     [2023-04-07 22:32:33] execu.solve :: preprocessing... 
+INFO     [2023-04-07 22:32:33] presg.buildSG :: building 2D SG: main_cs_set_0.xml... 
+CRITICAL [2023-04-07 22:32:33] execu.run :: prevabs -i main_cs_set_0.xml -vabs -fi 
+DEBUG    [2023-04-07 22:32:33] execu.run :: exit code: 0 
+DEBUG    [2023-04-07 22:32:33] execu.run :: None 
+INFO     [2023-04-07 22:32:33] execu.solve :: running analysis... 
+DEBUG    [2023-04-07 22:32:33] execu.solve :: solver: vabs 
+CRITICAL [2023-04-07 22:32:33] execu.run :: vabs main_cs_set_0.sg 3 
+DEBUG    [2023-04-07 22:32:34] execu.run :: exit code: 0 
+DEBUG    [2023-04-07 22:32:34] execu.run :: None 
+INFO     [2023-04-07 22:32:34] execu.solve :: reading results... 
+INFO     [2023-04-07 22:32:34] io.readSGOutFailureIndex :: reading sg failure indices and strengh ratios: main_cs_set_0.sg.fi... 
+INFO     [2023-04-07 22:32:34] execu.solve :: preprocessing... 
+INFO     [2023-04-07 22:32:34] presg.buildSG :: building 2D SG: main_cs_set_0.xml... 
+CRITICAL [2023-04-07 22:32:34] execu.run :: prevabs -i main_cs_set_0.xml -vabs -d 
+DEBUG    [2023-04-07 22:32:35] execu.run :: exit code: 0 
+DEBUG    [2023-04-07 22:32:35] execu.run :: None 
+INFO     [2023-04-07 22:32:35] execu.solve :: running analysis... 
+DEBUG    [2023-04-07 22:32:35] execu.solve :: solver: vabs 
+CRITICAL [2023-04-07 22:32:35] execu.run :: vabs main_cs_set_0.sg 2 
+DEBUG    [2023-04-07 22:32:41] execu.run :: exit code: 0 
+DEBUG    [2023-04-07 22:32:41] execu.run :: None 
+INFO     [2023-04-07 22:32:41] execu.solve :: reading results... 
+INFO     [2023-04-07 22:32:41] execu.solve :: preprocessing... 
+INFO     [2023-04-07 22:32:41] presg.buildSG :: building 2D SG: main_cs_set_0.xml... 
+CRITICAL [2023-04-07 22:32:41] execu.run :: prevabs -i main_cs_set_0.xml -vabs -fi 
+DEBUG    [2023-04-07 22:32:41] execu.run :: exit code: 0 
+DEBUG    [2023-04-07 22:32:41] execu.run :: None 
+INFO     [2023-04-07 22:32:41] execu.solve :: running analysis... 
+DEBUG    [2023-04-07 22:32:41] execu.solve :: solver: vabs 
+CRITICAL [2023-04-07 22:32:41] execu.run :: vabs main_cs_set_0.sg 3 
+DEBUG    [2023-04-07 22:32:42] execu.run :: exit code: 0 
+DEBUG    [2023-04-07 22:32:42] execu.run :: None 
+INFO     [2023-04-07 22:32:42] execu.solve :: reading results... 
+INFO     [2023-04-07 22:32:42] io.readSGOutFailureIndex :: reading sg failure indices and strengh ratios: main_cs_set_0.sg.fi... 
+INFO     [2023-04-07 22:32:42] execu.solve :: preprocessing... 
+INFO     [2023-04-07 22:32:42] presg.buildSG :: building 2D SG: main_cs_set_0.xml... 
+CRITICAL [2023-04-07 22:32:42] execu.run :: prevabs -i main_cs_set_0.xml -vabs -d 
+DEBUG    [2023-04-07 22:32:42] execu.run :: exit code: 0 
+DEBUG    [2023-04-07 22:32:42] execu.run :: None 
+INFO     [2023-04-07 22:32:42] execu.solve :: running analysis... 
+DEBUG    [2023-04-07 22:32:42] execu.solve :: solver: vabs 
+CRITICAL [2023-04-07 22:32:42] execu.run :: vabs main_cs_set_0.sg 2 
+DEBUG    [2023-04-07 22:32:48] execu.run :: exit code: 0 
+DEBUG    [2023-04-07 22:32:48] execu.run :: None 
+INFO     [2023-04-07 22:32:48] execu.solve :: reading results... 
+INFO     [2023-04-07 22:32:48] execu.solve :: preprocessing... 
+INFO     [2023-04-07 22:32:48] presg.buildSG :: building 2D SG: main_cs_set_0.xml... 
+CRITICAL [2023-04-07 22:32:48] execu.run :: prevabs -i main_cs_set_0.xml -vabs -fi 
+DEBUG    [2023-04-07 22:32:48] execu.run :: exit code: 0 
+DEBUG    [2023-04-07 22:32:48] execu.run :: None 
+INFO     [2023-04-07 22:32:48] execu.solve :: running analysis... 
+DEBUG    [2023-04-07 22:32:48] execu.solve :: solver: vabs 
+CRITICAL [2023-04-07 22:32:48] execu.run :: vabs main_cs_set_0.sg 3 
+DEBUG    [2023-04-07 22:32:49] execu.run :: exit code: 0 
+DEBUG    [2023-04-07 22:32:49] execu.run :: None 
+INFO     [2023-04-07 22:32:49] execu.solve :: reading results... 
+INFO     [2023-04-07 22:32:49] io.readSGOutFailureIndex :: reading sg failure indices and strengh ratios: main_cs_set_0.sg.fi... 
+INFO     [2023-04-07 22:32:49] msgd.writeMDAOEvalOut :: writing output files... 

@@ -126,7 +126,7 @@ class Mesh:
     def __init__(
         self,
         points: ArrayLike,
-        cells: dict[str, ArrayLike] | list[tuple[str, ArrayLike] | CellBlock],
+        cells: dict[str, ArrayLike] | list[tuple[str, ArrayLike] | CellBlock] | list[list[str, ArrayLike] | CellBlock],
         point_data: dict[str, ArrayLike] | None = None,
         cell_data: dict[str, list[ArrayLike]] | None = None,
         field_data=None,
@@ -165,7 +165,7 @@ class Mesh:
         """
 
         for cell_block in cells:
-            if isinstance(cell_block, tuple):
+            if isinstance(cell_block, tuple) or isinstance(cell_block, list):
                 cell_type, data = cell_block
                 cell_block = CellBlock(
                     cell_type,
@@ -274,25 +274,25 @@ class Mesh:
         else:
             lines.append("  No cells.")
 
-        if self.point_sets:
-            names = ", ".join(self.point_sets.keys())
-            lines.append(f"  Point sets: {names}")
+        # if self.point_sets:
+        names = ", ".join(self.point_sets.keys())
+        lines.append(f"  Point sets: {names}")
 
-        if self.cell_sets:
-            names = ", ".join(self.cell_sets.keys())
-            lines.append(f"  Cell sets: {names}")
+        # if self.cell_sets:
+        names = ", ".join(self.cell_sets.keys())
+        lines.append(f"  Cell sets: {names}")
 
-        if self.point_data:
-            names = ", ".join(self.point_data.keys())
-            lines.append(f"  Point data: {names}")
+        # if self.point_data:
+        names = ", ".join(self.point_data.keys())
+        lines.append(f"  Point data: {names}")
 
-        if self.cell_data:
-            names = ", ".join(self.cell_data.keys())
-            lines.append(f"  Cell data: {names}")
+        # if self.cell_data:
+        names = ", ".join(self.cell_data.keys())
+        lines.append(f"  Cell data: {names}")
 
-        if self.field_data:
-            names = ", ".join(self.field_data.keys())
-            lines.append(f"  Field data: {names}")
+        # if self.field_data:
+        names = ", ".join(self.field_data.keys())
+        lines.append(f"  Field data: {names}")
 
         return "\n".join(lines)
 

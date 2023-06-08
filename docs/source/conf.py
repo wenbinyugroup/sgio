@@ -12,31 +12,17 @@
 #
 import os
 import sys
-# sys.path.insert(0, os.path.abspath('.'))
-sys.path.insert(0, os.path.abspath(os.path.join('..', '..', '..', '..', 'scripts')))
-# sys.path.insert(0, os.path.abspath(os.path.join('..', '..', 'scripts', 'msgd')))
-
-# print(sys.path)
-# print(sys.modules)
-
-# import msgd
-# import msgd._global as mg
-
-# print('{} {}.{}'.format(mg.NAME, mg.VERSION_MAJOR, mg.VERSION_MINOR))
-
-# print(tags)
-if not tags.has('ivabs'):
-    tags.add('msg')
+sys.path.insert(0, os.path.abspath('../..'))
 
 
 # -- Project information -----------------------------------------------------
 
-project = u'SG Python Interface'
-version = u'0.8'
-release = u'0.8'
-copyright = u'2022, Multiscale Structural Mechanics Group, Purdue University'
-author = u'Su Tian, Haodong Du, Fei Tao and Wenbin Yu'
+project = 'sgio'
+copyright = '2023, su tian'
+author = 'su tian'
 
+# The full version, including alpha/beta/rc tags
+release = '0.1'
 
 
 # -- General configuration ---------------------------------------------------
@@ -61,21 +47,6 @@ exclude_patterns = []
 
 root_doc = 'index'
 
-if tags.has('ivabs'):
-    rst_prolog = """
-    .. |sg| replace:: CS
-    .. |structure gene| replace:: cross-section
-    """
-else:
-    rst_prolog = """
-    .. |sg| replace:: SG
-    .. |structure gene| replace:: structure gene
-    """
-
-
-language = 'en'
-
-
 # -- Options for HTML output -------------------------------------------------
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
@@ -86,20 +57,8 @@ html_theme = 'sphinx_book_theme'
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-# html_static_path = ['_static']
-
-# html_theme_options = {
-#     # "path_to_docs": "doc/source",
-#     'use_edit_page_button': True,
-#     "use_repository_button": True,
-#     "use_issues_button": True,
-#     'collapse_navigation': True,
-#     'navigation_depth': 4,
-# }
-
-
+html_static_path = ['_static']
 
 # -- Extension configuration -------------------------------------------------
 autodoc_member_order = 'groupwise'
 autosummary_generate = True
-

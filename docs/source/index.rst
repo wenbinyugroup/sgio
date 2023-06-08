@@ -1,19 +1,28 @@
-.. _section-ref_python:
+.. sgio documentation master file, created by
+   sphinx-quickstart on Thu May  4 00:03:30 2023.
+   You can adapt this file completely to your liking, but it should at least
+   contain the root `toctree` directive.
 
-Structure Gene Python Interface
-=================================
+Welcome to sgio's documentation!
+================================
+
 
 ..  toctree::
-    :maxdepth: 1
-    :caption: Reference manual
+    :maxdepth: 2
+    :caption: Guide:
 
-    sg/index
+    guide/index
 
 
+..  toctree::
+    :maxdepth: 2
+    :caption: Reference:
 
-Indices and tables
-==================
+    ref/index
 
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+.. Indices and tables
+.. ==================
+
+.. * :ref:`genindex`
+.. * :ref:`modindex`
+.. * :ref:`search`

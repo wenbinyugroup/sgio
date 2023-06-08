@@ -1,3 +1,3 @@
-from ._sg import read, write
+from .main import read, write
 
 __all__ = ["read", "write"]

@@ -1,0 +1,96 @@
+name: ''
+version: '0.8'
+setting:
+  log_level_cmd: info
+  log_level_file: debug
+  log_file_name: eval.log
+structure:
+  name: uh60_blade_1
+  parameter:
+    a2p1: 0.8
+    a2p3: 0.6
+  design:
+    cs_assignment:
+    - region: all
+      cs: cs1
+      model: md1
+  cs:
+    main_cs:
+      base: cs1
+      model: md1
+      model_dim: 1
+      model_name: t
+  css_data: {}
+cs:
+  cs1:
+    name: cs1
+    parameter:
+      a2p1: 0.82
+      a2p3: 0.58
+      mdb_name: material_database_us_ft
+      airfoil: SC1095.dat
+      airfoil_point_order: -1
+      chord: 20.76
+      pan2: -1
+      pan3: 0
+      a2nsm: 0.96
+      a3nsm: 0
+      rnsm: 0.01
+      gms: 0.04
+      lam_skin: T300 15k/976_0.0053
+      lam_cap: Aluminum 8009_0.01
+      lam_spar_1: T300 15k/976_0.0053
+      lam_front: T300 15k/976_0.0053
+      lam_back: T300 15k/976_0.0053
+      ssc_spar: '[-45:10/0:10/45:10/90:10]'
+      mat_nsm: lead
+      mat_fill_front: Rohacell 70
+      mat_fill_back: Plascore PN2-3/16OX3.0
+      mat_fill_te: Plascore PN2-3/16OX3.0
+    design:
+      dim: 2
+      tool: prevabs
+      base_file: airfoil_gbox_uni.xml.tmp
+    model:
+      md1:
+        tool: vabs
+analysis:
+  steps:
+  - step: cs analysis
+    type: cs
+    analysis: h
+    output:
+    - value:
+      - gj
+      - eiyy
+      - eizz
+  - step: convert global response file
+    type: script
+    file: data_process
+    function: convertGlobalResponseFileFormat
+    kwargs:
+      undeform_data: undeformed.csv
+      deformed_data:
+      - config_a_aoa_2_1mm_data.csv
+      - config_a_aoa_5_1mm_data.csv
+      - config_a_aoa_8_1mm_data.csv
+      condition_tags: aoa
+      conditions:
+      - 2.0
+      - 5.0
+      - 8.0
+      location_tag: node_id
+      output_file: test2.csv
+  - step: recovery
+    type: cs
+    analysis: d,fi
+    input:
+      load_case:
+        data_form: file
+        file_name: test2.csv
+        location_tags: node_id
+        condition_tags: aoa
+        location_value_types: int
+        condition_value_types: float
+        case:
+        - node_id: 30
