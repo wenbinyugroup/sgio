@@ -1,7 +1,8 @@
 import sgio
 
 # fn_base = 'rve_cube_test'
-fn_base = 'rve_udfrp'
+# fn_base = 'rve_udfrp'
+fn_base = 'rve_inclusion'
 
 fn_rve_abq_inp = f'../../files/{fn_base}.inp'
 fn_sg = f'{fn_base}.sg'
