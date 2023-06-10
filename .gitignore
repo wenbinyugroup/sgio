@@ -4,3 +4,8 @@ build*/
 .vscode/
 
 *.pyc
+
+SCInt
+SCReal
+SCTemp
+SCWork
