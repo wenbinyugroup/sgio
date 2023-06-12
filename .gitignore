@@ -5,6 +5,7 @@ build*/
 
 *.pyc
 
+*.deb
 SCInt
 SCReal
 SCTemp
