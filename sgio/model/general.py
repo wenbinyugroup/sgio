@@ -127,6 +127,24 @@ class MaterialSection(object):
                     print(row)
 
 
+    def get(self, name):
+        r"""
+        """
+        v = None
+
+        if name == 'density':
+            v = self.density
+
+        elif name in ['xt', 'yt', 'zt', 'xc', 'yc', 'zc', 'r', 't', 's']:
+            v = self.strength_constants[name]
+
+        elif self.smdim == 3:
+            if name in ['e', 'e1', 'e2', 'e3', 'g12', 'g13', 'g23', 'nu', 'nu12', 'nu13', 'nu23']:
+                v = self.constitutive.get(name)
+
+        return v
+
+
 
 
 

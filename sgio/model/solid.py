@@ -60,6 +60,21 @@ class Cauchy:
         return
 
 
+    def get(self, name):
+        r"""
+        """
+        v = None
+
+        if name == 'e':
+            v = self.e1
+        elif name == 'nu':
+            v = self.nu12
+        elif name in ['e1', 'e2', 'e3', 'g12', 'g13', 'g23', 'nu12', 'nu13', 'nu23']:
+            v = eval(f'self.{name}')
+
+        return v
+
+
 
 
 
