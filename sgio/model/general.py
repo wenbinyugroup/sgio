@@ -140,7 +140,8 @@ class MaterialSection(object):
 
         elif self.smdim == 3:
             if name in ['e', 'e1', 'e2', 'e3', 'g12', 'g13', 'g23', 'nu', 'nu12', 'nu13', 'nu23']:
-                v = self.constitutive.get(name)
+                # v = self.constitutive.get(name)
+                v = self.constants.get(name)
 
         return v
 
