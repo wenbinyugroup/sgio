@@ -127,6 +127,70 @@ class MaterialSection(object):
                     print(row)
 
 
+    def get(self, name):
+        r"""
+        """
+        v = None
+
+        if self.smdim == 1:
+            return self.constitutive.get(name)
+
+        if name == 'density':
+            v = self.density
+
+        elif name in ['xt', 'yt', 'zt', 'xc', 'yc', 'zc', 'r', 't', 's']:
+            v = self.strength_constants[name]
+
+        elif self.smdim == 3:
+            if name in ['e', 'e1', 'e2', 'e3', 'g12', 'g13', 'g23', 'nu', 'nu12', 'nu13', 'nu23']:
+                # v = self.constitutive.get(name)
+                v = self.constants.get(name)
+
+        return v
+    
+
+    def getAll(self):
+        """Get all beam properties.
+
+        Returns
+        -------
+        dict:
+            A Dictionary of all beam properties.
+
+        Notes
+        -----
+
+        Names are
+
+        - mu, mmoi1, mmoi2, mmoi3
+        - ea, ga22, ga33, gj, ei22, ei33
+        - mc2, mc3, tc2, tc3, sc2, sc3
+        - msij, stfijc, cmpijc, stfijr, cmpijr
+
+        """
+        return self.constitutive.getAll()
+        # names = [
+        #     'mu', 'mmoi1', 'mmoi2', 'mmoi3',
+        #     'ea', 'ga22', 'ga33', 'gj', 'ei22', 'ei33',
+        #     'mc2', 'mc3', 'tc2', 'tc3', 'sc2', 'sc3'
+        # ]
+        # for i in range(4):
+        #     for j in range(4):
+        #         names.append('stf{}{}c'.format(i+1, j+1))
+        #         names.append('cmp{}{}c'.format(i+1, j+1))
+        # for i in range(6):
+        #     for j in range(6):
+        #         names.append('ms{}{}'.format(i+1, j+1))
+        #         names.append('stf{}{}r'.format(i+1, j+1))
+        #         names.append('cmp{}{}r'.format(i+1, j+1))
+
+        # dict_prop = {}
+        # for n in names:
+        #     dict_prop[n] = self.get(n)
+
+        # return dict_prop
+
+
 
 
 

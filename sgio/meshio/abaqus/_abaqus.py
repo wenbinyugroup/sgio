@@ -527,7 +527,12 @@ def _read_material(f):
         # print(line)
         keyword = line.partition(",")[0].strip().replace("*", "").upper()
 
-        if keyword == 'ELASTIC':
+        if keyword == 'DENSITY':
+            line = f.readline()
+            _density = float(line.strip().strip(',')[0])
+            material['density'] = _density
+
+        elif keyword == 'ELASTIC':
             _elastic = []
             params_map = get_param_map(line)
             # print(params_map)

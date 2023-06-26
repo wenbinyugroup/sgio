@@ -59,7 +59,7 @@ def readOutput(fn:str, file_format:str, analysis=0, smdim:int=1, sg:StructureGen
             return _swiftcomp.readOutputBuffer(file, analysis, smdim, sg)
 
         elif file_format.startswith('v'):
-            return _vabs.readOutput(file, analysis, sg)
+            return _vabs.readOutputBuffer(file, analysis, sg)
 
     return
 
