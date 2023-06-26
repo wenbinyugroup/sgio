@@ -10,13 +10,15 @@ logger = logging.getLogger(__name__)
 # import meshio
 # import msgd.pkg.meshio as mpm
 
-fn_in = 'sg23_tri6_sc.sg'
-file_format_in = 'sc'
-format_version_in = '2.1'
-fn_out = 'sg23_tri6_sc_write.sg'
-file_format_out = 'sc'
-format_version_out = '2.1'
-smdim = 3
+fn_base = 'sg21eb_tri3_vabs40'
+
+fn_in = f'../files/{fn_base}.sg'
+file_format_in = 'vabs'
+format_version_in = '4.0'
+fn_out = f'{fn_base}_write.sg'
+file_format_out = 'vabs'
+format_version_out = '4.0'
+smdim = 1
 
 
 sg = sgio.read(fn_in, file_format_in, format_version_in, smdim)

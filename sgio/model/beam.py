@@ -4,6 +4,353 @@ from dataclasses import dataclass
 # class EulerBernoulli:
 
 
+class BeamModel():
+    """A beam property class (smdim = 1)
+
+    """
+
+    def __init__(self):
+        # MaterialSection.__init__(self, smdim=1)
+
+        #: float: Geometric center location in x2 direction
+        self.xg2 = 0.
+        #: float: Geometric center location in x3 direction
+        self.xg3 = 0.
+
+        #: float: Area of the cross-section
+        self.area = 0.
+
+
+        # Inertial properties
+        # -------------------
+
+        #: list of list of floats:
+        #: The 6x6 mass matrix
+        self.mass = []
+
+        #: list of lists of floats:
+        #: The 6x6 mass matrix at the mass center
+        self.mass_cs = []
+
+        #: float: Mass center location in x2 direction
+        self.xm2 = 0.
+        #: float: Mass center location in x3 direction
+        self.xm3 = 0.
+
+        #: float: Mass per unit span
+        self.mu = 0.
+        #: float: Mass moments of inertia i11
+        self.i11 = 0.
+        #: float: Principal mass moments of inertia i22
+        self.i22 = 0.
+        #: float: Principle mass moments of inertia i33
+        self.i33 = 0.
+        #: float: Principal inertial axes rotation angle in degree
+        self.phi_pia = 0.
+        #: float: mass-weighted radius of gyration
+        self.rg = 0.
+
+
+        # Structural properties
+        # ---------------------
+
+        #: list of lists of floats:
+        #: Classical stiffness matrix (1-extension; 2-twist; 3,4-bending)
+        self.stff = []
+        #: list of lists of floats:
+        #: Classical compliance matrix (1-extension; 2-twist; 3,4-bending)
+        self.cmpl = []
+
+        #: float: Tension center location in x2 direction
+        self.xt2 = 0.
+        #: float: Tension center location in x3 direction
+        self.xt3 = 0.
+
+        #: float: Extension stiffness EA
+        self.ea = 0.
+        #: float: Torsional stiffness GJ
+        self.gj = 0.
+        #: float: Principal bending stiffness EI22
+        self.ei22 = 0.
+        #: float: Principal bending stiffness EI33
+        self.ei33 = 0.
+        #: float: Principle bending axes rotation angle in degree
+        self.phi_pba = 0.
+
+        #: list of lists of floats:
+        #: Timoshenko stiffness matrix (1-extension; 2,3-shear, 4-twist; 5,6-bending)
+        self.stff_t = []
+        #: list of lists of floats:
+        #: Timoshenko compliance matrix (1-extension; 2,3-shear, 4-twist; 5,6-bending)
+        self.cmpl_t = []
+
+        #: float: Generalized shear center location in x2 direction
+        self.xs2 = 0.
+        #: float: Generalized shear center location in x3 direction
+        self.xs3 = 0.
+        #: float: Principal shear stiffness GA22
+        self.ga22 = 0.
+        #: float: Principal shear stiffness GA33
+        self.ga33 = 0.
+        #: float: Principal shear axes rotation angle in degree
+        self.phi_psa = 0.
+
+
+    def printData(self):
+        fmt = '20.10E'
+        print('Summary')
+        print()
+        print('The 6x6 mass matrix')
+        print(utio.matrixToString(self.mass, fmt=fmt))
+        print()
+        print('The Mass Center of the Cross-Section')
+        # print(f'({self.xm2:{fmt}}, {self.xm3:{fmt}})')
+        print('({:{fmt}}, {:{fmt}})'.format(self.xm2, self.xm3, fmt=fmt))
+        print()
+        print('The Mass Properties with respect to Principal Inertial Axes')
+        # print(f'Mass per unit span = {self.mu:{fmt}}')
+        print('Mass per unit span = {:{fmt}}'.format(self.mu, fmt=fmt))
+        # print(f'Mass moments of innertia i11 = {self.i11:{fmt}}')
+        print('Mass moments of innertia i11 = {:{fmt}}'.format(self.i11, fmt=fmt))
+        # print(f'Principle mass moments of innertia i22 = {self.i22:{fmt}}')
+        print('Principle mass moments of innertia i22 = {:{fmt}}'.format(self.i22, fmt=fmt))
+        # print(f'Principle mass moments of innertia i33 = {self.i33:{fmt}}')
+        print('Principle mass moments of innertia i33 = {:{fmt}}'.format(self.i33, fmt=fmt))
+        # print(f'The principal inertial axes rotation = {self.phi_pia:{fmt}}')
+        print('The principal inertial axes rotation = {:{fmt}}'.format(self.phi_pia, fmt=fmt))
+        # print(f'The mass-weighted radius of gyration = {self.rg:{fmt}}')
+        print('The mass-weighted radius of gyration = {:{fmt}}'.format(self.rg, fmt=fmt))
+        print()
+        print('Classical Stiffness Matrix (1-extension; 2-twist; 3,4-bending)')
+        print(utio.matrixToString(self.stff, fmt=fmt))
+        print('Classical Flexibility Matrix (1-extension; 2-twist; 3,4-bending)')
+        print(utio.matrixToString(self.cmpl, fmt=fmt))
+        print()
+        print('The Tension Center of the Cross-Section')
+        # print(f'({self.xt2:{fmt}}, {self.xt3:{fmt}})')
+        print('({:{fmt}}, {:{fmt}})'.format(self.xt2, self.xt3, fmt=fmt))
+        print()
+        # print(f'The extension stiffness EA = {self.ea:{fmt}}')
+        print('The extension stiffness EA = {:{fmt}}'.format(self.ea, fmt=fmt))
+        # print(f'The torsional stiffness GJ = {self.gj:{fmt}}')
+        print('The torsional stiffness GJ = {:{fmt}}'.format(self.gj, fmt=fmt))
+        # print(f'Principal bending stiffness EI22 = {self.ei22:{fmt}}')
+        print('Principal bending stiffness EI22 = {:{fmt}}'.format(self.ei22, fmt=fmt))
+        # print(f'Principal bending stiffness EI33 = {self.ei33:{fmt}}')
+        print('Principal bending stiffness EI33 = {:{fmt}}'.format(self.ei33, fmt=fmt))
+        # print(f'The principal bending axes rotation = {self.phi_pba:{fmt}}')
+        print('The principal bending axes rotation = {:{fmt}}'.format(self.phi_pba, fmt=fmt))
+        print()
+        print('Timoshenko Stiffness Matrix (1-extension; 2,3-shear, 4-twist; 5,6-bending)')
+        print(utio.matrixToString(self.stff_t, fmt=fmt))
+        print('Timoshenko Flexibility Matrix (1-extension; 2,3-shear, 4-twist; 5,6-bending)')
+        print(utio.matrixToString(self.cmpl_t, fmt=fmt))
+        print()
+        print('The Generalized Shear Center of the Cross-Section')
+        # print(f'({self.xs2:{fmt}}, {self.xs3:{fmt}})')
+        print('({:{fmt}}, {:{fmt}})'.format(self.xs2, self.xs3, fmt=fmt))
+        print()
+        # print(f'Principal shear stiffness GA22 = {self.ga22:{fmt}}')
+        print('Principal shear stiffness GA22 = {:{fmt}}'.format(self.ga22, fmt=fmt))
+        # print(f'Principal shear stiffness GA33 = {self.ga33:{fmt}}')
+        print('Principal shear stiffness GA33 = {:{fmt}}'.format(self.ga33, fmt=fmt))
+        # print(f'The principal shear axes rotation = {self.phi_psa:{fmt}}')
+        print('The principal shear axes rotation = {:{fmt}}'.format(self.phi_psa, fmt=fmt))
+
+
+    def get(self, name):
+        """Get beam properties using specific names.
+
+        Parameters
+        ----------
+        name : str
+            Name of the property that will be returned.
+
+        Returns
+        -------
+        float:
+            Value of the specified beam property.
+
+        Notes
+        -----
+
+        ..  list-table:: Inertial properties
+            :header-rows: 1
+
+            * - Name
+              - Description
+            * - ``msijo`` (``i``, ``j`` are numbers 1 to 6)
+              - Entry (i, j) of the 6x6 mass matrix at the origin
+            * - ``msijc`` (``i``, ``j`` are numbers 1 to 6)
+              - Entry (i, j) of the 6x6 mass matrix at the mass center
+            * - ``mu``
+              - Mass per unit length
+            * - ``mmoi1`` | ``mmoi2`` | ``mmoi3``
+              - Mass moment of inertia about x1/x2/x3 axis
+
+        ..  list-table:: Stiffness properties
+            :header-rows: 1
+
+            * - Name
+              - Description
+            * - ``stfijc`` (``i``, ``j`` are numbers 1 to 6)
+              - Entry (i, j) of the 4x4 classical stiffness matrix
+            * - ``stfijr`` (``i``, ``j`` are numbers 1 to 6)
+              - Entry (i, j) of the 6x6 refined stiffness matrix
+            * - ``eac`` | ``ear``
+              - Axial stiffness of the classical/refined model
+            * - ``gjc`` | ``gjr``
+              - Torsional stiffness of the classical/refined model
+            * - ``ei2c`` | ``eifc`` | ``ei2r`` | ``eifr``
+              - Bending stiffness around x2 (flapwise) of the classical/refined model
+            * - ``ei3c`` | ``eicc`` | ``ei3r`` | ``eicr``
+              - Bending stiffness around x3 (chordwise or lead-lag) of the classical/refined model
+            * - ``cmpijc`` (``i``, ``j`` are numbers 1 to 6)
+              - Entry (i, j) of the 4x4 classical compliance matrix
+            * - ``cmpijr`` (``i``, ``j`` are numbers 1 to 6)
+              - Entry (i, j) of the 6x6 refined compliance matrix
+
+        ..  list-table:: Center offsets
+            :header-rows: 1
+
+            * - Name
+              - Description
+            * - ``mcy`` | ``mc2``
+              - y (or x2) component of the mass center
+            * - ``mcz`` | ``mc3``
+              - z (or x3) component of the mass center
+            * - ``tcy`` | ``tc2``
+              - y (or x2) component of the tension center
+            * - ``tcz`` | ``tc3``
+              - z (or x3) component of the tension center
+            * - ``scy`` | ``sc2``
+              - y (or x2) component of the shear center
+            * - ``scz`` | ``sc3``
+              - z (or x3) component of the shear center
+
+        .
+
+        """
+
+        if isinstance(name, str):
+            name = name.lower()
+
+            # Mass
+            if name.startswith('ms'):
+                return self.mass[int(name[2])-1][int(name[3])-1]
+            if name == 'mu':
+                return self.mu
+            if name == 'mmoi1':
+                return self.i11
+            if name == 'mmoi2':
+                return self.i22
+            if name == 'mmoi3':
+                return self.i33
+
+            # Stiffness
+            if name.startswith('stf'):
+                if name[-1] == 'c':
+                    return self.stff[int(name[3])-1][int(name[4])-1]
+                elif name[-1] == 'r':
+                    return self.stff_t[int(name[3])-1][int(name[4])-1]
+
+            # Compliance
+            if name.startswith('cmp'):
+                if name[-1] == 'c':
+                    return self.cmpl[int(name[3])-1][int(name[4])-1]
+                elif name[-1] == 'r':
+                    return self.cmpl_t[int(name[3])-1][int(name[4])-1]
+
+            if name == 'ea':
+                return self.ea
+            if name in ['ga22', 'gayy', 'ga2', 'gay']:
+                return self.ga22
+            if name in ['ga33', 'gazz', 'ga3', 'gaz']:
+                return self.ga33
+            if name == 'gj':
+                return self.gj
+            if name in ['ei22', 'eiyy', 'ei2', 'eiy']:
+                return self.ei22
+            if name in ['ei33', 'eizz', 'ei3', 'eiz']:
+                return self.ei33
+
+            # Various centers
+            if name == 'mcy' or name == 'mc2':
+                return self.xm2
+            if name == 'mcz' or name == 'mc3':
+                return self.xm3
+            if name == 'tcy' or name == 'tc2':
+                return self.xt2
+            if name == 'tcz' or name == 'tc3':
+                return self.xt3
+            if name == 'scy' or name == 'sc2':
+                return self.xs2
+            if name == 'scz' or name == 'sc3':
+                return self.xs3
+
+        elif isinstance(name, list) or isinstance(name, tuple):
+            props = []
+            for n in name:
+                props.append(self.get(n))
+            return props
+
+
+    def getAll(self):
+        """Get all beam properties.
+
+        Returns
+        -------
+        dict:
+            A Dictionary of all beam properties.
+
+        Notes
+        -----
+
+        Names are
+
+        - mu, mmoi1, mmoi2, mmoi3
+        - ea, ga22, ga33, gj, ei22, ei33
+        - mc2, mc3, tc2, tc3, sc2, sc3
+        - msij, stfijc, cmpijc, stfijr, cmpijr
+
+        """
+        names = [
+            'mu', 'mmoi1', 'mmoi2', 'mmoi3',
+            'ea', 'ga22', 'ga33', 'gj', 'ei22', 'ei33',
+            'mc2', 'mc3', 'tc2', 'tc3', 'sc2', 'sc3'
+        ]
+        for i in range(4):
+            for j in range(4):
+                names.append('stf{}{}c'.format(i+1, j+1))
+                names.append('cmp{}{}c'.format(i+1, j+1))
+        for i in range(6):
+            for j in range(6):
+                names.append('ms{}{}'.format(i+1, j+1))
+                names.append('stf{}{}r'.format(i+1, j+1))
+                names.append('cmp{}{}r'.format(i+1, j+1))
+
+        dict_prop = {}
+        for n in names:
+            dict_prop[n] = self.get(n)
+
+        return dict_prop
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # Legacy
 
 
@@ -169,7 +516,7 @@ class BeamProperty(MaterialSection):
 
 
     def get(self, name):
-        r"""Get beam properties using specific names.
+        """Get beam properties using specific names.
 
         Parameters
         ----------
@@ -320,7 +667,7 @@ class BeamProperty(MaterialSection):
 
 
     def getAll(self):
-        r"""Get all beam properties.
+        """Get all beam properties.
 
         Returns
         -------

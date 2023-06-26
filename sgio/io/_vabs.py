@@ -4,6 +4,7 @@ from sgio.core.sg import StructureGene
 import sgio.utils.io as sui
 import sgio.utils.version as suv
 import sgio.model as sgmodel
+import sgio.meshio as smsh
 
 logger = logging.getLogger(__name__)
 
@@ -101,7 +102,7 @@ def _readMesh(file, file_format:str, sgdim:int, nnode:int, nelem:int, read_local
 
     logger.debug('reading mesh...')
 
-    mesh = sm.read(
+    mesh = smsh.read(
         file, file_format,
         sgdim=sgdim, nnode=nnode, nelem=nelem, read_local_frame=read_local_frame
     )
@@ -243,58 +244,28 @@ def _readElasticProperty(file, isotropy:int):
 # ====================================================================
 # Read output
 # ====================================================================
+def readOutputBuffer(file, analysis=0, sg:StructureGene=None):
+    if analysis == 0 or analysis == 'h' or analysis == '':
+        return _readOutputH(file)
 
-def readOutFailureIndex(fn, solver):
-    r"""
-    """
-    # if not logger:
-    #     logger = mul.initLogger(__name__)
+    elif analysis == 1 or analysis == 2 or analysis == 'dl' or analysis == 'd' or analysis == 'l':
+        pass
 
-    logger.info('reading sg failure indices and strengh ratios: {}...'.format(fn))
+    elif analysis == 'f' or analysis == 3:
+        # return readSCOutFailure(file, analysis)
+        pass
+    elif analysis == 'fe' or analysis == 4:
+        # return readSCOutFailure(file, analysis)
+        pass
+    elif analysis == 'fi' or analysis == 5:
+        return _readOutputFailureIndex(file)
 
-    lines = []
-    load_case = 0
-    sr_min = None
-    with open(fn, 'r') as fobj:
-        for i, line in enumerate(fobj):
-            line = line.strip()
-            if (line == ''):
-                continue
-            if line.startswith('Failure index'):
-                continue
-
-            if (line.startswith('The sectional strength ratio is')):
-                line = line.split()
-                tmp_id = line.index('existing')
-                sr_min = float(line[tmp_id - 1])
-                eid_sr_min = int(line[-1])
-                # lines.pop()
-                continue
-
-            line = line.split()
-            if len(line) == 3:
-                lines.append(line)
-
-    result = []
-    # fis = []
-    # srs = []
-    for line in lines:
-        # line = line.strip().split()
-        result.append([int(line[0]), float(line[1]), float(line[2])])
-        # fis.append(float(line[1]))
-        # srs.append(float(line[2]))
-
-    return result, sr_min, eid_sr_min
+    return
 
 
 
 
-
-
-
-
-
-def readOutHomo(fn, scrnout=True):
+def _readOutputH(file):
     """Read VABS homogenization results
 
     Parameters
@@ -311,128 +282,129 @@ def readOutHomo(fn, scrnout=True):
     """
     # sm = mms.MaterialSection(smdim = 1)
     # bp = mmbm.BeamProperty()
-    bp = sgmodel.MaterialSection()
+    ms = sgmodel.MaterialSection(smdim=1)
+    bp = sgmodel.BeamModel()
 
     linesRead = []
     keywordsIndex = {}
 
 
-    with open(fn, 'r') as fin:
-        ln = -1
-        lines = fin.readlines()
-        for i, line in enumerate(lines):
+    # with open(fn, 'r') as fin:
+    ln = -1
+    lines = file.readlines()
+    for i, line in enumerate(lines):
 
-            line = line.strip()
+        line = line.strip()
 
-            if len(line) > 0:
-                linesRead.append(line)
-                ln += 1
-            else:
-                continue
+        if len(line) > 0:
+            linesRead.append(line)
+            ln += 1
+        else:
+            continue
 
-            if '=====' in line:
-                continue
+        if '=====' in line:
+            continue
 
-            line = line.lower()
-            # line = line.replace('-', ' ')
+        line = line.lower()
+        # line = line.replace('-', ' ')
 
-            if 'geometric center' in line:
-                keywordsIndex['gc'] = ln
-            elif 'area =' in line:
-                bp.area = float(line.split()[-1])
-
-
-            # Inertial properties
-            # -------------------
-
-            elif '6x6 mass matrix at the mass center' in line:
-                keywordsIndex['mass_mc'] = ln
-            elif '6x6 mass matrix' in line:
-                keywordsIndex['mass'] = ln
-            elif 'mass center of the cross section' in line or 'mass center of the cross-section' in line:
-                keywordsIndex['mc'] = ln
-            elif 'mass per unit span' in line:
-                bp.mu = float(line.split()[-1])
-            elif 'inertia i11' in line:
-                bp.i11 = float(line.split()[-1])
-            elif 'inertia i22' in line:
-                bp.i22 = float(line.split()[-1])
-            elif 'inertia i33' in line:
-                bp.i33 = float(line.split()[-1])
-            elif 'principal inertial axes rotated' in line:
-                line = line.split()
-                try:
-                    tmp_id = line.index('degrees')
-                except ValueError:
-                    line = lines[i+1].split()
-                    tmp_id = line.index('degrees')
-                bp.phi_pia = float(line[tmp_id - 1])
-            elif 'mass-weighted radius of gyration' in line:
-                bp.rg = float(line.split()[-1])
+        if 'geometric center' in line:
+            keywordsIndex['gc'] = ln
+        elif 'area =' in line:
+            bp.area = float(line.split()[-1])
 
 
-            # Structural properties
-            # ---------------------
+        # Inertial properties
+        # -------------------
 
-            elif 'classical stiffness matrix' in line:
-                keywordsIndex['csm'] = ln
-            elif 'classical compliance matrix' in line:
-                keywordsIndex['cfm'] = ln
+        elif '6x6 mass matrix at the mass center' in line:
+            keywordsIndex['mass_mc'] = ln
+        elif '6x6 mass matrix' in line:
+            keywordsIndex['mass'] = ln
+        elif 'mass center of the cross section' in line or 'mass center of the cross-section' in line:
+            keywordsIndex['mc'] = ln
+        elif 'mass per unit span' in line:
+            bp.mu = float(line.split()[-1])
+        elif 'inertia i11' in line:
+            bp.i11 = float(line.split()[-1])
+        elif 'inertia i22' in line:
+            bp.i22 = float(line.split()[-1])
+        elif 'inertia i33' in line:
+            bp.i33 = float(line.split()[-1])
+        elif 'principal inertial axes rotated' in line:
+            line = line.split()
+            try:
+                tmp_id = line.index('degrees')
+            except ValueError:
+                line = lines[i+1].split()
+                tmp_id = line.index('degrees')
+            bp.phi_pia = float(line[tmp_id - 1])
+        elif 'mass-weighted radius of gyration' in line:
+            bp.rg = float(line.split()[-1])
 
-            elif 'tension center' in line:
-                keywordsIndex['tc'] = ln
-            elif 'extension stiffness ea' in line:
-                bp.ea = float(line.split()[-1])
-            elif 'torsional stiffness gj' in line:
-                bp.gj = float(line.split()[-1])
-            elif 'principal bending stiffness ei22' in line:
-                bp.ei22 = float(line.split()[-1])
-            elif 'principal bending stiffness ei33' in line:
-                bp.ei33 = float(line.split()[-1])
-            elif 'principal bending axes rotated' in line:
-                line = line.split()
-                try:
-                    tmp_id = line.index('degrees')
-                except ValueError:
-                    line = lines[i+1].split()
-                    tmp_id = line.index('degrees')
-                bp.phi_pba = float(line[tmp_id - 1])
 
-            elif 'timoshenko stiffness matrix' in line:
-                keywordsIndex['tsm'] = ln
-            elif 'timoshenko compliance matrix' in line:
-                keywordsIndex['tfm'] = ln
+        # Structural properties
+        # ---------------------
 
-            elif 'shear center' in line:
-                keywordsIndex['sc'] = ln
-            elif 'principal shear stiffness ga22' in line:
-                bp.ga22 = float(line.split()[-1])
-            elif 'principal shear stiffness ga33' in line:
-                bp.ga33 = float(line.split()[-1])
-            elif 'principal shear axes rotated' in line:
-                line = line.split()
-                try:
-                    tmp_id = line.index('degrees')
-                except ValueError:
-                    line = lines[i+1].split()
-                    tmp_id = line.index('degrees')
-                bp.phi_psa = float(line[tmp_id - 1])
+        elif 'classical stiffness matrix' in line:
+            keywordsIndex['csm'] = ln
+        elif 'classical compliance matrix' in line:
+            keywordsIndex['cfm'] = ln
 
-            # elif 'Vlasov Stiffness Matrix' in line:
-            #     keywordsIndex['vsm'] = ln
-            # elif 'Vlasov Flexibility Matrix' in line:
-            #     keywordsIndex['vfm'] = ln
-            
-            # elif 'Trapeze Effects' in line:
-            #     keywordsIndex['te'] = ln
-            # elif 'Ag1--Ag1--Ag1--Ag1' in line:
-            #     keywordsIndex['te_ag'] = ln
-            # elif 'Bk1--Bk1--Bk1--Bk1' in line:
-            #     keywordsIndex['te_bk'] = ln
-            # elif 'Ck2--Ck2--Ck2--Ck2' in line:
-            #     keywordsIndex['te_ck'] = ln
-            # elif 'Dk3--Dk3--Dk3--Dk3' in line:
-            #     keywordsIndex['te_dk'] = ln
+        elif 'tension center' in line:
+            keywordsIndex['tc'] = ln
+        elif 'extension stiffness ea' in line:
+            bp.ea = float(line.split()[-1])
+        elif 'torsional stiffness gj' in line:
+            bp.gj = float(line.split()[-1])
+        elif 'principal bending stiffness ei22' in line:
+            bp.ei22 = float(line.split()[-1])
+        elif 'principal bending stiffness ei33' in line:
+            bp.ei33 = float(line.split()[-1])
+        elif 'principal bending axes rotated' in line:
+            line = line.split()
+            try:
+                tmp_id = line.index('degrees')
+            except ValueError:
+                line = lines[i+1].split()
+                tmp_id = line.index('degrees')
+            bp.phi_pba = float(line[tmp_id - 1])
+
+        elif 'timoshenko stiffness matrix' in line:
+            keywordsIndex['tsm'] = ln
+        elif 'timoshenko compliance matrix' in line:
+            keywordsIndex['tfm'] = ln
+
+        elif 'shear center' in line:
+            keywordsIndex['sc'] = ln
+        elif 'principal shear stiffness ga22' in line:
+            bp.ga22 = float(line.split()[-1])
+        elif 'principal shear stiffness ga33' in line:
+            bp.ga33 = float(line.split()[-1])
+        elif 'principal shear axes rotated' in line:
+            line = line.split()
+            try:
+                tmp_id = line.index('degrees')
+            except ValueError:
+                line = lines[i+1].split()
+                tmp_id = line.index('degrees')
+            bp.phi_psa = float(line[tmp_id - 1])
+
+        # elif 'Vlasov Stiffness Matrix' in line:
+        #     keywordsIndex['vsm'] = ln
+        # elif 'Vlasov Flexibility Matrix' in line:
+        #     keywordsIndex['vfm'] = ln
+        
+        # elif 'Trapeze Effects' in line:
+        #     keywordsIndex['te'] = ln
+        # elif 'Ag1--Ag1--Ag1--Ag1' in line:
+        #     keywordsIndex['te_ag'] = ln
+        # elif 'Bk1--Bk1--Bk1--Bk1' in line:
+        #     keywordsIndex['te_bk'] = ln
+        # elif 'Ck2--Ck2--Ck2--Ck2' in line:
+        #     keywordsIndex['te_ck'] = ln
+        # elif 'Dk3--Dk3--Dk3--Dk3' in line:
+        #     keywordsIndex['te_dk'] = ln
 
 
     ln = keywordsIndex['mass']
@@ -507,10 +479,10 @@ def readOutHomo(fn, scrnout=True):
             #old dic method to save classical stiffness
             # sm.eff_props[1]['stiffness']['classical'] = utl.textToMatrix(linesRead[ln + 3:ln + 7])
         except KeyError:
-            if scrnout:
-                print('No classical stiffness matrix found.')
-            else:
-                pass
+            logger.info('No classical stiffness matrix found.')
+            # if scrnout:
+            # else:
+            #     pass
 
         try:
             ln = keywordsIndex['cfm']
@@ -518,10 +490,10 @@ def readOutHomo(fn, scrnout=True):
             #old dic method to save classical compliance
             # sm.eff_props[1]['compliance']['classical'] = utl.textToMatrix(linesRead[ln + 3:ln + 7])
         except KeyError:
-            if scrnout:
-                print('No classical compliance matrix found.')
-            else:
-                pass
+            logger.info('No classical compliance matrix found.')
+            # if scrnout:
+            # else:
+            #     pass
 
         try:
             ln = keywordsIndex['tsm']
@@ -529,20 +501,20 @@ def readOutHomo(fn, scrnout=True):
             #old dic method to save refined stiffness matrix
             # sm.eff_props[1]['stiffness']['refined'] = utl.textToMatrix(linesRead[ln + 3:ln + 9])
         except KeyError:
-            if scrnout:
-                print('No Timoshenko stiffness matrix found.')
-            else:
-                pass
+            logger.info('No Timoshenko stiffness matrix found.')
+            # if scrnout:
+            # else:
+            #     pass
         try:
             ln = keywordsIndex['tfm']
             bp.cmpl_t = sui.textToMatrix(linesRead[ln + 2:ln + 8])
             #old dic method to save refined compliance matrix
             # sm.eff_props[1]['compliance']['refined'] = utl.textToMatrix(linesRead[ln + 3:ln + 9])
         except KeyError:
-            if scrnout:
-                print('No Timoshenko compliance matrix found.')
-            else:
-                pass
+            logger.info('No Timoshenko compliance matrix found.')
+            # if scrnout:
+            # else:
+            #     pass
 
         if 'tc' in keywordsIndex.keys():
             ln = keywordsIndex['tc']
@@ -592,12 +564,59 @@ def readOutHomo(fn, scrnout=True):
         #         else:
         #             pass              
 
-    return bp
+    ms.constitutive = bp
+
+    return ms
 
 
 
 
-def readOutStrengthRatio(fn_in):
+def _readOutputFailureIndex(fn):
+    r"""
+    """
+    # if not logger:
+    #     logger = mul.initLogger(__name__)
+
+    logger.info('reading sg failure indices and strengh ratios: {}...'.format(fn))
+
+    lines = []
+    load_case = 0
+    sr_min = None
+    with open(fn, 'r') as fobj:
+        for i, line in enumerate(fobj):
+            line = line.strip()
+            if (line == ''):
+                continue
+            if line.startswith('Failure index'):
+                continue
+
+            if (line.startswith('The sectional strength ratio is')):
+                line = line.split()
+                tmp_id = line.index('existing')
+                sr_min = float(line[tmp_id - 1])
+                eid_sr_min = int(line[-1])
+                # lines.pop()
+                continue
+
+            line = line.split()
+            if len(line) == 3:
+                lines.append(line)
+
+    result = []
+    # fis = []
+    # srs = []
+    for line in lines:
+        # line = line.strip().split()
+        result.append([int(line[0]), float(line[1]), float(line[2])])
+        # fis.append(float(line[1]))
+        # srs.append(float(line[2]))
+
+    return result, sr_min, eid_sr_min
+
+
+
+
+def _readOutputStrengthRatio(fn_in):
     lines = []
     sr_min = None
     with open(fn_in, 'r') as fin:
