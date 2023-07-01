@@ -7,5 +7,7 @@ model Module
 
    sg
    general
+   solid
    beam
+   global
 

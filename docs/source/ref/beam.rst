@@ -1,13 +1,13 @@
-BeamProperty
+Beam
 ============
 
-.. currentmodule:: sgio.core.beam
+.. currentmodule:: sgio.model.beam
 
 .. highlight:: python
 
 ::
 
-    sgio.core.beam.BeamProperty
+    sgio.model.beam.BeamModel
 
 
 .. ..  autoclass:: BeamProperty
@@ -21,9 +21,7 @@ Class methods
 ..  autosummary::
     :toctree: _temp
 
-    sgio.core.beam.BeamProperty.printData
-    sgio.core.beam.BeamProperty.get
-    sgio.core.beam.BeamProperty.getAll
-    sgio.core.beam.BeamProperty.writeToFile
-    sgio.core.beam.BeamProperty.writeToFileVABS
+    sgio.model.beam.BeamModel.printData
+    sgio.model.beam.BeamModel.get
+    sgio.model.beam.BeamModel.getAll
 
