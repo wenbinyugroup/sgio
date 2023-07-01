@@ -199,9 +199,15 @@ class MaterialSection(object):
 
 
 class SectionResponse():
+    """Generalized stress/strain for an SG model.
+    """
     def __init__(self):
-        self.displacement = [0, 0, 0]
-        self.directional_cosine = [
+        self.displacement:list = [0, 0, 0]
+        """
+        list of floats: Global displacement vector ``[u1, u2, u3]``.
+        """
+
+        self.directional_cosine:list = [
             [1, 0, 0],
             [0, 1, 0],
             [0, 0, 1]
@@ -209,10 +215,16 @@ class SectionResponse():
         """
         list of lists floats: Global rotation matrix.
         
-        `[[C11, C12, C13], [C21, C22, C23], [C31, C32, C33]]`
+        ..  code-block::
+
+            [
+                [C11, C12, C13],
+                [C21, C22, C23],
+                [C31, C32, C33]
+            ]
         """
 
-        self.load_type = 0
+        self.load_type:int = 0
         """
         int: Type of the sectional response load
 
@@ -222,18 +234,18 @@ class SectionResponse():
 
         self.load_tags = []
 
-        self.load = []
+        self.load:list = []
         """list of list of floats: Global loads
 
-        ============================ ========================================== ============================================
-        Model                        Generalized stresses                       Generalized strains
-        ============================ ========================================== ============================================
-        Continuum                    `[s11, s22, s33, s23, s13, s12]`           `[e11, e22, e33, e23, e13, e12]`
-        Kirchhoff-Love plate/shell   `[N11, N22, N12, M11, M22, M12]`           `[e11, e22, 2e12, k11, k22, 2k12]`
-        Reissner-Mindlin plate/shell `[N11, N22, N12, M11, M22, M12, N13, N23]` `[e11, e22, 2e12, k11, k22, 2k12, g13, g23]`
-        Euler-Bernoulli beam         `[F1, M1, M2, M3]`                         `[e11, k11, k12, k13]`
-        Timoshenko beam              `[F1, F2, F3, M1, M2, M3]`                 `[e11, g12, g13, k11, k12, k13]`
-        ============================ ========================================== ============================================
+        ============================ ============================================ ==============================================
+        Model                        Generalized stresses                         Generalized strains
+        ============================ ============================================ ==============================================
+        Continuum                    ``[s11, s22, s33, s23, s13, s12]``           ``[e11, e22, e33, e23, e13, e12]``
+        Kirchhoff-Love plate/shell   ``[N11, N22, N12, M11, M22, M12]``           ``[e11, e22, 2e12, k11, k22, 2k12]``
+        Reissner-Mindlin plate/shell ``[N11, N22, N12, M11, M22, M12, N13, N23]`` ``[e11, e22, 2e12, k11, k22, 2k12, g13, g23]``
+        Euler-Bernoulli beam         ``[F1, M1, M2, M3]``                         ``[e11, k11, k12, k13]``
+        Timoshenko beam              ``[F1, F2, F3, M1, M2, M3]``                 ``[e11, g12, g13, k11, k12, k13]``
+        ============================ ============================================ ==============================================
         """
 
         self.distr_load = [0, 0, 0, 0, 0, 0]
@@ -307,38 +319,57 @@ class SectionResponse():
 
 
 class StructureResponseCases():
+    """Cases of generalized stress/strain.
+    """
     def __init__(self):
         self.loc_tags = []
+        """Response location tags
+
+        ..  code-block::
+
+            [
+                {
+                    tag1: value1,
+                    tag2: value2,
+                    ...
+                },
+                {...},
+            ]
+        """
 
         self.cond_tags = []
-        # """Response condition IDs
+        """Response condition tags
 
-        # [
-        #   {
-        #     tag1: value1,
-        #     tag2: value2,
-        #     ...
-        #   },
-        #   {...},
-        # ]
-        # """
+        ..  code-block::
+
+            [
+                {
+                    tag1: value1,
+                    tag2: value2,
+                    ...
+                },
+                {...},
+            ]
+        """
 
         self.responses = []
         """Responses
 
-        [
-            {
-                'loc_tag1': loc_value1,
-                'loc_tag2': loc_value2,
-                ...,
-                'condition_tag1': condition_value1,
-                'condition_tag2': condition_value2,
-                ...,
-                'response': SectionResponse
-            },
-            {...},
-            ...
-        ]
+        ..  code-block::
+
+            [
+                {
+                    'loc_tag1': loc_value1,
+                    'loc_tag2': loc_value2,
+                    ...,
+                    'condition_tag1': condition_value1,
+                    'condition_tag2': condition_value2,
+                    ...,
+                    'response': SectionResponse
+                },
+                {...},
+                ...
+            ]
         """
 
     def __repr__(self):
@@ -353,7 +384,11 @@ class StructureResponseCases():
         lines.append('-'*20)
         return '\n'.join(lines)
 
+
     def getResponsesByLocCond(self, **kwargs):
+        """Get response by providing location and condition.
+
+        """
         resps = []
 
         for _resp in self.responses:
