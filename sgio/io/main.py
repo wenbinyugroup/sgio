@@ -297,8 +297,7 @@ def readLoadCsv(
     rot_tags = ['c11', 'c12', 'c13', 'c21', 'c22', 'c23', 'c31', 'c32', 'c33'],
     loc_tags=['loc',], cond_tags=['cond',],
     loc_vtypes=[], cond_vtypes=[],
-    delimiter=',', nhead=1, encoding='utf-8-sig',
-    logger=None
+    delimiter=',', nhead=1, encoding='utf-8-sig'
     ):
     """
     """

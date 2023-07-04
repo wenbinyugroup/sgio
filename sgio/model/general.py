@@ -324,32 +324,10 @@ class StructureResponseCases():
     def __init__(self):
         self.loc_tags = []
         """Response location tags
-
-        ..  code-block::
-
-            [
-                {
-                    tag1: value1,
-                    tag2: value2,
-                    ...
-                },
-                {...},
-            ]
         """
 
         self.cond_tags = []
         """Response condition tags
-
-        ..  code-block::
-
-            [
-                {
-                    tag1: value1,
-                    tag2: value2,
-                    ...
-                },
-                {...},
-            ]
         """
 
         self.responses = []
@@ -404,4 +382,48 @@ class StructureResponseCases():
         return resps
 
 
+    def addResponseCase(self, loc, cond, sect_resp:SectionResponse):
+        resp_case = {}
+
+        # sect_resp = SectionResponse()
+
+        # sect_resp.load_type = load_type
+        # sect_resp.load_tags = load_tags
+
+        # Read location ids
+        for _tag, _value in zip(self.loc_tags, loc):
+            # _i = tags_idx[_tag]
+            resp_case[_tag] = _value
+
+        # Read case ids
+        for _tag, _value in zip(self.cond_tags, cond):
+            # _i = tags_idx[_tag]
+            resp_case[_tag] = _value
+
+        # # Read loads
+        # _load = []
+        # for _tag in load_tags:
+        #     _i = tags_idx[_tag]
+        #     _load.append(float(row[_i]))
+        # sect_resp.load = _load
+
+        # # Read displacements
+        # _disp = []
+        # for _tag in disp_tags:
+        #     _i = tags_idx[_tag]
+        #     _disp.append(float(row[_i]))
+        # sect_resp.displacement = _disp
+
+        # # Read rotations
+        # _rot = []
+        # for _tag in rot_tags:
+        #     _i = tags_idx[_tag]
+        #     _rot.append(float(row[_i]))
+        # sect_resp.directional_cosine = [
+        #     _rot[:3], _rot[3:6], _rot[6:]
+        # ]
+
+        resp_case['response'] = sect_resp
+
+        self.responses.append(resp_case)
 
