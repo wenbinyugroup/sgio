@@ -571,36 +571,36 @@ def _readOutputH(file):
 
 
 
-def _readOutputFailureIndex(fn):
+def _readOutputFailureIndex(file):
     r"""
     """
     # if not logger:
     #     logger = mul.initLogger(__name__)
 
-    logger.info('reading sg failure indices and strengh ratios: {}...'.format(fn))
+    # logger.info('reading sg failure indices and strengh ratios: {}...'.format(fn))
 
     lines = []
     load_case = 0
     sr_min = None
-    with open(fn, 'r') as fobj:
-        for i, line in enumerate(fobj):
-            line = line.strip()
-            if (line == ''):
-                continue
-            if line.startswith('Failure index'):
-                continue
+    # with open(fn, 'r') as fobj:
+    for i, line in enumerate(file):
+        line = line.strip()
+        if (line == ''):
+            continue
+        if line.startswith('Failure index'):
+            continue
 
-            if (line.startswith('The sectional strength ratio is')):
-                line = line.split()
-                tmp_id = line.index('existing')
-                sr_min = float(line[tmp_id - 1])
-                eid_sr_min = int(line[-1])
-                # lines.pop()
-                continue
-
+        if (line.startswith('The sectional strength ratio is')):
             line = line.split()
-            if len(line) == 3:
-                lines.append(line)
+            tmp_id = line.index('existing')
+            sr_min = float(line[tmp_id - 1])
+            eid_sr_min = int(line[-1])
+            # lines.pop()
+            continue
+
+        line = line.split()
+        if len(line) == 3:
+            lines.append(line)
 
     result = []
     # fis = []

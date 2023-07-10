@@ -1,0 +1,9 @@
+h5py==3.8.0
+importlib_metadata==6.1.0
+netCDF4==1.6.4
+numpy==1.23.5
+pandas==1.5.3
+PyYAML==6.0
+PyYAML==6.0
+rich==13.4.2
+setuptools==67.6.0

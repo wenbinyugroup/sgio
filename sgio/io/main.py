@@ -306,9 +306,9 @@ def readLoadCsv(
 
     if len(load_tags) == 0:
         if smdim == 1:
-            if model == 0:
+            if model == 'b1':
                 load_tags = ['f1', 'm1', 'm2', 'm3']
-            elif model == 1:
+            elif model == 'b2':
                 load_tags = ['f1', 'f2', 'f3', 'm1', 'm2', 'm3']
 
     if isinstance(loc_tags, str):
