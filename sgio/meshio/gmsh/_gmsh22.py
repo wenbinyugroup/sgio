@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import numpy as np
 
+from .._files import is_buffer
 from .._common import cell_data_from_raw, num_nodes_per_cell, raw_from_cell_data, warn
 from .._exceptions import ReadError
 from .._mesh import CellBlock, Mesh
@@ -261,7 +262,17 @@ def _read_periodic(f):
     return periodic
 
 
-def write(filename, mesh, float_fmt=".16e", binary=True, **kwargs):
+def write(filename, mesh, float_fmt=".16e", binary=False, **kwargs):
+    r"""
+    """
+    if is_buffer(filename, 'w'):
+        write_buffer(filename, mesh, float_fmt=float_fmt, binary=binary, **kwargs)
+    else:
+        with open(filename, 'at') as file:
+            write_buffer(file, mesh, float_fmt=float_fmt, binary=binary, **kwargs)
+
+
+def write_buffer(file, mesh, float_fmt=".16e", binary=False, **kwargs):
     """Writes msh files, cf.
     <http://gmsh.info//doc/texinfo/gmsh.html#MSH-ASCII-file-format>.
     """
@@ -290,28 +301,35 @@ def write(filename, mesh, float_fmt=".16e", binary=True, **kwargs):
                 np.zeros(len(cell_block), dtype=c_int) for cell_block in mesh.cells
             ]
 
-    with open(filename, "wb") as fh:
-        mode_idx = 1 if binary else 0
-        size_of_double = 8
-        fh.write(f"$MeshFormat\n2.2 {mode_idx} {size_of_double}\n".encode())
-        if binary:
-            np.array([1], dtype=c_int).tofile(fh)
-            fh.write(b"\n")
-        fh.write(b"$EndMeshFormat\n")
+    # with open(filename, "wb") as fh:
+    mode_idx = 1 if binary else 0
+    size_of_double = 8
+    file.write(f"$MeshFormat\n")
+    if binary:
+        file.write(f"2.2 {mode_idx} {size_of_double}\n".encode())
+    else:
+        file.write(f"2.2 {mode_idx} {size_of_double}\n")
 
-        if mesh.field_data:
-            _write_physical_names(fh, mesh.field_data)
+    if binary:
+        np.array([1], dtype=c_int).tofile(file)
+        file.write(b"\n")
+        file.write(b"$EndMeshFormat\n")
+    else:
+        file.write("$EndMeshFormat\n")
 
-        _write_nodes(fh, mesh.points, float_fmt, binary)
-        _write_elements(fh, mesh.cells, tag_data, binary)
-        if mesh.gmsh_periodic is not None:
-            _write_periodic(fh, mesh.gmsh_periodic, float_fmt)
+    if mesh.field_data:
+        _write_physical_names(file, mesh.field_data)
 
-        for name, dat in point_data.items():
-            _write_data(fh, "NodeData", name, dat, binary)
-        cell_data_raw = raw_from_cell_data(cell_data)
-        for name, dat in cell_data_raw.items():
-            _write_data(fh, "ElementData", name, dat, binary)
+    _write_nodes(file, mesh.points, float_fmt, binary)
+    _write_elements(file, mesh.cells, tag_data, binary)
+    if mesh.gmsh_periodic is not None:
+        _write_periodic(file, mesh.gmsh_periodic, float_fmt)
+
+    for name, dat in point_data.items():
+        _write_data(file, "NodeData", name, dat, binary)
+    cell_data_raw = raw_from_cell_data(cell_data)
+    for name, dat in cell_data_raw.items():
+        _write_data(file, "ElementData", name, dat, binary)
 
 
 def _write_nodes(fh, points, float_fmt, binary):
@@ -319,8 +337,13 @@ def _write_nodes(fh, points, float_fmt, binary):
         # msh2 requires 3D points, but 2D points given. Appending 0 third component.
         points = np.column_stack([points, np.zeros_like(points[:, 0])])
 
-    fh.write(b"$Nodes\n")
-    fh.write(f"{len(points)}\n".encode())
+    if binary:
+        fh.write(b"$Nodes\n")
+        fh.write(f"{len(points)}\n".encode())
+    else:
+        fh.write("$Nodes\n")
+        fh.write(f"{len(points)}\n")
+
     if binary:
         dtype = [("index", c_int), ("x", c_double, (3,))]
         tmp = np.empty(len(points), dtype=dtype)
@@ -328,20 +351,27 @@ def _write_nodes(fh, points, float_fmt, binary):
         tmp["x"] = points
         tmp.tofile(fh)
         fh.write(b"\n")
+        fh.write(b"$EndNodes\n")
     else:
         fmt = "{} " + " ".join(3 * ["{:" + float_fmt + "}"]) + "\n"
         for k, x in enumerate(points):
-            fh.write(fmt.format(k + 1, x[0], x[1], x[2]).encode())
-    fh.write(b"$EndNodes\n")
+            fh.write(fmt.format(k + 1, x[0], x[1], x[2]))
+        fh.write("$EndNodes\n")
 
 
 def _write_elements(fh, cells: list[CellBlock], tag_data, binary: bool):
     # write elements
-    fh.write(b"$Elements\n")
+    if binary:
+        fh.write(b"$Elements\n")
+    else:
+        fh.write("$Elements\n")
 
     # count all cells
     total_num_cells = sum(len(cell_block) for cell_block in cells)
-    fh.write(f"{total_num_cells}\n".encode())
+    if binary:
+        fh.write(f"{total_num_cells}\n".encode())
+    else:
+        fh.write(f"{total_num_cells}\n")
 
     consecutive_index = 0
     for k, cell_block in enumerate(cells):
@@ -383,13 +413,16 @@ def _write_elements(fh, cells: list[CellBlock], tag_data, binary: bool):
                         " ".join([str(val) for val in fcd[i]]),
                         # a bit clumsy for `c+1`, but if c is uint64, c+1 is float64
                         " ".join([str(cc) for cc in c + np.array(1, dtype=c.dtype)]),
-                    ).encode()
+                    )
                 )
 
         consecutive_index += len(node_idcs)
     if binary:
         fh.write(b"\n")
-    fh.write(b"$EndElements\n")
+        fh.write(b"$EndElements\n")
+    else:
+        fh.write("\n")
+        fh.write("$EndElements\n")
 
 
 def _write_periodic(fh, periodic, float_fmt):

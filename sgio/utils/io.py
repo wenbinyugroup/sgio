@@ -1,4 +1,9 @@
+import pprint
 import xml.etree.ElementTree as et
+
+def convertToPrettyString(v):
+    return pprint.pformat(v)
+
 
 def readNextNonEmptyLine(file):
     line = file.readline().strip()

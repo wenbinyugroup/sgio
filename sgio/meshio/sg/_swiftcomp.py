@@ -60,17 +60,14 @@ def read_buffer(f, sgdim:int, nnode:int, nelem:int, read_local_frame):
 
     # Read elements
     cells, prop_ids, cell_ids, line = _read_elements(f, nelem, point_ids)
-    # cell_type_to_id = {}
-    # for _cell_type, _cell_points in cells_dict.items():
-    #     cells.append(CellBlock(_cell_type, _cell_points))
-    #     cell_type_to_id[_cell_type] = len(cells) - 1
+    # print(cells)
 
     _cd = []
     for _cb in cells:
         _ct = _cb[0]
         _cd.append(prop_ids[_ct])
-    # cell_data['property'] = np.array(_cd)
-    cell_data['property_id'] = np.array(_cd)
+    # print(_cd)
+    cell_data['property_id'] = _cd
 
     if read_local_frame:
         # Read local coordinate system for sectional properties

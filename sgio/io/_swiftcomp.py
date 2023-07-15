@@ -31,7 +31,7 @@ def readInputBuffer(file, format_version:str, smdim:int):
     sg.sgdim = configs['sgdim']
     sg.physics = configs['physics']
     sg.do_dampling = configs.get('do_damping', 0)
-    sg.use_elem_local_orient = configs.get('use_elem_local_orient', 0)
+    _use_elem_local_orient = configs.get('use_elem_local_orient', 0)
     sg.is_temp_nonuniform = configs.get('is_temp_nonuniform', 0)
     if smdim != 3:
         sg.model = configs['model']
@@ -46,7 +46,7 @@ def readInputBuffer(file, format_version:str, smdim:int):
     nelem = configs['num_elements']
 
     # Read mesh
-    sg.mesh = _readMesh(file, sg.sgdim, nnode, nelem, sg.use_elem_local_orient)
+    sg.mesh = _readMesh(file, sg.sgdim, nnode, nelem, _use_elem_local_orient)
 
     # Read material in-plane angle combinations
     nma_comb = configs['num_mat_angle3_comb']

@@ -12,6 +12,8 @@ import sgio.io._vabs as _vabs
 import sgio.meshio as meshio
 import sgio._global as GLOBAL
 
+import sgio.utils as sutils
+
 
 
 def read(fn:str, file_format:str, format_version:str='', sgdim:int=3, smdim:int=3, sg:StructureGene=None):
@@ -90,7 +92,17 @@ def write(
         Name of the input file
     """
 
+    logger.info(f'writting sg data to {fn} (format: {file_format})...')
+
+    logger.debug(f'local variables:\n{sutils.convertToPrettyString(locals())}')
+
     _file_format = file_format.lower()
+
+    _format_full_data = ['sc', 'vabs']
+
+    # Write meshing data only for partially supported formats
+    if not _file_format in _format_full_data:
+        mesh_only = True
 
     with open(fn, 'w', encoding='utf-8') as file:
         if mesh_only:
