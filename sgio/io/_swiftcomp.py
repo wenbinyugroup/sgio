@@ -286,7 +286,7 @@ def _readOutputH(file, smdim):
     elif smdim == 2:
         out = _readOutputShellModel(file)
     elif smdim == 3:
-        out = _readOutputSolidModel(file)
+        out = _readOutputCauchyContinuumModel(file)
 
 
     return out
@@ -587,14 +587,13 @@ def _readOutputShellModel(file):
 
 
 
-def _readOutputSolidModel(file):
+def _readOutputCauchyContinuumModel(file):
     r"""
     """
-    # if logger is None:
-    #     logger = mul.initLogger(__name__)
 
     # mp = mmsd.MaterialProperty()
-    mp = smdl.MaterialSection()
+    # mp = smdl.MaterialSection()
+    mp = smdl.CauchyContinuumModel()
 
     linesRead = []
     keywordsIndex = {}

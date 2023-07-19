@@ -1,5 +1,21 @@
+from typing import Protocol, Iterable
+from numbers import Number
 import sgio.utils.io as sui
 # import sgio.model as sm
+
+class Model(Protocol):
+    def __repr__(self) -> str:
+        ...
+
+    def __call__(self, x):
+        ...
+
+    def set(self, name:str, value:Number) -> None:
+        ...
+
+    def get(self, name:str) -> Number:
+        """Get model parameter (property) given a name."""
+
 
 
 class MaterialSection(object):

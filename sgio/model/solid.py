@@ -1,37 +1,109 @@
-from dataclasses import dataclass
-from typing import List
+# from dataclasses import dataclass
+# from typing import 
+from numbers import Number
 
-@dataclass
-class Cauchy:
+# class CauchyModel:
+#     """Cauchy continuum model
+#     """
+
+#     dim = 3
+#     model_name = 'Cauchy continuum model'
+
+#     def __init__(self):
+#         ...
+
+#     def __repr__(self):
+#         s = [self.model_name,]
+
+#         return '\n'.join(s)
+
+
+
+
+# @dataclass
+class CauchyContinuumModel:
     """Cauchy continuum model
     """
 
-    #: Isotropy type.
-    #: Isotropic (0), orthotropic (1), anisotropic (2).
-    isotropy: int = None
+    dim = 3
+    model_name = 'Cauchy continuum model'
+    strain_name = ['e11', 'e22', 'e33', 'e23', 'e13', 'e12']
+    stress_name = ['s11', 's22', 's33', 's23', 's13', 's12']
 
-    #: Stiffness matrix
-    c: List[List[float]] = None
-    #: Compliance matrix
-    s: List[List[float]] = None
+    def __init__(self):
 
-    e1: float = None
-    e2: float = None
-    e3: float = None
-    g12: float = None
-    g13: float = None
-    g23: float = None
-    nu12: float = None
-    nu13: float = None
-    nu23: float = None
+        # Inertial
+        # --------
 
-    cte: List[float] = None
-    specific_heat: float = 0
+        self.density : float = None
 
-    d_thetatheta: float = 0
-    f_eff: float = 0
+        self.isotropy : int = None
+        """Isotropy type.
 
-    def setElasticProperty(self, consts, ctype):
+        * 0: Isotropic
+        * 1: Orthotropic
+        * 2: Anisotropic
+        """
+
+        # Consitutive
+
+        #: Stiffness matrix
+        self.c: list[list[float]] = None
+        #: Compliance matrix
+        self.s: list[list[float]] = None
+
+        # Mechanical
+        # ----------
+
+        self.e1 : float = None
+        self.e2 : float = None
+        self.e3 : float = None
+        self.g12 : float = None
+        self.g13 : float = None
+        self.g23 : float = None
+        self.nu12 : float = None
+        self.nu13 : float = None
+        self.nu23 : float = None
+
+        # Thermal
+        # -------
+
+        self.cte : list[float] = None
+        self.specific_heat : float = 0
+
+        self.d_thetatheta : float = 0
+        self.f_eff : float = 0
+
+
+    def __repr__(self) -> str:
+        s = [
+            f'density = {self.density}',
+        ]
+
+        if self.isotropy == 0:
+            s.append('isotropic')
+            s.append(f'E = {self.e1}, v = {self.nu12}')
+        elif self.isotropy == 1:
+            s.append('orthotropic')
+            s.append(f'E1 = {self.e1}, E2 = {self.e2}, E3 = {self.e3}')
+            s.append(f'G12 = {self.g12}, G13 = {self.g13}, G23 = {self.g23}')
+            s.append(f'v12 = {self.nu12}, v13 = {self.nu13}, v23 = {self.nu23}')
+        elif self.isotropy == 2:
+            s.append('anisotropic')
+            for i in range(6):
+                _row = []
+                for j in range(i, 6):
+                    _row.append(f'C{i+1}{j+1} = {self.stff[i][j]}')
+                s.append(', '.join(_row))
+
+        return '\n'.join(s)
+
+
+    def __call__(self, x):
+        return
+
+
+    def set(self, consts, ctype):
         if ctype == 'isotropic' or ctype == 0:
             self.isotropy = 0
             self.e1 = float(consts[0])
@@ -60,17 +132,28 @@ class Cauchy:
         return
 
 
-    def get(self, name):
+    def get(self, name:str) -> Number:
         r"""
         """
+
         v = None
 
-        if name == 'e':
+        if name == 'density':
+            v = self.density
+        elif name == 'e':
             v = self.e1
         elif name == 'nu':
             v = self.nu12
         elif name in ['e1', 'e2', 'e3', 'g12', 'g13', 'g23', 'nu12', 'nu13', 'nu23']:
             v = eval(f'self.{name}')
+        elif name.startswith('c'):
+            _i = int(name[1]) - 1
+            _j = int(name[2]) - 1
+            v = self.c[_i][_j]
+        elif name.startswith('s'):
+            _i = int(name[1]) - 1
+            _j = int(name[2]) - 1
+            v = self.s[_i][_j]
 
         return v
 
