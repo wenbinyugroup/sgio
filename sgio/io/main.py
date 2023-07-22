@@ -16,7 +16,7 @@ import sgio.utils as sutils
 
 
 
-def read(fn:str, file_format:str, format_version:str='', sgdim:int=3, smdim:int=3, sg:StructureGene=None):
+def read(fn:str, file_format:str, format_version:str='', sgdim:int=3, smdim:int=3, sg:StructureGene=None, mesh_only:bool=False):
     """Read SG input.
 
     Parameters
@@ -45,7 +45,7 @@ def read(fn:str, file_format:str, format_version:str='', sgdim:int=3, smdim:int=
     else:
         if not sg:
             sg = StructureGene(sgdim=sgdim, smdim=smdim)
-        sg.mesh = meshio.read(fn, file_format)
+        sg.mesh, _, _ = meshio.read(fn, file_format)
 
     return sg
 

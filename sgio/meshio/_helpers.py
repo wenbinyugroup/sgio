@@ -61,7 +61,7 @@ def _filetypes_from_path(path: Path) -> list[str]:
     return out
 
 
-def read(filename, file_format: str | None = None, **kwargs):
+def read(filename, file_format: str | None = None, **kwargs) -> Mesh:
     """Reads an unstructured mesh with added data.
 
     :param filenames: The files/PathLikes to read from.
