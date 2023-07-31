@@ -1,6 +1,7 @@
 import logging
 
 from sgio.core.sg import StructureGene
+from sgio.model import Model
 import sgio.utils.io as sui
 # import sgio.utils.logger as mul
 import sgio.utils.version as suv
@@ -587,13 +588,16 @@ def _readOutputShellModel(file):
 
 
 
-def _readOutputCauchyContinuumModel(file):
+def _readOutputCauchyContinuumModel(file) -> Model:
     r"""
     """
 
     # mp = mmsd.MaterialProperty()
     # mp = smdl.MaterialSection()
     mp = smdl.CauchyContinuumModel()
+
+    # Always set the homogenizated material as general anisotropic
+    mp.isotropy = 2
 
     linesRead = []
     keywordsIndex = {}
@@ -668,13 +672,15 @@ def _readOutputCauchyContinuumModel(file):
             line = line.split('=')
             label = line[0].strip().lower()
             value = float(line[-1].strip())
-            mp.constants[label] = value
+            # mp.constants[label] = value
+            mp.set(label, value)
     except KeyError:
         logger.debug('No engineering constants found.')
 
     line = linesRead[keywordsIndex['density']]
     line = line.strip().split('=')
-    mp.density = float(line[-1].strip())
+    mp.set('density', float(line[-1].strip()))
+    # mp.density = float(line[-1].strip())
 
 
     return mp
@@ -934,33 +940,35 @@ def _writeMaterials(sg:StructureGene, file, file_format, sfi, sff):
 
         # print('writing material {}'.format(mid))
 
-        cm = m.constitutive
+        # cm = m.constitutive
 
         # if m.stff:
         #     anisotropy = 2
         # else:
-        anisotropy = cm.isotropy
+        anisotropy = m.get('isotropy')
 
         sui.writeFormatIntegers(file, (mid, anisotropy, 1), sfi, newline=False)
         if counter == 0:  file.write('  # materials')
         file.write('\n')
-        sui.writeFormatFloats(file, (m.temperature, m.density), sff)
+        sui.writeFormatFloats(file, (m.get('temperature'), m.get('density')), sff)
 
         # Write elastic properties
         if anisotropy == 0:
-            sui.writeFormatFloats(file, [cm.e1, cm.nu12], sff)
+            sui.writeFormatFloats(file, [m.get('e1'), m.get('nu12')], sff)
 
         elif anisotropy == 1:
-            sui.writeFormatFloats(file, [cm.e1, cm.e2, cm.e3], sff)
-            sui.writeFormatFloats(file, [cm.g12, cm.g13, cm.g23], sff)
-            sui.writeFormatFloats(file, [cm.nu12, cm.nu13, cm.nu23], sff)
+            sui.writeFormatFloats(file, [m.get('e1'), m.get('e2'), m.get('e3')], sff)
+            sui.writeFormatFloats(file, [m.get('g12'), m.get('g13'), m.get('g23')], sff)
+            sui.writeFormatFloats(file, [m.get('nu12'), m.get('nu13'), m.get('nu23')], sff)
 
         elif anisotropy == 2:
             for i in range(6):
-                sui.writeFormatFloats(file, cm.c[i][i:], sff)
+                for j in range(i, 6):
+                    sui.writeFormatFloats(file, m.get(f'c{i+1}{j+1}'), sff, newline=False)
+                file.write('\n')
 
         if sg.physics in [1, 4, 6]:
-            sui.writeFormatFloats(file, cm.cte+[cm.specific_heat,], sff)
+            sui.writeFormatFloats(file, m.get('cte')+[m.get('specific_heat'),], sff)
 
         file.write('\n')
         

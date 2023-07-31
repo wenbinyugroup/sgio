@@ -13,7 +13,7 @@ class Model(Protocol):
     def set(self, name:str, value:Number) -> None:
         ...
 
-    def get(self, name:str) -> Number:
+    def get(self, name:str):
         """Get model parameter (property) given a name."""
 
 
