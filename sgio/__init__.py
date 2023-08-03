@@ -5,7 +5,7 @@ from .core.builder import buildSG1D
 # from .core.beam import BeamProperty
 from .core.merge import mergeSG
 
-from .model import MaterialSection, SectionResponse, StructureResponseCases
+from .model import *
 
 from .io.main import read, readOutput, readLoadCsv, write
 

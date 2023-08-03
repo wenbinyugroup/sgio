@@ -2,7 +2,8 @@ import copy
 import numpy as np
 
 from .sg import StructureGene
-from sgio.model.solid import MaterialProperty
+# from sgio.model.solid import MaterialProperty
+# from sgio.model import CauchyContinuumModel
 from sgio.meshio._mesh import Mesh
 import sgio.model as smdl
 
@@ -84,30 +85,37 @@ def buildSG1D(
                 # Not found
                 mid = len(sg.materials) + 1
                 # m = MaterialProperty(_lyr_m_name)
-                m = smdl.MaterialSection(_lyr_m_name)
+                # m = smdl.MaterialSection(_lyr_m_name)
                 # m = mms.MaterialProperty(_lyr_m_name)
+                m = smdl.CauchyContinuumModel()
+                m.name = _lyr_m_name
                 # print(sgdb)
                 # mprop = sgdb[_lyr_m_name][0]['property']['md3']
                 # mprop = muc.getValueByKey(sgdb[_lyr_m_name][0], 'prop')
                 mprop = sgdb[_lyr_m_name][0]['property']['md3']
+                # print(f'mprop = {mprop}')
 
                 m.density = float(mprop['density'])
                 m.temperature = float(mprop.get('temperature', 0))
 
                 # Constitutive model
                 # ------------------
-                _isotropy = mprop.get('type', 'isotropy')
-                cm = smdl.Cauchy()
+                _isotropy = mprop.get('type', 'isotropic')
+                m.set('isotropy', _isotropy)
+                # cm = smdl.Cauchy()
 
                 # Elastic property
-                _c = mprop.get('stiffness', [])
-                cm.setElasticProperty(mprop['elasticity'], _isotropy)
+                # _c = mprop.get('stiffness', [])
+                # cm.setElasticProperty(mprop['elasticity'], _isotropy)
+                _elastic = mprop.get('elasticity')
+                # print(f'_elastic = {_elastic}')
+                m.set('elastic', _elastic, input_type=_isotropy)
 
                 # Thermal property
-                cm.cte = list(map(float, mprop.get('cte', [])))
-                cm.specific_heat = float(mprop.get('specific_heat', 0))
+                m.cte = list(map(float, mprop.get('cte', [])))
+                m.specific_heat = float(mprop.get('specific_heat', 0))
 
-                m.constitutive = cm
+                # m.constitutive = cm
 
                 # Strength properties
                 # -------------------
@@ -139,9 +147,9 @@ def buildSG1D(
 
     # print('tt =', tt)
     # printLayers(layers, 'layers')
-    logger.info('full layers')
+    logger.debug('full layers')
     for layer in layers:
-        print(layer)
+        logger.debug(layer)
 
 
     # Global model settings

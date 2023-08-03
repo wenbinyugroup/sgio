@@ -1,6 +1,7 @@
 import logging
 
 from sgio.core.sg import StructureGene
+from sgio.model import Model
 import sgio.utils.io as sui
 # import sgio.utils.logger as mul
 import sgio.utils.version as suv
@@ -31,7 +32,7 @@ def readInputBuffer(file, format_version:str, smdim:int):
     sg.sgdim = configs['sgdim']
     sg.physics = configs['physics']
     sg.do_dampling = configs.get('do_damping', 0)
-    sg.use_elem_local_orient = configs.get('use_elem_local_orient', 0)
+    _use_elem_local_orient = configs.get('use_elem_local_orient', 0)
     sg.is_temp_nonuniform = configs.get('is_temp_nonuniform', 0)
     if smdim != 3:
         sg.model = configs['model']
@@ -46,7 +47,7 @@ def readInputBuffer(file, format_version:str, smdim:int):
     nelem = configs['num_elements']
 
     # Read mesh
-    sg.mesh = _readMesh(file, sg.sgdim, nnode, nelem, sg.use_elem_local_orient)
+    sg.mesh = _readMesh(file, sg.sgdim, nnode, nelem, _use_elem_local_orient)
 
     # Read material in-plane angle combinations
     nma_comb = configs['num_mat_angle3_comb']
@@ -250,9 +251,13 @@ def _readElasticProperty(file, isotropy:int):
 
 # Read output
 # -----------
-def readOutputBuffer(file, analysis=0, smdim:int=0, sg:StructureGene=None):
+def readOutputBuffer(
+    file, analysis=0, smdim:int=0,
+    sg:StructureGene=None, **kwargs
+    ):
+
     if analysis == 0 or analysis == 'h' or analysis == '':
-        return _readOutputH(file, smdim)
+        return _readOutputH(file, smdim, **kwargs)
 
     elif analysis == 1 or analysis == 2 or analysis == 'dl' or analysis == 'd' or analysis == 'l':
         pass
@@ -271,7 +276,7 @@ def readOutputBuffer(file, analysis=0, smdim:int=0, sg:StructureGene=None):
 
 
 
-def _readOutputH(file, smdim):
+def _readOutputH(file, smdim, **kwargs):
     """Read SwiftComp homogenization results.
 
     :param fn: SwiftComp output file (e.g. example.sg.k)
@@ -284,9 +289,9 @@ def _readOutputH(file, smdim):
     if smdim == 1:
         out = _readOutputBeamModel(file)
     elif smdim == 2:
-        out = _readOutputShellModel(file)
+        out = _readOutputShellModel(file, kwargs['submodel'])
     elif smdim == 3:
-        out = _readOutputSolidModel(file)
+        out = _readOutputCauchyContinuumModel(file)
 
 
     return out
@@ -450,151 +455,292 @@ def _readOutputBeamModel(file):
 
 
 
-def _readOutputShellModel(file):
+def _readOutputShellModel(file, submodel):
+    """
+    """
 
-    sp = smdl.ShellProperty()
-    # sp = smdl.MaterialSection()
+    if submodel == 1:
+        return _readKirchhoffLovePlateShellModel(file)
 
-    linesRead = []
-    keywordsIndex = {}
 
-    # with open(fn, 'r') as fin:
-    ln = -1
-    prop_plane = None
-    for line in file:
+
+def _readKirchhoffLovePlateShellModel(file):
+    """
+    """
+
+    model = smdl.KirchhoffLovePlateShellModel()
+
+    block = ''
+    line = file.readline()
+    while True:
+        if not line:  # EOF
+            break
 
         line = line.strip()
 
-        if len(line) > 0:
-            linesRead.append(line)
-            ln += 1
-        else:
+        if '-----' in line or len(line) == 0:
+            line = file.readline()
             continue
 
-        if '-----' in line:
-            continue
 
         # Inertial properties
         # -------------------
 
         elif 'Effective Mass Matrix' in line:
-            keywordsIndex['mass'] = ln
+            line = file.readline()
+            _mass, line = sui.readMatrix(
+                file, line, nrows=6, ncols=6,
+                number_type=float, comments=['----',]
+                )
+            model.mass = _mass
+
         elif 'Mass Center Location' in line:
-            sp.xm3 = float(line.split()[-1])
+            model.xm3 = float(line.split()[-1])
+
         elif 'i11' in line:
-            sp.i11 = float(line.split()[-1])
-            sp.i22 = sp.i11
+            model.i11 = float(line.split()[-1])
+            model.i22 = model.i11
 
 
         # Structural properties
         # ---------------------
 
         elif 'Effective Stiffness Matrix' in line:
-            keywordsIndex['stff'] = ln
+            line = file.readline()
+            _matrix, line = sui.readMatrix(
+                file, line, nrows=6, ncols=6,
+                number_type=float, comments=['----',]
+                )
+            model.stff = _matrix
         elif 'Effective Compliance Matrix' in line:
-            keywordsIndex['cmpl'] = ln
+            line = file.readline()
+            _matrix, line = sui.readMatrix(
+                file, line, nrows=6, ncols=6,
+                number_type=float, comments=['----',]
+                )
+            model.cmpl = _matrix
 
         elif 'Geometric Correction to the Stiffness Matrix' in line:
-            keywordsIndex['geo_to_stff'] = ln
+            line = file.readline()
+            _matrix, line = sui.readMatrix(
+                file, line, nrows=6, ncols=6,
+                number_type=float, comments=['----',]
+                )
+            model.geo_correction_stff = _matrix
         elif 'Total Stiffness Matrix after Geometric Correction' in line:
-            keywordsIndex['stff_geo'] = ln
+            line = file.readline()
+            _matrix, line = sui.readMatrix(
+                file, line, nrows=6, ncols=6,
+                number_type=float, comments=['----',]
+                )
+            model.stff_geo = _matrix
 
         elif 'In-Plane' in line:
-            prop_plane = 'in'
+            block = 'in_plane_prop'
         elif 'Flexural' in line:
-            prop_plane = 'out'
+            block = 'flexural_prop'
 
-        elif 'E1' in line:
-            if prop_plane == 'in':
-                sp.e1_i = float(line.split('=')[-1])
-            elif prop_plane == 'out':
-                sp.e1_o = float(line.split('=')[-1])
-        elif 'E2' in line:
-            if prop_plane == 'in':
-                sp.e2_i = float(line.split('=')[-1])
-            elif prop_plane == 'out':
-                sp.e2_o = float(line.split('=')[-1])
-        elif 'G12' in line:
-            if prop_plane == 'in':
-                sp.g12_i = float(line.split('=')[-1])
-            elif prop_plane == 'out':
-                sp.g12_o = float(line.split('=')[-1])
-        elif 'nu12' in line:
-            if prop_plane == 'in':
-                sp.nu12_i = float(line.split('=')[-1])
-            elif prop_plane == 'out':
-                sp.nu12_o = float(line.split('=')[-1])
-        elif 'eta121' in line:
-            if prop_plane == 'in':
-                sp.eta121_i = float(line.split('=')[-1])
-            elif prop_plane == 'out':
-                sp.eta121_o = float(line.split('=')[-1])
-        elif 'eta122' in line:
-            if prop_plane == 'in':
-                sp.eta122_i = float(line.split('=')[-1])
-            elif prop_plane == 'out':
-                sp.eta122_o = float(line.split('=')[-1])
+        elif line.startswith('E1'):
+            if block == 'in_plane_prop':
+                model.e1_i = float(line.split('=')[-1])
+            elif block == 'flexural_prop':
+                model.e1_o = float(line.split('=')[-1])
+        elif line.startswith('E2'):
+            if block == 'in_plane_prop':
+                model.e2_i = float(line.split('=')[-1])
+            elif block == 'flexural_prop':
+                model.e2_o = float(line.split('=')[-1])
+        elif line.startswith('G12'):
+            if block == 'in_plane_prop':
+                model.g12_i = float(line.split('=')[-1])
+            elif block == 'flexural_prop':
+                model.g12_o = float(line.split('=')[-1])
+        elif line.startswith('nu12'):
+            if block == 'in_plane_prop':
+                model.nu12_i = float(line.split('=')[-1])
+            elif block == 'flexural_prop':
+                model.nu12_o = float(line.split('=')[-1])
+        elif line.startswith('eta121'):
+            if block == 'in_plane_prop':
+                model.eta121_i = float(line.split('=')[-1])
+            elif block == 'flexural_prop':
+                model.eta121_o = float(line.split('=')[-1])
+        elif line.startswith('eta122'):
+            if block == 'in_plane_prop':
+                model.eta122_i = float(line.split('=')[-1])
+            elif block == 'flexural_prop':
+                model.eta122_o = float(line.split('=')[-1])
+
 
         # Thermal properties
         # ---------------------
 
         elif 'N11T' in line:
-            sp.n11_t = float(line.split('=')[-1])
+            model.n11_t = float(line.split('=')[-1])
         elif 'N22T' in line:
-            sp.n22_t = float(line.split('=')[-1])
+            model.n22_t = float(line.split('=')[-1])
         elif 'N12T' in line:
-            sp.n12_t = float(line.split('=')[-1])
+            model.n12_t = float(line.split('=')[-1])
         elif 'M11T' in line:
-            sp.m11_t = float(line.split('=')[-1])
+            model.m11_t = float(line.split('=')[-1])
         elif 'M22T' in line:
-            sp.m22_t = float(line.split('=')[-1])
+            model.m22_t = float(line.split('=')[-1])
         elif 'M12T' in line:
-            sp.m12_t = float(line.split('=')[-1])
+            model.m12_t = float(line.split('=')[-1])
 
-    try:
-        ln = keywordsIndex['mass']
-        sp.mass = sui.textToMatrix(linesRead[ln + 2:ln + 8])
-    except KeyError:
-        logger.debug('No mass matrix found.')
+        line = file.readline()
 
-    try:
-        ln = keywordsIndex['stff']
-        sp.stff = sui.textToMatrix(linesRead[ln + 2:ln + 8])
-    except KeyError:
-        logger.debug('No classical stiffness matrix found.')
-
-    try:
-        ln = keywordsIndex['cmpl']
-        sp.cmpl = sui.textToMatrix(linesRead[ln + 2:ln + 8])
-    except KeyError:
-        logger.debug('No classical flexibility matrix found.')
-
-    try:
-        ln = keywordsIndex['geo_to_stff']
-        sp.geo_correction_stff = sui.textToMatrix(linesRead[ln + 2:ln + 8])
-    except KeyError:
-        logger.debug('No geometric correction matrix found.')
-
-    try:
-        ln = keywordsIndex['stff_geo']
-        sp.stff_geo = sui.textToMatrix(linesRead[ln + 2:ln + 8])
-    except KeyError:
-        logger.debug('No geometric corrected stiffness matrix found.')
-
-
-    return sp
+    return model
 
 
 
+# def _readOutputShellModel(file):
 
-def _readOutputSolidModel(file):
+#     sp = smdl.ShellProperty()
+#     # sp = smdl.MaterialSection()
+
+#     linesRead = []
+#     keywordsIndex = {}
+
+#     # with open(fn, 'r') as fin:
+#     ln = -1
+#     prop_plane = None
+#     for line in file:
+
+#         line = line.strip()
+
+#         if len(line) > 0:
+#             linesRead.append(line)
+#             ln += 1
+#         else:
+#             continue
+
+#         if '-----' in line:
+#             continue
+
+#         # Inertial properties
+#         # -------------------
+
+#         elif 'Effective Mass Matrix' in line:
+#             keywordsIndex['mass'] = ln
+#         elif 'Mass Center Location' in line:
+#             sp.xm3 = float(line.split()[-1])
+#         elif 'i11' in line:
+#             sp.i11 = float(line.split()[-1])
+#             sp.i22 = sp.i11
+
+
+#         # Structural properties
+#         # ---------------------
+
+#         elif 'Effective Stiffness Matrix' in line:
+#             keywordsIndex['stff'] = ln
+#         elif 'Effective Compliance Matrix' in line:
+#             keywordsIndex['cmpl'] = ln
+
+#         elif 'Geometric Correction to the Stiffness Matrix' in line:
+#             keywordsIndex['geo_to_stff'] = ln
+#         elif 'Total Stiffness Matrix after Geometric Correction' in line:
+#             keywordsIndex['stff_geo'] = ln
+
+#         elif 'In-Plane' in line:
+#             prop_plane = 'in'
+#         elif 'Flexural' in line:
+#             prop_plane = 'out'
+
+#         elif 'E1' in line:
+#             if prop_plane == 'in':
+#                 sp.e1_i = float(line.split('=')[-1])
+#             elif prop_plane == 'out':
+#                 sp.e1_o = float(line.split('=')[-1])
+#         elif 'E2' in line:
+#             if prop_plane == 'in':
+#                 sp.e2_i = float(line.split('=')[-1])
+#             elif prop_plane == 'out':
+#                 sp.e2_o = float(line.split('=')[-1])
+#         elif 'G12' in line:
+#             if prop_plane == 'in':
+#                 sp.g12_i = float(line.split('=')[-1])
+#             elif prop_plane == 'out':
+#                 sp.g12_o = float(line.split('=')[-1])
+#         elif 'nu12' in line:
+#             if prop_plane == 'in':
+#                 sp.nu12_i = float(line.split('=')[-1])
+#             elif prop_plane == 'out':
+#                 sp.nu12_o = float(line.split('=')[-1])
+#         elif 'eta121' in line:
+#             if prop_plane == 'in':
+#                 sp.eta121_i = float(line.split('=')[-1])
+#             elif prop_plane == 'out':
+#                 sp.eta121_o = float(line.split('=')[-1])
+#         elif 'eta122' in line:
+#             if prop_plane == 'in':
+#                 sp.eta122_i = float(line.split('=')[-1])
+#             elif prop_plane == 'out':
+#                 sp.eta122_o = float(line.split('=')[-1])
+
+#         # Thermal properties
+#         # ---------------------
+
+#         elif 'N11T' in line:
+#             sp.n11_t = float(line.split('=')[-1])
+#         elif 'N22T' in line:
+#             sp.n22_t = float(line.split('=')[-1])
+#         elif 'N12T' in line:
+#             sp.n12_t = float(line.split('=')[-1])
+#         elif 'M11T' in line:
+#             sp.m11_t = float(line.split('=')[-1])
+#         elif 'M22T' in line:
+#             sp.m22_t = float(line.split('=')[-1])
+#         elif 'M12T' in line:
+#             sp.m12_t = float(line.split('=')[-1])
+
+#     try:
+#         ln = keywordsIndex['mass']
+#         sp.mass = sui.textToMatrix(linesRead[ln + 2:ln + 8])
+#     except KeyError:
+#         logger.debug('No mass matrix found.')
+
+#     try:
+#         ln = keywordsIndex['stff']
+#         sp.stff = sui.textToMatrix(linesRead[ln + 2:ln + 8])
+#     except KeyError:
+#         logger.debug('No classical stiffness matrix found.')
+
+#     try:
+#         ln = keywordsIndex['cmpl']
+#         sp.cmpl = sui.textToMatrix(linesRead[ln + 2:ln + 8])
+#     except KeyError:
+#         logger.debug('No classical flexibility matrix found.')
+
+#     try:
+#         ln = keywordsIndex['geo_to_stff']
+#         sp.geo_correction_stff = sui.textToMatrix(linesRead[ln + 2:ln + 8])
+#     except KeyError:
+#         logger.debug('No geometric correction matrix found.')
+
+#     try:
+#         ln = keywordsIndex['stff_geo']
+#         sp.stff_geo = sui.textToMatrix(linesRead[ln + 2:ln + 8])
+#     except KeyError:
+#         logger.debug('No geometric corrected stiffness matrix found.')
+
+
+#     return sp
+
+
+
+
+def _readOutputCauchyContinuumModel(file):
     r"""
     """
-    # if logger is None:
-    #     logger = mul.initLogger(__name__)
 
     # mp = mmsd.MaterialProperty()
-    mp = smdl.MaterialSection()
+    # mp = smdl.MaterialSection()
+    mp = smdl.CauchyContinuumModel()
+
+    # Always set the homogenizated material as general anisotropic
+    mp.isotropy = 2
 
     linesRead = []
     keywordsIndex = {}
@@ -669,13 +815,15 @@ def _readOutputSolidModel(file):
             line = line.split('=')
             label = line[0].strip().lower()
             value = float(line[-1].strip())
-            mp.constants[label] = value
+            # mp.constants[label] = value
+            mp.set(label, value)
     except KeyError:
         logger.debug('No engineering constants found.')
 
     line = linesRead[keywordsIndex['density']]
     line = line.strip().split('=')
-    mp.density = float(line[-1].strip())
+    mp.set('density', float(line[-1].strip()))
+    # mp.density = float(line[-1].strip())
 
 
     return mp
@@ -935,33 +1083,35 @@ def _writeMaterials(sg:StructureGene, file, file_format, sfi, sff):
 
         # print('writing material {}'.format(mid))
 
-        cm = m.constitutive
+        # cm = m.constitutive
 
         # if m.stff:
         #     anisotropy = 2
         # else:
-        anisotropy = cm.isotropy
+        anisotropy = m.get('isotropy')
 
         sui.writeFormatIntegers(file, (mid, anisotropy, 1), sfi, newline=False)
         if counter == 0:  file.write('  # materials')
         file.write('\n')
-        sui.writeFormatFloats(file, (m.temperature, m.density), sff)
+        sui.writeFormatFloats(file, (m.get('temperature'), m.get('density')), sff)
 
         # Write elastic properties
         if anisotropy == 0:
-            sui.writeFormatFloats(file, [cm.e1, cm.nu12], sff)
+            sui.writeFormatFloats(file, [m.get('e1'), m.get('nu12')], sff)
 
         elif anisotropy == 1:
-            sui.writeFormatFloats(file, [cm.e1, cm.e2, cm.e3], sff)
-            sui.writeFormatFloats(file, [cm.g12, cm.g13, cm.g23], sff)
-            sui.writeFormatFloats(file, [cm.nu12, cm.nu13, cm.nu23], sff)
+            sui.writeFormatFloats(file, [m.get('e1'), m.get('e2'), m.get('e3')], sff)
+            sui.writeFormatFloats(file, [m.get('g12'), m.get('g13'), m.get('g23')], sff)
+            sui.writeFormatFloats(file, [m.get('nu12'), m.get('nu13'), m.get('nu23')], sff)
 
         elif anisotropy == 2:
             for i in range(6):
-                sui.writeFormatFloats(file, cm.c[i][i:], sff)
+                for j in range(i, 6):
+                    sui.writeFormatFloats(file, m.get(f'c{i+1}{j+1}'), sff, newline=False)
+                file.write('\n')
 
         if sg.physics in [1, 4, 6]:
-            sui.writeFormatFloats(file, cm.cte+[cm.specific_heat,], sff)
+            sui.writeFormatFloats(file, m.get('cte')+[m.get('specific_heat'),], sff)
 
         file.write('\n')
         

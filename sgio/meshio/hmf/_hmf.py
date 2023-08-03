@@ -1,4 +1,4 @@
-import meshio
+import sgio.meshio as meshio
 
 from .._common import cell_data_from_raw, raw_from_cell_data, warn
 from .._helpers import register_format

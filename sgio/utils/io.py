@@ -1,10 +1,50 @@
+from typing import Iterable
+import pprint
 import xml.etree.ElementTree as et
+
+def convertToPrettyString(v):
+    return pprint.pformat(v)
+
 
 def readNextNonEmptyLine(file):
     line = file.readline().strip()
     while line == '':
         line = file.readline().strip()
     return line
+
+
+def readMatrix(
+    file, line, nrows:int, ncols:int=-1,
+    delimiter:str=None, number_type=float, comments=[]
+    ) -> Iterable:
+    """
+    """
+
+    matrix = []
+
+    while True:
+        line = line.strip()
+
+        if len(line) == 0:
+            line = file.readline()
+            continue
+        for _s in comments:
+            if line.startswith(_s):
+                line = file.readline()
+                continue
+
+        if delimiter is None:
+            _numbers = line.split()[:ncols]
+        else:
+            _numbers = line.split(delimiter)[:ncols]
+        _numbers = list(map(number_type, _numbers))
+        matrix.append(_numbers)
+        line = file.readline()
+
+        if len(matrix) == nrows:
+            break
+
+    return matrix, line
 
 
 def listToString(flist, delimiter='', fmt=''):

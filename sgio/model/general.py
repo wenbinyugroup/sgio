@@ -1,5 +1,21 @@
+from typing import Protocol, Iterable
+from numbers import Number
 import sgio.utils.io as sui
 # import sgio.model as sm
+
+class Model(Protocol):
+    def __repr__(self) -> str:
+        ...
+
+    def __call__(self, x):
+        ...
+
+    def set(self, name:str, value:Number) -> None:
+        ...
+
+    def get(self, name:str):
+        """Get model parameter (property) given a name."""
+
 
 
 class MaterialSection(object):
@@ -199,9 +215,15 @@ class MaterialSection(object):
 
 
 class SectionResponse():
+    """Generalized stress/strain for an SG model.
+    """
     def __init__(self):
-        self.displacement = [0, 0, 0]
-        self.directional_cosine = [
+        self.displacement:list = [0, 0, 0]
+        """
+        list of floats: Global displacement vector ``[u1, u2, u3]``.
+        """
+
+        self.directional_cosine:list = [
             [1, 0, 0],
             [0, 1, 0],
             [0, 0, 1]
@@ -209,10 +231,16 @@ class SectionResponse():
         """
         list of lists floats: Global rotation matrix.
         
-        `[[C11, C12, C13], [C21, C22, C23], [C31, C32, C33]]`
+        ..  code-block::
+
+            [
+                [C11, C12, C13],
+                [C21, C22, C23],
+                [C31, C32, C33]
+            ]
         """
 
-        self.load_type = 0
+        self.load_type:int = 0
         """
         int: Type of the sectional response load
 
@@ -222,18 +250,18 @@ class SectionResponse():
 
         self.load_tags = []
 
-        self.load = []
+        self.load:list = []
         """list of list of floats: Global loads
 
-        ============================ ========================================== ============================================
-        Model                        Generalized stresses                       Generalized strains
-        ============================ ========================================== ============================================
-        Continuum                    `[s11, s22, s33, s23, s13, s12]`           `[e11, e22, e33, e23, e13, e12]`
-        Kirchhoff-Love plate/shell   `[N11, N22, N12, M11, M22, M12]`           `[e11, e22, 2e12, k11, k22, 2k12]`
-        Reissner-Mindlin plate/shell `[N11, N22, N12, M11, M22, M12, N13, N23]` `[e11, e22, 2e12, k11, k22, 2k12, g13, g23]`
-        Euler-Bernoulli beam         `[F1, M1, M2, M3]`                         `[e11, k11, k12, k13]`
-        Timoshenko beam              `[F1, F2, F3, M1, M2, M3]`                 `[e11, g12, g13, k11, k12, k13]`
-        ============================ ========================================== ============================================
+        ============================ ============================================ ==============================================
+        Model                        Generalized stresses                         Generalized strains
+        ============================ ============================================ ==============================================
+        Continuum                    ``[s11, s22, s33, s23, s13, s12]``           ``[e11, e22, e33, e23, e13, e12]``
+        Kirchhoff-Love plate/shell   ``[N11, N22, N12, M11, M22, M12]``           ``[e11, e22, 2e12, k11, k22, 2k12]``
+        Reissner-Mindlin plate/shell ``[N11, N22, N12, M11, M22, M12, N13, N23]`` ``[e11, e22, 2e12, k11, k22, 2k12, g13, g23]``
+        Euler-Bernoulli beam         ``[F1, M1, M2, M3]``                         ``[e11, k11, k12, k13]``
+        Timoshenko beam              ``[F1, F2, F3, M1, M2, M3]``                 ``[e11, g12, g13, k11, k12, k13]``
+        ============================ ============================================ ==============================================
         """
 
         self.distr_load = [0, 0, 0, 0, 0, 0]
@@ -307,38 +335,35 @@ class SectionResponse():
 
 
 class StructureResponseCases():
+    """Cases of generalized stress/strain.
+    """
     def __init__(self):
         self.loc_tags = []
+        """Response location tags
+        """
 
         self.cond_tags = []
-        # """Response condition IDs
-
-        # [
-        #   {
-        #     tag1: value1,
-        #     tag2: value2,
-        #     ...
-        #   },
-        #   {...},
-        # ]
-        # """
+        """Response condition tags
+        """
 
         self.responses = []
         """Responses
 
-        [
-            {
-                'loc_tag1': loc_value1,
-                'loc_tag2': loc_value2,
-                ...,
-                'condition_tag1': condition_value1,
-                'condition_tag2': condition_value2,
-                ...,
-                'response': SectionResponse
-            },
-            {...},
-            ...
-        ]
+        ..  code-block::
+
+            [
+                {
+                    'loc_tag1': loc_value1,
+                    'loc_tag2': loc_value2,
+                    ...,
+                    'condition_tag1': condition_value1,
+                    'condition_tag2': condition_value2,
+                    ...,
+                    'response': SectionResponse
+                },
+                {...},
+                ...
+            ]
         """
 
     def __repr__(self):
@@ -353,7 +378,11 @@ class StructureResponseCases():
         lines.append('-'*20)
         return '\n'.join(lines)
 
+
     def getResponsesByLocCond(self, **kwargs):
+        """Get response by providing location and condition.
+
+        """
         resps = []
 
         for _resp in self.responses:
@@ -369,4 +398,48 @@ class StructureResponseCases():
         return resps
 
 
+    def addResponseCase(self, loc, cond, sect_resp:SectionResponse):
+        resp_case = {}
+
+        # sect_resp = SectionResponse()
+
+        # sect_resp.load_type = load_type
+        # sect_resp.load_tags = load_tags
+
+        # Read location ids
+        for _tag, _value in zip(self.loc_tags, loc):
+            # _i = tags_idx[_tag]
+            resp_case[_tag] = _value
+
+        # Read case ids
+        for _tag, _value in zip(self.cond_tags, cond):
+            # _i = tags_idx[_tag]
+            resp_case[_tag] = _value
+
+        # # Read loads
+        # _load = []
+        # for _tag in load_tags:
+        #     _i = tags_idx[_tag]
+        #     _load.append(float(row[_i]))
+        # sect_resp.load = _load
+
+        # # Read displacements
+        # _disp = []
+        # for _tag in disp_tags:
+        #     _i = tags_idx[_tag]
+        #     _disp.append(float(row[_i]))
+        # sect_resp.displacement = _disp
+
+        # # Read rotations
+        # _rot = []
+        # for _tag in rot_tags:
+        #     _i = tags_idx[_tag]
+        #     _rot.append(float(row[_i]))
+        # sect_resp.directional_cosine = [
+        #     _rot[:3], _rot[3:6], _rot[6:]
+        # ]
+
+        resp_case['response'] = sect_resp
+
+        self.responses.append(resp_case)
 

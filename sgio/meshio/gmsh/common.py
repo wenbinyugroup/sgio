@@ -233,21 +233,35 @@ def _write_physical_names(fh, field_data):
 
 
 def _write_data(fh, tag, name, data, binary):
-    fh.write(f"${tag}\n".encode())
+    if binary:
+        fh.write(f"${tag}\n".encode())
+    else:
+        fh.write(f"${tag}\n")
     # <http://gmsh.info/doc/texinfo/gmsh.html>:
     # > Number of string tags.
     # > gives the number of string tags that follow. By default the first
     # > string-tag is interpreted as the name of the post-processing view and
     # > the second as the name of the interpolation scheme. The interpolation
     # > scheme is provided in the $InterpolationScheme section (see below).
-    fh.write(f"{1}\n".encode())
-    fh.write(f'"{name}"\n'.encode())
-    fh.write(f"{1}\n".encode())
-    fh.write(f"{0.0}\n".encode())
-    # three integer tags:
-    fh.write(f"{3}\n".encode())
-    # time step
-    fh.write(f"{0}\n".encode())
+    if binary:
+        fh.write(f"{1}\n".encode())
+        fh.write(f'"{name}"\n'.encode())
+        fh.write(f"{1}\n".encode())
+        fh.write(f"{0.0}\n".encode())
+        # three integer tags:
+        fh.write(f"{3}\n".encode())
+        # time step
+        fh.write(f"{0}\n".encode())
+    else:
+        fh.write(f"{1}\n")
+        fh.write(f'"{name}"\n')
+        fh.write(f"{1}\n")
+        fh.write(f"{0.0}\n")
+        # three integer tags:
+        fh.write(f"{3}\n")
+        # time step
+        fh.write(f"{0}\n")
+
     # number of components
     num_components = data.shape[1] if len(data.shape) > 1 else 1
     if num_components not in [1, 3, 9]:
@@ -258,11 +272,11 @@ def _write_data(fh, tag, name, data, binary):
     if len(data.shape) > 1 and data.shape[1] == 1:
         data = data[:, 0]
 
-    fh.write(f"{num_components}\n".encode())
-    # num data items
-    fh.write(f"{data.shape[0]}\n".encode())
-    # actually write the data
     if binary:
+        fh.write(f"{num_components}\n".encode())
+        # num data items
+        fh.write(f"{data.shape[0]}\n".encode())
+        # actually write the data
         if num_components == 1:
             dtype = [("index", c_int), ("data", c_double)]
         else:
@@ -272,14 +286,18 @@ def _write_data(fh, tag, name, data, binary):
         tmp["data"] = data
         tmp.tofile(fh)
         fh.write(b"\n")
+        fh.write(f"$End{tag}\n".encode())
     else:
+        fh.write(f"{num_components}\n")
+        # num data items
+        fh.write(f"{data.shape[0]}\n")
+        # actually write the data
         fmt = " ".join(["{}"] + ["{!r}"] * num_components) + "\n"
         # TODO unify
         if num_components == 1:
             for k, x in enumerate(data):
-                fh.write(fmt.format(k + 1, x).encode())
+                fh.write(fmt.format(k + 1, x))
         else:
             for k, x in enumerate(data):
-                fh.write(fmt.format(k + 1, *x).encode())
-
-    fh.write(f"$End{tag}\n".encode())
+                fh.write(fmt.format(k + 1, *x))
+        fh.write(f"$End{tag}\n")

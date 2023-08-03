@@ -5,6 +5,8 @@ from sgio.core.sg import StructureGene
 import sgio.meshio as smsh
 import sgio.model as smdl
 
+from sgio.meshio.abaqus._abaqus import get_param_map
+
 
 # ====================================================================
 # Readers
@@ -21,8 +23,12 @@ def readInputBuffer(file, **kwargs):
     sg.smdim = kwargs['smdim']
 
     # Read mesh
-    sg.mesh, sections, materials = _readMesh(file)
+    mesh, sections, materials = _readMesh(file)
+    # sg.mesh, sections, materials = _readMesh(file)
     # sg.use_elem_local_orient = 1
+
+    sg.mesh = mesh
+
 
     # Store materials
     mname2id = {}
@@ -77,10 +83,51 @@ def _readMesh(file):
 
     logger.debug('reading mesh...')
 
-    mesh, sections, materials = smsh.read(file, 'abaqus')
+    mesh = smsh.read(file, 'abaqus')
     # print(mesh.cell_sets)
-    print(sections)
-    print(materials)
+    # print(sections)
+    # print(materials)
+
+
+    # Read materials and sections
+    sections = []
+    materials = []
+
+    line = file.readline()
+    while True:
+        if not line:  # EOF
+            break
+
+        # Comments
+        if line.startswith("**"):
+            line = file.readline()
+            continue
+
+        keyword = line.partition(",")[0].strip().replace("*", "").upper()
+
+        if keyword.split()[-1] == "SECTION":
+            # print(line)
+            params_map = get_param_map(line, required_keys=['ELSET', 'MATERIAL'])
+            _section = {
+                'elset': params_map['ELSET'],
+                'material': params_map['MATERIAL']
+            }
+            try:
+                _section['orientation'] = params_map['ORIENTATION']
+            except KeyError:
+                pass
+            line = file.readline()
+            line = file.readline()
+            sections.append(_section)
+
+        elif keyword == "MATERIAL":
+            params_map = get_param_map(line, required_keys=['NAME'])
+            _material = _read_material(file)
+            materials.append({
+                'name': params_map['NAME'],
+                'property': _material
+            })
+            line = file.readline()
 
     # Organize sections and materials
     mesh.cell_data['property_id'] = []
@@ -93,6 +140,51 @@ def _readMesh(file):
             for _j in _cb:
                 mesh.cell_data['property_id'][_i][_j] = _prop_id+1
 
+
     # print(mesh.cell_data['property_id'])
 
+    # return mesh
     return mesh, sections, materials
+
+
+
+
+def _read_material(f):
+    material = {}
+    while True:
+        line = f.readline()
+        if not line:
+            break
+        if line.startswith("**"):
+            continue
+        if line.strip() == "":
+            continue
+
+        # print(line)
+        keyword = line.partition(",")[0].strip().replace("*", "").upper()
+
+        if keyword == 'DENSITY':
+            line = f.readline()
+            _density = float(line.strip().strip(',')[0])
+            material['density'] = _density
+
+        elif keyword == 'ELASTIC':
+            _elastic = []
+            params_map = get_param_map(line)
+            # print(params_map)
+            _type = params_map.get('TYPE', 'ISOTROPIC')
+            if _type == 'ISOTROPIC':
+                material['type'] = 'isotropic'
+                line = f.readline()
+                _elastic += list(map(float, line.split(',')))
+            elif _type == 'ENGINEERING CONSTANTS':
+                material['type'] = 'engineering_constants'
+                line = f.readline()
+                _elastic.append(float(line.strip().strip(',')))
+            material['elastic'] = _elastic
+            break
+
+    # print(material)
+
+    return material
+

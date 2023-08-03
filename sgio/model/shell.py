@@ -1,3 +1,163 @@
+class KirchhoffLovePlateShellModel():
+    """Kirchhoff-Love Plate/Shell Model
+    """
+
+    dim = 2
+    model_name = 'Kirchhoff-Love plate/shell model'
+
+    constant_name_inplane = [
+        'e1_i', 'e2_i', 'g12_i', 'nu12_i', 'eta121_i', 'eta122_i']
+    constant_label_inplane = [
+        'E1', 'E2', 'G12', 'nu12', 'eta121', 'eta122']
+    constant_name_flexural = [
+        'e1_o', 'e2_o', 'g12_o', 'nu12_o', 'eta121_o', 'eta122_o']
+    constant_label_flexural = [
+        'E1', 'E2', 'G12', 'nu12', 'eta121', 'eta122']
+
+    def __init__(self):
+
+        self.name = ''
+        self.id = None
+
+        # Inertial
+        # --------
+        self.mass = None
+
+        self.xm3 = None
+
+        self.i11 = None
+        self.i22 = None
+
+        # ------------
+
+        self.stff = None
+        self.cmpl = None
+
+        self.geo_correction_stff = None
+        self.stff_geo = None
+
+        self.e1_i = None
+        self.e2_i = None
+        self.g12_i = None
+        self.nu12_i = None
+        self.eta121_i = None
+        self.eta122_i = None
+
+        self.e1_o = None
+        self.e2_o = None
+        self.g12_o = None
+        self.nu12_o = None
+        self.eta121_o = None
+        self.eta122_o = None
+
+        self.n11_t = None
+        self.n22_t = None
+        self.n12_t = None
+        self.m11_t = None
+        self.m22_t = None
+        self.m12_t = None
+
+
+    def __repr__(self) -> str:
+        s = [
+            self.model_name,
+        ]
+
+        s.append('----------------')
+        s.append('mass matrix')
+        if not self.mass is None:
+            for i in range(6):
+                _row = []
+                for j in range(6):
+                    _row.append(f'{self.mass[i][j]:14e}')
+                s.append(', '.join(_row))
+        else:
+            s.append('NONE')
+
+        s.append('----------------')
+        s.append('stiffness matrix')
+        if not self.stff is None:
+            for i in range(6):
+                _row = []
+                for j in range(6):
+                    _row.append(f'{self.stff[i][j]:14e}')
+                s.append(', '.join(_row))
+        else:
+            s.append('NONE')
+
+        s.append('\ncompliance matrix')
+        if not self.cmpl is None:
+            for i in range(6):
+                _row = []
+                for j in range(6):
+                    _row.append(f'{self.cmpl[i][j]:14e}')
+                s.append(', '.join(_row))
+        else:
+            s.append('NONE')
+
+        s.append('-------------------')
+        s.append('in-plane properties')
+        for _label, _name in zip(self.constant_label_inplane, self.constant_name_inplane):
+            _value = eval(f'self.{_name}')
+            s.append(f'  {_label} = {_value}')
+
+        s.append('\nflexural properties')
+        for _label, _name in zip(self.constant_label_flexural, self.constant_name_flexural):
+            _value = eval(f'self.{_name}')
+            s.append(f'  {_label} = {_value}')
+
+        return '\n'.join(s)
+
+
+    def __call__(self, x):
+        ...
+
+
+    def set(self, name, value, **kwargs):
+        ...
+
+
+    def get(self, name):
+        r"""
+        """
+
+        # Stiffness
+        if name.startswith('stf'):
+            if name[-1] == 'c':
+                return self.stff[int(name[3])-1][int(name[4])-1]
+            elif name[-1] == 'r':
+                if name[-2] == 'g':
+                    if len(self.stff_geo) > 0:
+                        return self.stff_geo[int(name[3])-1][int(name[4])-1]
+                    else:
+                        return self.stff[int(name[3])-1][int(name[4])-1]
+
+        elif name.startswith('mass'):
+            return self.mass[int(name[4])-1][int(name[5])-1]
+
+        return
+
+
+
+
+
+
+
+
+
+class ReissnerMindlinPlateShellModel():
+    """Reissner-Mindlin Plate/Shell Model
+    """
+    
+    dim = 2
+    model_name = 'Reissner-Mindlin plate/shell model'
+
+
+
+
+
+
+
 
 
 # Legacy

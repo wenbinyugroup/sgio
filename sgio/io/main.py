@@ -4,6 +4,7 @@ logger = logging.getLogger(__name__)
 import csv
 
 from sgio.core.sg import StructureGene
+import sgio.model as sgmodel
 
 import sgio.io._abaqus as _abaqus
 import sgio.io._swiftcomp as _swiftcomp
@@ -11,9 +12,11 @@ import sgio.io._vabs as _vabs
 import sgio.meshio as meshio
 import sgio._global as GLOBAL
 
+import sgio.utils as sutils
 
 
-def read(fn:str, file_format:str, format_version:str='', sgdim:int=3, smdim:int=3, sg:StructureGene=None):
+
+def read(fn:str, file_format:str, format_version:str='', sgdim:int=3, smdim:int=3, sg:StructureGene=None, mesh_only:bool=False):
     """Read SG input.
 
     Parameters
@@ -42,24 +45,27 @@ def read(fn:str, file_format:str, format_version:str='', sgdim:int=3, smdim:int=
     else:
         if not sg:
             sg = StructureGene(sgdim=sgdim, smdim=smdim)
-        sg.mesh = meshio.read(fn, file_format)
+        sg.mesh, _, _ = meshio.read(fn, file_format)
 
     return sg
 
 
 
 
-def readOutput(fn:str, file_format:str, analysis=0, smdim:int=1, sg:StructureGene=None):
+def readOutput(
+    fn:str, file_format:str, analysis=0, smdim:int=1,
+    sg:StructureGene=None, **kwargs
+    ):
     # print('fn =', fn)
     # print('file_format =', file_format)
     # print('smdim =', smdim)
     # print('analysis =', analysis)
     with open(fn, 'r') as file:
         if file_format.startswith('s'):
-            return _swiftcomp.readOutputBuffer(file, analysis, smdim, sg)
+            return _swiftcomp.readOutputBuffer(file, analysis, smdim, sg, **kwargs)
 
         elif file_format.startswith('v'):
-            return _vabs.readOutputBuffer(file, analysis, sg)
+            return _vabs.readOutputBuffer(file, analysis, sg, **kwargs)
 
     return
 
@@ -89,7 +95,17 @@ def write(
         Name of the input file
     """
 
+    logger.info(f'writting sg data to {fn} (format: {file_format})...')
+
+    logger.debug(f'local variables:\n{sutils.convertToPrettyString(locals())}')
+
     _file_format = file_format.lower()
+
+    _format_full_data = ['sc', 'vabs']
+
+    # Write meshing data only for partially supported formats
+    if not _file_format in _format_full_data:
+        mesh_only = True
 
     with open(fn, 'w', encoding='utf-8') as file:
         if mesh_only:
@@ -290,38 +306,84 @@ def readSGInterfaceNodes(fn):
 
 # ====================================================================
 
-def readLoadCsv(fn, delimiter=',', nhead=1, encoding='utf-8-sig'):
-    r"""
-    load = {
-        'flight_condition_1': {
-            'fx': {
-                'a': [],
-                'r': [],
-                'v': []
-            },
-            'fy': [],
-            'fz': [],
-            'mx', [],
-            'my', [],
-            'mz', []
-        },
-        'flight_condition_2': {},
-        ...
-    }
+def readLoadCsv(
+    fn:str, smdim:int, model:int, load_tags=[], load_type=0,
+    disp_tags=['u1', 'u2', 'u3'],
+    rot_tags = ['c11', 'c12', 'c13', 'c21', 'c22', 'c23', 'c31', 'c32', 'c33'],
+    loc_tags=['loc',], cond_tags=[],
+    loc_vtypes=[], cond_vtypes=[],
+    delimiter=',', nhead=1, encoding='utf-8-sig'
+    ):
+    """
     """
 
-    load = {}
-    azimuth = []
+    logger.info('reading structural response file {}...'.format(fn))
+
+    if len(load_tags) == 0:
+        if smdim == 1:
+            if model == 'b1':
+                load_tags = ['f1', 'm1', 'm2', 'm3']
+            elif model == 'b2':
+                load_tags = ['f1', 'f2', 'f3', 'm1', 'm2', 'm3']
+
+    if isinstance(loc_tags, str):
+        loc_tags = [loc_tags,]
+    if isinstance(cond_tags, str):
+        cond_tags = [cond_tags,]
+
+    if isinstance(loc_vtypes, str):
+        loc_vtypes = [loc_vtypes,]
+    if isinstance(cond_vtypes, str):
+        cond_vtypes = [cond_vtypes,]
+
+    if len(loc_vtypes) < len(loc_tags):
+        if len(loc_vtypes) == 0:
+            loc_vtypes = ['int',] * len(loc_tags)
+        elif len(loc_vtypes) == 1:
+            loc_vtypes = loc_vtypes * len(loc_tags)
+    if len(cond_vtypes) < len(cond_tags):
+        if len(cond_vtypes) == 0:
+            cond_vtypes = ['int',] * len(cond_tags)
+        elif len(cond_vtypes) == 1:
+            cond_vtypes = cond_vtypes * len(cond_tags)
+
+    struct_resp_cases = sgmodel.StructureResponseCases()
+    struct_resp_cases.loc_tags = loc_tags
+    struct_resp_cases.cond_tags = cond_tags
+
+    # load = {}
 
     with open(fn, 'r', encoding=encoding) as file:
         cr = csv.reader(file, delimiter=delimiter)
 
+        tags_idx = {}
+        # loc_tags_idx = {}
+        # case_tags_idx = {}
+        # disp_tags_idx = {}
+        # rot_tags_idx = {}
+        # load_tags_idx = {}
+
+        hi = 0
         for i, row in enumerate(cr):
             row = [s.strip() for s in row]
             if row[0] == '':
                 continue
 
             if i < nhead:
+                if hi == 0:
+                    # Get index of each tag
+                    for _tag in loc_tags:
+                        tags_idx[_tag] = row.index(_tag)
+                    for _tag in cond_tags:
+                        tags_idx[_tag] = row.index(_tag)
+                    for _tag in disp_tags:
+                        tags_idx[_tag] = row.index(_tag)
+                    for _tag in rot_tags:
+                        tags_idx[_tag] = row.index(_tag)
+                    for _tag in load_tags:
+                        tags_idx[_tag] = row.index(_tag)
+                    # print(tags_idx)
+                hi += 1
                 continue
                 # # Read head
                 # for label in row:
@@ -330,30 +392,150 @@ def readLoadCsv(fn, delimiter=',', nhead=1, encoding='utf-8-sig'):
                 #         load['node_id'].append(nid)
 
             else:
-                condition = str(row[0])
-                if not condition in load.keys():
-                    load[condition] = {
-                        'fx': {'a': [], 'r': [], 'v': []},
-                        'fy': {'a': [], 'r': [], 'v': []},
-                        'fz': {'a': [], 'r': [], 'v': []},
-                        'mx': {'a': [], 'r': [], 'v': []},
-                        'my': {'a': [], 'r': [], 'v': []},
-                        'mz': {'a': [], 'r': [], 'v': []}
-                    }
+                resp_case = {}
 
-                a, r, fx, fy, fz, mx, my, mz = list(map(float, row[1:]))
-                v = {
-                    'fx': fx, 'fy': fy, 'fz': fz,
-                    'mx': mx, 'my': my, 'mz': mz
-                }
+                sect_resp = sgmodel.SectionResponse()
 
-                azimuth.append(a)
+                sect_resp.load_type = load_type
+                sect_resp.load_tags = load_tags
 
-                for component in ['fx', 'fy', 'fz', 'mx', 'my', 'mz']:
-                    load[condition][component]['a'].append(a)
-                    load[condition][component]['r'].append(r)
-                    load[condition][component]['v'].append(v[component])
+                # Read location ids
+                for _tag, _type in zip(loc_tags, loc_vtypes):
+                    _i = tags_idx[_tag]
+                    resp_case[_tag] = eval(_type)(row[_i])
 
-    azimuth = list(set(azimuth))
+                # Read case ids
+                for _tag, _type in zip(cond_tags, cond_vtypes):
+                    _i = tags_idx[_tag]
+                    resp_case[_tag] = eval(_type)(row[_i])
 
-    return load, azimuth
+                # Read loads
+                _load = []
+                for _tag in load_tags:
+                    _i = tags_idx[_tag]
+                    _load.append(float(row[_i]))
+                sect_resp.load = _load
+
+                # Read displacements
+                _disp = []
+                for _tag in disp_tags:
+                    _i = tags_idx[_tag]
+                    _disp.append(float(row[_i]))
+                sect_resp.displacement = _disp
+
+                # Read rotations
+                _rot = []
+                for _tag in rot_tags:
+                    _i = tags_idx[_tag]
+                    _rot.append(float(row[_i]))
+                sect_resp.directional_cosine = [
+                    _rot[:3], _rot[3:6], _rot[6:]
+                ]
+
+                resp_case['response'] = sect_resp
+
+                # condition = str(row[0])
+                # if not condition in load.keys():
+                #     load[condition] = {
+                #         'fx': {'a': [], 'r': [], 'v': []},
+                #         'fy': {'a': [], 'r': [], 'v': []},
+                #         'fz': {'a': [], 'r': [], 'v': []},
+                #         'mx': {'a': [], 'r': [], 'v': []},
+                #         'my': {'a': [], 'r': [], 'v': []},
+                #         'mz': {'a': [], 'r': [], 'v': []}
+                #     }
+
+                # a, r, fx, fy, fz, mx, my, mz = list(map(float, row[1:]))
+                # v = {
+                #     'fx': fx, 'fy': fy, 'fz': fz,
+                #     'mx': mx, 'my': my, 'mz': mz
+                # }
+
+                # azimuth.append(a)
+
+                # for component in ['fx', 'fy', 'fz', 'mx', 'my', 'mz']:
+                #     load[condition][component]['a'].append(a)
+                #     load[condition][component]['r'].append(r)
+                #     load[condition][component]['v'].append(v[component])
+
+                struct_resp_cases.responses.append(resp_case)
+
+    # azimuth = list(set(azimuth))
+
+    return struct_resp_cases
+
+
+
+
+
+
+
+
+
+# def readLoadCsv(fn, delimiter=',', nhead=1, encoding='utf-8-sig'):
+#     r"""
+#     load = {
+#         'flight_condition_1': {
+#             'fx': {
+#                 'a': [],
+#                 'r': [],
+#                 'v': []
+#             },
+#             'fy': [],
+#             'fz': [],
+#             'mx', [],
+#             'my', [],
+#             'mz', []
+#         },
+#         'flight_condition_2': {},
+#         ...
+#     }
+#     """
+
+#     load = {}
+#     azimuth = []
+
+#     with open(fn, 'r', encoding=encoding) as file:
+#         cr = csv.reader(file, delimiter=delimiter)
+
+#         for i, row in enumerate(cr):
+#             row = [s.strip() for s in row]
+#             if row[0] == '':
+#                 continue
+
+#             if i < nhead:
+#                 continue
+#                 # # Read head
+#                 # for label in row:
+#                 #     if label.lower().startswith('rotor'):
+#                 #         nid = int(label.split('NODE')[1])
+#                 #         load['node_id'].append(nid)
+
+#             else:
+#                 condition = str(row[0])
+#                 if not condition in load.keys():
+#                     load[condition] = {
+#                         'fx': {'a': [], 'r': [], 'v': []},
+#                         'fy': {'a': [], 'r': [], 'v': []},
+#                         'fz': {'a': [], 'r': [], 'v': []},
+#                         'mx': {'a': [], 'r': [], 'v': []},
+#                         'my': {'a': [], 'r': [], 'v': []},
+#                         'mz': {'a': [], 'r': [], 'v': []}
+#                     }
+
+#                 a, r, fx, fy, fz, mx, my, mz = list(map(float, row[1:]))
+#                 v = {
+#                     'fx': fx, 'fy': fy, 'fz': fz,
+#                     'mx': mx, 'my': my, 'mz': mz
+#                 }
+
+#                 azimuth.append(a)
+
+#                 for component in ['fx', 'fy', 'fz', 'mx', 'my', 'mz']:
+#                     load[condition][component]['a'].append(a)
+#                     load[condition][component]['r'].append(r)
+#                     load[condition][component]['v'].append(v[component])
+
+#     azimuth = list(set(azimuth))
+
+#     return load, azimuth
