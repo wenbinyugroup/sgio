@@ -296,7 +296,7 @@ class StructureGene(object):
         int
             Material id. 0 if not found.
         """
-        print(self.materials)
+        # print(self.materials)
         for i, m in self.materials.items():
             if m.name == name:
                 return i

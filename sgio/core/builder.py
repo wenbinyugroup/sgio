@@ -147,9 +147,9 @@ def buildSG1D(
 
     # print('tt =', tt)
     # printLayers(layers, 'layers')
-    logger.info('full layers')
+    logger.debug('full layers')
     for layer in layers:
-        print(layer)
+        logger.debug(layer)
 
 
     # Global model settings
