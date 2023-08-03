@@ -90,6 +90,8 @@ class CauchyContinuumModel:
 
     def __repr__(self) -> str:
         s = [
+            self.model_name,
+            '-'*len(self.model_name),
             f'density = {self.density}',
             f'isotropy = {self.isotropy}'
         ]

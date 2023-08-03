@@ -52,17 +52,20 @@ def read(fn:str, file_format:str, format_version:str='', sgdim:int=3, smdim:int=
 
 
 
-def readOutput(fn:str, file_format:str, analysis=0, smdim:int=1, sg:StructureGene=None):
+def readOutput(
+    fn:str, file_format:str, analysis=0, smdim:int=1,
+    sg:StructureGene=None, **kwargs
+    ):
     # print('fn =', fn)
     # print('file_format =', file_format)
     # print('smdim =', smdim)
     # print('analysis =', analysis)
     with open(fn, 'r') as file:
         if file_format.startswith('s'):
-            return _swiftcomp.readOutputBuffer(file, analysis, smdim, sg)
+            return _swiftcomp.readOutputBuffer(file, analysis, smdim, sg, **kwargs)
 
         elif file_format.startswith('v'):
-            return _vabs.readOutputBuffer(file, analysis, sg)
+            return _vabs.readOutputBuffer(file, analysis, sg, **kwargs)
 
     return
 
