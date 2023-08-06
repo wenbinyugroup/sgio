@@ -10,18 +10,21 @@ logger = logging.getLogger(__name__)
 # import meshio
 # import msgd.pkg.meshio as mpm
 
-fn_base = 'sg12kl_line5_sc21.sg.k'
+# fn_base = 'sg21eb_tri6_sc21.sg.k'
+# fn_base = 'sg21eb_tri3_vabs40.sg.k'
+# fn_base = 'sg21t_tri6_sc21.sg.k'
+fn_base = 'sg21t_tri3_vabs40.sg.k'
 # fn_base = 'sg21eb_tri3_vabs40'
 
 fn = f'../../files/{fn_base}'
-file_format = 'sc'
+file_format = 'vabs'
 # format_version = '2.1'
 # fn_out = fn_base.replace('.sc', '.msh')
 # file_format_out = 'gmsh22'
 # format_version_out = '2.2'
 analysis = 0
-smdim = 2
-submodel = 1
+smdim = 1
+submodel = 2
 
 
 model = sgio.readOutput(

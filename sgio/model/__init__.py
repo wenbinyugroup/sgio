@@ -5,5 +5,9 @@ from .shell import (
     ReissnerMindlinPlateShellModel,
     ShellProperty
     )
-from .beam import BeamModel, BeamProperty
+from .beam import (
+    EulerBernoulliBeamModel,
+    TimoshenkoBeamModel,
+    # BeamModel, BeamProperty
+    )
 

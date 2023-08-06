@@ -238,157 +238,157 @@ class CauchyContinuumModel:
 
 # Legacy
 
-from .general import MaterialSection
+# from .general import MaterialSection
 
-class MaterialProperty(MaterialSection):
-    """
-    """
+# class MaterialProperty(MaterialSection):
+#     """
+#     """
 
-    def __init__(self, name=''):
-        MaterialSection.__init__(self, 3)
-        self.name = name
+#     def __init__(self, name=''):
+#         MaterialSection.__init__(self, 3)
+#         self.name = name
 
-        self.temperature = 0
+#         self.temperature = 0
 
-        #: int: (continuum model) Isotropy type.
-        #: Isotropic (0), orthotropic (1), anisotropic (2).
-        self.isotropy = None
+#         #: int: (continuum model) Isotropy type.
+#         #: Isotropic (0), orthotropic (1), anisotropic (2).
+#         self.isotropy = None
 
-        self.e1 = None
-        self.e2 = None
-        self.e3 = None
-        self.g12 = None
-        self.g13 = None
-        self.g23 = None
-        self.nu12 = None
-        self.nu13 = None
-        self.nu23 = None
+#         self.e1 = None
+#         self.e2 = None
+#         self.e3 = None
+#         self.g12 = None
+#         self.g13 = None
+#         self.g23 = None
+#         self.nu12 = None
+#         self.nu13 = None
+#         self.nu23 = None
 
-        self.strength = {}
+#         self.strength = {}
 
-        self.cte = []
-        self.specific_heat = 0
+#         self.cte = []
+#         self.specific_heat = 0
 
-        self.d_thetatheta = 0
-        self.f_eff = 0
-
-
-    def __repr__(self):
-        s = [
-            f'density = {self.density}',
-        ]
-
-        if self.isotropy == 0:
-            s.append('isotropic')
-            s.append(f'E = {self.e1}, v = {self.nu12}')
-        elif self.isotropy == 1:
-            s.append('orthotropic')
-            s.append(f'E1 = {self.e1}, E2 = {self.e2}, E3 = {self.e3}')
-            s.append(f'G12 = {self.g12}, G13 = {self.g13}, G23 = {self.g23}')
-            s.append(f'v12 = {self.nu12}, v13 = {self.nu13}, v23 = {self.nu23}')
-        elif self.isotropy == 2:
-            s.append('anisotropic')
-            for i in range(6):
-                _row = []
-                for j in range(i, 6):
-                    _row.append(f'C{i+1}{j+1} = {self.stff[i][j]}')
-                s.append(', '.join(_row))
-
-        return '\n'.join(s)
+#         self.d_thetatheta = 0
+#         self.f_eff = 0
 
 
-    def summary(self):
-        stype = 'isotropic'
-        sprop = [['e = {0}'.format(self.e1),], ['nu = {0}'.format(self.nu12),]]
-        if self.isotropy == 1:
-            stype = 'orthotropic'
-            sprop = [
-                ['e1 = {0}'.format(self.e1), 'e2 = {0}'.format(self.e2), 'e3 = {0}'.format(self.e3)],
-                ['g12 = {0}'.format(self.g12), 'g13 = {0}'.format(self.g13), 'g23 = {0}'.format(self.g23)],
-                ['nu12 = {0}'.format(self.nu12), 'nu13 = {0}'.format(self.nu13), 'nu23 = {0}'.format(self.nu23)]
-            ]
-        elif self.isotropy == 2:
-            stype = 'anisotropic'
-        print('type:', stype)
-        print('density =', self.density)
-        print('elastic properties:')
-        for p in sprop:
-            print(', '.join(p))
-        return
+#     def __repr__(self):
+#         s = [
+#             f'density = {self.density}',
+#         ]
+
+#         if self.isotropy == 0:
+#             s.append('isotropic')
+#             s.append(f'E = {self.e1}, v = {self.nu12}')
+#         elif self.isotropy == 1:
+#             s.append('orthotropic')
+#             s.append(f'E1 = {self.e1}, E2 = {self.e2}, E3 = {self.e3}')
+#             s.append(f'G12 = {self.g12}, G13 = {self.g13}, G23 = {self.g23}')
+#             s.append(f'v12 = {self.nu12}, v13 = {self.nu13}, v23 = {self.nu23}')
+#         elif self.isotropy == 2:
+#             s.append('anisotropic')
+#             for i in range(6):
+#                 _row = []
+#                 for j in range(i, 6):
+#                     _row.append(f'C{i+1}{j+1} = {self.stff[i][j]}')
+#                 s.append(', '.join(_row))
+
+#         return '\n'.join(s)
 
 
-    def get(self, name):
-        r"""
-        """
-        v = None
-
-        if name == 'density':
-            v = self.density
-
-        elif name in ['e', 'e1', 'e2', 'e3', 'g12', 'g13', 'g23', 'nu', 'nu12', 'nu13', 'nu23']:
-            v = self.constants[name]
-
-        elif name in ['xt', 'yt', 'zt', 'xc', 'yc', 'zc', 'r', 't', 's']:
-            v = self.strength_constants[name]
-        # v = eval('self.{}'.format(name))
-
-        return v
-
-
-    def assignConstants(self, consts):
-        if len(consts) == 2:
-            self.isotropy = 0
-            self.e1 = float(consts[0])
-            self.nu12 = float(consts[1])
-        elif len(consts) == 9:
-            self.isotropy = 1
-            self.e1, self.e2, self.e3 = list(map(float, consts[:3]))
-            self.g12, self.g13, self.g23 = list(map(float, consts[3:6]))
-            self.nu12, self.nu13, self.nu23 = list(map(float, consts[6:]))
+#     def summary(self):
+#         stype = 'isotropic'
+#         sprop = [['e = {0}'.format(self.e1),], ['nu = {0}'.format(self.nu12),]]
+#         if self.isotropy == 1:
+#             stype = 'orthotropic'
+#             sprop = [
+#                 ['e1 = {0}'.format(self.e1), 'e2 = {0}'.format(self.e2), 'e3 = {0}'.format(self.e3)],
+#                 ['g12 = {0}'.format(self.g12), 'g13 = {0}'.format(self.g13), 'g23 = {0}'.format(self.g23)],
+#                 ['nu12 = {0}'.format(self.nu12), 'nu13 = {0}'.format(self.nu13), 'nu23 = {0}'.format(self.nu23)]
+#             ]
+#         elif self.isotropy == 2:
+#             stype = 'anisotropic'
+#         print('type:', stype)
+#         print('density =', self.density)
+#         print('elastic properties:')
+#         for p in sprop:
+#             print(', '.join(p))
+#         return
 
 
-    def setElasticProperty(self, consts, ctype):
-        if ctype == 'isotropic' or ctype == 0:
-            self.isotropy = 0
-            self.e1 = float(consts[0])
-            self.nu12 = float(consts[1])
-        elif ctype == 'lamina':
-            self.isotropy = 1
-            self.e1 = float(consts[0])
-            self.e2 = float(consts[1])
-            self.g12 = float(consts[2])
-            self.nu12 = float(consts[3])
-            self.e3 = self.e2
-            self.g13 = self.g12
-            self.nu13 = self.nu12
-            self.nu23 = 0.3
-            self.g23 = self.e3 / (2.0 * (1 + self.nu23))
-        elif ctype == 'engineering' or ctype == 1:
-            self.isotropy = 1
-            self.e1, self.e2, self.e3 = list(map(float, consts[:3]))
-            self.g12, self.g13, self.g23 = list(map(float, consts[3:6]))
-            self.nu12, self.nu13, self.nu23 = list(map(float, consts[6:]))
-        elif ctype == 'orthotropic':
-            self.isotropy = 1
-        elif ctype == 'anisotropic' or ctype == 2:
-            self.isotropy = 2
+#     def get(self, name):
+#         r"""
+#         """
+#         v = None
 
-        return
+#         if name == 'density':
+#             v = self.density
+
+#         elif name in ['e', 'e1', 'e2', 'e3', 'g12', 'g13', 'g23', 'nu', 'nu12', 'nu13', 'nu23']:
+#             v = self.constants[name]
+
+#         elif name in ['xt', 'yt', 'zt', 'xc', 'yc', 'zc', 'r', 't', 's']:
+#             v = self.strength_constants[name]
+#         # v = eval('self.{}'.format(name))
+
+#         return v
 
 
-    def setStrengthProperty(self, strength):
-        self.strength['constants'] = list(map(float, strength))
-        return
+#     def assignConstants(self, consts):
+#         if len(consts) == 2:
+#             self.isotropy = 0
+#             self.e1 = float(consts[0])
+#             self.nu12 = float(consts[1])
+#         elif len(consts) == 9:
+#             self.isotropy = 1
+#             self.e1, self.e2, self.e3 = list(map(float, consts[:3]))
+#             self.g12, self.g13, self.g23 = list(map(float, consts[3:6]))
+#             self.nu12, self.nu13, self.nu23 = list(map(float, consts[6:]))
 
 
-    def setFailureCriterion(self, criterion):
-        if isinstance(criterion, str):
-            self.strength['criterion'] = self.FAILURE_CRITERION_NAME_TO_ID[criterion]
-        return
+#     def setElasticProperty(self, consts, ctype):
+#         if ctype == 'isotropic' or ctype == 0:
+#             self.isotropy = 0
+#             self.e1 = float(consts[0])
+#             self.nu12 = float(consts[1])
+#         elif ctype == 'lamina':
+#             self.isotropy = 1
+#             self.e1 = float(consts[0])
+#             self.e2 = float(consts[1])
+#             self.g12 = float(consts[2])
+#             self.nu12 = float(consts[3])
+#             self.e3 = self.e2
+#             self.g13 = self.g12
+#             self.nu13 = self.nu12
+#             self.nu23 = 0.3
+#             self.g23 = self.e3 / (2.0 * (1 + self.nu23))
+#         elif ctype == 'engineering' or ctype == 1:
+#             self.isotropy = 1
+#             self.e1, self.e2, self.e3 = list(map(float, consts[:3]))
+#             self.g12, self.g13, self.g23 = list(map(float, consts[3:6]))
+#             self.nu12, self.nu13, self.nu23 = list(map(float, consts[6:]))
+#         elif ctype == 'orthotropic':
+#             self.isotropy = 1
+#         elif ctype == 'anisotropic' or ctype == 2:
+#             self.isotropy = 2
+
+#         return
 
 
-    def setCharacteristicLength(self, char_len=0):
-        self.strength['chara_len'] = char_len
-        return
+#     def setStrengthProperty(self, strength):
+#         self.strength['constants'] = list(map(float, strength))
+#         return
+
+
+#     def setFailureCriterion(self, criterion):
+#         if isinstance(criterion, str):
+#             self.strength['criterion'] = self.FAILURE_CRITERION_NAME_TO_ID[criterion]
+#         return
+
+
+#     def setCharacteristicLength(self, char_len=0):
+#         self.strength['chara_len'] = char_len
+#         return
 
 
