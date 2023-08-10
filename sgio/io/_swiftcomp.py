@@ -2,9 +2,7 @@ import logging
 
 from sgio.core.sg import StructureGene
 from sgio.model import Model
-import sgio.utils.io as sui
-# import sgio.utils.logger as mul
-import sgio.utils.version as suv
+import sgio.utils as sutl
 import sgio.model as smdl
 import sgio.meshio as smsh
 
@@ -23,6 +21,7 @@ logger = logging.getLogger(__name__)
 def readInputBuffer(file, format_version:str, smdim:int):
     """
     """
+    logger.debug(f'local variables:\n{sutl.convertToPrettyString(locals())}')
     sg = StructureGene()
     sg.version = format_version
     sg.smdim = smdim
@@ -72,22 +71,22 @@ def _readHeader(file, format_version:str, smdim:int):
     configs = {}
 
     if smdim == 1:
-        line = sui.readNextNonEmptyLine(file)
+        line = sutl.readNextNonEmptyLine(file)
         configs['model'] = int(line.split()[0])
-        line = sui.readNextNonEmptyLine(file)
+        line = sutl.readNextNonEmptyLine(file)
         configs['curvature'] = list(map(float, line.split()[:3]))
-        line = sui.readNextNonEmptyLine(file)
+        line = sutl.readNextNonEmptyLine(file)
         configs['oblique'] = list(map(float, line.split()[:2]))
     elif smdim == 2:
-        line = sui.readNextNonEmptyLine(file)
+        line = sutl.readNextNonEmptyLine(file)
         configs['model'] = int(line.split()[0])
-        line = sui.readNextNonEmptyLine(file)
+        line = sutl.readNextNonEmptyLine(file)
         configs['curvature'] = list(map(float, line.split()[:2]))
         if format_version >= '2.2':
-            line = sui.readNextNonEmptyLine(file)
+            line = sutl.readNextNonEmptyLine(file)
             configs['lame'] = list(map(float, line.split()[:2]))
 
-    line = sui.readNextNonEmptyLine(file)
+    line = sutl.readNextNonEmptyLine(file)
     line = line.split()
     configs['physics'] = int(line[0])
     configs['ndim_degen_elem'] = int(line[1])
@@ -97,7 +96,7 @@ def _readHeader(file, format_version:str, smdim:int):
         configs['force_flag'] = int(line[4])
         configs['steer_flag'] = int(line[5])
 
-    line = sui.readNextNonEmptyLine(file)
+    line = sutl.readNextNonEmptyLine(file)
     line = line.split()
     configs['sgdim'] = int(line[0])
     configs['num_nodes'] = int(line[1])
@@ -189,8 +188,9 @@ def _readMaterial(file, isotropy:int, ntemp:int=1):
     """
     """
 
-    mp = smdl.MaterialProperty()
+    # mp = smdl.MaterialProperty()
     # mp = smdl.MaterialSection()
+    mp = smdl.CauchyContinuumModel()
     mp.isotropy = isotropy
 
     temp_counter = 0
@@ -207,7 +207,7 @@ def _readMaterial(file, isotropy:int, ntemp:int=1):
 
         # Read elastic properties
         elastic_props = _readElasticProperty(file, isotropy)
-        mp.setElasticProperty(elastic_props, isotropy)
+        mp.setElastic(elastic_props, isotropy)
 
         mp.density = density
 
@@ -339,7 +339,7 @@ def _readEulerBernoulliBeamModel(file):
 
         elif 'Effective Mass Matrix' in line:
             line = file.readline()
-            _mass, line = sui.readMatrix(
+            _mass, line = sutl.readMatrix(
                 file, line, nrows=6, ncols=6,
                 number_type=float, comments=['----',]
                 )
@@ -372,14 +372,14 @@ def _readEulerBernoulliBeamModel(file):
 
         elif 'Effective Stiffness Matrix' in line:
             line = file.readline()
-            _matrix, line = sui.readMatrix(
+            _matrix, line = sutl.readMatrix(
                 file, line, nrows=4, ncols=4,
                 number_type=float, comments=['----',]
                 )
             model.stff = _matrix
         elif 'Effective Compliance Matrix' in line:
             line = file.readline()
-            _matrix, line = sui.readMatrix(
+            _matrix, line = sutl.readMatrix(
                 file, line, nrows=4, ncols=4,
                 number_type=float, comments=['----',]
                 )
@@ -440,7 +440,7 @@ def _readTimoshenkoBeamModel(file):
 
         elif 'Effective Mass Matrix' in line:
             line = file.readline()
-            _mass, line = sui.readMatrix(
+            _mass, line = sutl.readMatrix(
                 file, line, nrows=6, ncols=6,
                 number_type=float, comments=['----',]
                 )
@@ -473,14 +473,14 @@ def _readTimoshenkoBeamModel(file):
 
         elif 'Effective Stiffness Matrix' in line:
             line = file.readline()
-            _matrix, line = sui.readMatrix(
+            _matrix, line = sutl.readMatrix(
                 file, line, nrows=4, ncols=4,
                 number_type=float, comments=['----',]
                 )
             model.stff_c = _matrix
         elif 'Effective Compliance Matrix' in line:
             line = file.readline()
-            _matrix, line = sui.readMatrix(
+            _matrix, line = sutl.readMatrix(
                 file, line, nrows=4, ncols=4,
                 number_type=float, comments=['----',]
                 )
@@ -488,14 +488,14 @@ def _readTimoshenkoBeamModel(file):
 
         elif 'Effective Timoshenko Stiffness Matrix' in line:
             line = file.readline()
-            _matrix, line = sui.readMatrix(
+            _matrix, line = sutl.readMatrix(
                 file, line, nrows=6, ncols=6,
                 number_type=float, comments=['----',]
                 )
             model.stff = _matrix
         elif 'Effective Timoshenko Compliance Matrix' in line:
             line = file.readline()
-            _matrix, line = sui.readMatrix(
+            _matrix, line = sutl.readMatrix(
                 file, line, nrows=6, ncols=6,
                 number_type=float, comments=['----',]
                 )
@@ -637,7 +637,7 @@ def _readTimoshenkoBeamModel(file):
 
 
 #     ln = keywordsIndex['mass']
-#     bp.mass = sui.textToMatrix(linesRead[ln + 2:ln + 8])
+#     bp.mass = sutl.textToMatrix(linesRead[ln + 2:ln + 8])
 
 #     #check whether the analysis is Vlasov or timoshenko
 #     #Read stiffness matrix and compliance matrix
@@ -647,25 +647,25 @@ def _readTimoshenkoBeamModel(file):
 #     else:
 #         try:
 #             ln = keywordsIndex['csm']
-#             bp.stff = sui.textToMatrix(linesRead[ln + 2:ln + 6])
+#             bp.stff = sutl.textToMatrix(linesRead[ln + 2:ln + 6])
 #         except KeyError:
 #             logger.debug('No classical stiffness matrix found.')
 
 #         try:
 #             ln = keywordsIndex['cfm']
-#             bp.cmpl = sui.textToMatrix(linesRead[ln + 2:ln + 6])
+#             bp.cmpl = sutl.textToMatrix(linesRead[ln + 2:ln + 6])
 #         except KeyError:
 #             logger.debug('No classical flexibility matrix found.')
 
 #         try:
 #             ln = keywordsIndex['tsm']
-#             bp.stff_t = sui.textToMatrix(linesRead[ln + 2:ln + 8])
+#             bp.stff_t = sutl.textToMatrix(linesRead[ln + 2:ln + 8])
 #         except KeyError:
 #             logger.debug('No Timoshenko stiffness matrix found.')
 
 #         try:
 #             ln = keywordsIndex['tfm']
-#             bp.cmpl_t = sui.textToMatrix(linesRead[ln + 2:ln + 8])
+#             bp.cmpl_t = sutl.textToMatrix(linesRead[ln + 2:ln + 8])
 #         except KeyError:
 #                 logger.debug('No Timoshenko flexibility matrix found.')
        
@@ -720,7 +720,7 @@ def _readKirchhoffLovePlateShellModel(file):
 
         elif 'Effective Mass Matrix' in line:
             line = file.readline()
-            _mass, line = sui.readMatrix(
+            _mass, line = sutl.readMatrix(
                 file, line, nrows=6, ncols=6,
                 number_type=float, comments=['----',]
                 )
@@ -739,14 +739,14 @@ def _readKirchhoffLovePlateShellModel(file):
 
         elif 'Effective Stiffness Matrix' in line:
             line = file.readline()
-            _matrix, line = sui.readMatrix(
+            _matrix, line = sutl.readMatrix(
                 file, line, nrows=6, ncols=6,
                 number_type=float, comments=['----',]
                 )
             model.stff = _matrix
         elif 'Effective Compliance Matrix' in line:
             line = file.readline()
-            _matrix, line = sui.readMatrix(
+            _matrix, line = sutl.readMatrix(
                 file, line, nrows=6, ncols=6,
                 number_type=float, comments=['----',]
                 )
@@ -754,14 +754,14 @@ def _readKirchhoffLovePlateShellModel(file):
 
         elif 'Geometric Correction to the Stiffness Matrix' in line:
             line = file.readline()
-            _matrix, line = sui.readMatrix(
+            _matrix, line = sutl.readMatrix(
                 file, line, nrows=6, ncols=6,
                 number_type=float, comments=['----',]
                 )
             model.geo_correction_stff = _matrix
         elif 'Total Stiffness Matrix after Geometric Correction' in line:
             line = file.readline()
-            _matrix, line = sui.readMatrix(
+            _matrix, line = sutl.readMatrix(
                 file, line, nrows=6, ncols=6,
                 number_type=float, comments=['----',]
                 )
@@ -929,31 +929,31 @@ def _readKirchhoffLovePlateShellModel(file):
 
 #     try:
 #         ln = keywordsIndex['mass']
-#         sp.mass = sui.textToMatrix(linesRead[ln + 2:ln + 8])
+#         sp.mass = sutl.textToMatrix(linesRead[ln + 2:ln + 8])
 #     except KeyError:
 #         logger.debug('No mass matrix found.')
 
 #     try:
 #         ln = keywordsIndex['stff']
-#         sp.stff = sui.textToMatrix(linesRead[ln + 2:ln + 8])
+#         sp.stff = sutl.textToMatrix(linesRead[ln + 2:ln + 8])
 #     except KeyError:
 #         logger.debug('No classical stiffness matrix found.')
 
 #     try:
 #         ln = keywordsIndex['cmpl']
-#         sp.cmpl = sui.textToMatrix(linesRead[ln + 2:ln + 8])
+#         sp.cmpl = sutl.textToMatrix(linesRead[ln + 2:ln + 8])
 #     except KeyError:
 #         logger.debug('No classical flexibility matrix found.')
 
 #     try:
 #         ln = keywordsIndex['geo_to_stff']
-#         sp.geo_correction_stff = sui.textToMatrix(linesRead[ln + 2:ln + 8])
+#         sp.geo_correction_stff = sutl.textToMatrix(linesRead[ln + 2:ln + 8])
 #     except KeyError:
 #         logger.debug('No geometric correction matrix found.')
 
 #     try:
 #         ln = keywordsIndex['stff_geo']
-#         sp.stff_geo = sui.textToMatrix(linesRead[ln + 2:ln + 8])
+#         sp.stff_geo = sutl.textToMatrix(linesRead[ln + 2:ln + 8])
 #     except KeyError:
 #         logger.debug('No geometric corrected stiffness matrix found.')
 
@@ -1030,13 +1030,13 @@ def _readOutputCauchyContinuumModel(file):
 
     try:
         ln = keywordsIndex['stff']
-        mp.stff = sui.textToMatrix(linesRead[ln + 2:ln + 8])
+        mp.stff = sutl.textToMatrix(linesRead[ln + 2:ln + 8])
     except KeyError:
         logger.debug('No classical stiffness matrix found.')
 
     try:
         ln = keywordsIndex['cmpl']
-        mp.cmpl = sui.textToMatrix(linesRead[ln + 2:ln + 8])
+        mp.cmpl = sutl.textToMatrix(linesRead[ln + 2:ln + 8])
     except KeyError:
         logger.debug('No classical flexibility matrix found.')
 
@@ -1226,8 +1226,9 @@ def writeInputBuffer(sg, file, file_format, sfi, sff, sg_fmt, version=None):
     logger.debug(f'writing sg input...')
 
     ssff = '{:' + sff + '}'
-    if not version is None:
-        sg.version = suv.Version(version)
+    # if not version is None:
+    #     sg.version = sutl.Version(version)
+    sg.version = version
 
     logger.debug('format version: {}'.format(sg.version))
 
@@ -1253,7 +1254,7 @@ def writeInputBufferGlobal(sg, file, file_format, sfi, sff, analysis, version=No
     elif analysis.startswith('f'):
         _writeInputMaterialStrength(sg, file, file_format, sfi, sff)
 
-    sui.writeFormatIntegers(file, [sg.global_loads_type, ], sfi)
+    sutl.writeFormatIntegers(file, [sg.global_loads_type, ], sfi)
 
     if analysis != 'f':
         _writeInputLoads(sg, file, file_format, sfi, sff)
@@ -1322,28 +1323,28 @@ def _writeMaterials(sg:StructureGene, file, file_format, sfi, sff):
         # else:
         anisotropy = m.get('isotropy')
 
-        sui.writeFormatIntegers(file, (mid, anisotropy, 1), sfi, newline=False)
+        sutl.writeFormatIntegers(file, (mid, anisotropy, 1), sfi, newline=False)
         if counter == 0:  file.write('  # materials')
         file.write('\n')
-        sui.writeFormatFloats(file, (m.get('temperature'), m.get('density')), sff)
+        sutl.writeFormatFloats(file, (m.get('temperature'), m.get('density')), sff)
 
         # Write elastic properties
         if anisotropy == 0:
-            sui.writeFormatFloats(file, [m.get('e1'), m.get('nu12')], sff)
+            sutl.writeFormatFloats(file, [m.get('e1'), m.get('nu12')], sff)
 
         elif anisotropy == 1:
-            sui.writeFormatFloats(file, [m.get('e1'), m.get('e2'), m.get('e3')], sff)
-            sui.writeFormatFloats(file, [m.get('g12'), m.get('g13'), m.get('g23')], sff)
-            sui.writeFormatFloats(file, [m.get('nu12'), m.get('nu13'), m.get('nu23')], sff)
+            sutl.writeFormatFloats(file, [m.get('e1'), m.get('e2'), m.get('e3')], sff)
+            sutl.writeFormatFloats(file, [m.get('g12'), m.get('g13'), m.get('g23')], sff)
+            sutl.writeFormatFloats(file, [m.get('nu12'), m.get('nu13'), m.get('nu23')], sff)
 
         elif anisotropy == 2:
             for i in range(6):
                 for j in range(i, 6):
-                    sui.writeFormatFloats(file, m.get(f'c{i+1}{j+1}'), sff, newline=False)
+                    sutl.writeFormatFloats(file, m.get(f'c{i+1}{j+1}'), sff, newline=False)
                 file.write('\n')
 
         if sg.physics in [1, 4, 6]:
-            sui.writeFormatFloats(file, m.get('cte')+[m.get('specific_heat'),], sff)
+            sutl.writeFormatFloats(file, m.get('cte')+[m.get('specific_heat'),], sff)
 
         file.write('\n')
         
@@ -1372,7 +1373,7 @@ def _writeHeader(sg:StructureGene, file, sfi, sff, version=None):
 
         if sg.smdim == 1:  # beam
             # initial twist/curvatures
-            sui.writeFormatFloats(
+            sutl.writeFormatFloats(
                 file,
                 [sg.initial_twist, sg.initial_curvature[0], sg.initial_curvature[1]],
                 sff, newline=False
@@ -1380,14 +1381,14 @@ def _writeHeader(sg:StructureGene, file, sfi, sff, version=None):
             file.write('  # initial curvatures k11, k12, k13\n')
             file.write('\n')
             # oblique cross section
-            sui.writeFormatFloats(file, sg.oblique, sff)
+            sutl.writeFormatFloats(file, sg.oblique, sff)
 
         elif sg.smdim == 2:  # shell
             # initial twist/curvatures
-            sui.writeFormatFloats(file, sg.initial_curvature, sff, newline=False)
+            sutl.writeFormatFloats(file, sg.initial_curvature, sff, newline=False)
             file.write('  # initial curvatures k12, k21\n')
             if version > '2.1':
-                sui.writeFormatFloats(file, sg.lame_params, sff, newline=False)
+                sutl.writeFormatFloats(file, sg.lame_params, sff, newline=False)
                 file.write('  # Lame parameters\n')
         file.write('\n')
 
@@ -1400,7 +1401,7 @@ def _writeHeader(sg:StructureGene, file, sfi, sff, version=None):
     if version > '2.1':
         nums += [sg.force_flag, sg.steer_flag]
         cmt = cmt + ', force_flag, steer_flag'
-    sui.writeFormatIntegers(file, nums, sfi, newline=False)
+    sutl.writeFormatIntegers(file, nums, sfi, newline=False)
     file.write(cmt)
     file.write('\n\n')
 
@@ -1408,7 +1409,7 @@ def _writeHeader(sg:StructureGene, file, sfi, sff, version=None):
         sg.sgdim, sg.nnodes, sg.nelems, sg.nmates,
         sg.num_slavenodes, sg.nma_combs
     ]
-    sui.writeFormatIntegers(file, nums, sfi, newline=False)
+    sutl.writeFormatIntegers(file, nums, sfi, newline=False)
     file.write('  # nsg, nnode, nelem, nmate, nslave, nlayer')
     file.write('\n\n')
 
@@ -1450,16 +1451,16 @@ def _writeInputMaterialStrength(sg, file, file_format, sfi, sff):
             elif m.failure_criterion == 5:
                 pass
 
-        sui.writeFormatIntegers(
+        sutl.writeFormatIntegers(
             file,
             # (m.strength['criterion'], len(m.strength['constants'])),
             [m.failure_criterion, len(strength)],
             sfi
         )
         # file.write((sff+'\n').format(m.strength['chara_len']))
-        sui.writeFormatFloats(file, [m.char_len,], sff)
-        # sui.writeFormatFloats(file, m.strength['constants'], sff[2:-1])
-        sui.writeFormatFloats(file, strength, sff)
+        sutl.writeFormatFloats(file, [m.char_len,], sff)
+        # sutl.writeFormatFloats(file, m.strength['constants'], sff[2:-1])
+        sutl.writeFormatFloats(file, strength, sff)
     return
 
 
@@ -1471,8 +1472,8 @@ def _writeInputMaterialStrength(sg, file, file_format, sfi, sff):
 
 
 def _writeInputDisplacements(sg, file, file_format, sff):
-    sui.writeFormatFloats(file, sg.global_displacements, sff[2:-1])
-    sui.writeFormatFloatsMatrix(file, sg.global_rotations, sff[2:-1])
+    sutl.writeFormatFloats(file, sg.global_displacements, sff[2:-1])
+    sutl.writeFormatFloatsMatrix(file, sg.global_rotations, sff[2:-1])
 
 
 
@@ -1485,19 +1486,19 @@ def _writeInputDisplacements(sg, file, file_format, sff):
 def _writeInputLoads(sg, file, file_format, sfi, sff):
     if file_format.startswith('v'):
         if sg.model == 0:
-            sui.writeFormatFloats(file, sg.global_loads)
+            sutl.writeFormatFloats(file, sg.global_loads)
         else:
-            sui.writeFormatFloats(file, [sg.global_loads[i] for i in [0, 3, 4, 5]])
-            sui.writeFormatFloats(file, [sg.global_loads[i] for i in [1, 2]])
+            sutl.writeFormatFloats(file, [sg.global_loads[i] for i in [0, 3, 4, 5]])
+            sutl.writeFormatFloats(file, [sg.global_loads[i] for i in [1, 2]])
             file.write('\n')
-            sui.writeFormatFloats(file, sg.global_loads_dist[0])
-            sui.writeFormatFloats(file, sg.global_loads_dist[1])
-            sui.writeFormatFloats(file, sg.global_loads_dist[2])
-            sui.writeFormatFloats(file, sg.global_loads_dist[3])
+            sutl.writeFormatFloats(file, sg.global_loads_dist[0])
+            sutl.writeFormatFloats(file, sg.global_loads_dist[1])
+            sutl.writeFormatFloats(file, sg.global_loads_dist[2])
+            sutl.writeFormatFloats(file, sg.global_loads_dist[3])
     elif file_format.startswith('s'):
         # file.write((sfi+'\n').format(sg.global_loads_type))
         for load_case in sg.global_loads:
-            sui.writeFormatFloats(file, load_case, sff)
+            sutl.writeFormatFloats(file, load_case, sff)
     file.write('\n')
     return
 

@@ -40,7 +40,7 @@ def read(fn:str, file_format:str, format_version:str='', sgdim:int=3, smdim:int=
             sg = _vabs.readBuffer(file, file_format, format_version, smdim)
     elif file_format == 'abaqus':
         with open(fn, 'r') as file:
-            sg = _abaqus.readInputBuffer(file, smdim=smdim)
+            sg = _abaqus.readInputBuffer(file, sgdim=sgdim, smdim=smdim)
 
     else:
         if not sg:
@@ -97,7 +97,7 @@ def write(
 
     logger.info(f'writting sg data to {fn} (format: {file_format})...')
 
-    logger.debug(f'local variables:\n{sutils.convertToPrettyString(locals())}')
+    # logger.debug(f'local variables:\n{sutils.convertToPrettyString(locals())}')
 
     _file_format = file_format.lower()
 

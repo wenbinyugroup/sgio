@@ -1,9 +1,8 @@
 import logging
 
 from sgio.core.sg import StructureGene
-import sgio.utils.io as sui
-import sgio.utils.version as suv
-import sgio.model as sgmodel
+import sgio.utils as sutl
+import sgio.model as smdl
 import sgio.meshio as smsh
 
 logger = logging.getLogger(__name__)
@@ -59,18 +58,18 @@ def _readHeader(file, file_format:str, format_version:str, smdim:int):
 
     configs['sgdim'] = 2
 
-    line = sui.readNextNonEmptyLine(file)
+    line = sutl.readNextNonEmptyLine(file)
     line = line.split()
     configs['format'] = int(line[0])
     configs['num_mat_angle3_comb'] = int(line[1])
 
-    line = sui.readNextNonEmptyLine(file)
+    line = sutl.readNextNonEmptyLine(file)
     line = line.split()
     configs['model'] = int(line[0])
     configs['do_damping'] = int(line[1])
     configs['physics'] = 1 if int(line[2]) > 0 else 0
 
-    line = sui.readNextNonEmptyLine(file)
+    line = sutl.readNextNonEmptyLine(file)
     line = line.split()
     configs['is_curve'] = int(line[0])
     configs['is_oblique'] = int(line[1])
@@ -78,16 +77,16 @@ def _readHeader(file, file_format:str, format_version:str, smdim:int):
     configs['model'] = 2 if line[3] == '1' else configs['model']  # vlasov
 
     if configs['is_curve'] == 1:
-        line = sui.readNextNonEmptyLine(file)
+        line = sutl.readNextNonEmptyLine(file)
         line = line.split()
         configs['curvature'] = list(map(float, line[:3]))
 
     if configs['is_oblique'] == 1:
-        line = sui.readNextNonEmptyLine(file)
+        line = sutl.readNextNonEmptyLine(file)
         line = line.split()
         configs['oblique'] = list(map(float, line[:2]))
 
-    line = sui.readNextNonEmptyLine(file)
+    line = sutl.readNextNonEmptyLine(file)
     line = line.split()
     configs['num_nodes'] = int(line[0])
     configs['num_elements'] = int(line[1])
@@ -181,7 +180,8 @@ def _readMaterial(file, file_format:str, isotropy:int, ntemp:int=1):
     """
 
     # mp = mmsd.MaterialProperty()
-    mp = sgmodel.MaterialSection()
+    # mp = smdl.MaterialSection()
+    mp = smdl.CauchyContinuumModel()
     mp.isotropy = isotropy
 
     temp_counter = 0
@@ -189,7 +189,7 @@ def _readMaterial(file, file_format:str, isotropy:int, ntemp:int=1):
 
         # Read elastic properties
         elastic_props = _readElasticProperty(file, isotropy)
-        mp.setElasticProperty(elastic_props, isotropy)
+        mp.setElastic(elastic_props, isotropy)
 
         line = file.readline().strip()
         while line == '':
@@ -281,7 +281,7 @@ def _readEulerBernoulliBeamModel(file):
     """
     """
 
-    model = sgmodel.EulerBernoulliBeamModel()
+    model = smdl.EulerBernoulliBeamModel()
 
     block = ''
     line = file.readline()
@@ -314,14 +314,14 @@ def _readEulerBernoulliBeamModel(file):
 
         elif line == 'The 6X6 Mass Matrix':
             for _ in range(3): line = file.readline()
-            _matrix, line = sui.readMatrix(
+            _matrix, line = sutl.readMatrix(
                 file, line, nrows=6, ncols=6,
                 number_type=float
                 )
             model.mass = _matrix
         elif '6X6 Mass Matrix at the Mass Center' in line:
             for _ in range(3): line = file.readline()
-            _matrix, line = sui.readMatrix(
+            _matrix, line = sutl.readMatrix(
                 file, line, nrows=6, ncols=6,
                 number_type=float
                 )
@@ -354,13 +354,13 @@ def _readEulerBernoulliBeamModel(file):
 
         elif 'Classical Stiffness Matrix' in line:
             for _ in range(3): line = file.readline()
-            _matrix, line = sui.readMatrix(
+            _matrix, line = sutl.readMatrix(
                 file, line, nrows=4, ncols=4, number_type=float
                 )
             model.stff = _matrix
         elif 'Classical Compliance Matrix' in line:
             for _ in range(3): line = file.readline()
-            _matrix, line = sui.readMatrix(
+            _matrix, line = sutl.readMatrix(
                 file, line, nrows=4, ncols=4, number_type=float
                 )
             model.cmpl = _matrix
@@ -396,7 +396,7 @@ def _readTimoshenkoBeamModel(file):
     """
     """
 
-    model = sgmodel.TimoshenkoBeamModel()
+    model = smdl.TimoshenkoBeamModel()
 
     block = ''
     line = file.readline()
@@ -429,14 +429,14 @@ def _readTimoshenkoBeamModel(file):
 
         elif line == 'The 6X6 Mass Matrix':
             for _ in range(3): line = file.readline()
-            _matrix, line = sui.readMatrix(
+            _matrix, line = sutl.readMatrix(
                 file, line, nrows=6, ncols=6,
                 number_type=float
                 )
             model.mass = _matrix
         elif '6X6 Mass Matrix at the Mass Center' in line:
             for _ in range(3): line = file.readline()
-            _matrix, line = sui.readMatrix(
+            _matrix, line = sutl.readMatrix(
                 file, line, nrows=6, ncols=6,
                 number_type=float
                 )
@@ -469,13 +469,13 @@ def _readTimoshenkoBeamModel(file):
 
         elif 'Classical Stiffness Matrix' in line:
             for _ in range(3): line = file.readline()
-            _matrix, line = sui.readMatrix(
+            _matrix, line = sutl.readMatrix(
                 file, line, nrows=4, ncols=4, number_type=float
                 )
             model.stff_c = _matrix
         elif 'Classical Compliance Matrix' in line:
             for _ in range(3): line = file.readline()
-            _matrix, line = sui.readMatrix(
+            _matrix, line = sutl.readMatrix(
                 file, line, nrows=4, ncols=4, number_type=float
                 )
             model.cmpl_c = _matrix
@@ -502,13 +502,13 @@ def _readTimoshenkoBeamModel(file):
 
         elif 'Timoshenko Stiffness Matrix' in line:
             for _ in range(3): line = file.readline()
-            _matrix, line = sui.readMatrix(
+            _matrix, line = sutl.readMatrix(
                 file, line, nrows=6, ncols=6, number_type=float
                 )
             model.stff = _matrix
         elif 'Timoshenko Compliance Matrix' in line:
             for _ in range(3): line = file.readline()
-            _matrix, line = sui.readMatrix(
+            _matrix, line = sutl.readMatrix(
                 file, line, nrows=6, ncols=6, number_type=float
                 )
             model.cmpl = _matrix
@@ -610,7 +610,7 @@ def _readTimoshenkoBeamModel(file):
     # else:
     #     try:
     #         ln = keywordsIndex['csm']
-    #         bp.stff = sui.textToMatrix(linesRead[ln + 2:ln + 6])
+    #         bp.stff = sutl.textToMatrix(linesRead[ln + 2:ln + 6])
     #         #old dic method to save classical stiffness
     #         # sm.eff_props[1]['stiffness']['classical'] = utl.textToMatrix(linesRead[ln + 3:ln + 7])
     #     except KeyError:
@@ -621,7 +621,7 @@ def _readTimoshenkoBeamModel(file):
 
     #     try:
     #         ln = keywordsIndex['cfm']
-    #         bp.cmpl = sui.textToMatrix(linesRead[ln + 2:ln + 6])
+    #         bp.cmpl = sutl.textToMatrix(linesRead[ln + 2:ln + 6])
     #         #old dic method to save classical compliance
     #         # sm.eff_props[1]['compliance']['classical'] = utl.textToMatrix(linesRead[ln + 3:ln + 7])
     #     except KeyError:
@@ -632,7 +632,7 @@ def _readTimoshenkoBeamModel(file):
 
     #     try:
     #         ln = keywordsIndex['tsm']
-    #         bp.stff_t = sui.textToMatrix(linesRead[ln + 2:ln + 8])
+    #         bp.stff_t = sutl.textToMatrix(linesRead[ln + 2:ln + 8])
     #         #old dic method to save refined stiffness matrix
     #         # sm.eff_props[1]['stiffness']['refined'] = utl.textToMatrix(linesRead[ln + 3:ln + 9])
     #     except KeyError:
@@ -642,7 +642,7 @@ def _readTimoshenkoBeamModel(file):
     #         #     pass
     #     try:
     #         ln = keywordsIndex['tfm']
-    #         bp.cmpl_t = sui.textToMatrix(linesRead[ln + 2:ln + 8])
+    #         bp.cmpl_t = sutl.textToMatrix(linesRead[ln + 2:ln + 8])
     #         #old dic method to save refined compliance matrix
     #         # sm.eff_props[1]['compliance']['refined'] = utl.textToMatrix(linesRead[ln + 3:ln + 9])
     #     except KeyError:
@@ -848,7 +848,7 @@ def writeInput(sg, fn, file_format, sfi, sff, sg_fmt, version=None, mesh_only=Fa
 
     ssff = '{:' + sff + '}'
     if not version is None:
-        sg.version = suv.Version(version)
+        sg.version = sutl.Version(version)
 
     logger.debug('format version: {}'.format(sg.version))
 
@@ -935,32 +935,32 @@ def _writeMaterials(sg, file, file_format, sfi, sff):
         # print(anisotropy)
 
         if file_format.startswith('v'):
-            sui.writeFormatIntegers(file, (mid, anisotropy), sfi, newline=False)
+            sutl.writeFormatIntegers(file, (mid, anisotropy), sfi, newline=False)
             if counter == 0:
                 file.write('  # materials')
             file.write('\n')
         elif file_format.startswith('s'):
-            sui.writeFormatIntegers(file, (mid, anisotropy, 1), sfi, newline=False)
+            sutl.writeFormatIntegers(file, (mid, anisotropy, 1), sfi, newline=False)
             if counter == 0:
                 file.write('  # materials')
             file.write('\n')
-            sui.writeFormatFloats(file, (m.temperature, m.density), sff)
+            sutl.writeFormatFloats(file, (m.temperature, m.density), sff)
 
         # Write elastic properties
         if anisotropy == 0:
             # mpc = m.constants
-            sui.writeFormatFloats(file, [m.e1, m.nu12], sff)
+            sutl.writeFormatFloats(file, [m.e1, m.nu12], sff)
 
         elif anisotropy == 1:
             # mpc = m.constants
-            sui.writeFormatFloats(file, [m.e1, m.e2, m.e3], sff)
-            sui.writeFormatFloats(file, [m.g12, m.g13, m.g23], sff)
-            sui.writeFormatFloats(file, [m.nu12, m.nu13, m.nu23], sff)
+            sutl.writeFormatFloats(file, [m.e1, m.e2, m.e3], sff)
+            sutl.writeFormatFloats(file, [m.g12, m.g13, m.g23], sff)
+            sutl.writeFormatFloats(file, [m.nu12, m.nu13, m.nu23], sff)
 
 
         elif anisotropy == 2:
             for i in range(6):
-                sui.writeFormatFloats(file, m.stff[i][i:], sff)
+                sutl.writeFormatFloats(file, m.stff[i][i:], sff)
                 # for j in range(i, 6):
                 #     file.write(sff.format(m.stff[i][j]))
                 # file.write('\n')
@@ -969,10 +969,10 @@ def _writeMaterials(sg, file, file_format, sfi, sff):
         # print('m.cte =', m.cte)
         # print('m.specific_heat =', m.specific_heat)
         if sg.physics in [1, 4, 6]:
-            sui.writeFormatFloats(file, m.cte+[m.specific_heat,], sff)
+            sutl.writeFormatFloats(file, m.cte+[m.specific_heat,], sff)
 
         if file_format.lower().startswith('v'):
-            sui.writeFormatFloats(file, (m.density,), sff)
+            sutl.writeFormatFloats(file, (m.density,), sff)
 
         file.write('\n')
         
@@ -995,7 +995,7 @@ def _writeHeader(sg, file, file_format, sfi, sff, sg_fmt, version=None):
     # VABS
     if file_format.startswith('v'):
         # format_flag  nlayer
-        sui.writeFormatIntegers(file, [sg_fmt, len(sg.mocombos)])
+        sutl.writeFormatIntegers(file, [sg_fmt, len(sg.mocombos)])
         file.write('\n')
 
         # timoshenko_flag  damping_flag  thermal_flag
@@ -1012,7 +1012,7 @@ def _writeHeader(sg, file, file_format, sfi, sff, sg_fmt, version=None):
         physics = 0
         if sg.physics == 1:
             physics = 3
-        sui.writeFormatIntegers(
+        sutl.writeFormatIntegers(
             file, [model, sg.do_dampling, physics], sfi, newline=False)
         file.write('  # model_flag, damping_flag, thermal_flag\n\n')
 
@@ -1022,12 +1022,12 @@ def _writeHeader(sg, file, file_format, sfi, sff, sg_fmt, version=None):
             line[0] = 1
         if (sg.oblique[0] != 1.0) or (sg.oblique[1] != 0.0):
             line[1] = 1
-        sui.writeFormatIntegers(file, line, sfi, newline=False)
+        sutl.writeFormatIntegers(file, line, sfi, newline=False)
         file.write('  # curve_flag, oblique_flag, trapeze_flag, vlasov_flag\n\n')
 
         # k1  k2  k3
         if line[0] == 1:
-            sui.writeFormatFloats(
+            sutl.writeFormatFloats(
                 file,
                 [sg.initial_twist, sg.initial_curvature[0], sg.initial_curvature[1]],
                 sff, newline=False
@@ -1036,11 +1036,11 @@ def _writeHeader(sg, file, file_format, sfi, sff, sg_fmt, version=None):
         
         # oblique1  oblique2
         if line[1] == 1:
-            sui.writeFormatFloats(file, sg.oblique, sff, newline=False)
+            sutl.writeFormatFloats(file, sg.oblique, sff, newline=False)
             file.write('  # cos11, cos21 (obliqueness)\n\n')
         
         # nnode  nelem  nmate
-        sui.writeFormatIntegers(
+        sutl.writeFormatIntegers(
             file, [sg.nnodes, sg.nelems, sg.nmates], sfi, newline=False)
         file.write('  # nnode, nelem, nmate\n\n')
 
@@ -1057,7 +1057,7 @@ def _writeHeader(sg, file, file_format, sfi, sff, sg_fmt, version=None):
             if sg.smdim == 1:  # beam
                 # initial twist/curvatures
                 # file.write((sff * 3 + '\n').format(0., 0., 0.))
-                sui.writeFormatFloats(
+                sutl.writeFormatFloats(
                     file,
                     [sg.initial_twist, sg.initial_curvature[0], sg.initial_curvature[1]],
                     sff, newline=False
@@ -1066,19 +1066,19 @@ def _writeHeader(sg, file, file_format, sfi, sff, sg_fmt, version=None):
                 file.write('\n')
                 # oblique cross section
                 # file.write((sff * 2 + '\n').format(1., 0.))
-                sui.writeFormatFloats(file, sg.oblique, sff)
+                sutl.writeFormatFloats(file, sg.oblique, sff)
 
             elif sg.smdim == 2:  # shell
                 # initial twist/curvatures
                 # file.write((sff * 2 + '\n').format(
                 #     sg.initial_curvature[0], sg.initial_curvature[1]
                 # ))
-                sui.writeFormatFloats(file, sg.initial_curvature, sff, newline=False)
+                sutl.writeFormatFloats(file, sg.initial_curvature, sff, newline=False)
                 file.write('  # initial curvatures k12, k21\n')
                 # if sg.geo_correct:
                 # if sg.initial_curvature[0] != 0 or sg.initial_curvature[1] != 0:
                 if version > '2.1':
-                    sui.writeFormatFloats(file, sg.lame_params, sff, newline=False)
+                    sutl.writeFormatFloats(file, sg.lame_params, sff, newline=False)
                     file.write('  # Lame parameters\n')
             file.write('\n')
 
@@ -1091,7 +1091,7 @@ def _writeHeader(sg, file, file_format, sfi, sff, sg_fmt, version=None):
         if version > '2.1':
             nums += [sg.force_flag, sg.steer_flag]
             cmt = cmt + ', force_flag, steer_flag'
-        sui.writeFormatIntegers(file, nums, sfi, newline=False)
+        sutl.writeFormatIntegers(file, nums, sfi, newline=False)
         file.write(cmt)
         file.write('\n\n')
         # file.write((sfi * 6 + '\n').format(
@@ -1102,7 +1102,7 @@ def _writeHeader(sg, file, file_format, sfi, sff, sg_fmt, version=None):
         #     sg.num_slavenodes,
         #     len(sg.mocombos)
         # ))
-        sui.writeFormatIntegers(file, [
+        sutl.writeFormatIntegers(file, [
             sg.sgdim,
             sg.nnodes,
             sg.nelems,
@@ -1151,16 +1151,16 @@ def _writeInputMaterialStrength(sg, file, file_format, sfi, sff):
             elif m.failure_criterion == 5:
                 pass
 
-        sui.writeFormatIntegers(
+        sutl.writeFormatIntegers(
             file,
             # (m.strength['criterion'], len(m.strength['constants'])),
             [m.failure_criterion, len(strength)],
             sfi
         )
         # file.write((sff+'\n').format(m.strength['chara_len']))
-        sui.writeFormatFloats(file, [m.char_len,], sff)
-        # sui.writeFormatFloats(file, m.strength['constants'], sff[2:-1])
-        sui.writeFormatFloats(file, strength, sff)
+        sutl.writeFormatFloats(file, [m.char_len,], sff)
+        # sutl.writeFormatFloats(file, m.strength['constants'], sff[2:-1])
+        sutl.writeFormatFloats(file, strength, sff)
     return
 
 
@@ -1172,8 +1172,8 @@ def _writeInputMaterialStrength(sg, file, file_format, sfi, sff):
 
 
 def _writeInputDisplacements(sg, file, file_format, sff):
-    sui.writeFormatFloats(file, sg.global_displacements, sff[2:-1])
-    sui.writeFormatFloatsMatrix(file, sg.global_rotations, sff[2:-1])
+    sutl.writeFormatFloats(file, sg.global_displacements, sff[2:-1])
+    sutl.writeFormatFloatsMatrix(file, sg.global_rotations, sff[2:-1])
 
 
 
@@ -1186,19 +1186,19 @@ def _writeInputDisplacements(sg, file, file_format, sff):
 def _writeInputLoads(sg, file, file_format, sfi, sff):
     if file_format.startswith('v'):
         if sg.model == 0:
-            sui.writeFormatFloats(file, sg.global_loads)
+            sutl.writeFormatFloats(file, sg.global_loads)
         else:
-            sui.writeFormatFloats(file, [sg.global_loads[i] for i in [0, 3, 4, 5]])
-            sui.writeFormatFloats(file, [sg.global_loads[i] for i in [1, 2]])
+            sutl.writeFormatFloats(file, [sg.global_loads[i] for i in [0, 3, 4, 5]])
+            sutl.writeFormatFloats(file, [sg.global_loads[i] for i in [1, 2]])
             file.write('\n')
-            sui.writeFormatFloats(file, sg.global_loads_dist[0])
-            sui.writeFormatFloats(file, sg.global_loads_dist[1])
-            sui.writeFormatFloats(file, sg.global_loads_dist[2])
-            sui.writeFormatFloats(file, sg.global_loads_dist[3])
+            sutl.writeFormatFloats(file, sg.global_loads_dist[0])
+            sutl.writeFormatFloats(file, sg.global_loads_dist[1])
+            sutl.writeFormatFloats(file, sg.global_loads_dist[2])
+            sutl.writeFormatFloats(file, sg.global_loads_dist[3])
     elif file_format.startswith('s'):
         # file.write((sfi+'\n').format(sg.global_loads_type))
         for load_case in sg.global_loads:
-            sui.writeFormatFloats(file, load_case, sff)
+            sutl.writeFormatFloats(file, load_case, sff)
     file.write('\n')
     return
 
@@ -1219,7 +1219,7 @@ def writeInputGlobal(sg, fn, file_format, sfi, sff, analysis, version=None):
 
         if file_format.startswith('s'):
             # file.write((sfi+'\n').format(sg.global_loads_type))
-            sui.writeFormatIntegers(file, [sg.global_loads_type, ], sfi)
+            sutl.writeFormatIntegers(file, [sg.global_loads_type, ], sfi)
 
         if analysis != 'f':
             sg._writeInputLoads(file, file_format, sfi, sff)

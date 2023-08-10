@@ -217,6 +217,15 @@ class CauchyContinuumModel:
         elif name == 'specific_heat':
             v = self.specific_heat
 
+        elif name.startswith('alpha'):
+            if name == 'alpha':
+                v = self.cte[0]
+            else:
+                _ij = name[-2:]
+                for _k, __ij in enumerate(['11', '22', '33', '23', '13', '12']):
+                    if _ij == __ij:
+                        v = self.cte[_k]
+                        break
         elif name.startswith('c'):
             _i = int(name[1]) - 1
             _j = int(name[2]) - 1

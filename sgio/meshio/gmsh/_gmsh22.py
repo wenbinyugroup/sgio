@@ -289,6 +289,9 @@ def write_buffer(file, mesh, float_fmt=".16e", binary=False, **kwargs):
     for key, d in mesh.cell_data.items():
         if key in ["gmsh:physical", "gmsh:geometrical", "cell_tags"]:
             tag_data[key] = d
+        elif key in ["property_id",]:
+            tag_data["gmsh:physical"] = d
+            tag_data["gmsh:geometrical"] = d
         else:
             cell_data[key] = d
 
@@ -418,10 +421,10 @@ def _write_elements(fh, cells: list[CellBlock], tag_data, binary: bool):
 
         consecutive_index += len(node_idcs)
     if binary:
-        fh.write(b"\n")
+        # fh.write(b"\n")
         fh.write(b"$EndElements\n")
     else:
-        fh.write("\n")
+        # fh.write("\n")
         fh.write("$EndElements\n")
 
 
