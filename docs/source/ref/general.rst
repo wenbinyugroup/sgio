@@ -7,10 +7,10 @@ General
 
 ::
 
-    sgio.model.general.MaterialSection
+    sgio.model.general.Model
 
 
-..  autoclass:: MaterialSection
+..  autoclass:: Model
     :members:
     :undoc-members:
     :inherited-members:

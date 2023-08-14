@@ -1,13 +1,12 @@
-model Module
+Model
 ==============
 
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
-   sg
    general
    solid
+   plateshell
    beam
-   global
 

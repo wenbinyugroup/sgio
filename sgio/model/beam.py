@@ -413,11 +413,11 @@ class TimoshenkoBeamModel:
 
         #: list of list of floats:
         #: The 6x6 mass matrix
-        self.mass = []
+        self.mass = None
 
         #: list of lists of floats:
         #: The 6x6 mass matrix at the mass center
-        self.mass_cs = []
+        self.mass_mc = None
 
         #: float: Mass center location in x2 direction
         self.xm2 = None

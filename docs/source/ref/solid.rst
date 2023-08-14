@@ -7,10 +7,10 @@ Solid
 
 ::
 
-    sgio.model.solid.Cauchy
+    sgio.model.solid.CauchyContinuumModel
 
 
-..  autoclass:: Cauchy
+..  autoclass:: CauchyContinuumModel
     :members:
     :undoc-members:
     :inherited-members:

@@ -5,23 +5,34 @@ Beam
 
 .. highlight:: python
 
+Euler-Bernoulli beam model
+---------------------------
+
 ::
 
-    sgio.model.beam.BeamModel
+    sgio.model.beam.EulerBernoulliBeamModel
 
 
-.. ..  autoclass:: BeamProperty
-..     :members:
-..     :undoc-members:
-..     :inherited-members:
+..  autoclass:: EulerBernoulliBeamModel
+    :members:
+    :undoc-members:
+    :inherited-members:
 
-Class methods
----------------
+.. ..  autosummary::
+..     :toctree: _temp
 
-..  autosummary::
-    :toctree: _temp
+..     sgio.model.beam.EulerBernoulliBeamModel.get
+..     sgio.model.beam.EulerBernoulliBeamModel.getAll
 
-    sgio.model.beam.BeamModel.printData
-    sgio.model.beam.BeamModel.get
-    sgio.model.beam.BeamModel.getAll
+Timoshenko beam model
+---------------------------
 
+::
+
+    sgio.model.beam.TimoshenkoBeamModel
+
+
+..  autoclass:: TimoshenkoBeamModel
+    :members:
+    :undoc-members:
+    :inherited-members:

@@ -17,16 +17,28 @@ import sgio.utils as sutils
 
 
 def read(fn:str, file_format:str, format_version:str='', sgdim:int=3, smdim:int=3, sg:StructureGene=None, mesh_only:bool=False):
-    """Read SG input.
+    """Read SG data file.
 
     Parameters
     ----------
-    fn : str
-        Name of the SG input file
-    file_format : str
-        Format of the SG input file
-    smdim : int
+    fn
+        Name of the SG data file
+    file_format
+        Format of the SG data file
+    format_version
+        Version of the format
+    sgdim
+        Dimension of the geometry
+    smdim
         Dimension of the macro structural model
+    sg
+        Structure gene object
+    mesh_only
+        If read meshing data only
+
+    Returns
+    -------
+    Structure gene
     """
 
     file_format = file_format.lower()
@@ -56,6 +68,27 @@ def readOutput(
     fn:str, file_format:str, analysis=0, smdim:int=1,
     sg:StructureGene=None, **kwargs
     ):
+    """Read SG analysis output file.
+
+    Parameters
+    ----------
+    fn
+        Name of the SG analysis output file
+    file_format
+        Format of the SG data file
+    analysis
+        Indicator of SG analysis
+    smdim
+        Dimension of the macro structural model
+    sg
+        Structure gene object
+
+
+    Returns
+    -------
+    Model
+    """
+
     # print('fn =', fn)
     # print('file_format =', file_format)
     # print('smdim =', smdim)
@@ -73,26 +106,31 @@ def readOutput(
 
 
 def write(
-    sg:StructureGene, fn:str, file_format:str, analysis='h', sg_fmt:int=1,
-    sfi:str='8d', sff:str='20.12e', version=None, mesh_only=False
+    sg:StructureGene, fn:str, file_format:str, format_version:str='', analysis='h',
+    sg_fmt:int=1, sfi:str='8d', sff:str='20.12e', mesh_only=False
     ):
     """Write analysis input
 
     Parameters
     ----------
-    fn : str
+    sg
+        Structure gene object
+    fn
         Name of the input file
-    file_format : {'vabs' (or 'v'), 'swfitcomp' (or 'sc', 's')}
+    file_format
         file_format of the analysis
     analysis : {0, 1, 2, 3, '', 'h', 'dn', 'dl', 'd', 'l', 'fi'}, optional
         Analysis type, by default 'h'
     sg_fmt : {0, 1}, optional
         Format for the VABS input, by default 1
-
-    Returns
-    -------
-    str
-        Name of the input file
+    sfi
+        String formating integers
+    sff
+        String formating floats
+    version
+        Version of the format
+    mesh_only
+        If write meshing data only
     """
 
     logger.info(f'writting sg data to {fn} (format: {file_format})...')
@@ -115,16 +153,41 @@ def write(
 
         else:
             if _file_format.startswith('s'):
-                if not version:
-                    version = GLOBAL.SC_VERSION_DEFAULT
+                if format_version == '':
+                    format_version = GLOBAL.SC_VERSION_DEFAULT
                 _swiftcomp.writeBuffer(sg, file, file_format, analysis, sg_fmt, sfi, sff, version, mesh_only)
 
             elif _file_format.startswith('v'):
-                if not version:
-                    version = GLOBAL.VABS_VERSION_DEFAULT
+                if format_version == '':
+                    format_version = GLOBAL.VABS_VERSION_DEFAULT
                 _vabs.readOutput(file, analysis, sg)
 
     return fn
+
+
+
+
+def convert(
+    file_name_in:str, file_name_out:str,
+    file_format_in:str='', file_format_out:str='',
+    format_version_in:str='', format_version_out:str='',
+    analysis:str|int='h', sgdim:int=3, smdim:int=3, sg_fmt:int=1,
+    sfi:str='8d', sff:str='20.12e', mesh_only:bool=False
+    ):
+    """Convert the SG data file format.
+
+    Parameters
+    ----------
+    file_name_in
+        File name before conversion
+    file_name_out
+        File name after conversion
+    """
+
+    sg = read(file_name_in, file_format_in, format_version_in, sgdim, smdim, mesh_only)
+    write(sg, file_name_out, file_format_out, format_version_out, analysis, sg_fmt, sfi, sff, mesh_only)
+
+    return sg
 
 
 

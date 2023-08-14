@@ -1,5 +1,5 @@
-StructureGene
-=============
+Structure Gene
+================
 
 .. currentmodule:: sgio.core.sg
 
@@ -12,5 +12,3 @@ StructureGene
 
 ..  autoclass:: StructureGene
     :members:
-    :undoc-members:
-    :inherited-members:

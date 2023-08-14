@@ -42,7 +42,8 @@ from ._helpers import (
     write,
     write_points_cells,
 )
-from ._mesh import CellBlock, Mesh
+from ._mesh import *
+# from ._mesh import CellBlock, Mesh
 
 __all__ = [
     "abaqus",

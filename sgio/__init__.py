@@ -7,10 +7,12 @@ from .core.merge import mergeSG
 
 from .model import *
 
-from .io.main import read, readOutput, readLoadCsv, write
+from .io import read, readOutput, readLoadCsv, write
 
 from .execu import run
 
 # from . import utils
+
+from .meshio import *
 
 
