@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import logging
 logger = logging.getLogger(__name__)
 
@@ -155,7 +157,11 @@ def write(
             if _file_format.startswith('s'):
                 if format_version == '':
                     format_version = GLOBAL.SC_VERSION_DEFAULT
-                _swiftcomp.writeBuffer(sg, file, file_format, analysis, sg_fmt, sfi, sff, version, mesh_only)
+                _swiftcomp.writeBuffer(
+                    sg, file, file_format,
+                    analysis=analysis, sg_fmt=sg_fmt,
+                    sfi=sfi, sff=sff, version=format_version,
+                    mesh_only=mesh_only)
 
             elif _file_format.startswith('v'):
                 if format_version == '':
