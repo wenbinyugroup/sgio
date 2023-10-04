@@ -182,7 +182,8 @@ def _readMaterial(file, file_format:str, isotropy:int, ntemp:int=1):
     # mp = mmsd.MaterialProperty()
     # mp = smdl.MaterialSection()
     mp = smdl.CauchyContinuumModel()
-    mp.isotropy = isotropy
+    # mp.isotropy = isotropy
+    mp.set('isotropy', isotropy)
 
     temp_counter = 0
     while temp_counter < ntemp:
@@ -196,7 +197,8 @@ def _readMaterial(file, file_format:str, isotropy:int, ntemp:int=1):
             line = file.readline().strip()
         density = float(line)
 
-        mp.density = density
+        # mp.density = density
+        mp.set('density', density)
 
         # Read thermal properties
 

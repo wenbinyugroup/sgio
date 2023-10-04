@@ -191,7 +191,8 @@ def _readMaterial(file, isotropy:int, ntemp:int=1):
     # mp = smdl.MaterialProperty()
     # mp = smdl.MaterialSection()
     mp = smdl.CauchyContinuumModel()
-    mp.isotropy = isotropy
+    # mp.isotropy = isotropy
+    mp.set('isotropy', isotropy)
 
     temp_counter = 0
     while temp_counter < ntemp:
@@ -209,7 +210,8 @@ def _readMaterial(file, isotropy:int, ntemp:int=1):
         elastic_props = _readElasticProperty(file, isotropy)
         mp.setElastic(elastic_props, isotropy)
 
-        mp.density = density
+        # mp.density = density
+        mp.set('density', density)
 
         # Read thermal properties
 

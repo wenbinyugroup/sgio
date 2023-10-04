@@ -294,17 +294,11 @@ class EulerBernoulliBeamModel:
 
             # Stiffness
             if name.startswith('stf'):
-                if name[-1] == 'c':
-                    return self.stff[int(name[3])-1][int(name[4])-1]
-                elif name[-1] == 'r':
-                    return self.stff_t[int(name[3])-1][int(name[4])-1]
+                return self.stff[int(name[3])-1][int(name[4])-1]
 
             # Compliance
             if name.startswith('cmp'):
-                if name[-1] == 'c':
-                    return self.cmpl[int(name[3])-1][int(name[4])-1]
-                elif name[-1] == 'r':
-                    return self.cmpl_t[int(name[3])-1][int(name[4])-1]
+                return self.cmpl[int(name[3])-1][int(name[4])-1]
 
             if name == 'ea':
                 return self.ea
@@ -366,13 +360,8 @@ class EulerBernoulliBeamModel:
         ]
         for i in range(4):
             for j in range(4):
-                names.append('stf{}{}c'.format(i+1, j+1))
-                names.append('cmp{}{}c'.format(i+1, j+1))
-        for i in range(6):
-            for j in range(6):
-                names.append('ms{}{}'.format(i+1, j+1))
-                names.append('stf{}{}r'.format(i+1, j+1))
-                names.append('cmp{}{}r'.format(i+1, j+1))
+                names.append('stf{}{}'.format(i+1, j+1))
+                names.append('cmp{}{}'.format(i+1, j+1))
 
         dict_prop = {}
         for n in names:
@@ -715,16 +704,16 @@ class TimoshenkoBeamModel:
             # Stiffness
             if name.startswith('stf'):
                 if name[-1] == 'c':
+                    return self.stff_c[int(name[3])-1][int(name[4])-1]
+                else:
                     return self.stff[int(name[3])-1][int(name[4])-1]
-                elif name[-1] == 'r':
-                    return self.stff_t[int(name[3])-1][int(name[4])-1]
 
             # Compliance
             if name.startswith('cmp'):
                 if name[-1] == 'c':
+                    return self.cmpl_c[int(name[3])-1][int(name[4])-1]
+                else:
                     return self.cmpl[int(name[3])-1][int(name[4])-1]
-                elif name[-1] == 'r':
-                    return self.cmpl_t[int(name[3])-1][int(name[4])-1]
 
             if name == 'ea':
                 return self.ea
@@ -791,8 +780,8 @@ class TimoshenkoBeamModel:
         for i in range(6):
             for j in range(6):
                 names.append('ms{}{}'.format(i+1, j+1))
-                names.append('stf{}{}r'.format(i+1, j+1))
-                names.append('cmp{}{}r'.format(i+1, j+1))
+                names.append('stf{}{}'.format(i+1, j+1))
+                names.append('cmp{}{}'.format(i+1, j+1))
 
         dict_prop = {}
         for n in names:
