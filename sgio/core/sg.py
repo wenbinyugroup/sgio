@@ -24,14 +24,14 @@ class StructureGene(object):
 
     Parameters
     ----------
-    name : str
+    name
         Name of the SG.
-    sgdim : int
+    sgdim
         Dimension of the SG.
-    smdim : int, default None
+    smdim
         Dimension of the material/structural model.
         Beam (1), plate/shell (2), 3D continuum (3).
-    spdim : int, default None
+    spdim
         Dimension of the space.
     """
 
@@ -48,7 +48,7 @@ class StructureGene(object):
         else:
             self.spdim = spdim
 
-        self.design = None
+        # self.design = None
 
         #: int: Analysis configurations
         #:
@@ -80,7 +80,7 @@ class StructureGene(object):
         self.geo_correct = False
 
         #: int: Flag of damping computation
-        self.do_dampling = 0
+        self.do_damping = 0
 
         #: int: Flag of transformation of elements
         # self.use_elem_local_orient = 0
@@ -122,38 +122,19 @@ class StructureGene(object):
         #: int: Number of slave nodes
         self.num_slavenodes = 0
 
-        #: dict of {int, list of floats}: Nodal coordinates
-        #:
-        #: * 3D SG: `{nid: [y1, y2, y3], ...}`
-        #: * 2D SG: `{nid: [y2, y3], ...}`
-        #: * 1D SG: `{nid: [y3], ...}`
-        # self.nodes = {}
-        #: dict of {int, list of ints}: Elemental connectivities
-        #: 
-        #: `{eid: [nid1, nid2, ...], ...}`, no zeros
-        # self.elements = {}
-        #: list of ints: Element ids
-        # self.elementids = []
-        #: list of ints: 1D element ids
-        # self.elementids1d = []
-        #: list of ints: 2D element ids
-        # self.elementids2d = []
-        #: list of ints: 3D element ids
-        # self.elementids3d = []
-
         #: dict of {int, int}: Material/Combination id for each element.
         #:
         #: `{eid: mid/cid, ...}`
-        self.elem_prop = {}
+        # self.elem_prop = {}
         #: dict of {int, int}: Element id for each material/combination.
         #:
         #: `{mid/cid: [eid, ...], ...}`
-        self.prop_elem = {}
+        # self.prop_elem = {}
 
         #: dict of {int, list of lists of floats}: Element local orientations.
         #:
         #: `{eid: [[a1, a2, a3], [b1, b2, b3], [c1, c2, c3]], ...}`
-        self.elem_orient = {}
+        # self.elem_orient = {}
 
         #: float: Omega (see SwiftComp manual).
         self.omega = 1

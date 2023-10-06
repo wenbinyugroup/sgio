@@ -6,19 +6,24 @@
 Welcome to sgio's documentation!
 ================================
 
+..  include:: ../../README.md
+    :parser: myst_parser.sphinx_
+
 
 ..  toctree::
-    :maxdepth: 2
+    :maxdepth: 1
     :caption: Guide:
 
-    guide/index
+    guide/convert
 
 
 ..  toctree::
-    :maxdepth: 2
+    :maxdepth: 1
     :caption: Reference:
 
-    ref/index
+    ref/sg
+    ref/model
+    ref/io
 
 .. Indices and tables
 .. ==================

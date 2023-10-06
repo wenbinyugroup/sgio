@@ -2,9 +2,7 @@ import logging
 
 from sgio.core.sg import StructureGene
 from sgio.model import Model
-import sgio.utils.io as sui
-# import sgio.utils.logger as mul
-import sgio.utils.version as suv
+import sgio.utils as sutl
 import sgio.model as smdl
 import sgio.meshio as smsh
 
@@ -23,6 +21,7 @@ logger = logging.getLogger(__name__)
 def readInputBuffer(file, format_version:str, smdim:int):
     """
     """
+    logger.debug(f'local variables:\n{sutl.convertToPrettyString(locals())}')
     sg = StructureGene()
     sg.version = format_version
     sg.smdim = smdim
@@ -72,22 +71,22 @@ def _readHeader(file, format_version:str, smdim:int):
     configs = {}
 
     if smdim == 1:
-        line = sui.readNextNonEmptyLine(file)
+        line = sutl.readNextNonEmptyLine(file)
         configs['model'] = int(line.split()[0])
-        line = sui.readNextNonEmptyLine(file)
+        line = sutl.readNextNonEmptyLine(file)
         configs['curvature'] = list(map(float, line.split()[:3]))
-        line = sui.readNextNonEmptyLine(file)
+        line = sutl.readNextNonEmptyLine(file)
         configs['oblique'] = list(map(float, line.split()[:2]))
     elif smdim == 2:
-        line = sui.readNextNonEmptyLine(file)
+        line = sutl.readNextNonEmptyLine(file)
         configs['model'] = int(line.split()[0])
-        line = sui.readNextNonEmptyLine(file)
+        line = sutl.readNextNonEmptyLine(file)
         configs['curvature'] = list(map(float, line.split()[:2]))
         if format_version >= '2.2':
-            line = sui.readNextNonEmptyLine(file)
+            line = sutl.readNextNonEmptyLine(file)
             configs['lame'] = list(map(float, line.split()[:2]))
 
-    line = sui.readNextNonEmptyLine(file)
+    line = sutl.readNextNonEmptyLine(file)
     line = line.split()
     configs['physics'] = int(line[0])
     configs['ndim_degen_elem'] = int(line[1])
@@ -97,7 +96,7 @@ def _readHeader(file, format_version:str, smdim:int):
         configs['force_flag'] = int(line[4])
         configs['steer_flag'] = int(line[5])
 
-    line = sui.readNextNonEmptyLine(file)
+    line = sutl.readNextNonEmptyLine(file)
     line = line.split()
     configs['sgdim'] = int(line[0])
     configs['num_nodes'] = int(line[1])
@@ -189,9 +188,11 @@ def _readMaterial(file, isotropy:int, ntemp:int=1):
     """
     """
 
-    mp = smdl.MaterialProperty()
+    # mp = smdl.MaterialProperty()
     # mp = smdl.MaterialSection()
-    mp.isotropy = isotropy
+    mp = smdl.CauchyContinuumModel()
+    # mp.isotropy = isotropy
+    mp.set('isotropy', isotropy)
 
     temp_counter = 0
     while temp_counter < ntemp:
@@ -207,9 +208,10 @@ def _readMaterial(file, isotropy:int, ntemp:int=1):
 
         # Read elastic properties
         elastic_props = _readElasticProperty(file, isotropy)
-        mp.setElasticProperty(elastic_props, isotropy)
+        mp.setElastic(elastic_props, isotropy)
 
-        mp.density = density
+        # mp.density = density
+        mp.set('density', density)
 
         # Read thermal properties
 
@@ -287,7 +289,7 @@ def _readOutputH(file, smdim, **kwargs):
     """
 
     if smdim == 1:
-        out = _readOutputBeamModel(file)
+        out = _readOutputBeamModel(file, kwargs['submodel'])
     elif smdim == 2:
         out = _readOutputShellModel(file, kwargs['submodel'])
     elif smdim == 3:
@@ -300,45 +302,37 @@ def _readOutputH(file, smdim, **kwargs):
 
 
 
-def _readOutputBeamModel(file):
-    """Read SwiftComp homogenization results
-
-    Parameters
-    ----------
-    fn : str
-        SwiftComp output file name (e.g. example.sg.k).
-    scrnout : bool, default True
-        Switch of printing cmd output.
-
-    Returns
-    -------
-    msgpi.sg.BeamProperty
-        Material/sectional properties.
+def _readOutputBeamModel(file, submodel):
     """
-    # if logger is None:
-    #     logger = mul.initLogger(__name__)
+    """
 
-    # sm = mms.MaterialSection(smdim = 1)
-    # bp = mmbm.BeamProperty()
-    bp = smdl.MaterialSection()
-
-    linesRead = []
-    keywordsIndex = {}
+    if submodel == 1:
+        return _readEulerBernoulliBeamModel(file)
+    elif submodel == 2:
+        return _readTimoshenkoBeamModel(file)
 
 
-    # with open(fn, 'r') as fin:
-    ln = -1
-    for line in file:
+
+def _readEulerBernoulliBeamModel(file):
+    """Read homogenization output for Euler-Bernoulli beam model.
+    """
+
+    model = smdl.EulerBernoulliBeamModel()
+
+    block = ''
+    line = file.readline()
+
+    while True:
+        if not line:  # EOF
+            break
 
         line = line.strip()
 
-        if len(line) > 0:
-            linesRead.append(line)
-            ln += 1
-        else:
+        if len(line) == 0:
+            line = file.readline()
             continue
-
-        if '-----' in line:
+        elif line.startswith('--') or line.startswith('=='):
+            line = file.readline()
             continue
 
 
@@ -346,111 +340,350 @@ def _readOutputBeamModel(file):
         # -------------------
 
         elif 'Effective Mass Matrix' in line:
-            keywordsIndex['mass'] = ln
+            line = file.readline()
+            _mass, line = sutl.readMatrix(
+                file, line, nrows=6, ncols=6,
+                number_type=float, comments=['----',]
+                )
+            model.mass = _mass
+
         elif 'Mass Center Location' in line:
-            keywordsIndex['mc'] = ln
+            for _ in range(2): line = file.readline()
+            model.xm2, model.xm3 = list(map(float, line.split()))
         elif 'Mass per unit span' in line:
-            bp.mu = float(line.split()[-1])
+            model.mu = float(line.split()[-1])
         elif 'i11' in line:
-            bp.i11 = float(line.split()[-1])
+            model.i11 = float(line.split()[-1])
         elif 'i22' in line:
-            bp.i22 = float(line.split()[-1])
+            model.i22 = float(line.split()[-1])
         elif 'i33' in line:
-            bp.i33 = float(line.split()[-1])
-        elif 'principal inertial axes rotated' in line:
+            model.i33 = float(line.split()[-1])
+        elif 'principal inertial axes' in line:
             line = line.split()
-            tmp_id = line.index('degrees')
-            bp.phi_pia = float(line[tmp_id - 1])
+            try:
+                tmp_id = line.index('degrees')
+                model.phi_pia = float(line[tmp_id - 1])
+            except ValueError:
+                model.phi_pia = 0
         elif 'Mass-Weighted Radius of Gyration' in line:
-            bp.rg = float(line.split()[-1])
+            model.rg = float(line.split()[-1])
 
 
         # Structural properties
         # ---------------------
 
         elif 'Effective Stiffness Matrix' in line:
-            keywordsIndex['csm'] = ln
+            line = file.readline()
+            _matrix, line = sutl.readMatrix(
+                file, line, nrows=4, ncols=4,
+                number_type=float, comments=['----',]
+                )
+            model.stff = _matrix
         elif 'Effective Compliance Matrix' in line:
-            keywordsIndex['cfm'] = ln
+            line = file.readline()
+            _matrix, line = sutl.readMatrix(
+                file, line, nrows=4, ncols=4,
+                number_type=float, comments=['----',]
+                )
+            model.cmpl = _matrix
 
         elif 'Tension Center Location' in line:
-            keywordsIndex['tc'] = ln
-        elif 'extension stiffness EA' in line:
-            bp.ea = float(line.split()[-1])
-        elif 'torsional stiffness GJ' in line:
-            bp.gj = float(line.split()[-1])
-        elif 'Principal bending stiffness EI22' in line:
-            bp.ei22 = float(line.split()[-1])
-        elif 'Principal bending stiffness EI33' in line:
-            bp.ei33 = float(line.split()[-1])
-        elif 'principal bending axes rotated' in line:
-            line = line.split()
-            tmp_id = line.index('degrees')
-            bp.phi_pba = float(line[tmp_id - 1])
+            for _ in range(2): line = file.readline()
+            model.xt2, model.xt3 = list(map(float, line.split()))
 
-        elif 'Timoshenko Stiffness Matrix' in line:
-            keywordsIndex['tsm'] = ln
-        elif 'Timoshenko Compliance Matrix' in line:
-            keywordsIndex['tfm'] = ln
+        elif 'extension stiffness EA' in line:
+            model.ea = float(line.split()[-1])
+        elif 'torsional stiffness GJ' in line:
+            model.gj = float(line.split()[-1])
+        elif 'Principal bending stiffness EI22' in line:
+            model.ei22 = float(line.split()[-1])
+        elif 'Principal bending stiffness EI33' in line:
+            model.ei33 = float(line.split()[-1])
+        elif 'principal bending axes' in line:
+            line = line.split()
+            try:
+                tmp_id = line.index('degrees')
+                model.phi_pba = float(line[tmp_id - 1])
+            except ValueError:
+                model.phi_pba = 0
+
+        line = file.readline()
+
+    return model
+
+
+
+
+def _readTimoshenkoBeamModel(file):
+    """Read homogenization output for Timoshenko beam model.
+    """
+
+    model = smdl.TimoshenkoBeamModel()
+
+    block = ''
+    line = file.readline()
+
+    while True:
+        if not line:  # EOF
+            break
+
+        line = line.strip()
+
+        if len(line) == 0:
+            line = file.readline()
+            continue
+        elif line.startswith('--') or line.startswith('=='):
+            line = file.readline()
+            continue
+
+
+        # Inertial properties
+        # -------------------
+
+        elif 'Effective Mass Matrix' in line:
+            line = file.readline()
+            _mass, line = sutl.readMatrix(
+                file, line, nrows=6, ncols=6,
+                number_type=float, comments=['----',]
+                )
+            model.mass = _mass
+
+        elif 'Mass Center Location' in line:
+            for _ in range(2): line = file.readline()
+            model.xm2, model.xm3 = list(map(float, line.split()))
+        elif 'Mass per unit span' in line:
+            model.mu = float(line.split()[-1])
+        elif 'i11' in line:
+            model.i11 = float(line.split()[-1])
+        elif 'i22' in line:
+            model.i22 = float(line.split()[-1])
+        elif 'i33' in line:
+            model.i33 = float(line.split()[-1])
+        elif 'principal inertial axes' in line:
+            line = line.split()
+            try:
+                tmp_id = line.index('degrees')
+                model.phi_pia = float(line[tmp_id - 1])
+            except ValueError:
+                model.phi_pia = 0
+        elif 'Mass-Weighted Radius of Gyration' in line:
+            model.rg = float(line.split()[-1])
+
+
+        # Structural properties
+        # ---------------------
+
+        elif 'Effective Stiffness Matrix' in line:
+            line = file.readline()
+            _matrix, line = sutl.readMatrix(
+                file, line, nrows=4, ncols=4,
+                number_type=float, comments=['----',]
+                )
+            model.stff_c = _matrix
+        elif 'Effective Compliance Matrix' in line:
+            line = file.readline()
+            _matrix, line = sutl.readMatrix(
+                file, line, nrows=4, ncols=4,
+                number_type=float, comments=['----',]
+                )
+            model.cmpl_c = _matrix
+
+        elif 'Effective Timoshenko Stiffness Matrix' in line:
+            line = file.readline()
+            _matrix, line = sutl.readMatrix(
+                file, line, nrows=6, ncols=6,
+                number_type=float, comments=['----',]
+                )
+            model.stff = _matrix
+        elif 'Effective Timoshenko Compliance Matrix' in line:
+            line = file.readline()
+            _matrix, line = sutl.readMatrix(
+                file, line, nrows=6, ncols=6,
+                number_type=float, comments=['----',]
+                )
+            model.cmpl = _matrix
+
+        elif 'Tension Center Location' in line:
+            for _ in range(2): line = file.readline()
+            model.xt2, model.xt3 = list(map(float, line.split()))
 
         elif 'Shear Center Location' in line:
-            keywordsIndex['sc'] = ln
-        elif 'Principal shear stiffness GA22' in line:
-            bp.ga22 = float(line.split()[-1])
-        elif 'Principal shear stiffness GA33' in line:
-            bp.ga33 = float(line.split()[-1])
-        elif 'principal shear axes rotated' in line:
+            for _ in range(2): line = file.readline()
+            model.xs2, model.xs3 = list(map(float, line.split()))
+
+        elif 'extension stiffness EA' in line:
+            model.ea = float(line.split()[-1])
+        elif 'torsional stiffness GJ' in line:
+            model.gj = float(line.split()[-1])
+        elif 'Principal bending stiffness EI22' in line:
+            model.ei22 = float(line.split()[-1])
+        elif 'Principal bending stiffness EI33' in line:
+            model.ei33 = float(line.split()[-1])
+        elif 'principal bending axes' in line:
             line = line.split()
-            tmp_id = line.index('degrees')
-            bp.phi_psa = float(line[tmp_id - 1])
+            try:
+                tmp_id = line.index('degrees')
+                model.phi_pba = float(line[tmp_id - 1])
+            except ValueError:
+                model.phi_pba = 0
+        elif 'Principal shear stiffness GA22' in line:
+            model.ga22 = float(line.split()[-1])
+        elif 'Principal shear stiffness GA33' in line:
+            model.ga33 = float(line.split()[-1])
+        elif 'principal shear axes' in line:
+            line = line.split()
+            try:
+                tmp_id = line.index('degrees')
+                model.phi_psa = float(line[tmp_id - 1])
+            except ValueError:
+                model.phi_psa = 0
+
+        line = file.readline()
+
+    return model
 
 
-    ln = keywordsIndex['mass']
-    bp.mass = sui.textToMatrix(linesRead[ln + 2:ln + 8])
 
-    #check whether the analysis is Vlasov or timoshenko
-    #Read stiffness matrix and compliance matrix
-    if 'vsm' in keywordsIndex.keys():
-        pass
 
-    else:
-        try:
-            ln = keywordsIndex['csm']
-            bp.stff = sui.textToMatrix(linesRead[ln + 2:ln + 6])
-        except KeyError:
-            logger.debug('No classical stiffness matrix found.')
+# def _readOutputBeamModel(file):
+#     """Read homogenization output for Euler-Bernoulli beam model.
+#     """
+#     # if logger is None:
+#     #     logger = mul.initLogger(__name__)
 
-        try:
-            ln = keywordsIndex['cfm']
-            bp.cmpl = sui.textToMatrix(linesRead[ln + 2:ln + 6])
-        except KeyError:
-            logger.debug('No classical flexibility matrix found.')
+#     # sm = mms.MaterialSection(smdim = 1)
+#     # bp = mmbm.BeamProperty()
+#     bp = smdl.MaterialSection()
 
-        try:
-            ln = keywordsIndex['tsm']
-            bp.stff_t = sui.textToMatrix(linesRead[ln + 2:ln + 8])
-        except KeyError:
-            logger.debug('No Timoshenko stiffness matrix found.')
+#     linesRead = []
+#     keywordsIndex = {}
 
-        try:
-            ln = keywordsIndex['tfm']
-            bp.cmpl_t = sui.textToMatrix(linesRead[ln + 2:ln + 8])
-        except KeyError:
-                logger.debug('No Timoshenko flexibility matrix found.')
+
+#     # with open(fn, 'r') as fin:
+#     ln = -1
+#     for line in file:
+
+#         line = line.strip()
+
+#         if len(line) > 0:
+#             linesRead.append(line)
+#             ln += 1
+#         else:
+#             continue
+
+#         if '-----' in line:
+#             continue
+
+
+#         # Inertial properties
+#         # -------------------
+
+#         elif 'Effective Mass Matrix' in line:
+#             keywordsIndex['mass'] = ln
+#         elif 'Mass Center Location' in line:
+#             keywordsIndex['mc'] = ln
+#         elif 'Mass per unit span' in line:
+#             bp.mu = float(line.split()[-1])
+#         elif 'i11' in line:
+#             bp.i11 = float(line.split()[-1])
+#         elif 'i22' in line:
+#             bp.i22 = float(line.split()[-1])
+#         elif 'i33' in line:
+#             bp.i33 = float(line.split()[-1])
+#         elif 'principal inertial axes rotated' in line:
+#             line = line.split()
+#             tmp_id = line.index('degrees')
+#             bp.phi_pia = float(line[tmp_id - 1])
+#         elif 'Mass-Weighted Radius of Gyration' in line:
+#             bp.rg = float(line.split()[-1])
+
+
+#         # Structural properties
+#         # ---------------------
+
+#         elif 'Effective Stiffness Matrix' in line:
+#             keywordsIndex['csm'] = ln
+#         elif 'Effective Compliance Matrix' in line:
+#             keywordsIndex['cfm'] = ln
+
+#         elif 'Tension Center Location' in line:
+#             keywordsIndex['tc'] = ln
+#         elif 'extension stiffness EA' in line:
+#             bp.ea = float(line.split()[-1])
+#         elif 'torsional stiffness GJ' in line:
+#             bp.gj = float(line.split()[-1])
+#         elif 'Principal bending stiffness EI22' in line:
+#             bp.ei22 = float(line.split()[-1])
+#         elif 'Principal bending stiffness EI33' in line:
+#             bp.ei33 = float(line.split()[-1])
+#         elif 'principal bending axes rotated' in line:
+#             line = line.split()
+#             tmp_id = line.index('degrees')
+#             bp.phi_pba = float(line[tmp_id - 1])
+
+#         elif 'Timoshenko Stiffness Matrix' in line:
+#             keywordsIndex['tsm'] = ln
+#         elif 'Timoshenko Compliance Matrix' in line:
+#             keywordsIndex['tfm'] = ln
+
+#         elif 'Shear Center Location' in line:
+#             keywordsIndex['sc'] = ln
+#         elif 'Principal shear stiffness GA22' in line:
+#             bp.ga22 = float(line.split()[-1])
+#         elif 'Principal shear stiffness GA33' in line:
+#             bp.ga33 = float(line.split()[-1])
+#         elif 'principal shear axes rotated' in line:
+#             line = line.split()
+#             tmp_id = line.index('degrees')
+#             bp.phi_psa = float(line[tmp_id - 1])
+
+
+#     ln = keywordsIndex['mass']
+#     bp.mass = sutl.textToMatrix(linesRead[ln + 2:ln + 8])
+
+#     #check whether the analysis is Vlasov or timoshenko
+#     #Read stiffness matrix and compliance matrix
+#     if 'vsm' in keywordsIndex.keys():
+#         pass
+
+#     else:
+#         try:
+#             ln = keywordsIndex['csm']
+#             bp.stff = sutl.textToMatrix(linesRead[ln + 2:ln + 6])
+#         except KeyError:
+#             logger.debug('No classical stiffness matrix found.')
+
+#         try:
+#             ln = keywordsIndex['cfm']
+#             bp.cmpl = sutl.textToMatrix(linesRead[ln + 2:ln + 6])
+#         except KeyError:
+#             logger.debug('No classical flexibility matrix found.')
+
+#         try:
+#             ln = keywordsIndex['tsm']
+#             bp.stff_t = sutl.textToMatrix(linesRead[ln + 2:ln + 8])
+#         except KeyError:
+#             logger.debug('No Timoshenko stiffness matrix found.')
+
+#         try:
+#             ln = keywordsIndex['tfm']
+#             bp.cmpl_t = sutl.textToMatrix(linesRead[ln + 2:ln + 8])
+#         except KeyError:
+#                 logger.debug('No Timoshenko flexibility matrix found.')
        
 
-        if 'tc' in keywordsIndex.keys():
-            ln = keywordsIndex['tc']
-            bp.xt2, bp.xt3 = list(map(float, linesRead[ln + 2].split()))
-        if 'sc' in keywordsIndex.keys():
-            ln = keywordsIndex['sc']
-            bp.xs2, bp.xs3 = list(map(float, linesRead[ln + 2].split()))
-        if 'mc' in keywordsIndex.keys():
-            ln = keywordsIndex['mc']
-            bp.xm2, bp.xm3 = list(map(float, linesRead[ln + 2].split()))
+#         if 'tc' in keywordsIndex.keys():
+#             ln = keywordsIndex['tc']
+#             bp.xt2, bp.xt3 = list(map(float, linesRead[ln + 2].split()))
+#         if 'sc' in keywordsIndex.keys():
+#             ln = keywordsIndex['sc']
+#             bp.xs2, bp.xs3 = list(map(float, linesRead[ln + 2].split()))
+#         if 'mc' in keywordsIndex.keys():
+#             ln = keywordsIndex['mc']
+#             bp.xm2, bp.xm3 = list(map(float, linesRead[ln + 2].split()))
 
 
-    return bp
+#     return bp
 
 
 
@@ -472,6 +705,7 @@ def _readKirchhoffLovePlateShellModel(file):
 
     block = ''
     line = file.readline()
+
     while True:
         if not line:  # EOF
             break
@@ -488,7 +722,7 @@ def _readKirchhoffLovePlateShellModel(file):
 
         elif 'Effective Mass Matrix' in line:
             line = file.readline()
-            _mass, line = sui.readMatrix(
+            _mass, line = sutl.readMatrix(
                 file, line, nrows=6, ncols=6,
                 number_type=float, comments=['----',]
                 )
@@ -507,14 +741,14 @@ def _readKirchhoffLovePlateShellModel(file):
 
         elif 'Effective Stiffness Matrix' in line:
             line = file.readline()
-            _matrix, line = sui.readMatrix(
+            _matrix, line = sutl.readMatrix(
                 file, line, nrows=6, ncols=6,
                 number_type=float, comments=['----',]
                 )
             model.stff = _matrix
         elif 'Effective Compliance Matrix' in line:
             line = file.readline()
-            _matrix, line = sui.readMatrix(
+            _matrix, line = sutl.readMatrix(
                 file, line, nrows=6, ncols=6,
                 number_type=float, comments=['----',]
                 )
@@ -522,14 +756,14 @@ def _readKirchhoffLovePlateShellModel(file):
 
         elif 'Geometric Correction to the Stiffness Matrix' in line:
             line = file.readline()
-            _matrix, line = sui.readMatrix(
+            _matrix, line = sutl.readMatrix(
                 file, line, nrows=6, ncols=6,
                 number_type=float, comments=['----',]
                 )
             model.geo_correction_stff = _matrix
         elif 'Total Stiffness Matrix after Geometric Correction' in line:
             line = file.readline()
-            _matrix, line = sui.readMatrix(
+            _matrix, line = sutl.readMatrix(
                 file, line, nrows=6, ncols=6,
                 number_type=float, comments=['----',]
                 )
@@ -697,31 +931,31 @@ def _readKirchhoffLovePlateShellModel(file):
 
 #     try:
 #         ln = keywordsIndex['mass']
-#         sp.mass = sui.textToMatrix(linesRead[ln + 2:ln + 8])
+#         sp.mass = sutl.textToMatrix(linesRead[ln + 2:ln + 8])
 #     except KeyError:
 #         logger.debug('No mass matrix found.')
 
 #     try:
 #         ln = keywordsIndex['stff']
-#         sp.stff = sui.textToMatrix(linesRead[ln + 2:ln + 8])
+#         sp.stff = sutl.textToMatrix(linesRead[ln + 2:ln + 8])
 #     except KeyError:
 #         logger.debug('No classical stiffness matrix found.')
 
 #     try:
 #         ln = keywordsIndex['cmpl']
-#         sp.cmpl = sui.textToMatrix(linesRead[ln + 2:ln + 8])
+#         sp.cmpl = sutl.textToMatrix(linesRead[ln + 2:ln + 8])
 #     except KeyError:
 #         logger.debug('No classical flexibility matrix found.')
 
 #     try:
 #         ln = keywordsIndex['geo_to_stff']
-#         sp.geo_correction_stff = sui.textToMatrix(linesRead[ln + 2:ln + 8])
+#         sp.geo_correction_stff = sutl.textToMatrix(linesRead[ln + 2:ln + 8])
 #     except KeyError:
 #         logger.debug('No geometric correction matrix found.')
 
 #     try:
 #         ln = keywordsIndex['stff_geo']
-#         sp.stff_geo = sui.textToMatrix(linesRead[ln + 2:ln + 8])
+#         sp.stff_geo = sutl.textToMatrix(linesRead[ln + 2:ln + 8])
 #     except KeyError:
 #         logger.debug('No geometric corrected stiffness matrix found.')
 
@@ -798,13 +1032,13 @@ def _readOutputCauchyContinuumModel(file):
 
     try:
         ln = keywordsIndex['stff']
-        mp.stff = sui.textToMatrix(linesRead[ln + 2:ln + 8])
+        mp.stff = sutl.textToMatrix(linesRead[ln + 2:ln + 8])
     except KeyError:
         logger.debug('No classical stiffness matrix found.')
 
     try:
         ln = keywordsIndex['cmpl']
-        mp.cmpl = sui.textToMatrix(linesRead[ln + 2:ln + 8])
+        mp.cmpl = sutl.textToMatrix(linesRead[ln + 2:ln + 8])
     except KeyError:
         logger.debug('No classical flexibility matrix found.')
 
@@ -994,8 +1228,9 @@ def writeInputBuffer(sg, file, file_format, sfi, sff, sg_fmt, version=None):
     logger.debug(f'writing sg input...')
 
     ssff = '{:' + sff + '}'
-    if not version is None:
-        sg.version = suv.Version(version)
+    # if not version is None:
+    #     sg.version = sutl.Version(version)
+    sg.version = version
 
     logger.debug('format version: {}'.format(sg.version))
 
@@ -1021,7 +1256,7 @@ def writeInputBufferGlobal(sg, file, file_format, sfi, sff, analysis, version=No
     elif analysis.startswith('f'):
         _writeInputMaterialStrength(sg, file, file_format, sfi, sff)
 
-    sui.writeFormatIntegers(file, [sg.global_loads_type, ], sfi)
+    sutl.writeFormatIntegers(file, [sg.global_loads_type, ], sfi)
 
     if analysis != 'f':
         _writeInputLoads(sg, file, file_format, sfi, sff)
@@ -1090,28 +1325,28 @@ def _writeMaterials(sg:StructureGene, file, file_format, sfi, sff):
         # else:
         anisotropy = m.get('isotropy')
 
-        sui.writeFormatIntegers(file, (mid, anisotropy, 1), sfi, newline=False)
+        sutl.writeFormatIntegers(file, (mid, anisotropy, 1), sfi, newline=False)
         if counter == 0:  file.write('  # materials')
         file.write('\n')
-        sui.writeFormatFloats(file, (m.get('temperature'), m.get('density')), sff)
+        sutl.writeFormatFloats(file, (m.get('temperature'), m.get('density')), sff)
 
         # Write elastic properties
         if anisotropy == 0:
-            sui.writeFormatFloats(file, [m.get('e1'), m.get('nu12')], sff)
+            sutl.writeFormatFloats(file, [m.get('e1'), m.get('nu12')], sff)
 
         elif anisotropy == 1:
-            sui.writeFormatFloats(file, [m.get('e1'), m.get('e2'), m.get('e3')], sff)
-            sui.writeFormatFloats(file, [m.get('g12'), m.get('g13'), m.get('g23')], sff)
-            sui.writeFormatFloats(file, [m.get('nu12'), m.get('nu13'), m.get('nu23')], sff)
+            sutl.writeFormatFloats(file, [m.get('e1'), m.get('e2'), m.get('e3')], sff)
+            sutl.writeFormatFloats(file, [m.get('g12'), m.get('g13'), m.get('g23')], sff)
+            sutl.writeFormatFloats(file, [m.get('nu12'), m.get('nu13'), m.get('nu23')], sff)
 
         elif anisotropy == 2:
             for i in range(6):
                 for j in range(i, 6):
-                    sui.writeFormatFloats(file, m.get(f'c{i+1}{j+1}'), sff, newline=False)
+                    sutl.writeFormatFloats(file, m.get(f'c{i+1}{j+1}'), sff, newline=False)
                 file.write('\n')
 
         if sg.physics in [1, 4, 6]:
-            sui.writeFormatFloats(file, m.get('cte')+[m.get('specific_heat'),], sff)
+            sutl.writeFormatFloats(file, m.get('cte')+[m.get('specific_heat'),], sff)
 
         file.write('\n')
         
@@ -1140,7 +1375,7 @@ def _writeHeader(sg:StructureGene, file, sfi, sff, version=None):
 
         if sg.smdim == 1:  # beam
             # initial twist/curvatures
-            sui.writeFormatFloats(
+            sutl.writeFormatFloats(
                 file,
                 [sg.initial_twist, sg.initial_curvature[0], sg.initial_curvature[1]],
                 sff, newline=False
@@ -1148,14 +1383,14 @@ def _writeHeader(sg:StructureGene, file, sfi, sff, version=None):
             file.write('  # initial curvatures k11, k12, k13\n')
             file.write('\n')
             # oblique cross section
-            sui.writeFormatFloats(file, sg.oblique, sff)
+            sutl.writeFormatFloats(file, sg.oblique, sff)
 
         elif sg.smdim == 2:  # shell
             # initial twist/curvatures
-            sui.writeFormatFloats(file, sg.initial_curvature, sff, newline=False)
+            sutl.writeFormatFloats(file, sg.initial_curvature, sff, newline=False)
             file.write('  # initial curvatures k12, k21\n')
             if version > '2.1':
-                sui.writeFormatFloats(file, sg.lame_params, sff, newline=False)
+                sutl.writeFormatFloats(file, sg.lame_params, sff, newline=False)
                 file.write('  # Lame parameters\n')
         file.write('\n')
 
@@ -1168,7 +1403,7 @@ def _writeHeader(sg:StructureGene, file, sfi, sff, version=None):
     if version > '2.1':
         nums += [sg.force_flag, sg.steer_flag]
         cmt = cmt + ', force_flag, steer_flag'
-    sui.writeFormatIntegers(file, nums, sfi, newline=False)
+    sutl.writeFormatIntegers(file, nums, sfi, newline=False)
     file.write(cmt)
     file.write('\n\n')
 
@@ -1176,7 +1411,7 @@ def _writeHeader(sg:StructureGene, file, sfi, sff, version=None):
         sg.sgdim, sg.nnodes, sg.nelems, sg.nmates,
         sg.num_slavenodes, sg.nma_combs
     ]
-    sui.writeFormatIntegers(file, nums, sfi, newline=False)
+    sutl.writeFormatIntegers(file, nums, sfi, newline=False)
     file.write('  # nsg, nnode, nelem, nmate, nslave, nlayer')
     file.write('\n\n')
 
@@ -1218,16 +1453,16 @@ def _writeInputMaterialStrength(sg, file, file_format, sfi, sff):
             elif m.failure_criterion == 5:
                 pass
 
-        sui.writeFormatIntegers(
+        sutl.writeFormatIntegers(
             file,
             # (m.strength['criterion'], len(m.strength['constants'])),
             [m.failure_criterion, len(strength)],
             sfi
         )
         # file.write((sff+'\n').format(m.strength['chara_len']))
-        sui.writeFormatFloats(file, [m.char_len,], sff)
-        # sui.writeFormatFloats(file, m.strength['constants'], sff[2:-1])
-        sui.writeFormatFloats(file, strength, sff)
+        sutl.writeFormatFloats(file, [m.char_len,], sff)
+        # sutl.writeFormatFloats(file, m.strength['constants'], sff[2:-1])
+        sutl.writeFormatFloats(file, strength, sff)
     return
 
 
@@ -1239,8 +1474,8 @@ def _writeInputMaterialStrength(sg, file, file_format, sfi, sff):
 
 
 def _writeInputDisplacements(sg, file, file_format, sff):
-    sui.writeFormatFloats(file, sg.global_displacements, sff[2:-1])
-    sui.writeFormatFloatsMatrix(file, sg.global_rotations, sff[2:-1])
+    sutl.writeFormatFloats(file, sg.global_displacements, sff[2:-1])
+    sutl.writeFormatFloatsMatrix(file, sg.global_rotations, sff[2:-1])
 
 
 
@@ -1253,30 +1488,19 @@ def _writeInputDisplacements(sg, file, file_format, sff):
 def _writeInputLoads(sg, file, file_format, sfi, sff):
     if file_format.startswith('v'):
         if sg.model == 0:
-            sui.writeFormatFloats(file, sg.global_loads)
+            sutl.writeFormatFloats(file, sg.global_loads)
         else:
-            sui.writeFormatFloats(file, [sg.global_loads[i] for i in [0, 3, 4, 5]])
-            sui.writeFormatFloats(file, [sg.global_loads[i] for i in [1, 2]])
+            sutl.writeFormatFloats(file, [sg.global_loads[i] for i in [0, 3, 4, 5]])
+            sutl.writeFormatFloats(file, [sg.global_loads[i] for i in [1, 2]])
             file.write('\n')
-            sui.writeFormatFloats(file, sg.global_loads_dist[0])
-            sui.writeFormatFloats(file, sg.global_loads_dist[1])
-            sui.writeFormatFloats(file, sg.global_loads_dist[2])
-            sui.writeFormatFloats(file, sg.global_loads_dist[3])
+            sutl.writeFormatFloats(file, sg.global_loads_dist[0])
+            sutl.writeFormatFloats(file, sg.global_loads_dist[1])
+            sutl.writeFormatFloats(file, sg.global_loads_dist[2])
+            sutl.writeFormatFloats(file, sg.global_loads_dist[3])
     elif file_format.startswith('s'):
         # file.write((sfi+'\n').format(sg.global_loads_type))
         for load_case in sg.global_loads:
-            sui.writeFormatFloats(file, load_case, sff)
+            sutl.writeFormatFloats(file, load_case, sff)
     file.write('\n')
     return
-
-
-
-
-
-
-
-
-
-
-
 

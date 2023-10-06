@@ -315,6 +315,8 @@ def _write_elements(f, cells, cell_prop_ids, int_fmt:str='8d'):
 
             _nums.extend(c.tolist())
 
+            # print(_nums)
+
             # Write the numbers
             fmt = ''.join([sfi,]*len(_nums))
             f.write(fmt.format(*_nums))

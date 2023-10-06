@@ -3,7 +3,11 @@ from .solid import CauchyContinuumModel
 from .shell import (
     KirchhoffLovePlateShellModel,
     ReissnerMindlinPlateShellModel,
-    ShellProperty
+    # ShellProperty
     )
-from .beam import BeamModel, BeamProperty
+from .beam import (
+    EulerBernoulliBeamModel,
+    TimoshenkoBeamModel,
+    # BeamModel, BeamProperty
+    )
 

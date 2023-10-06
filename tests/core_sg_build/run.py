@@ -53,6 +53,6 @@ sg = sgio.buildSG1D(
 print(sg)
 
 fn_sg = '{}.sg'.format(name)
-sgio.write(sg, fn_sg, 'sc', version=version)
+sgio.write(sg, fn_sg, 'sc', format_version=version)
 
 

@@ -127,7 +127,7 @@ def buildSG1D(
 
             cid = len(sg.mocombos) + 1
             sg.mocombos[cid] = [mid, _lyr_ipo]
-            sg.prop_elem[cid] = []
+            # sg.prop_elem[cid] = []
         layer['mocombo'] = cid
         lyr_thk = layer['ply_thickness'] * _lyr_np
         # print('lyr_thk =', lyr_thk)
@@ -248,8 +248,8 @@ def buildSG1D(
             # sg.elements[eid] = [nid1, nid2]
 
             # sg.elem_prop[eid] = lyr['mocombo']
-            sg.prop_elem[lyr['mocombo']].append(eid)
-            sg.elem_orient[eid] = [_lyr_glo['a'], _lyr_glo['b'], _lyr_glo['c']]
+            # sg.prop_elem[lyr['mocombo']].append(eid)
+            # sg.elem_orient[eid] = [_lyr_glo['a'], _lyr_glo['b'], _lyr_glo['c']]
             # sg.elementids1d.append(eid)
 
             # nid1 = nid2

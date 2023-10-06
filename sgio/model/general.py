@@ -18,193 +18,193 @@ class Model(Protocol):
 
 
 
-class MaterialSection(object):
-    """A macroscopic structure model. Stores material or structural
-    properties.
+# class MaterialSection(object):
+#     """A macroscopic structure model. Stores material or structural
+#     properties.
 
-    Parameters
-    ----------
-    smdim : int, default 3
-        Dimension of material/structure model.
-        Beam (1), plate/shell (2), or 3D continuum (3).
-        Defualt to 3.
-    """
+#     Parameters
+#     ----------
+#     smdim : int, default 3
+#         Dimension of material/structure model.
+#         Beam (1), plate/shell (2), or 3D continuum (3).
+#         Defualt to 3.
+#     """
 
-    def __init__(self, name:str='', smdim:int=3):
-        #: int: Dimension of material/structure model.
-        self.smdim = smdim
-        #: str: Name of the material/structure.
-        self.name = name
+#     def __init__(self, name:str='', smdim:int=3):
+#         #: int: Dimension of material/structure model.
+#         self.smdim = smdim
+#         #: str: Name of the material/structure.
+#         self.name = name
 
-        # Mass property
-        # -------------
-        #: list of lists of floats: Mass matrix at the origin.
-        self.mass_origin = None
-        #: list of lists of floats: Mass matrix at the mass center.
-        self.mass_mc = None
-        #: float: Density of the material/structure.
-        self.density = None
-        #: list of floats: Mass moments of inertia.
-        self.mmoi = [0, 0, 0]
-        #: float: Mass-weighted radius of gyration.
-        self.mwrg = None
-        #: list of floats: Mass center. [x1, x2, x3]
-        self.mass_center = None
+#         # Mass property
+#         # -------------
+#         #: list of lists of floats: Mass matrix at the origin.
+#         self.mass_origin = None
+#         #: list of lists of floats: Mass matrix at the mass center.
+#         self.mass_mc = None
+#         #: float: Density of the material/structure.
+#         self.density = None
+#         #: list of floats: Mass moments of inertia.
+#         self.mmoi = [0, 0, 0]
+#         #: float: Mass-weighted radius of gyration.
+#         self.mwrg = None
+#         #: list of floats: Mass center. [x1, x2, x3]
+#         self.mass_center = None
 
-        # Geometry property
-        # -----------------
-        #: float: Geometric center
-        self.gc = None
+#         # Geometry property
+#         # -----------------
+#         #: float: Geometric center
+#         self.gc = None
 
-        # Constitutive property
-        self.constitutive = None
-
-
-        # Elastic property
-        # ----------------
-        #: int: (continuum model) Isotropy type.
-        #: Isotropic (0), orthotropic (1), anisotropic (2).
-        # self.type = None
-        #: dict of {str, float}: Engineering constants.
-        #: Keys: `e1`, `e2`, `e3`, `nu12`, `nu13`, `nu23`, `g12`, `g13`, `g23`
-        self.constants = {}
-        #: list of lists of floats: Stiffness matrix.
-        self.stff = None
-        # self.stiffness = None
-        #: list of lists floats: Compliance matrix.
-        self.cmpl = None
-        # self.compliance = None
-
-        #: list of lists of floats:
-        #: (beam/plate/shell models) Refined stiffness matrix
-        # self.stiffness_refined = None
-        #: list of lists of floats:
-        #: (beam/plate/shell models) Refined compliance matrix
-        # self.compliance_refined = None
-        #: list of floats: (beam model) Neutral axes/Tension center. [x1, x2, x3]
-        self.tension_center = None
-        #: list of floats: (beam model) Elastic axis/Shear center. [x1, x2, x3]
-        self.shear_center = None
-
-        # Strength property
-        # -----------------
-        #: int: Failure criterion.
-        self.failure_criterion = None
-        #: dict: Strength properties.
-        # {
-        #   'xt|x1t':,
-        #   'yt|x2t':,
-        #   'zt|x3t':,
-        #   'xc|x1c':,
-        #   'yc|x2c':,
-        #   'zc|x3c':,
-        #   'r|x23':,
-        #   't|x13':,
-        #   's|x12':
-        # }
-        self.strength_constants = {}
-
-        self.char_len = 0
+#         # Constitutive property
+#         self.constitutive = None
 
 
-    def __repr__(self):
-        s = '\n'
-        s += f'name: {self.name}\n'
-        s += 'effective properties\n'
-        s += f'structural model dimension: {self.smdim}\n'
-        if self.smdim == 3:
-            pass
-        elif self.smdim == 2:
-            pass
-        elif self.smdim == 1:
-            pass
+#         # Elastic property
+#         # ----------------
+#         #: int: (continuum model) Isotropy type.
+#         #: Isotropic (0), orthotropic (1), anisotropic (2).
+#         # self.type = None
+#         #: dict of {str, float}: Engineering constants.
+#         #: Keys: `e1`, `e2`, `e3`, `nu12`, `nu13`, `nu23`, `g12`, `g13`, `g23`
+#         self.constants = {}
+#         #: list of lists of floats: Stiffness matrix.
+#         self.stff = None
+#         # self.stiffness = None
+#         #: list of lists floats: Compliance matrix.
+#         self.cmpl = None
+#         # self.compliance = None
 
-        return s
+#         #: list of lists of floats:
+#         #: (beam/plate/shell models) Refined stiffness matrix
+#         # self.stiffness_refined = None
+#         #: list of lists of floats:
+#         #: (beam/plate/shell models) Refined compliance matrix
+#         # self.compliance_refined = None
+#         #: list of floats: (beam model) Neutral axes/Tension center. [x1, x2, x3]
+#         self.tension_center = None
+#         #: list of floats: (beam model) Elastic axis/Shear center. [x1, x2, x3]
+#         self.shear_center = None
+
+#         # Strength property
+#         # -----------------
+#         #: int: Failure criterion.
+#         self.failure_criterion = None
+#         #: dict: Strength properties.
+#         # {
+#         #   'xt|x1t':,
+#         #   'yt|x2t':,
+#         #   'zt|x3t':,
+#         #   'xc|x1c':,
+#         #   'yc|x2c':,
+#         #   'zc|x3c':,
+#         #   'r|x23':,
+#         #   't|x13':,
+#         #   's|x12':
+#         # }
+#         self.strength_constants = {}
+
+#         self.char_len = 0
 
 
-    def summary(self):
-        print('')
-        print('Effective properties of the SG')
-        print('Structure model dimension: {0}'.format(self.smdim))
+#     def __repr__(self):
+#         s = '\n'
+#         s += f'name: {self.name}\n'
+#         s += 'effective properties\n'
+#         s += f'structural model dimension: {self.smdim}\n'
+#         if self.smdim == 3:
+#             pass
+#         elif self.smdim == 2:
+#             pass
+#         elif self.smdim == 1:
+#             pass
 
-        ep = self.eff_props[self.smdim]
-        if self.smdim == 3:
-            pass
-        elif self.smdim == 2:
-            pass
-        elif self.smdim == 1:
-            stf = ep['stiffness']
-            print('The Effective Stiffness Matrix')
-            for row in stf['classical']:
-                print(row)
-            if len(stf['refined']) > 0:
-                print('Generalized Timoshenko Stiffness')
-                for row in stf['refined']:
-                    print(row)
+#         return s
 
 
-    def get(self, name):
-        r"""
-        """
-        v = None
+#     def summary(self):
+#         print('')
+#         print('Effective properties of the SG')
+#         print('Structure model dimension: {0}'.format(self.smdim))
 
-        if self.smdim == 1:
-            return self.constitutive.get(name)
+#         ep = self.eff_props[self.smdim]
+#         if self.smdim == 3:
+#             pass
+#         elif self.smdim == 2:
+#             pass
+#         elif self.smdim == 1:
+#             stf = ep['stiffness']
+#             print('The Effective Stiffness Matrix')
+#             for row in stf['classical']:
+#                 print(row)
+#             if len(stf['refined']) > 0:
+#                 print('Generalized Timoshenko Stiffness')
+#                 for row in stf['refined']:
+#                     print(row)
 
-        if name == 'density':
-            v = self.density
 
-        elif name in ['xt', 'yt', 'zt', 'xc', 'yc', 'zc', 'r', 't', 's']:
-            v = self.strength_constants[name]
+#     def get(self, name):
+#         r"""
+#         """
+#         v = None
 
-        elif self.smdim == 3:
-            if name in ['e', 'e1', 'e2', 'e3', 'g12', 'g13', 'g23', 'nu', 'nu12', 'nu13', 'nu23']:
-                # v = self.constitutive.get(name)
-                v = self.constants.get(name)
+#         if self.smdim == 1:
+#             return self.constitutive.get(name)
 
-        return v
+#         if name == 'density':
+#             v = self.density
+
+#         elif name in ['xt', 'yt', 'zt', 'xc', 'yc', 'zc', 'r', 't', 's']:
+#             v = self.strength_constants[name]
+
+#         elif self.smdim == 3:
+#             if name in ['e', 'e1', 'e2', 'e3', 'g12', 'g13', 'g23', 'nu', 'nu12', 'nu13', 'nu23']:
+#                 # v = self.constitutive.get(name)
+#                 v = self.constants.get(name)
+
+#         return v
     
 
-    def getAll(self):
-        """Get all beam properties.
+#     def getAll(self):
+#         """Get all beam properties.
 
-        Returns
-        -------
-        dict:
-            A Dictionary of all beam properties.
+#         Returns
+#         -------
+#         dict:
+#             A Dictionary of all beam properties.
 
-        Notes
-        -----
+#         Notes
+#         -----
 
-        Names are
+#         Names are
 
-        - mu, mmoi1, mmoi2, mmoi3
-        - ea, ga22, ga33, gj, ei22, ei33
-        - mc2, mc3, tc2, tc3, sc2, sc3
-        - msij, stfijc, cmpijc, stfijr, cmpijr
+#         - mu, mmoi1, mmoi2, mmoi3
+#         - ea, ga22, ga33, gj, ei22, ei33
+#         - mc2, mc3, tc2, tc3, sc2, sc3
+#         - msij, stfijc, cmpijc, stfijr, cmpijr
 
-        """
-        return self.constitutive.getAll()
-        # names = [
-        #     'mu', 'mmoi1', 'mmoi2', 'mmoi3',
-        #     'ea', 'ga22', 'ga33', 'gj', 'ei22', 'ei33',
-        #     'mc2', 'mc3', 'tc2', 'tc3', 'sc2', 'sc3'
-        # ]
-        # for i in range(4):
-        #     for j in range(4):
-        #         names.append('stf{}{}c'.format(i+1, j+1))
-        #         names.append('cmp{}{}c'.format(i+1, j+1))
-        # for i in range(6):
-        #     for j in range(6):
-        #         names.append('ms{}{}'.format(i+1, j+1))
-        #         names.append('stf{}{}r'.format(i+1, j+1))
-        #         names.append('cmp{}{}r'.format(i+1, j+1))
+#         """
+#         return self.constitutive.getAll()
+#         # names = [
+#         #     'mu', 'mmoi1', 'mmoi2', 'mmoi3',
+#         #     'ea', 'ga22', 'ga33', 'gj', 'ei22', 'ei33',
+#         #     'mc2', 'mc3', 'tc2', 'tc3', 'sc2', 'sc3'
+#         # ]
+#         # for i in range(4):
+#         #     for j in range(4):
+#         #         names.append('stf{}{}c'.format(i+1, j+1))
+#         #         names.append('cmp{}{}c'.format(i+1, j+1))
+#         # for i in range(6):
+#         #     for j in range(6):
+#         #         names.append('ms{}{}'.format(i+1, j+1))
+#         #         names.append('stf{}{}r'.format(i+1, j+1))
+#         #         names.append('cmp{}{}r'.format(i+1, j+1))
 
-        # dict_prop = {}
-        # for n in names:
-        #     dict_prop[n] = self.get(n)
+#         # dict_prop = {}
+#         # for n in names:
+#         #     dict_prop[n] = self.get(n)
 
-        # return dict_prop
+#         # return dict_prop
 
 
 

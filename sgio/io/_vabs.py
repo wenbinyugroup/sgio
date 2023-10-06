@@ -1,9 +1,8 @@
 import logging
 
 from sgio.core.sg import StructureGene
-import sgio.utils.io as sui
-import sgio.utils.version as suv
-import sgio.model as sgmodel
+import sgio.utils as sutl
+import sgio.model as smdl
 import sgio.meshio as smsh
 
 logger = logging.getLogger(__name__)
@@ -59,18 +58,18 @@ def _readHeader(file, file_format:str, format_version:str, smdim:int):
 
     configs['sgdim'] = 2
 
-    line = sui.readNextNonEmptyLine(file)
+    line = sutl.readNextNonEmptyLine(file)
     line = line.split()
     configs['format'] = int(line[0])
     configs['num_mat_angle3_comb'] = int(line[1])
 
-    line = sui.readNextNonEmptyLine(file)
+    line = sutl.readNextNonEmptyLine(file)
     line = line.split()
     configs['model'] = int(line[0])
     configs['do_damping'] = int(line[1])
     configs['physics'] = 1 if int(line[2]) > 0 else 0
 
-    line = sui.readNextNonEmptyLine(file)
+    line = sutl.readNextNonEmptyLine(file)
     line = line.split()
     configs['is_curve'] = int(line[0])
     configs['is_oblique'] = int(line[1])
@@ -78,16 +77,16 @@ def _readHeader(file, file_format:str, format_version:str, smdim:int):
     configs['model'] = 2 if line[3] == '1' else configs['model']  # vlasov
 
     if configs['is_curve'] == 1:
-        line = sui.readNextNonEmptyLine(file)
+        line = sutl.readNextNonEmptyLine(file)
         line = line.split()
         configs['curvature'] = list(map(float, line[:3]))
 
     if configs['is_oblique'] == 1:
-        line = sui.readNextNonEmptyLine(file)
+        line = sutl.readNextNonEmptyLine(file)
         line = line.split()
         configs['oblique'] = list(map(float, line[:2]))
 
-    line = sui.readNextNonEmptyLine(file)
+    line = sutl.readNextNonEmptyLine(file)
     line = line.split()
     configs['num_nodes'] = int(line[0])
     configs['num_elements'] = int(line[1])
@@ -181,22 +180,25 @@ def _readMaterial(file, file_format:str, isotropy:int, ntemp:int=1):
     """
 
     # mp = mmsd.MaterialProperty()
-    mp = sgmodel.MaterialSection()
-    mp.isotropy = isotropy
+    # mp = smdl.MaterialSection()
+    mp = smdl.CauchyContinuumModel()
+    # mp.isotropy = isotropy
+    mp.set('isotropy', isotropy)
 
     temp_counter = 0
     while temp_counter < ntemp:
 
         # Read elastic properties
         elastic_props = _readElasticProperty(file, isotropy)
-        mp.setElasticProperty(elastic_props, isotropy)
+        mp.setElastic(elastic_props, isotropy)
 
         line = file.readline().strip()
         while line == '':
             line = file.readline().strip()
         density = float(line)
 
-        mp.density = density
+        # mp.density = density
+        mp.set('density', density)
 
         # Read thermal properties
 
@@ -244,9 +246,9 @@ def _readElasticProperty(file, isotropy:int):
 # ====================================================================
 # Read output
 # ====================================================================
-def readOutputBuffer(file, analysis=0, sg:StructureGene=None):
+def readOutputBuffer(file, analysis=0, sg:StructureGene=None, **kwargs):
     if analysis == 0 or analysis == 'h' or analysis == '':
-        return _readOutputH(file)
+        return _readOutputH(file, **kwargs)
 
     elif analysis == 1 or analysis == 2 or analysis == 'dl' or analysis == 'd' or analysis == 'l':
         pass
@@ -265,130 +267,273 @@ def readOutputBuffer(file, analysis=0, sg:StructureGene=None):
 
 
 
-def _readOutputH(file):
-    """Read VABS homogenization results
-
-    Parameters
-    ----------
-    fn : str
-        VABS output file name (e.g. example.sg.k).
-    scrnout : bool, default True
-        Switch of printing cmd output.
-
-    Returns
-    -------
-    msgpi.sg.MaterialSection
-        Material/sectional properties.
+def _readOutputH(file, **kwargs):
+    """Read VABS homogenization output.
     """
-    # sm = mms.MaterialSection(smdim = 1)
-    # bp = mmbm.BeamProperty()
-    ms = sgmodel.MaterialSection(smdim=1)
-    bp = sgmodel.BeamModel()
 
-    linesRead = []
-    keywordsIndex = {}
+    if kwargs['submodel'] == 1:
+        return _readEulerBernoulliBeamModel(file)
+    elif kwargs['submodel'] == 2:
+        return _readTimoshenkoBeamModel(file)
 
 
-    # with open(fn, 'r') as fin:
-    ln = -1
-    lines = file.readlines()
-    for i, line in enumerate(lines):
+
+
+def _readEulerBernoulliBeamModel(file):
+    """
+    """
+
+    model = smdl.EulerBernoulliBeamModel()
+
+    block = ''
+    line = file.readline()
+
+    while True:
+        if not line:  # EOF
+            break
 
         line = line.strip()
 
-        if len(line) > 0:
-            linesRead.append(line)
-            ln += 1
-        else:
+        if len(line) == 0:
+            line = file.readline()
+            continue
+        elif line.startswith('--') or line.startswith('=='):
+            line = file.readline()
             continue
 
-        if '=====' in line:
-            continue
-
-        line = line.lower()
+        # line = line.lower()
         # line = line.replace('-', ' ')
 
-        if 'geometric center' in line:
-            keywordsIndex['gc'] = ln
-        elif 'area =' in line:
-            bp.area = float(line.split()[-1])
+        elif 'Geometric Center' in line:
+            for _ in range(3): line = file.readline()
+            model.xg2, model.xg3 = list(map(float, line.split()))
+        elif 'Area =' in line:
+            model.area = float(line.split()[-1])
 
 
         # Inertial properties
         # -------------------
 
-        elif '6x6 mass matrix at the mass center' in line:
-            keywordsIndex['mass_mc'] = ln
-        elif '6x6 mass matrix' in line:
-            keywordsIndex['mass'] = ln
-        elif 'mass center of the cross section' in line or 'mass center of the cross-section' in line:
-            keywordsIndex['mc'] = ln
-        elif 'mass per unit span' in line:
-            bp.mu = float(line.split()[-1])
+        elif line == 'The 6X6 Mass Matrix':
+            for _ in range(3): line = file.readline()
+            _matrix, line = sutl.readMatrix(
+                file, line, nrows=6, ncols=6,
+                number_type=float
+                )
+            model.mass = _matrix
+        elif '6X6 Mass Matrix at the Mass Center' in line:
+            for _ in range(3): line = file.readline()
+            _matrix, line = sutl.readMatrix(
+                file, line, nrows=6, ncols=6,
+                number_type=float
+                )
+            model.mass_mc = _matrix
+        elif 'Mass Center of the Cross' in line:
+            for _ in range(3): line = file.readline()
+            model.xm2, model.xm3 = list(map(float, line.split()))
+        elif 'Mass per unit span' in line:
+            model.mu = float(line.split()[-1])
         elif 'inertia i11' in line:
-            bp.i11 = float(line.split()[-1])
+            model.i11 = float(line.split()[-1])
         elif 'inertia i22' in line:
-            bp.i22 = float(line.split()[-1])
+            model.i22 = float(line.split()[-1])
         elif 'inertia i33' in line:
-            bp.i33 = float(line.split()[-1])
+            model.i33 = float(line.split()[-1])
         elif 'principal inertial axes rotated' in line:
             line = line.split()
             try:
                 tmp_id = line.index('degrees')
             except ValueError:
-                line = lines[i+1].split()
+                line = file.readline().split()
                 tmp_id = line.index('degrees')
-            bp.phi_pia = float(line[tmp_id - 1])
+            model.phi_pia = float(line[tmp_id - 1])
         elif 'mass-weighted radius of gyration' in line:
-            bp.rg = float(line.split()[-1])
+            model.rg = float(line.split()[-1])
 
 
         # Structural properties
         # ---------------------
 
-        elif 'classical stiffness matrix' in line:
-            keywordsIndex['csm'] = ln
-        elif 'classical compliance matrix' in line:
-            keywordsIndex['cfm'] = ln
+        elif 'Classical Stiffness Matrix' in line:
+            for _ in range(3): line = file.readline()
+            _matrix, line = sutl.readMatrix(
+                file, line, nrows=4, ncols=4, number_type=float
+                )
+            model.stff = _matrix
+        elif 'Classical Compliance Matrix' in line:
+            for _ in range(3): line = file.readline()
+            _matrix, line = sutl.readMatrix(
+                file, line, nrows=4, ncols=4, number_type=float
+                )
+            model.cmpl = _matrix
 
-        elif 'tension center' in line:
-            keywordsIndex['tc'] = ln
-        elif 'extension stiffness ea' in line:
-            bp.ea = float(line.split()[-1])
-        elif 'torsional stiffness gj' in line:
-            bp.gj = float(line.split()[-1])
-        elif 'principal bending stiffness ei22' in line:
-            bp.ei22 = float(line.split()[-1])
-        elif 'principal bending stiffness ei33' in line:
-            bp.ei33 = float(line.split()[-1])
+        elif 'Tension Center of the Cross' in line:
+            for _ in range(3): line = file.readline()
+            model.xt2, model.xt3 = list(map(float, line.split()))
+        elif 'extension stiffness EA' in line:
+            model.ea = float(line.split()[-1])
+        elif 'torsional stiffness GJ' in line:
+            model.gj = float(line.split()[-1])
+        elif 'Principal bending stiffness EI22' in line:
+            model.ei22 = float(line.split()[-1])
+        elif 'Principal bending stiffness EI33' in line:
+            model.ei33 = float(line.split()[-1])
         elif 'principal bending axes rotated' in line:
             line = line.split()
             try:
                 tmp_id = line.index('degrees')
             except ValueError:
-                line = lines[i+1].split()
+                line = file.readline().split()
                 tmp_id = line.index('degrees')
-            bp.phi_pba = float(line[tmp_id - 1])
+            model.phi_pba = float(line[tmp_id - 1])
 
-        elif 'timoshenko stiffness matrix' in line:
-            keywordsIndex['tsm'] = ln
-        elif 'timoshenko compliance matrix' in line:
-            keywordsIndex['tfm'] = ln
+        line = file.readline()
 
-        elif 'shear center' in line:
-            keywordsIndex['sc'] = ln
-        elif 'principal shear stiffness ga22' in line:
-            bp.ga22 = float(line.split()[-1])
-        elif 'principal shear stiffness ga33' in line:
-            bp.ga33 = float(line.split()[-1])
+    return model
+
+
+
+
+def _readTimoshenkoBeamModel(file):
+    """
+    """
+
+    model = smdl.TimoshenkoBeamModel()
+
+    block = ''
+    line = file.readline()
+
+    while True:
+        if not line:  # EOF
+            break
+
+        line = line.strip()
+
+        if len(line) == 0:
+            line = file.readline()
+            continue
+        elif line.startswith('--') or line.startswith('=='):
+            line = file.readline()
+            continue
+
+        # line = line.lower()
+        # line = line.replace('-', ' ')
+
+        elif 'Geometric Center' in line:
+            for _ in range(3): line = file.readline()
+            model.xg2, model.xg3 = list(map(float, line.split()))
+        elif 'Area =' in line:
+            model.area = float(line.split()[-1])
+
+
+        # Inertial properties
+        # -------------------
+
+        elif line == 'The 6X6 Mass Matrix':
+            for _ in range(3): line = file.readline()
+            _matrix, line = sutl.readMatrix(
+                file, line, nrows=6, ncols=6,
+                number_type=float
+                )
+            model.mass = _matrix
+        elif '6X6 Mass Matrix at the Mass Center' in line:
+            for _ in range(3): line = file.readline()
+            _matrix, line = sutl.readMatrix(
+                file, line, nrows=6, ncols=6,
+                number_type=float
+                )
+            model.mass_mc = _matrix
+        elif 'Mass Center of the Cross' in line:
+            for _ in range(3): line = file.readline()
+            model.xm2, model.xm3 = list(map(float, line.split()))
+        elif 'Mass per unit span' in line:
+            model.mu = float(line.split()[-1])
+        elif 'inertia i11' in line:
+            model.i11 = float(line.split()[-1])
+        elif 'inertia i22' in line:
+            model.i22 = float(line.split()[-1])
+        elif 'inertia i33' in line:
+            model.i33 = float(line.split()[-1])
+        elif 'principal inertial axes rotated' in line:
+            line = line.split()
+            try:
+                tmp_id = line.index('degrees')
+            except ValueError:
+                line = file.readline().split()
+                tmp_id = line.index('degrees')
+            model.phi_pia = float(line[tmp_id - 1])
+        elif 'mass-weighted radius of gyration' in line:
+            model.rg = float(line.split()[-1])
+
+
+        # Structural properties
+        # ---------------------
+
+        elif 'Classical Stiffness Matrix' in line:
+            for _ in range(3): line = file.readline()
+            _matrix, line = sutl.readMatrix(
+                file, line, nrows=4, ncols=4, number_type=float
+                )
+            model.stff_c = _matrix
+        elif 'Classical Compliance Matrix' in line:
+            for _ in range(3): line = file.readline()
+            _matrix, line = sutl.readMatrix(
+                file, line, nrows=4, ncols=4, number_type=float
+                )
+            model.cmpl_c = _matrix
+
+        elif 'Tension Center of the Cross' in line:
+            for _ in range(3): line = file.readline()
+            model.xt2, model.xt3 = list(map(float, line.split()))
+        elif 'extension stiffness EA' in line:
+            model.ea = float(line.split()[-1])
+        elif 'torsional stiffness GJ' in line:
+            model.gj = float(line.split()[-1])
+        elif 'Principal bending stiffness EI22' in line:
+            model.ei22 = float(line.split()[-1])
+        elif 'Principal bending stiffness EI33' in line:
+            model.ei33 = float(line.split()[-1])
+        elif 'principal bending axes rotated' in line:
+            line = line.split()
+            try:
+                tmp_id = line.index('degrees')
+            except ValueError:
+                line = file.readline().split()
+                tmp_id = line.index('degrees')
+            model.phi_pba = float(line[tmp_id - 1])
+
+        elif 'Timoshenko Stiffness Matrix' in line:
+            for _ in range(3): line = file.readline()
+            _matrix, line = sutl.readMatrix(
+                file, line, nrows=6, ncols=6, number_type=float
+                )
+            model.stff = _matrix
+        elif 'Timoshenko Compliance Matrix' in line:
+            for _ in range(3): line = file.readline()
+            _matrix, line = sutl.readMatrix(
+                file, line, nrows=6, ncols=6, number_type=float
+                )
+            model.cmpl = _matrix
+
+        elif 'Shear Center' in line:
+            for _ in range(3): line = file.readline()
+            model.xs2, model.xs3 = list(map(float, line.split()))
+        elif 'Principal shear stiffness GA22' in line:
+            model.ga22 = float(line.split()[-1])
+        elif 'Principal shear stiffness GA33' in line:
+            model.ga33 = float(line.split()[-1])
         elif 'principal shear axes rotated' in line:
             line = line.split()
             try:
                 tmp_id = line.index('degrees')
             except ValueError:
-                line = lines[i+1].split()
+                line = file.readline().split()
                 tmp_id = line.index('degrees')
-            bp.phi_psa = float(line[tmp_id - 1])
+            model.phi_psa = float(line[tmp_id - 1])
+
+        line = file.readline()
+
+    return model
 
         # elif 'Vlasov Stiffness Matrix' in line:
         #     keywordsIndex['vsm'] = ln
@@ -406,168 +551,159 @@ def _readOutputH(file):
         # elif 'Dk3--Dk3--Dk3--Dk3' in line:
         #     keywordsIndex['te_dk'] = ln
 
+    # #check whether the analysis is Vlasov or timoshenko
+    # #Read stiffness matrix and compliance matrix
+    # if 'vsm' in keywordsIndex.keys():
+    #     pass
+    #     # try:
+    #     #     ln = keywordsIndex['vsm']
+    #     #     sm.stiffness_refined = utl.textToMatrix(linesRead[ln + 3:ln + 8])
+    #     #     #old dic to save valsov stiffness matrix
+    #     #     # sm.eff_props[1]['stiffness']['refined'] = utl.textToMatrix(linesRead[ln + 3:ln + 8])
+    #     # except KeyError:
+    #     #     if scrnout:
+    #     #         print('No Vlasov stiffness matrix found.')
+    #     #     else:
+    #     #         pass
+    #     # try:
+    #     #     ln = keywordsIndex['vfm']
+    #     #     sm.compliance_refined = utl.textToMatrix(linesRead[ln + 3:ln + 8])
+    #     #     #old dic to save valsov compliance matrix
+    #     #     # sm.eff_props[1]['compliance']['refined'] = utl.textToMatrix(linesRead[ln + 3:ln + 8])            
+    #     # except KeyError:
+    #     #     if scrnout:
+    #     #         print('No Vlasov flexibility matrix found.')
+    #     #     else:
+    #     #         pass
+    #     #check whether trapeze effect analysis is on and read the correponding matrix
+    #     # if 'te' in keywordsIndex.keys():
+    #     #     try:
+    #     #         ln = keywordsIndex['te_ag']
+    #     #         sm.trapeze_effect['ag'] = utl.textToMatrix(linesRead[ln + 3:ln + 7])
+    #     #     except KeyError:
+    #     #         if scrnout:
+    #     #             print('No Ag1--Ag1--Ag1--Ag1 matrix found.')
+    #     #         else:
+    #     #             pass
+    #     #     try:
+    #     #         ln = keywordsIndex['te_bk']
+    #     #         sm.trapeze_effect['bk'] = utl.textToMatrix(linesRead[ln + 3:ln + 7])
+    #     #     except KeyError:
+    #     #         if scrnout:
+    #     #             print('No Bk1--Bk1--Bk1--Bk1 matrix found.')
+    #     #         else:
+    #     #             pass
+    #     #     try:
+    #     #         ln = keywordsIndex['te_ck']
+    #     #         sm.trapeze_effect['ck'] = utl.textToMatrix(linesRead[ln + 3:ln + 7])
+    #     #     except KeyError:
+    #     #         if scrnout:
+    #     #             print('No Ck2--Ck2--Ck2--Ck2 matrix found.')
+    #     #         else:
+    #     #             pass    
+    #     #     try:
+    #     #         ln = keywordsIndex['te_dk']
+    #     #         sm.trapeze_effect['dk'] = utl.textToMatrix(linesRead[ln + 3:ln + 7])
+    #     #     except KeyError:
+    #     #         if scrnout:
+    #     #             print('No Dk3--Dk3--Dk3--Dk3 matrix found.')
+    #     #         else:
+    #     #             pass                   
+    # else:
+    #     try:
+    #         ln = keywordsIndex['csm']
+    #         bp.stff = sutl.textToMatrix(linesRead[ln + 2:ln + 6])
+    #         #old dic method to save classical stiffness
+    #         # sm.eff_props[1]['stiffness']['classical'] = utl.textToMatrix(linesRead[ln + 3:ln + 7])
+    #     except KeyError:
+    #         logger.info('No classical stiffness matrix found.')
+    #         # if scrnout:
+    #         # else:
+    #         #     pass
 
-    ln = keywordsIndex['mass']
-    bp.mass = sui.textToMatrix(linesRead[ln + 2:ln + 8])
+    #     try:
+    #         ln = keywordsIndex['cfm']
+    #         bp.cmpl = sutl.textToMatrix(linesRead[ln + 2:ln + 6])
+    #         #old dic method to save classical compliance
+    #         # sm.eff_props[1]['compliance']['classical'] = utl.textToMatrix(linesRead[ln + 3:ln + 7])
+    #     except KeyError:
+    #         logger.info('No classical compliance matrix found.')
+    #         # if scrnout:
+    #         # else:
+    #         #     pass
 
-    if 'mass_mc' in keywordsIndex.keys():
-        ln = keywordsIndex['mass_mc']
-        bp.mass_cs = sui.textToMatrix(linesRead[ln + 2:ln + 8])
+    #     try:
+    #         ln = keywordsIndex['tsm']
+    #         bp.stff_t = sutl.textToMatrix(linesRead[ln + 2:ln + 8])
+    #         #old dic method to save refined stiffness matrix
+    #         # sm.eff_props[1]['stiffness']['refined'] = utl.textToMatrix(linesRead[ln + 3:ln + 9])
+    #     except KeyError:
+    #         logger.info('No Timoshenko stiffness matrix found.')
+    #         # if scrnout:
+    #         # else:
+    #         #     pass
+    #     try:
+    #         ln = keywordsIndex['tfm']
+    #         bp.cmpl_t = sutl.textToMatrix(linesRead[ln + 2:ln + 8])
+    #         #old dic method to save refined compliance matrix
+    #         # sm.eff_props[1]['compliance']['refined'] = utl.textToMatrix(linesRead[ln + 3:ln + 9])
+    #     except KeyError:
+    #         logger.info('No Timoshenko compliance matrix found.')
+    #         # if scrnout:
+    #         # else:
+    #         #     pass
 
-    #check whether the analysis is Vlasov or timoshenko
-    #Read stiffness matrix and compliance matrix
-    if 'vsm' in keywordsIndex.keys():
-        pass
-        # try:
-        #     ln = keywordsIndex['vsm']
-        #     sm.stiffness_refined = utl.textToMatrix(linesRead[ln + 3:ln + 8])
-        #     #old dic to save valsov stiffness matrix
-        #     # sm.eff_props[1]['stiffness']['refined'] = utl.textToMatrix(linesRead[ln + 3:ln + 8])
-        # except KeyError:
-        #     if scrnout:
-        #         print('No Vlasov stiffness matrix found.')
-        #     else:
-        #         pass
-        # try:
-        #     ln = keywordsIndex['vfm']
-        #     sm.compliance_refined = utl.textToMatrix(linesRead[ln + 3:ln + 8])
-        #     #old dic to save valsov compliance matrix
-        #     # sm.eff_props[1]['compliance']['refined'] = utl.textToMatrix(linesRead[ln + 3:ln + 8])            
-        # except KeyError:
-        #     if scrnout:
-        #         print('No Vlasov flexibility matrix found.')
-        #     else:
-        #         pass
-        #check whether trapeze effect analysis is on and read the correponding matrix
-        # if 'te' in keywordsIndex.keys():
-        #     try:
-        #         ln = keywordsIndex['te_ag']
-        #         sm.trapeze_effect['ag'] = utl.textToMatrix(linesRead[ln + 3:ln + 7])
-        #     except KeyError:
-        #         if scrnout:
-        #             print('No Ag1--Ag1--Ag1--Ag1 matrix found.')
-        #         else:
-        #             pass
-        #     try:
-        #         ln = keywordsIndex['te_bk']
-        #         sm.trapeze_effect['bk'] = utl.textToMatrix(linesRead[ln + 3:ln + 7])
-        #     except KeyError:
-        #         if scrnout:
-        #             print('No Bk1--Bk1--Bk1--Bk1 matrix found.')
-        #         else:
-        #             pass
-        #     try:
-        #         ln = keywordsIndex['te_ck']
-        #         sm.trapeze_effect['ck'] = utl.textToMatrix(linesRead[ln + 3:ln + 7])
-        #     except KeyError:
-        #         if scrnout:
-        #             print('No Ck2--Ck2--Ck2--Ck2 matrix found.')
-        #         else:
-        #             pass    
-        #     try:
-        #         ln = keywordsIndex['te_dk']
-        #         sm.trapeze_effect['dk'] = utl.textToMatrix(linesRead[ln + 3:ln + 7])
-        #     except KeyError:
-        #         if scrnout:
-        #             print('No Dk3--Dk3--Dk3--Dk3 matrix found.')
-        #         else:
-        #             pass                   
-    else:
-        try:
-            ln = keywordsIndex['csm']
-            bp.stff = sui.textToMatrix(linesRead[ln + 2:ln + 6])
-            #old dic method to save classical stiffness
-            # sm.eff_props[1]['stiffness']['classical'] = utl.textToMatrix(linesRead[ln + 3:ln + 7])
-        except KeyError:
-            logger.info('No classical stiffness matrix found.')
-            # if scrnout:
-            # else:
-            #     pass
+    #     if 'tc' in keywordsIndex.keys():
+    #         ln = keywordsIndex['tc']
+    #         bp.xt2, bp.xt3 = list(map(float, linesRead[ln + 2].split()))
+    #     if 'sc' in keywordsIndex.keys():
+    #         ln = keywordsIndex['sc']
+    #         bp.xs2, bp.xs3 = list(map(float, linesRead[ln + 2].split()))
+    #     if 'mc' in keywordsIndex.keys():
+    #         ln = keywordsIndex['mc']
+    #         bp.xm2, bp.xm3 = list(map(float, linesRead[ln + 2].split()))
+    #     if 'gc' in keywordsIndex.keys():
+    #         ln = keywordsIndex['gc']
+    #         bp.xg2, bp.xg3 = list(map(float, linesRead[ln + 2].split()))
 
-        try:
-            ln = keywordsIndex['cfm']
-            bp.cmpl = sui.textToMatrix(linesRead[ln + 2:ln + 6])
-            #old dic method to save classical compliance
-            # sm.eff_props[1]['compliance']['classical'] = utl.textToMatrix(linesRead[ln + 3:ln + 7])
-        except KeyError:
-            logger.info('No classical compliance matrix found.')
-            # if scrnout:
-            # else:
-            #     pass
+    #     #check whether trapeze effect analysis is on and read the correponding matrix
+    #     # if 'te' in keywordsIndex.keys():
+    #     #     try:
+    #     #         ln = keywordsIndex['te_ag']
+    #     #         sm.trapeze_effect['ag'] = utl.textToMatrix(linesRead[ln + 3:ln + 7])
+    #     #     except KeyError:
+    #     #         if scrnout:
+    #     #             print('No Ag1--Ag1--Ag1--Ag1 matrix found.')
+    #     #         else:
+    #     #             pass
+    #     #     try:
+    #     #         ln = keywordsIndex['te_bk']
+    #     #         sm.trapeze_effect['bk'] = utl.textToMatrix(linesRead[ln + 3:ln + 7])
+    #     #     except KeyError:
+    #     #         if scrnout:
+    #     #             print('No Bk1--Bk1--Bk1--Bk1 matrix found.')
+    #     #         else:
+    #     #             pass
+    #     #     try:
+    #     #         ln = keywordsIndex['te_ck']
+    #     #         sm.trapeze_effect['ck'] = utl.textToMatrix(linesRead[ln + 3:ln + 7])
+    #     #     except KeyError:
+    #     #         if scrnout:
+    #     #             print('No Ck2--Ck2--Ck2--Ck2 matrix found.')
+    #     #         else:
+    #     #             pass    
+    #     #     try:
+    #     #         ln = keywordsIndex['te_dk']
+    #     #         sm.trapeze_effect['dk'] = utl.textToMatrix(linesRead[ln + 3:ln + 7])
+    #     #     except KeyError:
+    #     #         if scrnout:
+    #     #             print('No Dk3--Dk3--Dk3--Dk3 matrix found.')
+    #     #         else:
+    #     #             pass              
 
-        try:
-            ln = keywordsIndex['tsm']
-            bp.stff_t = sui.textToMatrix(linesRead[ln + 2:ln + 8])
-            #old dic method to save refined stiffness matrix
-            # sm.eff_props[1]['stiffness']['refined'] = utl.textToMatrix(linesRead[ln + 3:ln + 9])
-        except KeyError:
-            logger.info('No Timoshenko stiffness matrix found.')
-            # if scrnout:
-            # else:
-            #     pass
-        try:
-            ln = keywordsIndex['tfm']
-            bp.cmpl_t = sui.textToMatrix(linesRead[ln + 2:ln + 8])
-            #old dic method to save refined compliance matrix
-            # sm.eff_props[1]['compliance']['refined'] = utl.textToMatrix(linesRead[ln + 3:ln + 9])
-        except KeyError:
-            logger.info('No Timoshenko compliance matrix found.')
-            # if scrnout:
-            # else:
-            #     pass
+    # ms.constitutive = bp
 
-        if 'tc' in keywordsIndex.keys():
-            ln = keywordsIndex['tc']
-            bp.xt2, bp.xt3 = list(map(float, linesRead[ln + 2].split()))
-        if 'sc' in keywordsIndex.keys():
-            ln = keywordsIndex['sc']
-            bp.xs2, bp.xs3 = list(map(float, linesRead[ln + 2].split()))
-        if 'mc' in keywordsIndex.keys():
-            ln = keywordsIndex['mc']
-            bp.xm2, bp.xm3 = list(map(float, linesRead[ln + 2].split()))
-        if 'gc' in keywordsIndex.keys():
-            ln = keywordsIndex['gc']
-            bp.xg2, bp.xg3 = list(map(float, linesRead[ln + 2].split()))
-
-        #check whether trapeze effect analysis is on and read the correponding matrix
-        # if 'te' in keywordsIndex.keys():
-        #     try:
-        #         ln = keywordsIndex['te_ag']
-        #         sm.trapeze_effect['ag'] = utl.textToMatrix(linesRead[ln + 3:ln + 7])
-        #     except KeyError:
-        #         if scrnout:
-        #             print('No Ag1--Ag1--Ag1--Ag1 matrix found.')
-        #         else:
-        #             pass
-        #     try:
-        #         ln = keywordsIndex['te_bk']
-        #         sm.trapeze_effect['bk'] = utl.textToMatrix(linesRead[ln + 3:ln + 7])
-        #     except KeyError:
-        #         if scrnout:
-        #             print('No Bk1--Bk1--Bk1--Bk1 matrix found.')
-        #         else:
-        #             pass
-        #     try:
-        #         ln = keywordsIndex['te_ck']
-        #         sm.trapeze_effect['ck'] = utl.textToMatrix(linesRead[ln + 3:ln + 7])
-        #     except KeyError:
-        #         if scrnout:
-        #             print('No Ck2--Ck2--Ck2--Ck2 matrix found.')
-        #         else:
-        #             pass    
-        #     try:
-        #         ln = keywordsIndex['te_dk']
-        #         sm.trapeze_effect['dk'] = utl.textToMatrix(linesRead[ln + 3:ln + 7])
-        #     except KeyError:
-        #         if scrnout:
-        #             print('No Dk3--Dk3--Dk3--Dk3 matrix found.')
-        #         else:
-        #             pass              
-
-    ms.constitutive = bp
-
-    return ms
-
+    # return ms
 
 
 
@@ -714,7 +850,7 @@ def writeInput(sg, fn, file_format, sfi, sff, sg_fmt, version=None, mesh_only=Fa
 
     ssff = '{:' + sff + '}'
     if not version is None:
-        sg.version = suv.Version(version)
+        sg.version = sutl.Version(version)
 
     logger.debug('format version: {}'.format(sg.version))
 
@@ -801,32 +937,32 @@ def _writeMaterials(sg, file, file_format, sfi, sff):
         # print(anisotropy)
 
         if file_format.startswith('v'):
-            sui.writeFormatIntegers(file, (mid, anisotropy), sfi, newline=False)
+            sutl.writeFormatIntegers(file, (mid, anisotropy), sfi, newline=False)
             if counter == 0:
                 file.write('  # materials')
             file.write('\n')
         elif file_format.startswith('s'):
-            sui.writeFormatIntegers(file, (mid, anisotropy, 1), sfi, newline=False)
+            sutl.writeFormatIntegers(file, (mid, anisotropy, 1), sfi, newline=False)
             if counter == 0:
                 file.write('  # materials')
             file.write('\n')
-            sui.writeFormatFloats(file, (m.temperature, m.density), sff)
+            sutl.writeFormatFloats(file, (m.temperature, m.density), sff)
 
         # Write elastic properties
         if anisotropy == 0:
             # mpc = m.constants
-            sui.writeFormatFloats(file, [m.e1, m.nu12], sff)
+            sutl.writeFormatFloats(file, [m.e1, m.nu12], sff)
 
         elif anisotropy == 1:
             # mpc = m.constants
-            sui.writeFormatFloats(file, [m.e1, m.e2, m.e3], sff)
-            sui.writeFormatFloats(file, [m.g12, m.g13, m.g23], sff)
-            sui.writeFormatFloats(file, [m.nu12, m.nu13, m.nu23], sff)
+            sutl.writeFormatFloats(file, [m.e1, m.e2, m.e3], sff)
+            sutl.writeFormatFloats(file, [m.g12, m.g13, m.g23], sff)
+            sutl.writeFormatFloats(file, [m.nu12, m.nu13, m.nu23], sff)
 
 
         elif anisotropy == 2:
             for i in range(6):
-                sui.writeFormatFloats(file, m.stff[i][i:], sff)
+                sutl.writeFormatFloats(file, m.stff[i][i:], sff)
                 # for j in range(i, 6):
                 #     file.write(sff.format(m.stff[i][j]))
                 # file.write('\n')
@@ -835,10 +971,10 @@ def _writeMaterials(sg, file, file_format, sfi, sff):
         # print('m.cte =', m.cte)
         # print('m.specific_heat =', m.specific_heat)
         if sg.physics in [1, 4, 6]:
-            sui.writeFormatFloats(file, m.cte+[m.specific_heat,], sff)
+            sutl.writeFormatFloats(file, m.cte+[m.specific_heat,], sff)
 
         if file_format.lower().startswith('v'):
-            sui.writeFormatFloats(file, (m.density,), sff)
+            sutl.writeFormatFloats(file, (m.density,), sff)
 
         file.write('\n')
         
@@ -861,7 +997,7 @@ def _writeHeader(sg, file, file_format, sfi, sff, sg_fmt, version=None):
     # VABS
     if file_format.startswith('v'):
         # format_flag  nlayer
-        sui.writeFormatIntegers(file, [sg_fmt, len(sg.mocombos)])
+        sutl.writeFormatIntegers(file, [sg_fmt, len(sg.mocombos)])
         file.write('\n')
 
         # timoshenko_flag  damping_flag  thermal_flag
@@ -878,7 +1014,7 @@ def _writeHeader(sg, file, file_format, sfi, sff, sg_fmt, version=None):
         physics = 0
         if sg.physics == 1:
             physics = 3
-        sui.writeFormatIntegers(
+        sutl.writeFormatIntegers(
             file, [model, sg.do_dampling, physics], sfi, newline=False)
         file.write('  # model_flag, damping_flag, thermal_flag\n\n')
 
@@ -888,12 +1024,12 @@ def _writeHeader(sg, file, file_format, sfi, sff, sg_fmt, version=None):
             line[0] = 1
         if (sg.oblique[0] != 1.0) or (sg.oblique[1] != 0.0):
             line[1] = 1
-        sui.writeFormatIntegers(file, line, sfi, newline=False)
+        sutl.writeFormatIntegers(file, line, sfi, newline=False)
         file.write('  # curve_flag, oblique_flag, trapeze_flag, vlasov_flag\n\n')
 
         # k1  k2  k3
         if line[0] == 1:
-            sui.writeFormatFloats(
+            sutl.writeFormatFloats(
                 file,
                 [sg.initial_twist, sg.initial_curvature[0], sg.initial_curvature[1]],
                 sff, newline=False
@@ -902,11 +1038,11 @@ def _writeHeader(sg, file, file_format, sfi, sff, sg_fmt, version=None):
         
         # oblique1  oblique2
         if line[1] == 1:
-            sui.writeFormatFloats(file, sg.oblique, sff, newline=False)
+            sutl.writeFormatFloats(file, sg.oblique, sff, newline=False)
             file.write('  # cos11, cos21 (obliqueness)\n\n')
         
         # nnode  nelem  nmate
-        sui.writeFormatIntegers(
+        sutl.writeFormatIntegers(
             file, [sg.nnodes, sg.nelems, sg.nmates], sfi, newline=False)
         file.write('  # nnode, nelem, nmate\n\n')
 
@@ -923,7 +1059,7 @@ def _writeHeader(sg, file, file_format, sfi, sff, sg_fmt, version=None):
             if sg.smdim == 1:  # beam
                 # initial twist/curvatures
                 # file.write((sff * 3 + '\n').format(0., 0., 0.))
-                sui.writeFormatFloats(
+                sutl.writeFormatFloats(
                     file,
                     [sg.initial_twist, sg.initial_curvature[0], sg.initial_curvature[1]],
                     sff, newline=False
@@ -932,19 +1068,19 @@ def _writeHeader(sg, file, file_format, sfi, sff, sg_fmt, version=None):
                 file.write('\n')
                 # oblique cross section
                 # file.write((sff * 2 + '\n').format(1., 0.))
-                sui.writeFormatFloats(file, sg.oblique, sff)
+                sutl.writeFormatFloats(file, sg.oblique, sff)
 
             elif sg.smdim == 2:  # shell
                 # initial twist/curvatures
                 # file.write((sff * 2 + '\n').format(
                 #     sg.initial_curvature[0], sg.initial_curvature[1]
                 # ))
-                sui.writeFormatFloats(file, sg.initial_curvature, sff, newline=False)
+                sutl.writeFormatFloats(file, sg.initial_curvature, sff, newline=False)
                 file.write('  # initial curvatures k12, k21\n')
                 # if sg.geo_correct:
                 # if sg.initial_curvature[0] != 0 or sg.initial_curvature[1] != 0:
                 if version > '2.1':
-                    sui.writeFormatFloats(file, sg.lame_params, sff, newline=False)
+                    sutl.writeFormatFloats(file, sg.lame_params, sff, newline=False)
                     file.write('  # Lame parameters\n')
             file.write('\n')
 
@@ -957,7 +1093,7 @@ def _writeHeader(sg, file, file_format, sfi, sff, sg_fmt, version=None):
         if version > '2.1':
             nums += [sg.force_flag, sg.steer_flag]
             cmt = cmt + ', force_flag, steer_flag'
-        sui.writeFormatIntegers(file, nums, sfi, newline=False)
+        sutl.writeFormatIntegers(file, nums, sfi, newline=False)
         file.write(cmt)
         file.write('\n\n')
         # file.write((sfi * 6 + '\n').format(
@@ -968,7 +1104,7 @@ def _writeHeader(sg, file, file_format, sfi, sff, sg_fmt, version=None):
         #     sg.num_slavenodes,
         #     len(sg.mocombos)
         # ))
-        sui.writeFormatIntegers(file, [
+        sutl.writeFormatIntegers(file, [
             sg.sgdim,
             sg.nnodes,
             sg.nelems,
@@ -1017,16 +1153,16 @@ def _writeInputMaterialStrength(sg, file, file_format, sfi, sff):
             elif m.failure_criterion == 5:
                 pass
 
-        sui.writeFormatIntegers(
+        sutl.writeFormatIntegers(
             file,
             # (m.strength['criterion'], len(m.strength['constants'])),
             [m.failure_criterion, len(strength)],
             sfi
         )
         # file.write((sff+'\n').format(m.strength['chara_len']))
-        sui.writeFormatFloats(file, [m.char_len,], sff)
-        # sui.writeFormatFloats(file, m.strength['constants'], sff[2:-1])
-        sui.writeFormatFloats(file, strength, sff)
+        sutl.writeFormatFloats(file, [m.char_len,], sff)
+        # sutl.writeFormatFloats(file, m.strength['constants'], sff[2:-1])
+        sutl.writeFormatFloats(file, strength, sff)
     return
 
 
@@ -1038,8 +1174,8 @@ def _writeInputMaterialStrength(sg, file, file_format, sfi, sff):
 
 
 def _writeInputDisplacements(sg, file, file_format, sff):
-    sui.writeFormatFloats(file, sg.global_displacements, sff[2:-1])
-    sui.writeFormatFloatsMatrix(file, sg.global_rotations, sff[2:-1])
+    sutl.writeFormatFloats(file, sg.global_displacements, sff[2:-1])
+    sutl.writeFormatFloatsMatrix(file, sg.global_rotations, sff[2:-1])
 
 
 
@@ -1052,19 +1188,19 @@ def _writeInputDisplacements(sg, file, file_format, sff):
 def _writeInputLoads(sg, file, file_format, sfi, sff):
     if file_format.startswith('v'):
         if sg.model == 0:
-            sui.writeFormatFloats(file, sg.global_loads)
+            sutl.writeFormatFloats(file, sg.global_loads)
         else:
-            sui.writeFormatFloats(file, [sg.global_loads[i] for i in [0, 3, 4, 5]])
-            sui.writeFormatFloats(file, [sg.global_loads[i] for i in [1, 2]])
+            sutl.writeFormatFloats(file, [sg.global_loads[i] for i in [0, 3, 4, 5]])
+            sutl.writeFormatFloats(file, [sg.global_loads[i] for i in [1, 2]])
             file.write('\n')
-            sui.writeFormatFloats(file, sg.global_loads_dist[0])
-            sui.writeFormatFloats(file, sg.global_loads_dist[1])
-            sui.writeFormatFloats(file, sg.global_loads_dist[2])
-            sui.writeFormatFloats(file, sg.global_loads_dist[3])
+            sutl.writeFormatFloats(file, sg.global_loads_dist[0])
+            sutl.writeFormatFloats(file, sg.global_loads_dist[1])
+            sutl.writeFormatFloats(file, sg.global_loads_dist[2])
+            sutl.writeFormatFloats(file, sg.global_loads_dist[3])
     elif file_format.startswith('s'):
         # file.write((sfi+'\n').format(sg.global_loads_type))
         for load_case in sg.global_loads:
-            sui.writeFormatFloats(file, load_case, sff)
+            sutl.writeFormatFloats(file, load_case, sff)
     file.write('\n')
     return
 
@@ -1085,7 +1221,7 @@ def writeInputGlobal(sg, fn, file_format, sfi, sff, analysis, version=None):
 
         if file_format.startswith('s'):
             # file.write((sfi+'\n').format(sg.global_loads_type))
-            sui.writeFormatIntegers(file, [sg.global_loads_type, ], sfi)
+            sutl.writeFormatIntegers(file, [sg.global_loads_type, ], sfi)
 
         if analysis != 'f':
             sg._writeInputLoads(file, file_format, sfi, sff)
