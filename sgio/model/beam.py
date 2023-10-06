@@ -742,6 +742,14 @@ class TimoshenkoBeamModel:
             if name == 'scz' or name == 'sc3':
                 return self.xs3
 
+            # Principal axes
+            if name == 'phi_pia':
+                return self.phi_pia
+            if name == 'phi_pba':
+                return self.phi_pba
+            if name == 'phi_psa':
+                return self.phi_psa
+
         elif isinstance(name, list) or isinstance(name, tuple):
             props = []
             for n in name:
