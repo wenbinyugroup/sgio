@@ -1,0 +1,93 @@
+# -*- coding: mbcs -*-
+#
+# Abaqus/CAE Release 2017 replay file
+# Internal Version: 2016_09_27-17.54.59 126836
+# Run by tian50 on Fri Oct 27 16:53:38 2023
+#
+
+# from driverUtils import executeOnCaeGraphicsStartup
+# executeOnCaeGraphicsStartup()
+#: Executing "onCaeGraphicsStartup()" in the site directory ...
+from abaqus import *
+from abaqusConstants import *
+session.Viewport(name='Viewport: 1', origin=(0.0, 0.0), width=319.21923828125, 
+    height=215.422225952148)
+session.viewports['Viewport: 1'].makeCurrent()
+session.viewports['Viewport: 1'].maximize()
+from caeModules import *
+from driverUtils import executeOnCaeStartup
+executeOnCaeStartup()
+session.viewports['Viewport: 1'].partDisplay.geometryOptions.setValues(
+    referenceRepresentation=ON)
+s = mdb.models['Model-1'].ConstrainedSketch(name='__profile__', 
+    sheetSize=200.0)
+g, v, d, c = s.geometry, s.vertices, s.dimensions, s.constraints
+s.setPrimaryObject(option=STANDALONE)
+s.CircleByCenterPerimeter(center=(0.0, 0.0), point1=(10.0, 0.0))
+p = mdb.models['Model-1'].Part(name='Part-1', dimensionality=TWO_D_PLANAR, 
+    type=DEFORMABLE_BODY)
+p = mdb.models['Model-1'].parts['Part-1']
+p.BaseShell(sketch=s)
+s.unsetPrimaryObject()
+p = mdb.models['Model-1'].parts['Part-1']
+session.viewports['Viewport: 1'].setValues(displayedObject=p)
+del mdb.models['Model-1'].sketches['__profile__']
+execfile('C:/Users/tian50/work/sgio/tests/files/abq_import_sketch_airfoil.py', 
+    __main__.__dict__)
+#: Model: Model-1
+#: Sketch: airfoil
+#: Airfoil file: sc1095.dat
+p = mdb.models['Model-1'].parts['Part-1']
+session.viewports['Viewport: 1'].setValues(displayedObject=p)
+p = mdb.models['Model-1'].parts['Part-1']
+f, e, d1 = p.faces, p.edges, p.datums
+t = p.MakeSketchTransform(sketchPlane=f[0], sketchPlaneSide=SIDE1, origin=(0.0, 
+    0.0, 0.0))
+s1 = mdb.models['Model-1'].ConstrainedSketch(name='__profile__', 
+    sheetSize=56.41, gridSpacing=1.41, transform=t)
+g, v, d, c = s1.geometry, s1.vertices, s1.dimensions, s1.constraints
+s1.setPrimaryObject(option=SUPERIMPOSE)
+p = mdb.models['Model-1'].parts['Part-1']
+p.projectReferencesOntoSketch(sketch=s1, filter=COPLANAR_EDGES)
+s1.retrieveSketch(sketch=mdb.models['Model-1'].sketches['airfoil'])
+session.viewports['Viewport: 1'].view.fitView()
+#: Info: 1 entities copied from airfoil.
+session.viewports['Viewport: 1'].view.setValues(nearPlane=54.24, 
+    farPlane=58.8971, width=28.2857, height=14.4873, cameraPosition=(1.83654, 
+    -0.239527, 56.5685), cameraTarget=(1.83654, -0.239527, 0))
+s1.undo()
+s1.ConstructionLine(point1=(-0.705, 0.0), point2=(1.05750000011176, 0.0))
+s1.HorizontalConstraint(entity=g[3], addUndoState=False)
+s1.ConstructionLine(point1=(0.0, -1.0575), point2=(0.0, 1.05750000005588))
+s1.VerticalConstraint(entity=g[4], addUndoState=False)
+s1.retrieveSketch(sketch=mdb.models['Model-1'].sketches['airfoil'])
+session.viewports['Viewport: 1'].view.fitView()
+#: Info: 1 entities copied from airfoil.
+session.viewports['Viewport: 1'].view.setValues(nearPlane=55.1491, 
+    farPlane=57.9879, width=15.2351, height=7.80306, cameraPosition=(0.420007, 
+    -0.502872, 56.5685), cameraTarget=(0.420007, -0.502872, 0))
+s1.mirror(mirrorLine=g[4], objectList=(g[7], ))
+s1.move(vector=(0.25, 0.0), objectList=(g[7], ))
+s1.scale(scaleValue=2.0, scaleCenter=(0.0, 0.0), objectList=(g[7], ))
+session.viewports['Viewport: 1'].view.setValues(nearPlane=56.5557, 
+    farPlane=56.5814, width=0.138217, height=0.0707917, cameraPosition=(
+    -1.48517, -0.00564637, 56.5685), cameraTarget=(-1.48517, -0.00564637, 0))
+s1.Line(point1=(-1.5, -0.003458), point2=(-1.5, 0.003458))
+s1.VerticalConstraint(entity=g[8], addUndoState=False)
+session.viewports['Viewport: 1'].view.setValues(nearPlane=56.3385, 
+    farPlane=56.7986, width=2.79501, height=1.43154, cameraPosition=(-0.446126, 
+    0.051151, 56.5685), cameraTarget=(-0.446126, 0.051151, 0))
+s1.FixedConstraint(entity=g[3])
+s1.FixedConstraint(entity=g[4])
+session.viewports['Viewport: 1'].view.setValues(nearPlane=56.4237, 
+    farPlane=56.7133, width=1.55419, height=0.796018, cameraPosition=(
+    -0.872786, 0.0797487, 56.5685), cameraTarget=(-0.872786, 0.0797487, 0))
+s1.offset(distance=0.01, objectList=(g[7], g[8]), side=RIGHT)
+session.viewports['Viewport: 1'].view.setValues(nearPlane=56.3329, 
+    farPlane=56.8041, width=2.52876, height=1.29517, cameraPosition=(-0.392498, 
+    0.246273, 56.5685), cameraTarget=(-0.392498, 0.246273, 0))
+p = mdb.models['Model-1'].parts['Part-1']
+f = p.faces
+pickedFaces = f.getSequenceFromMask(mask=('[#1 ]', ), )
+e1, d2 = p.edges, p.datums
+p.PartitionFaceBySketch(faces=pickedFaces, sketch=s1)

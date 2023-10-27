@@ -200,7 +200,7 @@ def read_buffer(f, mesh_only:bool=True):
                         raise ReadError(f"Unknown cell set '{set_name}'")
 
         elif keyword == "DISTRIBUTION":
-            _default = [1, 0, 0, 0, 1, 0]
+            _default = [1, 0, 0, 0, 1, 0, 0, 0, 0]
             if not 'property_ref_csys' in cell_data.keys():
                 cell_data['property_ref_csys'] = []
                 for _i in range(len(cell_ids)):
@@ -243,6 +243,7 @@ def read_buffer(f, mesh_only:bool=True):
             if 'MATERIAL' in params_map.keys():
                 # Homogeneous section
                 _section['material'] = params_map['MATERIAL']
+                _section['rotation_angle'] = 0
                 line = f.readline()
 
             elif 'COMPOSITE' in params_map.keys():
@@ -306,8 +307,10 @@ def read_buffer(f, mesh_only:bool=True):
                     cell_sets_element[name] if i == ic else np.array([], dtype="int32")
                 )
 
-    for _key in cell_data.keys():
-        cell_data[_key] = np.asarray(cell_data[_key])
+    # for _key in cell_data.keys():
+    #     print(f'\n\ncell_data["{_key}"]:')
+    #     print(cell_data[_key][0])
+    #     cell_data[_key] = np.asarray(cell_data[_key])
     # print(cell_data)
 
     mesh = Mesh(
@@ -530,6 +533,7 @@ def _read_distribution(f, params_map):
         # cell_ids.append(int(line[0]))
         # cell_data.append(list(map(float, line[1:])))
         cell_data[int(line[0])] = list(map(float, line[1:]+[0, 0, 0]))
+        # cell_data[int(line[0])] = list(map(float, line[1:]))
 
     return cell_data, line
 

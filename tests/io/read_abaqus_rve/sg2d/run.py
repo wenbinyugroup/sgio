@@ -1,6 +1,9 @@
 import sgio
 
-fn_base = 'sg2_box_composite_section'
+# fn_base = 'sg2_box_composite_section'
+# fn_base = 'sg2_plydrop_composite_section'
+# fn_base = 'sg2_airfoil_composite_section'
+fn_base = 'sg2_airfoil_2'
 
 fn_rve_abq_inp = f'../../../files/{fn_base}.inp'
 sg = sgio.read(fn_rve_abq_inp, file_format='abaqus')
@@ -12,3 +15,6 @@ print(sg)
 
 fn_sg = f'{fn_base}.sg'
 sgio.write(sg, fn_sg, 'vabs')
+
+fn_sg = f'{fn_base}.msh'
+sgio.write(sg, fn_sg, 'gmsh22', format_version='2.2')
