@@ -166,7 +166,11 @@ def write(
             elif _file_format.startswith('v'):
                 if format_version == '':
                     format_version = GLOBAL.VABS_VERSION_DEFAULT
-                _vabs.readOutput(file, analysis, sg)
+                _vabs.writeBuffer(
+                    sg, file, file_format,
+                    analysis=analysis, sg_fmt=sg_fmt,
+                    sfi=sfi, sff=sff, version=format_version,
+                    mesh_only=mesh_only)
 
     return fn
 

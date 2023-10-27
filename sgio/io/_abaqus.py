@@ -64,16 +64,17 @@ def readInputBuffer(file, **kwargs):
 
         sg.materials[_i+1] = m
 
-    print(mname2id)
+    # print(mname2id)
 
     # Store sections as material-rotation combinations
     for _i, _section in enumerate(sections):
         _mname = _section.get('material')
-        print(_mname)
+        _rotation = _section.get('rotation_angle', 0)
+        # print(_mname)
         _mid = mname2id.get(_mname)
-        sg.mocombos[_i+1] = [_mid, 0]
+        sg.mocombos[_i+1] = [_mid, _rotation]
 
-    print(sg.mocombos)
+    # print(sg.mocombos)
 
     return sg
 
@@ -88,8 +89,8 @@ def _readMesh(file):
 
     mesh, sections, materials = smsh.read(file, 'abaqus', mesh_only=False)
     # print(mesh.cell_sets)
-    print(sections)
-    print(materials)
+    # print(sections)
+    # print(materials)
 
 
     # Read materials and sections

@@ -364,7 +364,16 @@ def _write_property_id_ref_csys(
             elem_id = elem_ids[i][j]
             theta_1 = cell_csys[i][j]
 
+            if not isinstance(theta_1, float):
+                # Calculate theta_1 from the csys
+                _csys = theta_1
+                _vx2 = np.array([1, 0, 0])
+                _vy2 = np.array(_csys[:3])
+                _cos_theta_1 = np.dot(_vx2, _vy2) / (np.linalg.norm(_vx2) * np.linalg.norm(_vy2))
+                theta_1 = np.rad2deg(np.arccos(_cos_theta_1))
+
             _nums = [elem_id, prop_id, theta_1]
+            # print(_nums)
 
             file.write(sfmt.format(*_nums))
             file.write('\n')
