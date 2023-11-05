@@ -1,0 +1,11 @@
+2023-11-02 16:27:15 [info] prevabs start
+2023-11-02 16:27:15 [info] - reading input files
+2023-11-02 16:27:15 [info]     - reading main input file: cs_main.xml
+2023-11-02 16:27:15 [info]       - reading airfoil data file: sc1095.dat
+2023-11-02 16:27:15 [error]       - unable to open file: C:\Users\tian50\program\MaterialDB.xml
+2023-11-02 16:27:15 [info]         - reading materials file: material_database_us_ft.xml
+2023-11-02 16:27:15 [info]   - reading input files -- done
+2023-11-02 16:27:15 [info]   - building the shape
+2023-11-02 16:27:15 [info]     - building the cross section, step 1
+2023-11-02 16:27:15 [info]       - building component: spar
+2023-11-02 16:27:15 [info]       - building component: le
