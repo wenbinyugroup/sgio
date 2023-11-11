@@ -40,7 +40,7 @@ def read(fn:str, file_format:str, format_version:str='', sgdim:int=3, smdim:int=
 
     Returns
     -------
-    Structure gene
+    :obj:`Structure gene`
     """
 
     file_format = file_format.lower()

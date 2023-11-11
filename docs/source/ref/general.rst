@@ -12,5 +12,4 @@ General
 
 ..  autoclass:: Model
     :members:
-    :undoc-members:
     :inherited-members:

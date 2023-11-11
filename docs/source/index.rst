@@ -15,6 +15,7 @@ Welcome to sgio's documentation!
     :caption: Guide:
 
     guide/convert
+    guide/format
 
 
 ..  toctree::
