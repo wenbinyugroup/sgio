@@ -302,10 +302,6 @@ class EulerBernoulliBeamModel:
 
             if name == 'ea':
                 return self.ea
-            if name in ['ga22', 'gayy', 'ga2', 'gay']:
-                return self.ga22
-            if name in ['ga33', 'gazz', 'ga3', 'gaz']:
-                return self.ga33
             if name == 'gj':
                 return self.gj
             if name in ['ei22', 'eiyy', 'ei2', 'eiy']:
@@ -322,10 +318,6 @@ class EulerBernoulliBeamModel:
                 return self.xt2
             if name == 'tcz' or name == 'tc3':
                 return self.xt3
-            if name == 'scy' or name == 'sc2':
-                return self.xs2
-            if name == 'scz' or name == 'sc3':
-                return self.xs3
 
         elif isinstance(name, list) or isinstance(name, tuple):
             props = []

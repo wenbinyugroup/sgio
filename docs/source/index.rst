@@ -3,19 +3,21 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to sgio's documentation!
-================================
+.. Welcome to sgio's documentation!
+.. ================================
 
 ..  include:: ../../README.md
     :parser: myst_parser.sphinx_
 
 
 ..  toctree::
-    :maxdepth: 1
+    :maxdepth: 2
     :caption: Guide:
 
-    guide/convert
-    guide/format
+    guide/io
+    guide/sg
+    guide/model/index
+    .. guide/convert
 
 
 ..  toctree::
