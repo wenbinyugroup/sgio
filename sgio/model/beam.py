@@ -224,9 +224,9 @@ class EulerBernoulliBeamModel:
 
             * - Name
               - Description
-            * - ``msijo`` (``i``, ``j`` are numbers 1 to 6)
+            * - ``msijo`` (``i``, ``j`` = 1 to 6)
               - Entry (i, j) of the 6x6 mass matrix at the origin
-            * - ``msijc`` (``i``, ``j`` are numbers 1 to 6)
+            * - ``msijc`` (``i``, ``j`` = 1 to 6)
               - Entry (i, j) of the 6x6 mass matrix at the mass center
             * - ``mu``
               - Mass per unit length
@@ -238,9 +238,9 @@ class EulerBernoulliBeamModel:
 
             * - Name
               - Description
-            * - ``stfijc`` (``i``, ``j`` are numbers 1 to 6)
+            * - ``stfijc`` (``i``, ``j`` = 1 to 6)
               - Entry (i, j) of the 4x4 classical stiffness matrix
-            * - ``stfijr`` (``i``, ``j`` are numbers 1 to 6)
+            * - ``stfijr`` (``i``, ``j`` = 1 to 6)
               - Entry (i, j) of the 6x6 refined stiffness matrix
             * - ``eac`` | ``ear``
               - Axial stiffness of the classical/refined model
@@ -250,9 +250,9 @@ class EulerBernoulliBeamModel:
               - Bending stiffness around x2 (flapwise) of the classical/refined model
             * - ``ei3c`` | ``eicc`` | ``ei3r`` | ``eicr``
               - Bending stiffness around x3 (chordwise or lead-lag) of the classical/refined model
-            * - ``cmpijc`` (``i``, ``j`` are numbers 1 to 6)
+            * - ``cmpijc`` (``i``, ``j`` = 1 to 6)
               - Entry (i, j) of the 4x4 classical compliance matrix
-            * - ``cmpijr`` (``i``, ``j`` are numbers 1 to 6)
+            * - ``cmpijr`` (``i``, ``j`` = 1 to 6)
               - Entry (i, j) of the 6x6 refined compliance matrix
 
         ..  list-table:: Center offsets
@@ -302,10 +302,6 @@ class EulerBernoulliBeamModel:
 
             if name == 'ea':
                 return self.ea
-            if name in ['ga22', 'gayy', 'ga2', 'gay']:
-                return self.ga22
-            if name in ['ga33', 'gazz', 'ga3', 'gaz']:
-                return self.ga33
             if name == 'gj':
                 return self.gj
             if name in ['ei22', 'eiyy', 'ei2', 'eiy']:
@@ -322,10 +318,6 @@ class EulerBernoulliBeamModel:
                 return self.xt2
             if name == 'tcz' or name == 'tc3':
                 return self.xt3
-            if name == 'scy' or name == 'sc2':
-                return self.xs2
-            if name == 'scz' or name == 'sc3':
-                return self.xs3
 
         elif isinstance(name, list) or isinstance(name, tuple):
             props = []

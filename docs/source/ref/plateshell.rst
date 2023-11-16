@@ -5,8 +5,8 @@ Plate and Shell
 
 .. highlight:: python
 
-Kirchhoff-Love plate/shell model
----------------------------------
+
+
 
 ::
 
@@ -15,17 +15,9 @@ Kirchhoff-Love plate/shell model
 
 ..  autoclass:: KirchhoffLovePlateShellModel
     :members:
-    :undoc-members:
-    :inherited-members:
 
-.. ..  autosummary::
-..     :toctree: _temp
 
-..     sgio.model.beam.EulerBernoulliBeamModel.get
-..     sgio.model.beam.EulerBernoulliBeamModel.getAll
 
-Reissner-Mindlin plate/shell model
--------------------------------------
 
 ::
 
@@ -34,5 +26,3 @@ Reissner-Mindlin plate/shell model
 
 ..  autoclass:: ReissnerMindlinPlateShellModel
     :members:
-    :undoc-members:
-    :inherited-members:

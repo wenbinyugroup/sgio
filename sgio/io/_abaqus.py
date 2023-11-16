@@ -24,7 +24,7 @@ def readInputBuffer(file, **kwargs):
     sg.smdim = kwargs['smdim']
 
     # Read mesh
-    mesh, sections, materials = _readMesh(file)
+    mesh, sections, materials, mocombos = _readMesh(file)
     # sg.mesh, sections, materials = _readMesh(file)
     # sg.use_elem_local_orient = 1
 
@@ -48,14 +48,15 @@ def readInputBuffer(file, **kwargs):
 
         # Elastic
         _type = _mp.get('type')
+        m.set('isotropy', _type)
         # cm = smdl.Cauchy()
 
         _values = _mp.get('elastic')
         if _type == 'isotropic':
-            m.isotropy = 0
+            # m.isotropy = 0
             m.e1, m.nu12 = _values
         elif _type == 'engineering_constants':
-            m.isotropy = 1
+            # m.isotropy = 1
             m.e1, m.e2, m.e3 = _values[:3]
             m.g12, m.g13, m.g23 = _values[6:]
             m.nu12, m.nu13, m.nu23 = _values[3:6]
@@ -64,16 +65,24 @@ def readInputBuffer(file, **kwargs):
 
         sg.materials[_i+1] = m
 
-    print(mname2id)
+    # print(mname2id)
+
+    for _k, _v in mocombos.items():
+        _mname, _angle = _v
+        _mid = mname2id.get(_mname)
+        mocombos[_k] = [_mid, _angle]
+
+    sg.mocombos = mocombos
 
     # Store sections as material-rotation combinations
-    for _i, _section in enumerate(sections):
-        _mname = _section.get('material')
-        print(_mname)
-        _mid = mname2id.get(_mname)
-        sg.mocombos[_i+1] = [_mid, 0]
+    # for _i, _section in enumerate(sections):
+    #     _mname = _section.get('material')
+    #     _rotation = _section.get('rotation_angle', 0)
+    #     # print(_mname)
+    #     _mid = mname2id.get(_mname)
+    #     sg.mocombos[_i+1] = [_mid, _rotation]
 
-    print(sg.mocombos)
+    # print(sg.mocombos)
 
     return sg
 
@@ -88,52 +97,8 @@ def _readMesh(file):
 
     mesh, sections, materials = smsh.read(file, 'abaqus', mesh_only=False)
     # print(mesh.cell_sets)
-    print(sections)
-    print(materials)
-
-
-    # Read materials and sections
-    # sections = []
-    # materials = []
-
-    # line = file.readline()
-    # print(line)
-    # while True:
-    #     if not line:  # EOF
-    #         break
-
-    #     # Comments
-    #     if line.startswith("**"):
-    #         line = file.readline()
-    #         continue
-
-    #     keyword = line.partition(",")[0].strip().replace("*", "").upper()
-
-    #     print(keyword)
-
-    #     if keyword.split()[-1] == "SECTION":
-    #         # print(line)
-    #         params_map = get_param_map(line, required_keys=['ELSET', 'MATERIAL'])
-    #         _section = {
-    #             'elset': params_map['ELSET'],
-    #             'material': params_map['MATERIAL']
-    #         }
-    #         try:
-    #             _section['orientation'] = params_map['ORIENTATION']
-    #         except KeyError:
-    #             pass
-    #         line = file.readline()
-    #         line = file.readline()
-    #         sections.append(_section)
-
-    #     elif keyword == "MATERIAL":
-    #         params_map = get_param_map(line, required_keys=['NAME'])
-    #         _material = _read_material(file)
-    #         materials.append({
-    #             'name': params_map['NAME'],
-    #             'property': _material
-    #         })
-    #         line = file.readline()
+    # print(sections)
+    # print(materials)
 
     # Organize sections and materials
     mesh.cell_data['property_id'] = []
@@ -142,17 +107,32 @@ def _readMesh(file):
 
     # print(sections)
 
-    for _prop_id, _section in enumerate(sections):
+    mocombos = {}
+    # _prop_id = 0
+    for _i, _section in enumerate(sections):
         _elset = _section['elset']
+        _mname = _section['material']
+        _angle = _section['rotation_angle']
+
+        _prop_id = None
+        for _k, _v in mocombos.items():
+            if _v[0] == _mname and _v[1] == _angle:
+                _prop_id = _k
+                break
+
+        if _prop_id is None:
+            _prop_id = len(mocombos) + 1
+            mocombos[_prop_id] = [_mname, _angle]
+
         for _i, _cb in enumerate(mesh.cell_sets[_elset]):
             for _j in _cb:
-                mesh.cell_data['property_id'][_i][_j] = _prop_id+1
+                mesh.cell_data['property_id'][_i][_j] = _prop_id
 
 
     # print(mesh.cell_data['property_id'])
 
     # return mesh
-    return mesh, sections, materials
+    return mesh, sections, materials, mocombos
 
 
 

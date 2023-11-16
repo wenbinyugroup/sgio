@@ -5,6 +5,14 @@ Solid
 
 .. highlight:: python
 
+.. ::
+
+..     sgio.model.solid.CauchyContinuumProperty
+
+
+.. ..  autoclass:: CauchyContinuumProperty
+..     :members:
+
 ::
 
     sgio.model.solid.CauchyContinuumModel
@@ -12,5 +20,3 @@ Solid
 
 ..  autoclass:: CauchyContinuumModel
     :members:
-    :undoc-members:
-    :inherited-members:

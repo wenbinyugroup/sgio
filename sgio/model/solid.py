@@ -107,12 +107,6 @@ class CauchyContinuumModel:
         self.temperature : float = 0
 
         # self.isotropy : int = None
-        """Isotropy type.
-
-        * 0: Isotropic
-        * 1: Orthotropic
-        * 2: Anisotropic
-        """
 
         # Consitutive
 
@@ -196,7 +190,58 @@ class CauchyContinuumModel:
 
 
     def get(self, name:str):
-        r"""
+        """Get material properties.
+
+        Parameters
+        -----------
+        name : str
+            Name of the property that will be returned.
+
+        Returns
+        ---------
+        int or float or :obj:`Iterable`:
+            Value of the specified beam property.
+
+        Notes
+        -------
+
+        ..  list-table:: Properties
+            :header-rows: 1
+
+            * - ``name``
+              - Description
+            * - density
+              - Density of the material
+            * - temperature
+              -
+            * - isotropy
+              - Isotropy of the material
+            * - e
+              - Young's modulus of isotropic materials
+            * - nu
+              - Poisson's ratio of isotropic materials
+            * - e1 | e2 | e3
+              - Modulus of elasticity in material direction 1, 2, or 3
+            * - nu12 | nu13 | nu23
+              - Poisson's ratio in material plane 1-2, 1-3, or 2-3
+            * - g12 | g13 | g23
+              - Shear modulus in material plane 1-2, 1-3, or 2-3
+            * - c
+              - 6x6 stiffness matrix
+            * - cij (i, j = 1 to 6)
+              - Component (i, j) of the stiffness matrix
+            * - s
+              - 6x6 compliance matrix
+            * - sij (i, j = 1 to 6)
+              - Component (i, j) of the compliance matrix
+            * - strength
+              -
+            * - alpha
+              - CTE of isotropic materials
+            * - alpha11 | alpha22 | alpha33 | alpha12 | alpha13 | alpha23
+              - The 11, 22, 33, 12, 13, or 23 component of CTE
+            * - specific_heat
+              -
         """
 
         v = None
@@ -252,6 +297,17 @@ class CauchyContinuumModel:
 
 
     def set(self, name:str, value, **kwargs):
+        """Set material properties.
+
+        Parameters
+        ------------
+        name : str
+            Name of the property that will be set.
+
+        value : str or int or float
+            Value of the property that will be set.
+
+        """
         if name == 'isotropy':
             if isinstance(value, str):
                 if value.startswith('iso'):
