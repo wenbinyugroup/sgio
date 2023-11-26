@@ -74,6 +74,13 @@ class CauchyContinuumProperty:
             _value = eval(f'self.{_name}')
             s.append(f'{_label} = {_value}')
 
+        s.append('---------------------')
+        s.append('cte')
+        if not self.cte is None:
+            s.append('  '.join(list(map(str, self.cte))))
+        else:
+            s.append('NONE')
+
         return '\n'.join(s)
 
 

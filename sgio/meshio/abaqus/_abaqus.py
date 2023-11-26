@@ -275,7 +275,12 @@ def read_buffer(f, mesh_only:bool=True):
                 ext_input_file = cd / ext_input_file
 
             # Read contents from external input file into mesh object
-            out = read(ext_input_file)
+            try:
+                out = read(ext_input_file)
+            except FileNotFoundError:
+                print(f'warning: include file ({ext_input_file}) not found.')
+                line = f.readline()
+                continue
 
             # Merge contents of external file only if it is containing mesh data
             if len(out.points) > 0:

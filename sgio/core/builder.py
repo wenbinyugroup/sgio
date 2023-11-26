@@ -112,8 +112,12 @@ def buildSG1D(
                 m.set('elastic', _elastic, input_type=_isotropy)
 
                 # Thermal property
-                m.cte = list(map(float, mprop.get('cte', [])))
-                m.specific_heat = float(mprop.get('specific_heat', 0))
+                _cte = list(map(float, mprop.get('cte', [])))
+                m.set('cte', _cte)
+                # m.cte = list(map(float, mprop.get('cte', [])))
+                _specific_heat = float(mprop.get('specific_heat', 0))
+                m.set('specific_heat', _specific_heat)
+                # m.specific_heat = float(mprop.get('specific_heat', 0))
 
                 # m.constitutive = cm
 

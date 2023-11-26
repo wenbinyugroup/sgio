@@ -1,7 +1,7 @@
 import logging
 
 from sgio.core.sg import StructureGene
-from sgio.model import Model
+# from sgio.model import Model
 import sgio.utils as sutl
 import sgio.model as smdl
 import sgio.meshio as smsh
@@ -1317,6 +1317,8 @@ def _writeMaterials(sg:StructureGene, file, file_format, sfi, sff):
     for mid, m in sg.materials.items():
 
         # print('writing material {}'.format(mid))
+
+        print(m)
 
         # cm = m.constitutive
 

@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 
 
 def readBuffer(f, file_format:str, format_version:str, smdim:int):
-    r"""
+    """
     """
     sg = StructureGene()
     sg.version = format_version
@@ -708,7 +708,7 @@ def _readTimoshenkoBeamModel(file):
 
 
 def _readOutputFailureIndex(file):
-    r"""
+    """
     """
     # if not logger:
     #     logger = mul.initLogger(__name__)
