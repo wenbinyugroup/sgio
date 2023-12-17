@@ -1318,7 +1318,7 @@ def _writeMaterials(sg:StructureGene, file, file_format, sfi, sff):
 
         # print('writing material {}'.format(mid))
 
-        print(m)
+        # print(m)
 
         # cm = m.constitutive
 

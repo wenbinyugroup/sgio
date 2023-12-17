@@ -19,7 +19,29 @@ from sgio.meshio._mesh import Mesh
 logger = logging.getLogger(__name__)
 
 
-class StructureGene(object):
+class SGMacroModel():
+    """Configuration of SG analysis, independent on the geometry.
+    """
+    def __init__(self, kwd='SD1'):
+        self._kwd = kwd
+        self._physics = 0
+        self._geo_correct = False
+        self._do_damping = 0
+        self._is_temp_nonuniform = 0
+
+    @property
+    def smdim(self):
+        if self._kwd[:2] == 'SD':
+            return 3
+        if self._kwd[:2] == 'PL':
+            return 2
+        if self._kwd[:2] == 'BM':
+            return 1
+
+
+
+
+class StructureGene():
     r"""A finite element level structure gene model in the theory of MSG.
 
     Parameters

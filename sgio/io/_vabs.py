@@ -251,7 +251,7 @@ def readOutputBuffer(file, analysis=0, sg:StructureGene=None, **kwargs):
         return _readOutputH(file, **kwargs)
 
     elif analysis == 1 or analysis == 2 or analysis == 'dl' or analysis == 'd' or analysis == 'l':
-        pass
+        return _readOutputElementStrainStress(file)
 
     elif analysis == 'f' or analysis == 3:
         # return readSCOutFailure(file, analysis)
@@ -707,6 +707,50 @@ def _readTimoshenkoBeamModel(file):
 
 
 
+
+def _readOutputElementStrainStress(file):
+    """Read VABS output averaged strains and stressed on elements.
+
+    Parameters
+    ----------
+    file:
+        File object of the output file.
+
+    Returns
+    -------
+    dict[int, list[float]]:
+        Averaged 3D strains in the beam coordinate system.
+    dict[int, list[float]]:
+        Averaged 3D stressess in the beam coordinate system.
+    dict[int, list[float]]:
+        Averaged 3D strains in the material coordinate system.
+    dict[int, list[float]]:
+        Averaged 3D stressess in the material coordinate system.
+    """
+
+    e, s, em, sm = {}, {}, {}, {}
+    for i, line in enumerate(file):
+        line = line.strip()
+        if line == '':
+            continue
+
+        line = line.split()
+        _eid = int(line[0])
+        _ei = list(map(float, line[1:7]))
+        _si = list(map(float, line[7:13]))
+        _emi = list(map(float, line[13:19]))
+        _smi = list(map(float, line[19:]))
+
+        e[_eid] = _ei
+        s[_eid] = _si
+        em[_eid] = _emi
+        sm[_eid] = _smi
+
+    return e, s, em, sm
+
+
+
+
 def _readOutputFailureIndex(file):
     """
     """
@@ -797,7 +841,8 @@ def _readOutputStrengthRatio(fn_in):
 
 
 def writeBuffer(
-    sg:StructureGene, file, file_format:str, analysis='h', sg_fmt:int=1,
+    sg:StructureGene, file, analysis='h', sg_fmt:int=1,
+    macro_responses:list[smdl.SectionResponse]=[], model=0,
     sfi:str='8d', sff:str='20.12e', version=None, mesh_only=False
     ):
     """Write analysis input
@@ -819,18 +864,39 @@ def writeBuffer(
         Name of the input file
     """
 
+    if sg is None:
+        timoshenko_flag = model
+    else:
+        timoshenko_flag = 0
+        trapeze_flag = 0
+        vlasov_flag = 0
+        if sg.model == 1:
+            timoshenko_flag = 1
+        elif sg.model == 2:
+            timoshenko_flag = 1
+            vlasov_flag = 1
+        elif sg.model == 3:
+            trapeze_flag = 1
+        thermal_flag = 0
+        if sg.physics == 1:
+            thermal_flag = 3
 
-    # string format
-    # sfi = '8d'
-    # sff = '16.6e'
+    if analysis == 'h':
+        writeInputBuffer(
+            sg, file, sg_fmt,
+            timoshenko_flag, vlasov_flag, trapeze_flag, thermal_flag,
+            sfi, sff, version)
 
-    _file_format = file_format.lower()
+    elif (analysis == 'd') or (analysis == 'l') or (analysis == 'f'):
+        if sg is None:
+            materials = {}
+        else:
+            materials = sg.materials
 
-    if analysis.lower().startswith('h'):
-        writeInputBuffer(sg, file, _file_format, sfi, sff, sg_fmt, version, mesh_only)
-
-    elif (analysis.lower().startswith('d')) or (analysis.lower().startswith('l')) or (analysis.lower().startswith('f')):
-        writeInputBufferGlobal(sg, file, _file_format, sfi, sff, analysis, version)
+        writeInputBufferGlobal(
+            file, timoshenko_flag, analysis,
+            macro_responses, materials,
+            sfi=sfi, sff=sff)
 
     return
 
@@ -842,33 +908,62 @@ def writeBuffer(
 
 
 
-def writeInputBuffer(sg, file, file_format, sfi, sff, sg_fmt, version=None, mesh_only=False):
+def writeInputBuffer(
+    sg, file, sg_fmt,
+    timoshenko_flag, vlasov_flag, trapeze_flag, thermal_flag,
+    sfi:str='8d', sff:str='20.12e', version=None):
     """
     """
 
     logger.debug(f'writing sg input...')
 
-    ssff = '{:' + sff + '}'
+    # ssff = '{:' + sff + '}'
     # if not version is None:
     #     sg.version = sutl.Version(version)
     sg.version = version
 
     logger.debug('format version: {}'.format(sg.version))
 
-    # with open(fn, 'w') as file:
+    nlayer = len(sg.mocombos)
+
+    # timoshenko_flag = model
+    # trapeze_flag = 0
+    # vlasov_flag = 0
+    # if sg.model == 1:
+    #     timoshenko_flag = 1
+    # elif sg.model == 2:
+    #     timoshenko_flag = 1
+    #     vlasov_flag = 1
+    # elif sg.model == 3:
+    #     trapeze_flag = 1
+    # thermal_flag = 0
+    # if sg.physics == 1:
+    #     thermal_flag = 3
+
+    curve_flag = 0
+    if (sg.initial_twist != 0.0) or (sg.initial_curvature[0] != 0.0) or (sg.initial_curvature[1] != 0.0):
+        curve_flag = 1
+    initial_curvatures = [sg.initial_twist,]+sg.initial_curvature
+
+    oblique_flag = 0
+    if (sg.oblique[0] != 1.0) or (sg.oblique[1] != 0.0):
+        oblique_flag = 1
+
+    _writeHeader(
+        sg_fmt, nlayer,
+        timoshenko_flag, sg.do_damping, thermal_flag,
+        curve_flag, oblique_flag, trapeze_flag, vlasov_flag,
+        initial_curvatures, sg.oblique,
+        sg.nnodes, sg.nelems, sg.nmates,
+        file, sfi, sff)
+
+    _writeMesh(sg, file, int_fmt=sfi, float_fmt=sff)
+
     # if not mesh_only:
-    _writeHeader(sg, file, file_format, sfi, sff, sg_fmt, version)
-
-    _writeMesh(sg, file, file_format=file_format, sgdim=sg.sgdim, int_fmt=sfi, float_fmt=sff)
+    _writeMOCombos(sg, file, sfi, sff)
 
     # if not mesh_only:
-    _writeMOCombos(sg, file, file_format, sfi, sff)
-
-    # if not mesh_only:
-    _writeMaterials(sg, file, file_format, sfi, sff)
-
-    if file_format.startswith('s'):
-        file.write((ssff + '\n').format(sg.omega))
+    _writeMaterials(sg.materials, file, thermal_flag, sfi, sff)
 
     return
 
@@ -880,12 +975,12 @@ def writeInputBuffer(sg, file, file_format, sfi, sff, sg_fmt, version=None, mesh
 
 
 
-def _writeMesh(sg, file, file_format, sgdim, int_fmt, float_fmt):
+def _writeMesh(sg, file, int_fmt, float_fmt):
     """
     """
     logger.debug('writing mesh...')
 
-    sg.mesh.write(file, file_format, sgdim=sgdim, int_fmt=int_fmt, float_fmt=float_fmt)
+    sg.mesh.write(file, 'vabs', sgdim=2, int_fmt=int_fmt, float_fmt=float_fmt)
 
     return
 
@@ -897,7 +992,7 @@ def _writeMesh(sg, file, file_format, sgdim, int_fmt, float_fmt):
 
 
 
-def _writeMOCombos(sg, file, file_format, sfi, sff):
+def _writeMOCombos(sg, file, sfi:str='8d', sff:str='20.12e'):
     ssfi = '{:' + sfi + '}'
     ssff = '{:' + sff + '}'
     count = 0
@@ -913,66 +1008,115 @@ def _writeMOCombos(sg, file, file_format, sfi, sff):
 
 
 
+def _writeMaterial(
+    mid:int, material:smdl.CauchyContinuumModel, file,
+    thermal_flag, analysis, failure_criterion,
+    sfi:str='8d', sff:str='20.12e'):
+    """
+    """
+
+    anisotropy = material.get('isotropy')
+
+    if analysis == 'h':
+        # Write material properties for homogenization
+
+        sutl.writeFormatIntegers(file, (mid, anisotropy), sfi, newline=False)
+        file.write('  # material id, anisotropy\n')
+
+        # Write elastic properties
+        if anisotropy == 0:
+            sutl.writeFormatFloats(file, [material.get('e'), material.get('nu')], sff)
+            if thermal_flag == 3:
+                sutl.writeFormatFloats(file, [material.get('alpha'),], sff)
+
+        elif anisotropy == 1:
+            sutl.writeFormatFloats(file, [material.get('e1'), material.get('e2'), material.get('e3')], sff)
+            sutl.writeFormatFloats(file, [material.get('g12'), material.get('g13'), material.get('g23')], sff)
+            sutl.writeFormatFloats(file, [material.get('nu12'), material.get('nu13'), material.get('nu23')], sff)
+            if thermal_flag == 3:
+                sutl.writeFormatFloats(
+                    file, [material.get('alpha11'), material.get('alpha22'), material.get('alpha33')], sff)
+
+        elif anisotropy == 2:
+            for _i in range(6):
+                for _j in range(_i, 6):
+                    sutl.writeFormatFloats(
+                        file, material.get(f'c{_i+1}{_j+1}'), sff)
+            if thermal_flag == 3:
+                sutl.writeFormatFloats(
+                    file, [
+                        material.get('alpha11'),
+                        material.get('alpha12')*2,
+                        material.get('alpha13')*2,
+                        material.get('alpha22'),
+                        material.get('alpha23')*2,
+                        material.get('alpha33')
+                    ],sff)
+
+        sutl.writeFormatFloats(file, [material.get('density'),], sff)
+
+    elif analysis == 'f':
+        # Write material properties for failure analysis
+
+        strength = []
+        if anisotropy == 0:
+            if failure_criterion == 1:
+                pass
+            elif failure_criterion == 2:
+                pass
+            elif failure_criterion == 3:
+                pass
+            elif failure_criterion == 4:
+                pass
+            elif failure_criterion == 5:
+                pass
+        else:
+            if failure_criterion == 1:
+                pass
+            elif failure_criterion == 2:
+                pass
+            elif failure_criterion == 3:
+                pass
+            elif failure_criterion == 4:
+                # Tsai-Wu
+                strength = [
+                    material.get('x1t'), material.get('x2t'), material.get('x3t'),
+                    material.get('x1c'), material.get('x2c'), material.get('x3c'),
+                    material.get('x23'), material.get('x13'), material.get('x12'),
+                    # strength_constants['r'], m.strength_constants['t'], m.strength_constants['s'],
+                ]
+            elif failure_criterion == 5:
+                pass
+
+        sutl.writeFormatIntegers(
+            file,
+            # (m.strength['criterion'], len(m.strength['constants'])),
+            [failure_criterion, len(strength)],
+            sfi
+        )
+        # file.write((sff+'\n').format(m.strength['chara_len']))
+        # sutl.writeFormatFloats(file, [m.char_len,], sff)
+        # sutl.writeFormatFloats(file, m.strength['constants'], sff[2:-1])
+        sutl.writeFormatFloats(file, strength, sff)
+
+
+    file.write('\n')
+
+    return
 
 
 
 
-
-def _writeMaterials(sg, file, file_format, sfi, sff):
+def _writeMaterials(
+    dict_materials, file, thermal_flag=0, sfi:str='8d', sff:str='20.12e'):
     """
     """
 
     logger.debug('writing materials...')
 
-    counter = 0
-    for mid, m in sg.materials.items():
-
-        # print('writing material {}'.format(mid))
-
-        # if m.stff:
-        #     anisotropy = 2
-        # else:
-        anisotropy = m.get('isotropy')
-
-        # print(m.stff)
-        # print(anisotropy)
-
-        sutl.writeFormatIntegers(file, (mid, anisotropy), sfi, newline=False)
-        if counter == 0:
-            file.write('  # materials')
-        file.write('\n')
-
-        # Write elastic properties
-        if anisotropy == 0:
-            # mpc = m.constants
-            sutl.writeFormatFloats(file, [m.e1, m.nu12], sff)
-
-        elif anisotropy == 1:
-            # mpc = m.constants
-            sutl.writeFormatFloats(file, [m.e1, m.e2, m.e3], sff)
-            sutl.writeFormatFloats(file, [m.g12, m.g13, m.g23], sff)
-            sutl.writeFormatFloats(file, [m.nu12, m.nu13, m.nu23], sff)
-
-
-        elif anisotropy == 2:
-            for i in range(6):
-                sutl.writeFormatFloats(file, m.stff[i][i:], sff)
-                # for j in range(i, 6):
-                #     file.write(sff.format(m.stff[i][j]))
-                # file.write('\n')
-
-        # print('sg.physics =', sg.physics)
-        # print('m.cte =', m.cte)
-        # print('m.specific_heat =', m.specific_heat)
-        if sg.physics in [1, 4, 6]:
-            sutl.writeFormatFloats(file, m.cte+[m.specific_heat,], sff)
-
-        if file_format.lower().startswith('v'):
-            sutl.writeFormatFloats(file, (m.density,), sff)
-
-        file.write('\n')
-        
-        counter += 1
+    # counter = 0
+    for mid, m in dict_materials.items():
+        _writeMaterial(mid, m, file, thermal_flag, sfi, sff)
 
     file.write('\n')
     return
@@ -985,57 +1129,48 @@ def _writeMaterials(sg, file, file_format, sfi, sff):
 
 
 
-def _writeHeader(sg, file, file_format, sfi, sff, sg_fmt, version=None):
-    ssfi = '{:' + sfi + '}'
+def _writeHeader(
+    format_flag, nlayer,
+    timoshenko_flag, damping_flag, thermal_flag,
+    curve_flag, oblique_flag, trapeze_flag, vlasov_flag,
+    initial_curvatures, obliqueness,
+    nnode, nelem, nmate,
+    file, sfi:str='8d', sff:str='20.12e'):
+    # ssfi = '{:' + sfi + '}'
 
     # format_flag  nlayer
-    sutl.writeFormatIntegers(file, [sg_fmt, len(sg.mocombos)], newline=False)
+    sutl.writeFormatIntegers(file, [format_flag, nlayer], newline=False)
     file.write('  # format_flag, nlayer\n\n')
 
     # timoshenko_flag  damping_flag  thermal_flag
-    model = 0
-    trapeze = 0
-    vlasov = 0
-    if sg.model == 1:
-        model = 1
-    elif sg.model == 2:
-        model = 1
-        vlasov = 1
-    elif sg.model == 3:
-        trapeze = 1
-    physics = 0
-    if sg.physics == 1:
-        physics = 3
     sutl.writeFormatIntegers(
-        file, [model, sg.do_damping, physics], sfi, newline=False)
+        file, [timoshenko_flag, damping_flag, thermal_flag], sfi, newline=False)
     file.write('  # model_flag, damping_flag, thermal_flag\n\n')
 
     # curve_flag  oblique_flag  trapeze_flag  vlasov_flag
-    line = [0, 0, trapeze, vlasov]
-    if (sg.initial_twist != 0.0) or (sg.initial_curvature[0] != 0.0) or (sg.initial_curvature[1] != 0.0):
-        line[0] = 1
-    if (sg.oblique[0] != 1.0) or (sg.oblique[1] != 0.0):
-        line[1] = 1
+    line = [curve_flag, oblique_flag, trapeze_flag, vlasov_flag]
+    # if (sg.initial_twist != 0.0) or (sg.initial_curvature[0] != 0.0) or (sg.initial_curvature[1] != 0.0):
+    #     line[0] = 1
+    # if (sg.oblique[0] != 1.0) or (sg.oblique[1] != 0.0):
+    #     line[1] = 1
     sutl.writeFormatIntegers(file, line, sfi, newline=False)
     file.write('  # curve_flag, oblique_flag, trapeze_flag, vlasov_flag\n\n')
 
     # k1  k2  k3
     if line[0] == 1:
         sutl.writeFormatFloats(
-            file,
-            [sg.initial_twist, sg.initial_curvature[0], sg.initial_curvature[1]],
-            sff, newline=False
+            file, initial_curvatures, sff, newline=False
         )
         file.write('  # k11, k12, k13 (initial curvatures)\n\n')
     
     # oblique1  oblique2
     if line[1] == 1:
-        sutl.writeFormatFloats(file, sg.oblique, sff, newline=False)
+        sutl.writeFormatFloats(file, obliqueness, sff, newline=False)
         file.write('  # cos11, cos21 (obliqueness)\n\n')
     
     # nnode  nelem  nmate
     sutl.writeFormatIntegers(
-        file, [sg.nnodes, sg.nelems, sg.nmates], sfi, newline=False)
+        file, [nnode, nelem, nmate], sfi, newline=False)
     file.write('  # nnode, nelem, nmate\n\n')
 
     return
@@ -1048,57 +1183,45 @@ def _writeHeader(sg, file, file_format, sfi, sff, sg_fmt, version=None):
 
 
 
-def _writeInputMaterialStrength(sg, file, file_format, sfi, sff):
-    for i, m in sg.materials.items():
-        # print(m.strength)
-        # print(m.failure_criterion)
-        # print(m.char_len)
+# def _writeInputMaterialStrength(sg, file, sfi, sff):
+#     for i, m in sg.materials.items():
+#         # print(m.strength)
+#         # print(m.failure_criterion)
+#         # print(m.char_len)
 
-        # file.write('{} {}'.format(m.failure_criterion, len(m.strength)))
+#         # file.write('{} {}'.format(m.failure_criterion, len(m.strength)))
 
-        strength = []
-        if m.type == 0:
-            pass
-        else:
-            if m.failure_criterion == 1:
-                pass
-            elif m.failure_criterion == 2:
-                pass
-            elif m.failure_criterion == 3:
-                pass
-            elif m.failure_criterion == 4:
-                # Tsai-Wu
-                strength = [
-                    m.strength_constants['xt'], m.strength_constants['yt'], m.strength_constants['zt'],
-                    m.strength_constants['xc'], m.strength_constants['yc'], m.strength_constants['zc'],
-                    m.strength_constants['r'], m.strength_constants['t'], m.strength_constants['s'],
-                ]
-            elif m.failure_criterion == 5:
-                pass
+#         strength = []
+#         if m.type == 0:
+#             pass
+#         else:
+#             if m.failure_criterion == 1:
+#                 pass
+#             elif m.failure_criterion == 2:
+#                 pass
+#             elif m.failure_criterion == 3:
+#                 pass
+#             elif m.failure_criterion == 4:
+#                 # Tsai-Wu
+#                 strength = [
+#                     m.strength_constants['xt'], m.strength_constants['yt'], m.strength_constants['zt'],
+#                     m.strength_constants['xc'], m.strength_constants['yc'], m.strength_constants['zc'],
+#                     m.strength_constants['r'], m.strength_constants['t'], m.strength_constants['s'],
+#                 ]
+#             elif m.failure_criterion == 5:
+#                 pass
 
-        sutl.writeFormatIntegers(
-            file,
-            # (m.strength['criterion'], len(m.strength['constants'])),
-            [m.failure_criterion, len(strength)],
-            sfi
-        )
-        # file.write((sff+'\n').format(m.strength['chara_len']))
-        sutl.writeFormatFloats(file, [m.char_len,], sff)
-        # sutl.writeFormatFloats(file, m.strength['constants'], sff[2:-1])
-        sutl.writeFormatFloats(file, strength, sff)
-    return
-
-
-
-
-
-
-
-
-
-def _writeInputDisplacements(sg, file, file_format, sff):
-    sutl.writeFormatFloats(file, sg.global_displacements, sff[2:-1])
-    sutl.writeFormatFloatsMatrix(file, sg.global_rotations, sff[2:-1])
+#         sutl.writeFormatIntegers(
+#             file,
+#             # (m.strength['criterion'], len(m.strength['constants'])),
+#             [m.failure_criterion, len(strength)],
+#             sfi
+#         )
+#         # file.write((sff+'\n').format(m.strength['chara_len']))
+#         sutl.writeFormatFloats(file, [m.char_len,], sff)
+#         # sutl.writeFormatFloats(file, m.strength['constants'], sff[2:-1])
+#         sutl.writeFormatFloats(file, strength, sff)
+#     return
 
 
 
@@ -1108,44 +1231,79 @@ def _writeInputDisplacements(sg, file, file_format, sff):
 
 
 
-def _writeInputLoads(sg, file, file_format, sfi, sff):
-    if file_format.startswith('v'):
-        if sg.model == 0:
-            sutl.writeFormatFloats(file, sg.global_loads)
-        else:
-            sutl.writeFormatFloats(file, [sg.global_loads[i] for i in [0, 3, 4, 5]])
-            sutl.writeFormatFloats(file, [sg.global_loads[i] for i in [1, 2]])
-            file.write('\n')
-            sutl.writeFormatFloats(file, sg.global_loads_dist[0])
-            sutl.writeFormatFloats(file, sg.global_loads_dist[1])
-            sutl.writeFormatFloats(file, sg.global_loads_dist[2])
-            sutl.writeFormatFloats(file, sg.global_loads_dist[3])
-    elif file_format.startswith('s'):
-        # file.write((sfi+'\n').format(sg.global_loads_type))
-        for load_case in sg.global_loads:
-            sutl.writeFormatFloats(file, load_case, sff)
+def _writeDisplacement(
+    macro_response:smdl.SectionResponse, file, sff:str='20.12e'):
+    # sutl.writeFormatFloats(file, sg.global_displacements, sff[2:-1])
+    # sutl.writeFormatFloatsMatrix(file, sg.global_rotations, sff[2:-1])
+    sutl.writeFormatFloats(file, macro_response.getDisplacement(), sff)
+    sutl.writeFormatFloatsMatrix(file, macro_response.getDirectionCosine(), sff)
+
+
+
+
+
+
+
+
+
+def _writeLoad(
+    macro_response:smdl.SectionResponse, file, model, sff:str='20.12e'):
+
+    if model == 0 or model == 'BM1':
+        sutl.writeFormatFloats(file, macro_response.getLoad())
+    elif model == 1 or model == 'BM2':
+        _load = macro_response.getLoad()
+        _distr_load = macro_response.getDistributedLoad()
+        sutl.writeFormatFloats(file, [_load[i] for i in [0, 3, 4, 5]])
+        sutl.writeFormatFloats(file, [_load[i] for i in [1, 2]])
+        file.write('\n')
+        sutl.writeFormatFloats(file, _distr_load[0])
+        sutl.writeFormatFloats(file, _distr_load[1])
+        sutl.writeFormatFloats(file, _distr_load[2])
+        sutl.writeFormatFloats(file, _distr_load[3])
+
     file.write('\n')
     return
 
 
 
 
+def _writeGlobalResponses(
+    macro_responses:list[smdl.SectionResponse], file, model, sff:str='20.12e'):
+
+    for _i, _response in enumerate(macro_responses):
+        _writeDisplacement(_response, file, sff)
+        _writeLoad(_response, file, model, sff)
+
+    return
 
 
 
 
 
-def writeInputBufferGlobal(sg, file, file_format, sfi, sff, analysis, version=None):
-    # with open(fn, 'w') as file:
-    if analysis.startswith('d') or analysis.lower().startswith('l'):
-        _writeInputDisplacements(sg, file, file_format, sff)
-    elif analysis.startswith('f'):
-        _writeInputMaterialStrength(sg, file, file_format, sfi, sff)
 
-    if file_format.startswith('s'):
-        # file.write((sfi+'\n').format(sg.global_loads_type))
-        sutl.writeFormatIntegers(file, [sg.global_loads_type, ], sfi)
 
-    if analysis != 'f':
-        _writeInputLoads(sg, file, file_format, sfi, sff)
+
+
+def writeInputBufferGlobal(
+    file, model, analysis,
+    macro_responses:list[smdl.SectionResponse]=[],
+    dict_materials={},
+    sfi:str='8d', sff:str='20.12e'):
+    """Write material strength and global/macro responses to a file.
+
+    Parameters
+    ----------
+    file:
+        File object to which data will be written.
+    model:
+        Model of the global/macro structure.
+    analysis:
+        Identifier for the analysis. If 'f' (failure analysis), then material strengh will be written.
+    """
+
+    if analysis.startswith('f'):
+        _writeMaterials(dict_materials, file, sfi=sfi, sff=sff)
+
+    _writeGlobalResponses(macro_responses, file, model, sff)
 

@@ -18,196 +18,6 @@ class Model(Protocol):
 
 
 
-# class MaterialSection(object):
-#     """A macroscopic structure model. Stores material or structural
-#     properties.
-
-#     Parameters
-#     ----------
-#     smdim : int, default 3
-#         Dimension of material/structure model.
-#         Beam (1), plate/shell (2), or 3D continuum (3).
-#         Defualt to 3.
-#     """
-
-#     def __init__(self, name:str='', smdim:int=3):
-#         #: int: Dimension of material/structure model.
-#         self.smdim = smdim
-#         #: str: Name of the material/structure.
-#         self.name = name
-
-#         # Mass property
-#         # -------------
-#         #: list of lists of floats: Mass matrix at the origin.
-#         self.mass_origin = None
-#         #: list of lists of floats: Mass matrix at the mass center.
-#         self.mass_mc = None
-#         #: float: Density of the material/structure.
-#         self.density = None
-#         #: list of floats: Mass moments of inertia.
-#         self.mmoi = [0, 0, 0]
-#         #: float: Mass-weighted radius of gyration.
-#         self.mwrg = None
-#         #: list of floats: Mass center. [x1, x2, x3]
-#         self.mass_center = None
-
-#         # Geometry property
-#         # -----------------
-#         #: float: Geometric center
-#         self.gc = None
-
-#         # Constitutive property
-#         self.constitutive = None
-
-
-#         # Elastic property
-#         # ----------------
-#         #: int: (continuum model) Isotropy type.
-#         #: Isotropic (0), orthotropic (1), anisotropic (2).
-#         # self.type = None
-#         #: dict of {str, float}: Engineering constants.
-#         #: Keys: `e1`, `e2`, `e3`, `nu12`, `nu13`, `nu23`, `g12`, `g13`, `g23`
-#         self.constants = {}
-#         #: list of lists of floats: Stiffness matrix.
-#         self.stff = None
-#         # self.stiffness = None
-#         #: list of lists floats: Compliance matrix.
-#         self.cmpl = None
-#         # self.compliance = None
-
-#         #: list of lists of floats:
-#         #: (beam/plate/shell models) Refined stiffness matrix
-#         # self.stiffness_refined = None
-#         #: list of lists of floats:
-#         #: (beam/plate/shell models) Refined compliance matrix
-#         # self.compliance_refined = None
-#         #: list of floats: (beam model) Neutral axes/Tension center. [x1, x2, x3]
-#         self.tension_center = None
-#         #: list of floats: (beam model) Elastic axis/Shear center. [x1, x2, x3]
-#         self.shear_center = None
-
-#         # Strength property
-#         # -----------------
-#         #: int: Failure criterion.
-#         self.failure_criterion = None
-#         #: dict: Strength properties.
-#         # {
-#         #   'xt|x1t':,
-#         #   'yt|x2t':,
-#         #   'zt|x3t':,
-#         #   'xc|x1c':,
-#         #   'yc|x2c':,
-#         #   'zc|x3c':,
-#         #   'r|x23':,
-#         #   't|x13':,
-#         #   's|x12':
-#         # }
-#         self.strength_constants = {}
-
-#         self.char_len = 0
-
-
-#     def __repr__(self):
-#         s = '\n'
-#         s += f'name: {self.name}\n'
-#         s += 'effective properties\n'
-#         s += f'structural model dimension: {self.smdim}\n'
-#         if self.smdim == 3:
-#             pass
-#         elif self.smdim == 2:
-#             pass
-#         elif self.smdim == 1:
-#             pass
-
-#         return s
-
-
-#     def summary(self):
-#         print('')
-#         print('Effective properties of the SG')
-#         print('Structure model dimension: {0}'.format(self.smdim))
-
-#         ep = self.eff_props[self.smdim]
-#         if self.smdim == 3:
-#             pass
-#         elif self.smdim == 2:
-#             pass
-#         elif self.smdim == 1:
-#             stf = ep['stiffness']
-#             print('The Effective Stiffness Matrix')
-#             for row in stf['classical']:
-#                 print(row)
-#             if len(stf['refined']) > 0:
-#                 print('Generalized Timoshenko Stiffness')
-#                 for row in stf['refined']:
-#                     print(row)
-
-
-#     def get(self, name):
-#         r"""
-#         """
-#         v = None
-
-#         if self.smdim == 1:
-#             return self.constitutive.get(name)
-
-#         if name == 'density':
-#             v = self.density
-
-#         elif name in ['xt', 'yt', 'zt', 'xc', 'yc', 'zc', 'r', 't', 's']:
-#             v = self.strength_constants[name]
-
-#         elif self.smdim == 3:
-#             if name in ['e', 'e1', 'e2', 'e3', 'g12', 'g13', 'g23', 'nu', 'nu12', 'nu13', 'nu23']:
-#                 # v = self.constitutive.get(name)
-#                 v = self.constants.get(name)
-
-#         return v
-    
-
-#     def getAll(self):
-#         """Get all beam properties.
-
-#         Returns
-#         -------
-#         dict:
-#             A Dictionary of all beam properties.
-
-#         Notes
-#         -----
-
-#         Names are
-
-#         - mu, mmoi1, mmoi2, mmoi3
-#         - ea, ga22, ga33, gj, ei22, ei33
-#         - mc2, mc3, tc2, tc3, sc2, sc3
-#         - msij, stfijc, cmpijc, stfijr, cmpijr
-
-#         """
-#         return self.constitutive.getAll()
-#         # names = [
-#         #     'mu', 'mmoi1', 'mmoi2', 'mmoi3',
-#         #     'ea', 'ga22', 'ga33', 'gj', 'ei22', 'ei33',
-#         #     'mc2', 'mc3', 'tc2', 'tc3', 'sc2', 'sc3'
-#         # ]
-#         # for i in range(4):
-#         #     for j in range(4):
-#         #         names.append('stf{}{}c'.format(i+1, j+1))
-#         #         names.append('cmp{}{}c'.format(i+1, j+1))
-#         # for i in range(6):
-#         #     for j in range(6):
-#         #         names.append('ms{}{}'.format(i+1, j+1))
-#         #         names.append('stf{}{}r'.format(i+1, j+1))
-#         #         names.append('cmp{}{}r'.format(i+1, j+1))
-
-#         # dict_prop = {}
-#         # for n in names:
-#         #     dict_prop[n] = self.get(n)
-
-#         # return dict_prop
-
-
-
 
 
 
@@ -269,6 +79,22 @@ class SectionResponse():
         self.distr_load_d2 = [0, 0, 0, 0, 0, 0]
         self.distr_load_d3 = [0, 0, 0, 0, 0, 0]
 
+    def getDisplacement(self):
+        return self.displacement
+
+    def getDirectionCosine(self):
+        return self.directional_cosine
+
+    def getLoad(self):
+        return self.load
+
+    def getDistributedLoad(self):
+        return [
+            self.distr_load,
+            self.distr_load_d1,
+            self.distr_load_d2,
+            self.distr_load_d3
+        ]
 
     def strU(self, float_format='16.6e', delimiter=','):
         fstr = '{:'+float_format+'}'
@@ -334,6 +160,58 @@ class SectionResponse():
 
 
 
+class StructureResponseCase():
+    """
+    """
+    def __init__(self):
+        self._loc_tags = []
+        self._loc_values = []
+        self._cond_tags = []
+        self._cond_values = []
+        self._response:SectionResponse = None
+
+    def __repr__(self):
+        lines = []
+        lines.append('Location:')
+        for t, v in zip(self._loc_tags, self._loc_values):
+            lines.append(f'  {t} = {v}')
+        lines.append('Condition:')
+        for t, v in zip(self._cond_tags, self._cond_values):
+            lines.append(f'  {t} = {v}')
+        lines.append(str(self._response))
+        return '\n'.join(lines)
+
+    def getLocation(self, tag):
+        """
+        """
+        value = None
+        for _t, _v in zip(self._loc_tags, self._loc_values):
+            if tag == _t:
+                value = _v
+                break
+        return value
+
+    def getCondition(self, tag):
+        """
+        """
+        value = None
+        for _t, _v in zip(self._cond_tags, self._cond_values):
+            if tag == _t:
+                value = _v
+                break
+        return value
+
+    def getLocationOrCondition(self, tag):
+        """
+        """
+        value = self.getLocation(tag)
+        if value is None:
+            value = self.getCondition(tag)
+        return value
+
+
+
+
 class StructureResponseCases():
     """Cases of generalized stress/strain.
     """
@@ -346,35 +224,20 @@ class StructureResponseCases():
         """Response condition tags
         """
 
-        self.responses = []
+        self.responses:list[StructureResponseCase] = []
         """Responses
-
-        ..  code-block::
-
-            [
-                {
-                    'loc_tag1': loc_value1,
-                    'loc_tag2': loc_value2,
-                    ...,
-                    'condition_tag1': condition_value1,
-                    'condition_tag2': condition_value2,
-                    ...,
-                    'response': SectionResponse
-                },
-                {...},
-                ...
-            ]
         """
 
     def __repr__(self):
         lines = []
         for _resp in self.responses:
             lines.append('-'*20)
-            lines.append('Location:')
-            lines.append('\n'.join(['  {} = {}'.format(t, _resp[t]) for t in self.loc_tags]))
-            lines.append('Condition:')
-            lines.append('\n'.join(['  {} = {}'.format(t, _resp[t]) for t in self.cond_tags]))
-            lines.append(str(_resp['response']))
+            lines.append(str(_resp))
+            # lines.append('Location:')
+            # lines.append('\n'.join(['  {} = {}'.format(t, _resp[t]) for t in self.loc_tags]))
+            # lines.append('Condition:')
+            # lines.append('\n'.join(['  {} = {}'.format(t, _resp[t]) for t in self.cond_tags]))
+            # lines.append(str(_resp['response']))
         lines.append('-'*20)
         return '\n'.join(lines)
 
@@ -389,7 +252,8 @@ class StructureResponseCases():
             # resp = _resp
             found = True
             for _k, _v in kwargs.items():
-                if _v != _resp[_k]:
+                # if _v != _resp[_k]:
+                if _v != _resp.getLocationOrCondition(_k):
                     found = False
                     break
             if found:

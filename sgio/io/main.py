@@ -108,8 +108,10 @@ def readOutput(
 
 
 def write(
-    sg:StructureGene, fn:str, file_format:str, format_version:str='', analysis='h',
-    sg_fmt:int=1, sfi:str='8d', sff:str='20.12e', mesh_only=False
+    sg:StructureGene, fn:str, file_format:str,
+    format_version:str='', analysis='h', sg_fmt:int=1,
+    macro_responses:list[sgmodel.SectionResponse]=[], model=0,
+    sfi:str='8d', sff:str='20.12e', mesh_only=False
     ):
     """Write analysis input
 
@@ -158,7 +160,7 @@ def write(
                 if format_version == '':
                     format_version = GLOBAL.SC_VERSION_DEFAULT
                 _swiftcomp.writeBuffer(
-                    sg, file, file_format,
+                    sg, file,
                     analysis=analysis, sg_fmt=sg_fmt,
                     sfi=sfi, sff=sff, version=format_version,
                     mesh_only=mesh_only)
@@ -167,8 +169,9 @@ def write(
                 if format_version == '':
                     format_version = GLOBAL.VABS_VERSION_DEFAULT
                 _vabs.writeBuffer(
-                    sg, file, file_format,
+                    sg, file,
                     analysis=analysis, sg_fmt=sg_fmt,
+                    macro_responses=macro_responses, model=model,
                     sfi=sfi, sff=sff, version=format_version,
                     mesh_only=mesh_only)
 

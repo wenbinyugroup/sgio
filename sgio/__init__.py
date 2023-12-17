@@ -7,7 +7,10 @@ from .core.merge import combineSG
 
 from .model import *
 
-from .io import read, readOutput, readLoadCsv, write
+from .io import (
+    read, readOutput, readLoadCsv, write,
+    addCellDictDataToMesh,
+    )
 
 from .execu import run
 
