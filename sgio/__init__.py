@@ -9,6 +9,7 @@ from .model import *
 
 from .io import (
     read, readOutput, readLoadCsv, write,
+    addPointDictDataToMesh,
     addCellDictDataToMesh,
     )
 

@@ -91,16 +91,39 @@ def readOutput(
     Model
     """
 
-    # print('fn =', fn)
-    # print('file_format =', file_format)
-    # print('smdim =', smdim)
-    # print('analysis =', analysis)
-    with open(fn, 'r') as file:
-        if file_format.startswith('s'):
+    if file_format.startswith('s'):
+        with open(fn, 'r') as file:
             return _swiftcomp.readOutputBuffer(file, analysis, smdim, sg, **kwargs)
 
-        elif file_format.startswith('v'):
-            return _vabs.readOutputBuffer(file, analysis, sg, **kwargs)
+    elif file_format.startswith('v'):
+        if analysis == 'h':
+            with open(fn, 'r') as file:
+                return _vabs.readOutputBuffer(file, analysis, sg, **kwargs)
+
+        elif analysis == 'fi':
+            _fn = f'{fn}.fi'
+            with open(_fn, 'r') as file:
+                return _vabs.readOutputBuffer(file, analysis, sg, **kwargs)
+
+        elif analysis == 'd' or analysis == 'l':
+            # Displacement
+            _u = None
+            _fn = f'{fn}.U'
+            with open(_fn, 'r') as file:
+                _u = _vabs.readOutputBuffer(file, analysis, ext='u', **kwargs)
+
+            # Element strain and stress
+            _ee, _es, _eem, _esm = None, None, None, None
+            _fn = f'{fn}.ELE'
+            with open(_fn, 'r') as file:
+                _ee, _es, _eem, _esm = _vabs.readOutputBuffer(file, analysis, ext='ele', **kwargs)
+
+            state_field = sgmodel.StateField(
+                node_displ=_u,
+                elem_strain=_ee, elem_stress=_es, elem_strain_m=_eem, elem_stress_m=_esm
+            )
+
+            return state_field
 
     return
 

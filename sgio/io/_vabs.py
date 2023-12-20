@@ -246,21 +246,35 @@ def _readElasticProperty(file, isotropy:int):
 # ====================================================================
 # Read output
 # ====================================================================
-def readOutputBuffer(file, analysis=0, sg:StructureGene=None, **kwargs):
+def readOutputBuffer(file, analysis=0, sg:StructureGene=None, ext:str='', **kwargs):
+    """
+    """
+
     if analysis == 0 or analysis == 'h' or analysis == '':
         return _readOutputH(file, **kwargs)
 
     elif analysis == 1 or analysis == 2 or analysis == 'dl' or analysis == 'd' or analysis == 'l':
-        return _readOutputElementStrainStress(file)
+        if ext == 'u':
+            return _readOutputNodeDisplacement(file)
+        elif ext == 'ele':
+            return _readOutputElementStrainStress(file)
 
     elif analysis == 'f' or analysis == 3:
         # return readSCOutFailure(file, analysis)
         pass
+
     elif analysis == 'fe' or analysis == 4:
         # return readSCOutFailure(file, analysis)
         pass
+
     elif analysis == 'fi' or analysis == 5:
-        return _readOutputFailureIndex(file)
+        output = {}
+        _fi, _sr, _eids_sr_min = _readOutputFailureIndex(file)
+        output['failure_index'] = _fi
+        output['strength_ratio'] = _sr
+        output['elems_sr_min'] = _eids_sr_min
+
+        return output
 
     return
 
@@ -708,6 +722,37 @@ def _readTimoshenkoBeamModel(file):
 
 
 
+def _readOutputNodeDisplacement(file):
+    """Read VABS output displacement on nodes.
+
+    Parameters
+    ----------
+    file:
+        File object of the output file.
+
+    Returns
+    -------
+    dict[int, list[float]]:
+        Averaged 3D strains in the beam coordinate system.
+    """
+
+    u = {}
+    for i, line in enumerate(file):
+        line = line.strip()
+        if line == '':
+            continue
+
+        line = line.split()
+        _nid = int(line[0])
+        _ui = list(map(float, line[3:6]))
+
+        u[_nid] = _ui
+
+    return u
+
+
+
+
 def _readOutputElementStrainStress(file):
     """Read VABS output averaged strains and stressed on elements.
 
@@ -752,17 +797,25 @@ def _readOutputElementStrainStress(file):
 
 
 def _readOutputFailureIndex(file):
-    """
-    """
-    # if not logger:
-    #     logger = mul.initLogger(__name__)
+    """Read VABS output initial failure indices and strength ratios for elements.
 
-    # logger.info('reading sg failure indices and strengh ratios: {}...'.format(fn))
+    Parameters
+    ----------
+    file:
+        File object of the output file.
 
-    lines = []
-    load_case = 0
-    sr_min = None
-    # with open(fn, 'r') as fobj:
+    Returns
+    -------
+    dict[int, list[float]]:
+        Initial failure index and strength ratio for each element.
+    list[int]:
+        ID of elemnets having the lowest strength ratio.
+    """
+
+    fi = {}
+    sr = {}
+    eids_sr_min = []
+
     for i, line in enumerate(file):
         line = line.strip()
         if (line == ''):
@@ -772,62 +825,66 @@ def _readOutputFailureIndex(file):
 
         if (line.startswith('The sectional strength ratio is')):
             line = line.split()
-            tmp_id = line.index('existing')
-            sr_min = float(line[tmp_id - 1])
-            eid_sr_min = int(line[-1])
+            # _loc = line.index('existing')
+            # _sr_min = float(line[tmp_id - 1])
+            _eid = int(line[-1])
+            eids_sr_min.append(_eid)
             # lines.pop()
             continue
 
         line = line.split()
         if len(line) == 3:
-            lines.append(line)
-
-    result = []
-    # fis = []
-    # srs = []
-    for line in lines:
-        # line = line.strip().split()
-        result.append([int(line[0]), float(line[1]), float(line[2])])
-        # fis.append(float(line[1]))
-        # srs.append(float(line[2]))
-
-    return result, sr_min, eid_sr_min
-
-
-
-
-def _readOutputStrengthRatio(fn_in):
-    lines = []
-    sr_min = None
-    with open(fn_in, 'r') as fin:
-        for i, line in enumerate(fin.readlines()):
-            line = line.strip()
-            if (line == ''):
-                continue
-            if line.startswith('Failure index'):
-                continue
             # lines.append(line)
-            # initial failure indices and strength ratios
-            if (line.startswith('The sectional strength ratio is')):
-                line = line.split()
-                tmp_id = line.index('existing')
-                sr_min = float(line[tmp_id - 1])
-                # lines.pop()
-                continue
-            line = line.split()
-            if len(line) == 3:
-                lines.append(line)
+            fi[int(line[0])] = float(line[1])
+            sr[int(line[0])] = float(line[2])
 
-    # print(lines)
-    # initial failure indices and strength ratios
-    fis = []
-    srs = []
-    for line in lines:
-        # line = line.strip().split()
-        # results.append([int(line[0]), float(line[1]), float(line[2])])
-        fis.append(float(line[1]))
-        srs.append(float(line[2]))
-    return fis, srs, sr_min
+    # result = []
+    # # fis = []
+    # # srs = []
+    # for line in lines:
+    #     # line = line.strip().split()
+    #     result.append([int(line[0]), float(line[1]), float(line[2])])
+    #     # fis.append(float(line[1]))
+    #     # srs.append(float(line[2]))
+
+    return fi, sr, eids_sr_min
+    # return result, sr_min, eid_sr_min
+
+
+
+
+# def _readOutputStrengthRatio(fn_in):
+#     lines = []
+#     sr_min = None
+#     with open(fn_in, 'r') as fin:
+#         for i, line in enumerate(fin.readlines()):
+#             line = line.strip()
+#             if (line == ''):
+#                 continue
+#             if line.startswith('Failure index'):
+#                 continue
+#             # lines.append(line)
+#             # initial failure indices and strength ratios
+#             if (line.startswith('The sectional strength ratio is')):
+#                 line = line.split()
+#                 tmp_id = line.index('existing')
+#                 sr_min = float(line[tmp_id - 1])
+#                 # lines.pop()
+#                 continue
+#             line = line.split()
+#             if len(line) == 3:
+#                 lines.append(line)
+
+#     # print(lines)
+#     # initial failure indices and strength ratios
+#     fis = []
+#     srs = []
+#     for line in lines:
+#         # line = line.strip().split()
+#         # results.append([int(line[0]), float(line[1]), float(line[2])])
+#         fis.append(float(line[1]))
+#         srs.append(float(line[2]))
+#     return fis, srs, sr_min
 
 
 

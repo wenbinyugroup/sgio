@@ -4,6 +4,8 @@ import sgio.utils.io as sui
 # import sgio.model as sm
 
 class Model(Protocol):
+    """
+    """
     def __repr__(self) -> str:
         ...
 
@@ -19,7 +21,115 @@ class Model(Protocol):
 
 
 
+class State():
+    """Generalized strain and stress.
+    """
+    def __init__(self, strain=[], stress=[]):
+        self._e = strain
+        self._s = stress
 
+    def getStrain(self):
+        return self._e
+
+    def getStress(self):
+        return self._s
+
+
+
+
+class StateField():
+    """Generalized strain and stress fields.
+    """
+    def __init__(self, node_displ={},
+        intp_strain={}, intp_stress={}, intp_strain_m={}, intp_stress_m={},
+        node_strain={}, node_stress={}, node_strain_m={}, node_stress_m={},
+        elem_strain={}, elem_stress={}, elem_strain_m={}, elem_stress_m={},
+        ):
+        # Displacement
+        self._node_displ = node_displ
+
+        # State at integration points [coordinates, state]
+        self._intp_strain = intp_strain
+        self._intp_stress = intp_stress
+        self._intp_strain_m = intp_strain_m
+        self._intp_stress_m = intp_stress_m
+
+        # State at nodes [nid, state]
+        self._node_strain = node_strain
+        self._node_stress = node_stress
+        self._node_strain_m = node_strain_m
+        self._node_stress_m = node_stress_m
+
+        # Averaged state at elements [eid, state]
+        self._elem_strain = elem_strain
+        self._elem_stress = elem_stress
+        self._elem_strain_m = elem_strain_m
+        self._elem_stress_m = elem_stress_m
+
+    def getDisplacementField(self):
+        return self._node_displ
+
+    def getStrainField(self, where:str='element', cs:str='structure'):
+        """
+
+        Parameters
+        ----------
+        where
+            Location of the field.
+            - 'i': integration points
+            - 'n': nodes
+            - 'e': elements
+        cs
+            Reference coordinate system.
+            - 's': structural model frame
+            - 'm': material frame
+        """
+        if where.startswith('i'):
+            if cs.startswith('s'):
+                return self._intp_strain
+            elif cs.startswith('m'):
+                return self._intp_strain_m
+        elif where.startswith('n'):
+            if cs.startswith('s'):
+                return self._node_strain
+            elif cs.startswith('m'):
+                return self._node_strain_m
+        elif where.startswith('e'):
+            if cs.startswith('s'):
+                return self._elem_strain
+            elif cs.startswith('m'):
+                return self._elem_strain_m
+
+    def getStressField(self, where:str='element', cs:str='structure'):
+        """
+
+        Parameters
+        ----------
+        where
+            Location of the field.
+            - 'i': integration points
+            - 'n': nodes
+            - 'e': elements
+        cs
+            Reference coordinate system.
+            - 's': structural model frame
+            - 'm': material frame
+        """
+        if where.startswith('i'):
+            if cs.startswith('s'):
+                return self._intp_stress
+            elif cs.startswith('m'):
+                return self._intp_stress_m
+        elif where.startswith('n'):
+            if cs.startswith('s'):
+                return self._node_stress
+            elif cs.startswith('m'):
+                return self._node_stress_m
+        elif where.startswith('e'):
+            if cs.startswith('s'):
+                return self._elem_stress
+            elif cs.startswith('m'):
+                return self._elem_stress_m
 
 
 
