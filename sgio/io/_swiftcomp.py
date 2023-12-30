@@ -288,10 +288,15 @@ def _readOutputH(file, smdim, **kwargs):
     :type smdim: int
     """
 
+    try:
+        model = kwargs['model']
+    except KeyError:
+        model = kwargs['submodel']
+
     if smdim == 1:
-        out = _readOutputBeamModel(file, kwargs['submodel'])
+        out = _readOutputBeamModel(file, model=model)
     elif smdim == 2:
-        out = _readOutputShellModel(file, kwargs['submodel'])
+        out = _readOutputShellModel(file, model=model)
     elif smdim == 3:
         out = _readOutputCauchyContinuumModel(file)
 
@@ -302,13 +307,13 @@ def _readOutputH(file, smdim, **kwargs):
 
 
 
-def _readOutputBeamModel(file, submodel):
+def _readOutputBeamModel(file, model):
     """
     """
 
-    if submodel == 1:
+    if model == 'BM1' or model == 1:
         return _readEulerBernoulliBeamModel(file)
-    elif submodel == 2:
+    elif model == 'BM2' or model == 2:
         return _readTimoshenkoBeamModel(file)
 
 
@@ -688,11 +693,11 @@ def _readTimoshenkoBeamModel(file):
 
 
 
-def _readOutputShellModel(file, submodel):
+def _readOutputShellModel(file, model):
     """
     """
 
-    if submodel == 1:
+    if model == 'PL1' or model == 1:
         return _readKirchhoffLovePlateShellModel(file)
 
 

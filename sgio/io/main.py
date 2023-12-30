@@ -18,7 +18,10 @@ import sgio.utils as sutils
 
 
 
-def read(fn:str, file_format:str, format_version:str='', sgdim:int=3, smdim:int=3, sg:StructureGene=None, mesh_only:bool=False):
+def read(
+    fn:str, file_format:str, format_version:str='',
+    sgdim:int=3, model:int|str=3, sg:StructureGene=None,
+    mesh_only:bool=False):
     """Read SG data file.
 
     Parameters
@@ -48,17 +51,17 @@ def read(fn:str, file_format:str, format_version:str='', sgdim:int=3, smdim:int=
     # if file_format.lower() in ['vabs', 'sc', 'swiftcomp']:
     if file_format in ['sc', 'swiftcomp']:
         with open(fn, 'r') as file:
-            sg = _swiftcomp.readInputBuffer(file, format_version, smdim)
+            sg = _swiftcomp.readInputBuffer(file, format_version, model)
     elif file_format == 'vabs':
         with open(fn, 'r') as file:
-            sg = _vabs.readBuffer(file, file_format, format_version, smdim)
+            sg = _vabs.readBuffer(file, file_format, format_version, model)
     elif file_format == 'abaqus':
         with open(fn, 'r') as file:
-            sg = _abaqus.readInputBuffer(file, sgdim=sgdim, smdim=smdim)
+            sg = _abaqus.readInputBuffer(file, sgdim=sgdim, smdim=model)
 
     else:
         if not sg:
-            sg = StructureGene(sgdim=sgdim, smdim=smdim)
+            sg = StructureGene(sgdim=sgdim, smdim=model)
         sg.mesh, _, _ = meshio.read(fn, file_format)
 
     return sg

@@ -8,11 +8,22 @@ import sgio.meshio as smsh
 logger = logging.getLogger(__name__)
 
 
-def readBuffer(f, file_format:str, format_version:str, smdim:int):
+def readBuffer(f, file_format:str, format_version:str, model:int|str):
     """
     """
     sg = StructureGene()
     sg.version = format_version
+
+    if isinstance(model, int):
+        smdim = model
+    elif isinstance(model, str):
+        if model.upper()[:2] == 'SD':
+            smdim = 3
+        elif model.upper()[:2] == 'PL':
+            smdim = 2
+        elif model.upper()[:2] == 'BM':
+            smdim = 1
+
     sg.smdim = smdim
 
     # Read head
@@ -246,7 +257,8 @@ def _readElasticProperty(file, isotropy:int):
 # ====================================================================
 # Read output
 # ====================================================================
-def readOutputBuffer(file, analysis=0, sg:StructureGene=None, ext:str='', **kwargs):
+def readOutputBuffer(
+    file, analysis='h', sg:StructureGene=None, ext:str='', **kwargs):
     """
     """
 
@@ -285,19 +297,26 @@ def _readOutputH(file, **kwargs):
     """Read VABS homogenization output.
     """
 
-    if kwargs['submodel'] == 1:
-        return _readEulerBernoulliBeamModel(file)
-    elif kwargs['submodel'] == 2:
-        return _readTimoshenkoBeamModel(file)
+    try:
+        model_type = kwargs['model_type'].upper()
+    except KeyError:
+        model_type = kwargs['submodel']
+
+    model = kwargs.get('model', None)
+
+    if model_type == 'BM1' or model_type == 1:
+        return _readEulerBernoulliBeamModel(file, model)
+    elif model_type == 'BM2' or model_type == 2:
+        return _readTimoshenkoBeamModel(file, model)
 
 
 
 
-def _readEulerBernoulliBeamModel(file):
+def _readEulerBernoulliBeamModel(file, model=None):
     """
     """
-
-    model = smdl.EulerBernoulliBeamModel()
+    if model is None:
+        model = smdl.EulerBernoulliBeamModel()
 
     block = ''
     line = file.readline()
@@ -408,11 +427,12 @@ def _readEulerBernoulliBeamModel(file):
 
 
 
-def _readTimoshenkoBeamModel(file):
+def _readTimoshenkoBeamModel(file, model=None):
     """
     """
 
-    model = smdl.TimoshenkoBeamModel()
+    if model is None:
+        model = smdl.TimoshenkoBeamModel()
 
     block = ''
     line = file.readline()

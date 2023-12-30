@@ -21,6 +21,23 @@ class Model(Protocol):
 
 
 
+def getModelDim(model:str) -> int:
+    """
+    """
+
+    mdim = 0
+    if model[:2].lower() == 'sd':
+        mdim = 3
+    elif model[:2].lower() == 'pl':
+        mdim = 2
+    elif model[:2].lower() == 'bm':
+        mdim = 1
+
+    return mdim
+
+
+
+
 class State():
     """Generalized strain and stress.
     """
