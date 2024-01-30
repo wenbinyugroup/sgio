@@ -18,25 +18,52 @@ def buildSG1D(
     submodel=0, geo_correct=None, elem_type=5,
     sgdb_map = {},
     ):
-    """Preprocessor of 1D SG.
+    """Build a 1D structure gene
 
     Parameters
     ----------
-    layup : msgpi.materials.Layup
-        Layup design.
-    material_db : dict
-        Material database.
+    name : str
+        Name of the structure gene
+    layup : dict
+        Layup design
+    sgdb : dict
+        Material database
+    smdim : int
+        Spatial dimension (2 or 3)
+    mesh_size : float
+        Mesh size
+    k11 : float
+        Curvature in the 1-direction
+    k22 : float
+        Curvature in the 2-direction
+    lame1 : float
+        Lame constant 1
+    lame2 : float
+        Lame constant 2
+    load_cases : list
+        List of load cases
+    analysis : str
+        Analysis type
+    physics : int
+        Physics type
+    submodel : int
+        Submodel type
+    geo_correct : dict
+        Geometric correction
+    elem_type : int
+        Element type
+    sgdb_map : dict
+        Material database map
 
     Returns
     -------
-    msgpi.sg.sg.StructureGene
-        1D structure gene.
+    sg : StructureGene
+        Structure gene
     """
 
     logger.info('building 1D SG: {}...'.format(name))
 
     sg = StructureGene(name, 1)
-    # sg = mss.StructureGene(name, 1)
 
     # Design
     # ----------------------------------------------------------------
@@ -84,16 +111,11 @@ def buildSG1D(
             if mid == 0:
                 # Not found
                 mid = len(sg.materials) + 1
-                # m = MaterialProperty(_lyr_m_name)
-                # m = smdl.MaterialSection(_lyr_m_name)
-                # m = mms.MaterialProperty(_lyr_m_name)
+
                 m = smdl.CauchyContinuumModel()
                 m.name = _lyr_m_name
-                # print(sgdb)
-                # mprop = sgdb[_lyr_m_name][0]['property']['md3']
-                # mprop = muc.getValueByKey(sgdb[_lyr_m_name][0], 'prop')
+
                 mprop = sgdb[_lyr_m_name][0]['property']['md3']
-                # print(f'mprop = {mprop}')
 
                 m.density = float(mprop['density'])
                 m.temperature = float(mprop.get('temperature', 0))
@@ -102,24 +124,16 @@ def buildSG1D(
                 # ------------------
                 _isotropy = mprop.get('type', 'isotropic')
                 m.set('isotropy', _isotropy)
-                # cm = smdl.Cauchy()
 
                 # Elastic property
-                # _c = mprop.get('stiffness', [])
-                # cm.setElasticProperty(mprop['elasticity'], _isotropy)
                 _elastic = mprop.get('elasticity')
-                # print(f'_elastic = {_elastic}')
                 m.set('elastic', _elastic, input_type=_isotropy)
 
                 # Thermal property
                 _cte = list(map(float, mprop.get('cte', [])))
                 m.set('cte', _cte)
-                # m.cte = list(map(float, mprop.get('cte', [])))
                 _specific_heat = float(mprop.get('specific_heat', 0))
                 m.set('specific_heat', _specific_heat)
-                # m.specific_heat = float(mprop.get('specific_heat', 0))
-
-                # m.constitutive = cm
 
                 # Strength properties
                 # -------------------

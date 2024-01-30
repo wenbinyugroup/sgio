@@ -162,9 +162,18 @@ def read_buffer(f, mesh_only:bool=True):
             )
             cells.append(CellBlock(cell_type, cells_data))
             cell_ids.append(ids)
+            # print(cell_ids)
             if sets:
                 cell_sets_element.update(sets)
                 cell_sets_element_order += list(sets.keys())
+
+            if not 'element_id' in cell_data.keys():
+                cell_data['element_id'] = []
+            _element_id = [0,]*len(ids)
+            for _eid, _cid in ids.items():
+                _element_id[_cid] = _eid
+            # print(_element_id)
+            cell_data['element_id'].append(_element_id)
 
         elif keyword == "NSET":
             params_map = get_param_map(line, required_keys=["NSET"])
