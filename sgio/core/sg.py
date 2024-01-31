@@ -321,9 +321,14 @@ class StructureGene():
         int
             Combination id. 0 if not found.
         """
+        print(f'findComboByMaterialOrientation: {name}, {angle}')
         for i, mo in self.mocombos.items():
+            print(f'  {i}, {mo}')
+            print(f'  {self.materials[mo[0]].name}, {mo[1]}')
             if (self.materials[mo[0]].name == name) and (mo[1] == angle):
+                print(f'  found: {i}')
                 return i
+        print('  not found')
         return 0
 
 

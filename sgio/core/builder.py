@@ -101,7 +101,7 @@ def buildSG1D(
             _lyr_m_name = sgdb_map[_lyr_m_name]
         except KeyError:
             pass
-        logger.debug('checking material {}...'.format(_lyr_m_name))
+        logger.debug(f'checking material {_lyr_m_name}...')
         cid = sg.findComboByMaterialOrientation(_lyr_m_name, _lyr_ipo)
         if cid == 0:
             # Not found
@@ -112,34 +112,40 @@ def buildSG1D(
                 # Not found
                 mid = len(sg.materials) + 1
 
-                m = smdl.CauchyContinuumModel()
-                m.name = _lyr_m_name
+                # mprop = sgdb[_lyr_m_name][0]['property']['md3']
+                mprop = sgdb[f'{_lyr_m_name}']
 
-                mprop = sgdb[_lyr_m_name][0]['property']['md3']
+                if isinstance(mprop, smdl.CauchyContinuumModel):
+                    m = mprop
 
-                m.density = float(mprop['density'])
-                m.temperature = float(mprop.get('temperature', 0))
+                else:
 
-                # Constitutive model
-                # ------------------
-                _isotropy = mprop.get('type', 'isotropic')
-                m.set('isotropy', _isotropy)
+                    m = smdl.CauchyContinuumModel()
+                    m.name = _lyr_m_name
 
-                # Elastic property
-                _elastic = mprop.get('elasticity')
-                m.set('elastic', _elastic, input_type=_isotropy)
+                    m.density = float(mprop['density'])
+                    m.temperature = float(mprop.get('temperature', 0))
 
-                # Thermal property
-                _cte = list(map(float, mprop.get('cte', [])))
-                m.set('cte', _cte)
-                _specific_heat = float(mprop.get('specific_heat', 0))
-                m.set('specific_heat', _specific_heat)
+                    # Constitutive model
+                    # ------------------
+                    _isotropy = mprop.get('type', 'isotropic')
+                    m.set('isotropy', _isotropy)
 
-                # Strength properties
-                # -------------------
-                m.strength_constants = mprop.get('strength', None)
-                m.failure_criterion = mprop.get('failure_criterion', None)
-                m.char_len = float(mprop.get('char_len', 0))
+                    # Elastic property
+                    _elastic = mprop.get('elasticity')
+                    m.set('elastic', _elastic, input_type=_isotropy)
+
+                    # Thermal property
+                    _cte = list(map(float, mprop.get('cte', [])))
+                    m.set('cte', _cte)
+                    _specific_heat = float(mprop.get('specific_heat', 0))
+                    m.set('specific_heat', _specific_heat)
+
+                    # Strength properties
+                    # -------------------
+                    m.strength_constants = mprop.get('strength', None)
+                    m.failure_criterion = mprop.get('failure_criterion', None)
+                    m.char_len = float(mprop.get('char_len', 0))
 
                 sg.materials[mid] = m
 

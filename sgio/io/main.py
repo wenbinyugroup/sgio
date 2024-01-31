@@ -169,7 +169,7 @@ def write(
 
     _file_format = file_format.lower()
 
-    _format_full_data = ['sc', 'vabs']
+    _format_full_data = ['sc', 'swiftcomp', 'vabs']
 
     # Write meshing data only for partially supported formats
     if not _file_format in _format_full_data:
@@ -187,9 +187,9 @@ def write(
                     format_version = GLOBAL.SC_VERSION_DEFAULT
                 _swiftcomp.writeBuffer(
                     sg, file,
-                    analysis=analysis, sg_fmt=sg_fmt,
+                    analysis=analysis,
                     sfi=sfi, sff=sff, version=format_version,
-                    mesh_only=mesh_only)
+                    )
 
             elif _file_format.startswith('v'):
                 if format_version == '':

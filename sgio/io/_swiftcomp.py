@@ -1186,8 +1186,8 @@ def _readOutputFailureIndex(file):
 
 
 def writeBuffer(
-    sg:StructureGene, file, file_format:str, analysis='h', sg_fmt:int=1,
-    sfi:str='8d', sff:str='20.12e', version=None, mesh_only=False
+    sg:StructureGene, file, analysis='h',
+    sfi:str='8d', sff:str='20.12e', version=None
     ):
     """Write analysis input
 
@@ -1208,13 +1208,11 @@ def writeBuffer(
         Name of the input file
     """
 
-    _file_format = file_format.lower()
-
     if analysis.startswith('h'):
-        writeInputBuffer(sg, file, _file_format, sfi, sff, sg_fmt, version)
+        writeInputBuffer(sg, file, sfi, sff, version)
 
     elif (analysis.startswith('d')) or (analysis.startswith('l')) or (analysis.startswith('f')):
-        writeInputBufferGlobal(sg, file, _file_format, sfi, sff, analysis, version)
+        writeInputBufferGlobal(sg, file, sfi, sff, analysis, version)
 
     return
 
@@ -1226,11 +1224,13 @@ def writeBuffer(
 
 
 
-def writeInputBuffer(sg, file, file_format, sfi, sff, sg_fmt, version=None):
+def writeInputBuffer(sg, file, sfi, sff, version=None):
     """
     """
 
     logger.debug(f'writing sg input...')
+
+    # print(sg)
 
     ssff = '{:' + sff + '}'
     # if not version is None:
@@ -1241,11 +1241,11 @@ def writeInputBuffer(sg, file, file_format, sfi, sff, sg_fmt, version=None):
 
     _writeHeader(sg, file, sfi, sff, version)
 
-    _writeMesh(sg, file, file_format=file_format, sgdim=sg.sgdim, int_fmt=sfi, float_fmt=sff)
+    _writeMesh(sg, file, sgdim=sg.sgdim, int_fmt=sfi, float_fmt=sff)
 
-    _writeMOCombos(sg, file, file_format, sfi, sff)
+    _writeMOCombos(sg, file, sfi, sff)
 
-    _writeMaterials(sg, file, file_format, sfi, sff)
+    _writeMaterials(sg, file, sfi, sff)
 
     file.write((ssff + '\n').format(sg.omega))
 
@@ -1254,17 +1254,17 @@ def writeInputBuffer(sg, file, file_format, sfi, sff, sg_fmt, version=None):
 
 
 
-def writeInputBufferGlobal(sg, file, file_format, sfi, sff, analysis, version=None):
+def writeInputBufferGlobal(sg, file, sfi, sff, analysis, version=None):
     # with open(fn, 'w') as file:
     if analysis.startswith('d') or analysis.lower().startswith('l'):
-        _writeInputDisplacements(sg, file, file_format, sff)
+        _writeInputDisplacements(sg, file, sff)
     elif analysis.startswith('f'):
-        _writeInputMaterialStrength(sg, file, file_format, sfi, sff)
+        _writeInputMaterialStrength(sg, file, sfi, sff)
 
     sutl.writeFormatIntegers(file, [sg.global_loads_type, ], sfi)
 
     if analysis != 'f':
-        _writeInputLoads(sg, file, file_format, sfi, sff)
+        _writeInputLoads(sg, file, sfi, sff)
 
 
 
@@ -1274,12 +1274,14 @@ def writeInputBufferGlobal(sg, file, file_format, sfi, sff, analysis, version=No
 
 
 
-def _writeMesh(sg, file, file_format, sgdim, int_fmt, float_fmt):
+def _writeMesh(sg, file, sgdim, int_fmt, float_fmt):
     """
     """
     logger.debug('writing mesh...')
 
-    sg.mesh.write(file, file_format, sgdim=sgdim, int_fmt=int_fmt, float_fmt=float_fmt)
+    sg.mesh.write(
+        file, 'sc', sgdim=sgdim,
+        int_fmt=int_fmt, float_fmt=float_fmt)
 
     return
 
@@ -1291,11 +1293,12 @@ def _writeMesh(sg, file, file_format, sgdim, int_fmt, float_fmt):
 
 
 
-def _writeMOCombos(sg, file, file_format, sfi, sff):
+def _writeMOCombos(sg, file, sfi, sff):
     ssfi = '{:' + sfi + '}'
     ssff = '{:' + sff + '}'
     count = 0
     for cid, combo in sg.mocombos.items():
+        print(f'cid: {cid}, combo: {combo}')
         count += 1
         file.write((ssfi + ssfi + ssff).format(cid, combo[0], combo[1]))
         if count == 1:
@@ -1312,7 +1315,7 @@ def _writeMOCombos(sg, file, file_format, sfi, sff):
 
 
 
-def _writeMaterials(sg:StructureGene, file, file_format, sfi, sff):
+def _writeMaterials(sg:StructureGene, file, sfi, sff):
     """
     """
 
@@ -1432,7 +1435,7 @@ def _writeHeader(sg:StructureGene, file, sfi, sff, version=None):
 
 
 
-def _writeInputMaterialStrength(sg, file, file_format, sfi, sff):
+def _writeInputMaterialStrength(sg, file, sfi, sff):
     for i, m in sg.materials.items():
         # print(m.strength)
         # print(m.failure_criterion)
@@ -1480,7 +1483,7 @@ def _writeInputMaterialStrength(sg, file, file_format, sfi, sff):
 
 
 
-def _writeInputDisplacements(sg, file, file_format, sff):
+def _writeInputDisplacements(sg, file, sff):
     sutl.writeFormatFloats(file, sg.global_displacements, sff[2:-1])
     sutl.writeFormatFloatsMatrix(file, sg.global_rotations, sff[2:-1])
 
@@ -1492,22 +1495,9 @@ def _writeInputDisplacements(sg, file, file_format, sff):
 
 
 
-def _writeInputLoads(sg, file, file_format, sfi, sff):
-    if file_format.startswith('v'):
-        if sg.model == 0:
-            sutl.writeFormatFloats(file, sg.global_loads)
-        else:
-            sutl.writeFormatFloats(file, [sg.global_loads[i] for i in [0, 3, 4, 5]])
-            sutl.writeFormatFloats(file, [sg.global_loads[i] for i in [1, 2]])
-            file.write('\n')
-            sutl.writeFormatFloats(file, sg.global_loads_dist[0])
-            sutl.writeFormatFloats(file, sg.global_loads_dist[1])
-            sutl.writeFormatFloats(file, sg.global_loads_dist[2])
-            sutl.writeFormatFloats(file, sg.global_loads_dist[3])
-    elif file_format.startswith('s'):
-        # file.write((sfi+'\n').format(sg.global_loads_type))
-        for load_case in sg.global_loads:
-            sutl.writeFormatFloats(file, load_case, sff)
+def _writeInputLoads(sg, file, sfi, sff):
+    for load_case in sg.global_loads:
+        sutl.writeFormatFloats(file, load_case, sff)
     file.write('\n')
     return
 
