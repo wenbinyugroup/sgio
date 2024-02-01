@@ -94,11 +94,14 @@ def readOutput(
     Model
     """
 
-    if file_format.startswith('s'):
+    # print(f'reading {file_format} output file {fn}...')
+    # print(f'file_format: {file_format}, analysis: {analysis}, smdim: {smdim}...')
+
+    if file_format.lower().startswith('s'):
         with open(fn, 'r') as file:
             return _swiftcomp.readOutputBuffer(file, analysis, smdim, sg, **kwargs)
 
-    elif file_format.startswith('v'):
+    elif file_format.lower().startswith('v'):
         if analysis == 'h':
             with open(fn, 'r') as file:
                 return _vabs.readOutputBuffer(file, analysis, sg, **kwargs)

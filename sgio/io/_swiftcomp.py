@@ -257,6 +257,7 @@ def readOutputBuffer(
     file, analysis=0, smdim:int=0,
     sg:StructureGene=None, **kwargs
     ):
+    # print('reading output buffer...')
 
     if analysis == 0 or analysis == 'h' or analysis == '':
         return _readOutputH(file, smdim, **kwargs)
@@ -287,17 +288,18 @@ def _readOutputH(file, smdim, **kwargs):
     :param smdim: Dimension of the structural model
     :type smdim: int
     """
+    # print('reading homogenization output...')
 
     try:
-        model = kwargs['model']
+        model_type = kwargs['model_type']
     except KeyError:
-        model = kwargs['submodel']
+        model_type = kwargs['submodel']
 
-    if smdim == 1:
-        out = _readOutputBeamModel(file, model=model)
-    elif smdim == 2:
-        out = _readOutputShellModel(file, model=model)
-    elif smdim == 3:
+    if model_type.upper().startswith('BM'):
+        out = _readOutputBeamModel(file, model=model_type)
+    elif model_type.upper().startswith('PL'):
+        out = _readOutputShellModel(file, model=model_type)
+    elif  model_type.upper().startswith('SD'):
         out = _readOutputCauchyContinuumModel(file)
 
 
@@ -696,8 +698,9 @@ def _readTimoshenkoBeamModel(file):
 def _readOutputShellModel(file, model):
     """
     """
+    # print('reading shell model...')
 
-    if model == 'PL1' or model == 1:
+    if model.upper() == 'PL1':
         return _readKirchhoffLovePlateShellModel(file)
 
 
@@ -705,6 +708,7 @@ def _readOutputShellModel(file, model):
 def _readKirchhoffLovePlateShellModel(file):
     """
     """
+    # print('reading Kirchhoff-Love plate shell model...')
 
     model = smdl.KirchhoffLovePlateShellModel()
 
