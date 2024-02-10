@@ -45,16 +45,42 @@ class State():
         self._e = strain
         self._s = stress
 
-    def getStrain(self):
-        return self._e
+    @property
+    def strain(self): return self._e
+    @strain.setter
+    def strain(self, value): self._e = value
+    @property
+    def stress(self): return self._s
+    @stress.setter
+    def stress(self, value): self._s = value
 
-    def getStress(self):
-        return self._s
+    # def getStrain(self):
+    #     return self._e
+
+    # def getStress(self):
+    #     return self._s
 
 
 
 
 class StateField():
+    """
+    """
+    def __init__(self, name:str, data:dict={}, label:str=''):
+        self._name = name
+        self._data = data
+        self._label = label
+
+    @property
+    def name(self): return self._name
+    @property
+    def data(self): return self._data
+    @property
+    def label(self): return self._label
+
+
+
+class StateFields():
     """Generalized strain and stress fields.
     """
     def __init__(self, node_displ={},
