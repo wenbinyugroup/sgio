@@ -918,8 +918,8 @@ def _readOutputFailureIndex(file):
 
 
 def writeBuffer(
-    sg:StructureGene, file, analysis='h', sg_fmt:int=1,
-    macro_responses:list[smdl.SectionResponse]=[], model=0,
+    sg:StructureGene, file, analysis='h', sg_fmt:int=1, model=0,
+    macro_responses:list[smdl.StateCase]=[],
     sfi:str='8d', sff:str='20.12e', version=None, mesh_only=False
     ):
     """Write analysis input
@@ -964,7 +964,7 @@ def writeBuffer(
             timoshenko_flag, vlasov_flag, trapeze_flag, thermal_flag,
             sfi, sff, version)
 
-    elif (analysis == 'd') or (analysis == 'l') or (analysis == 'f'):
+    elif (analysis == 'd') or (analysis == 'l') or (analysis.startswith('f')):
         if sg is None:
             materials = {}
         else:
@@ -1308,12 +1308,18 @@ def _writeHeader(
 
 
 
-def _writeDisplacement(
-    macro_response:smdl.SectionResponse, file, sff:str='20.12e'):
-    # sutl.writeFormatFloats(file, sg.global_displacements, sff[2:-1])
-    # sutl.writeFormatFloatsMatrix(file, sg.global_rotations, sff[2:-1])
-    sutl.writeFormatFloats(file, macro_response.getDisplacement(), sff)
-    sutl.writeFormatFloatsMatrix(file, macro_response.getDirectionCosine(), sff)
+def _writeDisplacementRotation(
+    # macro_response:smdl.SectionResponse,
+    file,
+    displacement:list[float]=[0, 0, 0],
+    rotation:list[list[float]]=[[1,0,0],[0,1,0],[0,0,1]],
+    sff:str='20.12e'):
+
+    # sutl.writeFormatFloats(file, macro_response.getDisplacement(), sff)
+    # sutl.writeFormatFloatsMatrix(file, macro_response.getDirectionCosine(), sff)
+    sutl.writeFormatFloats(file, displacement, sff)
+    file.write('\n')
+    sutl.writeFormatFloatsMatrix(file, rotation, sff)
 
 
 
@@ -1324,33 +1330,66 @@ def _writeDisplacement(
 
 
 def _writeLoad(
-    macro_response:smdl.SectionResponse, file, model, sff:str='20.12e'):
+    file, macro_response:smdl.StateCase, model, sff:str='20.12e'):
+
+    # _load = macro_response.getLoad()
+    _load = macro_response.load.data
 
     if model == 0 or model == 'BM1':
-        sutl.writeFormatFloats(file, macro_response.getLoad())
+        # sutl.writeFormatFloats(file, macro_response.getLoad())
+        sutl.writeFormatFloats(file, _load, fmt=sff)
+
     elif model == 1 or model == 'BM2':
-        _load = macro_response.getLoad()
-        _distr_load = macro_response.getDistributedLoad()
-        sutl.writeFormatFloats(file, [_load[i] for i in [0, 3, 4, 5]])
-        sutl.writeFormatFloats(file, [_load[i] for i in [1, 2]])
+        sutl.writeFormatFloats(file, [_load[i] for i in [0, 3, 4, 5]], fmt=sff)
+        sutl.writeFormatFloats(file, [_load[i] for i in [1, 2]], fmt=sff)
         file.write('\n')
-        sutl.writeFormatFloats(file, _distr_load[0])
-        sutl.writeFormatFloats(file, _distr_load[1])
-        sutl.writeFormatFloats(file, _distr_load[2])
-        sutl.writeFormatFloats(file, _distr_load[3])
+
+        # _distr_load = macro_response.getDistributedLoad()
+        _distr_load = macro_response.distributed_load
+        if _distr_load is None:
+            _distr_load = [[0,]*6]*4
+        else:
+            _distr_load = _distr_load.data
+        sutl.writeFormatFloats(file, _distr_load[0], fmt=sff)
+        sutl.writeFormatFloats(file, _distr_load[1], fmt=sff)
+        sutl.writeFormatFloats(file, _distr_load[2], fmt=sff)
+        sutl.writeFormatFloats(file, _distr_load[3], fmt=sff)
 
     file.write('\n')
+
     return
 
 
 
 
 def _writeGlobalResponses(
-    macro_responses:list[smdl.SectionResponse], file, model, sff:str='20.12e'):
+    file, macro_responses:list[smdl.StateCase], model, sff:str='20.12e'):
 
     for _i, _response in enumerate(macro_responses):
-        _writeDisplacement(_response, file, sff)
-        _writeLoad(_response, file, model, sff)
+        if _i == 0:
+            # _writeDisplacementRotation(_response, file, sff)
+            _disp = _response.displacement
+            if _disp is None:
+                _disp = [0, 0, 0]
+            else:
+                _disp = _disp.data
+
+            _rot = _response.rotation
+            if _rot is None:
+                _rot = [[1,0,0],[0,1,0],[0,0,1]]
+            else:
+                _rot = _rot.data
+
+            _writeDisplacementRotation(
+                file=file,
+                displacement=_disp,
+                rotation=_rot,
+                sff=sff
+            )
+
+            file.write('\n')
+
+        _writeLoad(file, _response, model, sff)
 
     return
 
@@ -1364,7 +1403,7 @@ def _writeGlobalResponses(
 
 def writeInputBufferGlobal(
     file, model, analysis,
-    macro_responses:list[smdl.SectionResponse]=[],
+    macro_responses:list[smdl.StateCase]=[],
     dict_materials={},
     sfi:str='8d', sff:str='20.12e'):
     """Write material strength and global/macro responses to a file.
@@ -1382,5 +1421,5 @@ def writeInputBufferGlobal(
     if analysis.startswith('f'):
         _writeMaterials(dict_materials, file, sfi=sfi, sff=sff)
 
-    _writeGlobalResponses(macro_responses, file, model, sff)
+    _writeGlobalResponses(file, macro_responses, model, sff)
 

@@ -139,7 +139,7 @@ def readOutput(
 def write(
     sg:StructureGene, fn:str, file_format:str,
     format_version:str='', analysis='h', sg_fmt:int=1,
-    macro_responses:list[sgmodel.SectionResponse]=[], model=0,
+    macro_responses:list[sgmodel.StateCase]=[], model=0,
     sfi:str='8d', sff:str='20.12e', mesh_only=False
     ):
     """Write analysis input

@@ -38,38 +38,49 @@ def getModelDim(model:str) -> int:
 
 
 
+# class State():
+#     """Generalized strain and stress.
+#     """
+#     def __init__(self, strain=[], stress=[]):
+#         self._e = strain
+#         self._s = stress
+
+#     @property
+#     def strain(self): return self._e
+#     @strain.setter
+#     def strain(self, value): self._e = value
+#     @property
+#     def stress(self): return self._s
+#     @stress.setter
+#     def stress(self, value): self._s = value
+
+#     # def getStrain(self):
+#     #     return self._e
+
+#     # def getStress(self):
+#     #     return self._s
+
+
+
+
 class State():
-    """Generalized strain and stress.
-    """
-    def __init__(self, strain=[], stress=[]):
-        self._e = strain
-        self._s = stress
-
-    @property
-    def strain(self): return self._e
-    @strain.setter
-    def strain(self, value): self._e = value
-    @property
-    def stress(self): return self._s
-    @stress.setter
-    def stress(self, value): self._s = value
-
-    # def getStrain(self):
-    #     return self._e
-
-    # def getStress(self):
-    #     return self._s
-
-
-
-
-class StateField():
     """
     """
-    def __init__(self, name:str, data:dict={}, label:str=''):
-        self._name = name
-        self._data = data
-        self._label = label
+    def __init__(
+        self, name:str='', data:list|dict={}, label:list[str]=[],
+        location:str=''):
+        self._name:str = name
+        self._label:list[str] = label
+        self._location:str = location  # Choose from 'node', 'element'
+        self._data:list|dict = data
+        """
+        point data: []
+        field data: {
+            1: [],
+            2: [],
+            ...
+        }
+        """
 
     @property
     def name(self): return self._name
@@ -77,102 +88,190 @@ class StateField():
     def data(self): return self._data
     @property
     def label(self): return self._label
+    @property
+    def location(self): return self._location
 
-
-
-class StateFields():
-    """Generalized strain and stress fields.
     """
-    def __init__(self, node_displ={},
-        intp_strain={}, intp_stress={}, intp_strain_m={}, intp_stress_m={},
-        node_strain={}, node_stress={}, node_strain_m={}, node_stress_m={},
-        elem_strain={}, elem_stress={}, elem_strain_m={}, elem_stress_m={},
-        ):
-        # Displacement
-        self._node_displ = node_displ
+    A function returning the state data at a list of given locations.
 
-        # State at integration points [coordinates, state]
-        self._intp_strain = intp_strain
-        self._intp_stress = intp_stress
-        self._intp_strain_m = intp_strain_m
-        self._intp_stress_m = intp_stress_m
+    Parameters
+    ----------
+    locs : list
+        List of locations.
 
-        # State at nodes [nid, state]
-        self._node_strain = node_strain
-        self._node_stress = node_stress
-        self._node_strain_m = node_strain_m
-        self._node_stress_m = node_stress_m
+    Returns
+    -------
+    State
+        A copy of the State object with the data at the given locations.
+    """
+    def at(self, locs:Iterable):
+        data = []
+        if isinstance(self._data, list):
+            data = self._data
+        elif isinstance(self._data, dict):
+            data = [self._data[i] for i in locs]
+        return State(self._name, data, self._label, self._location)
 
-        # Averaged state at elements [eid, state]
-        self._elem_strain = elem_strain
-        self._elem_stress = elem_stress
-        self._elem_strain_m = elem_strain_m
-        self._elem_stress_m = elem_stress_m
 
-    def getDisplacementField(self):
-        return self._node_displ
 
-    def getStrainField(self, where:str='element', cs:str='structure'):
-        """
 
-        Parameters
-        ----------
-        where
-            Location of the field.
-            - 'i': integration points
-            - 'n': nodes
-            - 'e': elements
-        cs
-            Reference coordinate system.
-            - 's': structural model frame
-            - 'm': material frame
-        """
-        if where.startswith('i'):
-            if cs.startswith('s'):
-                return self._intp_strain
-            elif cs.startswith('m'):
-                return self._intp_strain_m
-        elif where.startswith('n'):
-            if cs.startswith('s'):
-                return self._node_strain
-            elif cs.startswith('m'):
-                return self._node_strain_m
-        elif where.startswith('e'):
-            if cs.startswith('s'):
-                return self._elem_strain
-            elif cs.startswith('m'):
-                return self._elem_strain_m
+class StateCase():
+    """
+    """
+    def __init__(self, case:dict={}):
+        self._case:dict = case
+        self._states:dict = {}
 
-    def getStressField(self, where:str='element', cs:str='structure'):
-        """
+    @property
+    def case(self): return self._case
+    @property
+    def states(self): return self._states
 
-        Parameters
-        ----------
-        where
-            Location of the field.
-            - 'i': integration points
-            - 'n': nodes
-            - 'e': elements
-        cs
-            Reference coordinate system.
-            - 's': structural model frame
-            - 'm': material frame
-        """
-        if where.startswith('i'):
-            if cs.startswith('s'):
-                return self._intp_stress
-            elif cs.startswith('m'):
-                return self._intp_stress_m
-        elif where.startswith('n'):
-            if cs.startswith('s'):
-                return self._node_stress
-            elif cs.startswith('m'):
-                return self._node_stress_m
-        elif where.startswith('e'):
-            if cs.startswith('s'):
-                return self._elem_stress
-            elif cs.startswith('m'):
-                return self._elem_stress_m
+    @property
+    def displacement(self):
+        try:
+            return self._states['displacement']
+        except KeyError:
+            return None
+
+    @property
+    def rotation(self):
+        try:
+            return self._states['rotation']
+        except KeyError:
+            return None
+
+    @property
+    def load(self):
+        try:
+            return self._states['load']
+        except KeyError:
+            return None
+
+    @property
+    def distributed_load(self):
+        try:
+            return self._states['distributed_load']
+        except KeyError:
+            return None
+
+    def addState(self, name:str, state:State):
+        self._states[name] = state
+
+    """
+    A function returning all states with data
+    at a list of given locations.
+
+    Parameters
+    ----------
+    locs : list
+        List of locations.
+
+    Returns
+    -------
+    StateCase
+        A copy of the StateCase object with the states at the given locations.
+    """
+    def at(self, locs:Iterable):
+        states = {}
+        for _name, _state in self._states.items():
+            states[_name] = _state.at(locs)
+        return StateCase(self._case, states)
+
+
+# class StateFields():
+#     """Generalized strain and stress fields.
+#     """
+#     def __init__(self, node_displ={},
+#         intp_strain={}, intp_stress={}, intp_strain_m={}, intp_stress_m={},
+#         node_strain={}, node_stress={}, node_strain_m={}, node_stress_m={},
+#         elem_strain={}, elem_stress={}, elem_strain_m={}, elem_stress_m={},
+#         ):
+#         # Displacement
+#         self._node_displ = node_displ
+
+#         # State at integration points [coordinates, state]
+#         self._intp_strain = intp_strain
+#         self._intp_stress = intp_stress
+#         self._intp_strain_m = intp_strain_m
+#         self._intp_stress_m = intp_stress_m
+
+#         # State at nodes [nid, state]
+#         self._node_strain = node_strain
+#         self._node_stress = node_stress
+#         self._node_strain_m = node_strain_m
+#         self._node_stress_m = node_stress_m
+
+#         # Averaged state at elements [eid, state]
+#         self._elem_strain = elem_strain
+#         self._elem_stress = elem_stress
+#         self._elem_strain_m = elem_strain_m
+#         self._elem_stress_m = elem_stress_m
+
+#     def getDisplacementField(self):
+#         return self._node_displ
+
+#     def getStrainField(self, where:str='element', cs:str='structure'):
+#         """
+
+#         Parameters
+#         ----------
+#         where
+#             Location of the field.
+#             - 'i': integration points
+#             - 'n': nodes
+#             - 'e': elements
+#         cs
+#             Reference coordinate system.
+#             - 's': structural model frame
+#             - 'm': material frame
+#         """
+#         if where.startswith('i'):
+#             if cs.startswith('s'):
+#                 return self._intp_strain
+#             elif cs.startswith('m'):
+#                 return self._intp_strain_m
+#         elif where.startswith('n'):
+#             if cs.startswith('s'):
+#                 return self._node_strain
+#             elif cs.startswith('m'):
+#                 return self._node_strain_m
+#         elif where.startswith('e'):
+#             if cs.startswith('s'):
+#                 return self._elem_strain
+#             elif cs.startswith('m'):
+#                 return self._elem_strain_m
+
+#     def getStressField(self, where:str='element', cs:str='structure'):
+#         """
+
+#         Parameters
+#         ----------
+#         where
+#             Location of the field.
+#             - 'i': integration points
+#             - 'n': nodes
+#             - 'e': elements
+#         cs
+#             Reference coordinate system.
+#             - 's': structural model frame
+#             - 'm': material frame
+#         """
+#         if where.startswith('i'):
+#             if cs.startswith('s'):
+#                 return self._intp_stress
+#             elif cs.startswith('m'):
+#                 return self._intp_stress_m
+#         elif where.startswith('n'):
+#             if cs.startswith('s'):
+#                 return self._node_stress
+#             elif cs.startswith('m'):
+#                 return self._node_stress_m
+#         elif where.startswith('e'):
+#             if cs.startswith('s'):
+#                 return self._elem_stress
+#             elif cs.startswith('m'):
+#                 return self._elem_stress_m
 
 
 

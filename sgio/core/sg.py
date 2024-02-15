@@ -166,66 +166,62 @@ class StructureGene():
         self.node_elements = []
 
 
-        # Global response
-        # ------------------------------------------------------------
+        # # Global response
+        # # ------------------------------------------------------------
 
-        #: list of floats: Global displacements.
-        #:
-        #: `[u1, u2, u3]`
-        self.global_displacements = []
-        #: list of lists floats: Global rotation matrix.
-        #:
-        #: `[[C11, C12, C13], [C21, C22, C23], [C31, C32, C33]]`
-        self.global_rotations = []
-        #: int: Global load type.
-        #:
-        #: * 0 - generalized stresses
-        #: * 1 - generalized strains
-        self.global_loads_type = 0
+        # #: list of floats: Global displacements.
+        # #:
+        # #: `[u1, u2, u3]`
+        # self.global_displacements = []
+        # #: list of lists floats: Global rotation matrix.
+        # #:
+        # #: `[[C11, C12, C13], [C21, C22, C23], [C31, C32, C33]]`
+        # self.global_rotations = []
+        # #: int: Global load type.
+        # #:
+        # #: * 0 - generalized stresses
+        # #: * 1 - generalized strains
+        # self.global_loads_type = 0
 
-        self.global_loads = []
-        """list of list of floats: Global loads
+        # self.global_loads = []
+        # """list of list of floats: Global loads
 
-        ============================ ========================================== ============================================
-        Model                        Generalized stresses                       Generalized strains
-        ============================ ========================================== ============================================
-        Continuum                    `[s11, s22, s33, s23, s13, s12]`           `[e11, e22, e33, e23, e13, e12]`
-        Kirchhoff-Love plate/shell   `[N11, N22, N12, M11, M22, M12]`           `[e11, e22, 2e12, k11, k22, 2k12]`
-        Reissner-Mindlin plate/shell `[N11, N22, N12, M11, M22, M12, N13, N23]` `[e11, e22, 2e12, k11, k22, 2k12, g13, g23]`
-        Euler-Bernoulli beam         `[F1, M1, M2, M3]`                         `[e11, k11, k12, k13]`
-        Timoshenko beam              `[F1, F2, F3, M1, M2, M3]`                 `[e11, g12, g13, k11, k12, k13]`
-        ============================ ========================================== ============================================
-        """
+        # ============================ ========================================== ============================================
+        # Model                        Generalized stresses                       Generalized strains
+        # ============================ ========================================== ============================================
+        # Continuum                    `[s11, s22, s33, s23, s13, s12]`           `[e11, e22, e33, e23, e13, e12]`
+        # Kirchhoff-Love plate/shell   `[N11, N22, N12, M11, M22, M12]`           `[e11, e22, 2e12, k11, k22, 2k12]`
+        # Reissner-Mindlin plate/shell `[N11, N22, N12, M11, M22, M12, N13, N23]` `[e11, e22, 2e12, k11, k22, 2k12, g13, g23]`
+        # Euler-Bernoulli beam         `[F1, M1, M2, M3]`                         `[e11, k11, k12, k13]`
+        # Timoshenko beam              `[F1, F2, F3, M1, M2, M3]`                 `[e11, g12, g13, k11, k12, k13]`
+        # ============================ ========================================== ============================================
+        # """
 
-        #: list of lists of floats:
-        #: Distributed loads for Timoshenko beam model (VABS only)
-        self.global_loads_dist = []
+        # #: list of lists of floats:
+        # #: Distributed loads for Timoshenko beam model (VABS only)
+        # self.global_loads_dist = []
 
-        # if logger:
-        #     self.logger = logger
-        # else:
-        #     self.logger = mul.initLogger(__name__)
+        # # if logger:
+        # #     self.logger = logger
+        # # else:
+        # #     self.logger = mul.initLogger(__name__)
 
 
     @property
     def nnodes(self):
         return len(self.mesh.points)
 
-
     @property
     def nelems(self):
         return sum([len(cell.data) for cell in self.mesh.cells])
-
 
     @property
     def nma_combs(self):
         return len(self.mocombos)
 
-
     @property
     def nmates(self):
         return len(self.materials)
-
 
     @property
     def use_elem_local_orient(self):
