@@ -46,7 +46,7 @@ class EulerBernoulliBeamModel:
         #: float: Principle mass moments of inertia i33
         self.i33 = None
         #: float: Principal inertial axes rotation angle in degree
-        self.phi_pia = None
+        self.phi_pia = 0
         #: float: mass-weighted radius of gyration
         self.rg = None
 
@@ -75,7 +75,7 @@ class EulerBernoulliBeamModel:
         #: float: Principal bending stiffness EI33
         self.ei33 = None
         #: float: Principle bending axes rotation angle in degree
-        self.phi_pba = None
+        self.phi_pba = 0
 
         # #: list of lists of floats:
         # #: Timoshenko stiffness matrix (1-extension; 2,3-shear, 4-twist; 5,6-bending)
@@ -414,7 +414,7 @@ class TimoshenkoBeamModel:
         #: float: Principle mass moments of inertia i33
         self.i33 = None
         #: float: Principal inertial axes rotation angle in degree
-        self.phi_pia = None
+        self.phi_pia = 0
         #: float: mass-weighted radius of gyration
         self.rg = None
 
@@ -450,7 +450,7 @@ class TimoshenkoBeamModel:
         #: float: Principal bending stiffness EI33
         self.ei33 = None
         #: float: Principle bending axes rotation angle in degree
-        self.phi_pba = None
+        self.phi_pba = 0
 
         #: float: Generalized shear center location in x2 direction
         self.xs2 = None
@@ -461,7 +461,7 @@ class TimoshenkoBeamModel:
         #: float: Principal shear stiffness GA33
         self.ga33 = None
         #: float: Principal shear axes rotation angle in degree
-        self.phi_psa = None
+        self.phi_psa = 0
 
 
     def __repr__(self):

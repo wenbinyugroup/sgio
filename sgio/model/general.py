@@ -91,6 +91,25 @@ class State():
     @property
     def location(self): return self._location
 
+    def __repr__(self):
+        _str = [
+            f'state: {self._name} ({self._label})',
+        ]
+        if isinstance(self._data, list):
+            _str.append(f'  point data: {self._data}')
+        elif isinstance(self._data, dict):
+            _str.append(f'  field data: {len(self._data)} {self._location} data')
+
+        return '\n'.join(_str)
+
+    def toDictionary(self):
+        return {
+            'name': self._name,
+            'data': self._data,
+            'label': self._label,
+            'location': self._location
+        }
+
     """
     A function returning the state data at a list of given locations.
 
@@ -118,9 +137,9 @@ class State():
 class StateCase():
     """
     """
-    def __init__(self, case:dict={}):
+    def __init__(self, case:dict={}, states:dict={}):
         self._case:dict = case
-        self._states:dict = {}
+        self._states:dict = states
 
     @property
     def case(self): return self._case
@@ -155,6 +174,19 @@ class StateCase():
         except KeyError:
             return None
 
+    def __repr__(self):
+        lines = [
+            'state case',
+            'case:',
+        ]
+        for _k, _v in self._case.items():
+            lines.append(f'  {_k}: {_v}')
+        lines.append('states:')
+        for _k, _v in self._states.items():
+            lines.append(f'  {str(_v)}')
+
+        return '\n'.join(lines)
+
     def addState(self, name:str, state:State):
         self._states[name] = state
 
@@ -176,7 +208,10 @@ class StateCase():
         states = {}
         for _name, _state in self._states.items():
             states[_name] = _state.at(locs)
-        return StateCase(self._case, states)
+        return StateCase(
+            case=self._case,
+            states=states
+            )
 
 
 # class StateFields():
