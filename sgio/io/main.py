@@ -57,7 +57,7 @@ def read(
             sg = _vabs.readBuffer(file, file_format, format_version, model)
     elif file_format == 'abaqus':
         with open(fn, 'r') as file:
-            sg = _abaqus.readInputBuffer(file, sgdim=sgdim, smdim=model)
+            sg = _abaqus.readInputBuffer(file, sgdim=sgdim, model=model)
 
     else:
         if not sg:
@@ -213,7 +213,7 @@ def convert(
     file_name_in:str, file_name_out:str,
     file_format_in:str='', file_format_out:str='',
     format_version_in:str='', format_version_out:str='',
-    analysis:str|int='h', sgdim:int=3, smdim:int=3, sg_fmt:int=1,
+    analysis:str|int='h', sgdim:int=3, model:int|str='SD1', sg_fmt:int=1,
     sfi:str='8d', sff:str='20.12e', mesh_only:bool=False
     ):
     """Convert the SG data file format.
@@ -226,8 +226,24 @@ def convert(
         File name after conversion
     """
 
-    sg = read(file_name_in, file_format_in, format_version_in, sgdim, smdim, mesh_only)
-    write(sg, file_name_out, file_format_out, format_version_out, analysis, sg_fmt, sfi, sff, mesh_only)
+    sg = read(
+        fn=file_name_in,
+        file_format=file_format_in,
+        format_version=format_version_in,
+        sgdim=sgdim,
+        model=model,
+        mesh_only=mesh_only)
+
+    write(
+        sg=sg,
+        fn=file_name_out,
+        file_format=file_format_out,
+        format_version=format_version_out,
+        analysis=analysis,
+        sg_fmt=sg_fmt,
+        sfi=sfi,
+        sff=sff,
+        mesh_only=mesh_only)
 
     return sg
 

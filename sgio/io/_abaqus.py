@@ -21,15 +21,27 @@ def readInputBuffer(file, **kwargs):
     """
     sg = StructureGene()
     sg.sgdim = kwargs['sgdim']
-    sg.smdim = kwargs['smdim']
+
+    model = kwargs.get('model')
+    if isinstance(model, int):
+        smdim = kwargs.get('model')
+        _submodel = model
+    elif isinstance(model, str):
+        if model.upper()[:2] == 'SD':
+            smdim = 3
+        elif model.upper()[:2] == 'PL':
+            smdim = 2
+        elif model.upper()[:2] == 'BM':
+            smdim = 1
+        _submodel = int(model[2]) - 1
+
+    sg.smdim = smdim
+    sg.model = _submodel
 
     # Read mesh
     mesh, sections, materials, mocombos = _readMesh(file)
-    # sg.mesh, sections, materials = _readMesh(file)
-    # sg.use_elem_local_orient = 1
 
     sg.mesh = mesh
-
 
     # Store materials
     mname2id = {}
@@ -37,35 +49,39 @@ def readInputBuffer(file, **kwargs):
         _name = _m.get('name')
         mname2id[_name] = _i+1
 
-        # m = smdl.MaterialSection(_name)
-        m = smdl.CauchyContinuumModel()
-        m.name = _name
+        m = smdl.CauchyContinuumModel(_name)
+        # m.name = _name
 
         _mp = _m.get('property')
 
         m.temperature = _mp.get('temperature', 0)
-        m.density = _mp.get('density', 1)
+
+        # _prop = smdl.CauchyContinuumProperty()
+        _density = _mp.get('density', 1)
+        m.set('density', _density)
 
         # Elastic
         _type = _mp.get('type')
-        m.set('isotropy', _type)
-        # cm = smdl.Cauchy()
+        # _prop.isotropy = _type
 
         _values = _mp.get('elastic')
         if _type == 'isotropic':
-            # m.isotropy = 0
-            m.e1, m.nu12 = _values
+            m.set('isotropy', 0)
+            m.set('elastic', _values)
         elif _type == 'engineering_constants':
-            # m.isotropy = 1
-            m.e1, m.e2, m.e3 = _values[:3]
-            m.g12, m.g13, m.g23 = _values[6:]
-            m.nu12, m.nu13, m.nu23 = _values[3:6]
-
-        # m.constitutive = cm
+            m.set('isotropy', 1)
+            _e1, _e2, _e3 = _values[:3]
+            _g12, _g13, _g23 = _values[6:]
+            _nu12, _nu13, _nu23 = _values[3:6]
+            m.set(
+                'elastic',
+                [_e1, _e2, _e3, _g12, _g13, _g23, _nu12, _nu13, _nu23],
+                input_type='engineering')
 
         sg.materials[_i+1] = m
 
     # print(mname2id)
+    # print(sg.materials)
 
     for _k, _v in mocombos.items():
         _mname, _angle = _v
@@ -73,16 +89,6 @@ def readInputBuffer(file, **kwargs):
         mocombos[_k] = [_mid, _angle]
 
     sg.mocombos = mocombos
-
-    # Store sections as material-rotation combinations
-    # for _i, _section in enumerate(sections):
-    #     _mname = _section.get('material')
-    #     _rotation = _section.get('rotation_angle', 0)
-    #     # print(_mname)
-    #     _mid = mname2id.get(_mname)
-    #     sg.mocombos[_i+1] = [_mid, _rotation]
-
-    # print(sg.mocombos)
 
     return sg
 

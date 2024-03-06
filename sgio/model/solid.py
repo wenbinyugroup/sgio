@@ -109,9 +109,9 @@ class CauchyContinuumModel:
     strain_name = ['e11', 'e22', 'e33', 'e23', 'e13', 'e12']
     stress_name = ['s11', 's22', 's33', 's23', 's13', 's12']
 
-    def __init__(self):
+    def __init__(self, name:str=''):
 
-        self.name = ''
+        self.name = name
         self.id = None
 
         self.property = CauchyContinuumProperty()
@@ -295,7 +295,7 @@ class CauchyContinuumModel:
                 self.property.isotropy = value
 
         elif name == 'elastic':
-            self.setElastic(value, kwargs['input_type'])
+            self.setElastic(value, **kwargs)
 
         else:
             exec(f'self.property.{name} = {value}')
@@ -303,7 +303,7 @@ class CauchyContinuumModel:
         return
 
 
-    def setElastic(self, consts:Iterable, input_type):
+    def setElastic(self, consts:Iterable, input_type='', **kwargs):
         if self.property.isotropy == 0:
             self.property.e1 = float(consts[0])
             self.property.nu12 = float(consts[1])

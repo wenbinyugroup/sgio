@@ -18,12 +18,23 @@ logger = logging.getLogger(__name__)
 # Read input
 # ----------
 
-def readInputBuffer(file, format_version:str, smdim:int):
+def readInputBuffer(file, format_version:str, model:int|str):
     """
     """
     logger.debug(f'local variables:\n{sutl.convertToPrettyString(locals())}')
     sg = StructureGene()
     sg.version = format_version
+
+    if isinstance(model, int):
+        smdim = model
+    elif isinstance(model, str):
+        if model.upper()[:2] == 'SD':
+            smdim = 3
+        elif model.upper()[:2] == 'PL':
+            smdim = 2
+        elif model.upper()[:2] == 'BM':
+            smdim = 1
+
     sg.smdim = smdim
 
     # Read head

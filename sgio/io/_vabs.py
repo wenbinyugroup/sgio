@@ -960,8 +960,9 @@ def writeBuffer(
 
     if analysis == 'h':
         writeInputBuffer(
-            sg, file, sg_fmt,
+            sg, file, analysis,
             timoshenko_flag, vlasov_flag, trapeze_flag, thermal_flag,
+            sg_fmt,
             sfi, sff, version)
 
     elif (analysis == 'd') or (analysis == 'l') or (analysis.startswith('f')):
@@ -986,8 +987,9 @@ def writeBuffer(
 
 
 def writeInputBuffer(
-    sg, file, sg_fmt,
+    sg, file, analysis,
     timoshenko_flag, vlasov_flag, trapeze_flag, thermal_flag,
+    sg_fmt:int=1,
     sfi:str='8d', sff:str='20.12e', version=None):
     """
     """
@@ -1040,7 +1042,13 @@ def writeInputBuffer(
     _writeMOCombos(sg, file, sfi, sff)
 
     # if not mesh_only:
-    _writeMaterials(sg.materials, file, thermal_flag, sfi, sff)
+    _writeMaterials(
+        dict_materials=sg.materials,
+        file=file,
+        analysis=analysis,
+        thermal_flag=thermal_flag,
+        sfi=sfi,
+        sff=sff)
 
     return
 
@@ -1087,7 +1095,7 @@ def _writeMOCombos(sg, file, sfi:str='8d', sff:str='20.12e'):
 
 def _writeMaterial(
     mid:int, material:smdl.CauchyContinuumModel, file,
-    thermal_flag, analysis, failure_criterion,
+    analysis, thermal_flag,
     sfi:str='8d', sff:str='20.12e'):
     """
     """
@@ -1137,24 +1145,24 @@ def _writeMaterial(
 
         strength = []
         if anisotropy == 0:
-            if failure_criterion == 1:
+            if material.failure_criterion == 1:
                 pass
-            elif failure_criterion == 2:
+            elif material.failure_criterion == 2:
                 pass
-            elif failure_criterion == 3:
+            elif material.failure_criterion == 3:
                 pass
-            elif failure_criterion == 4:
+            elif material.failure_criterion == 4:
                 pass
-            elif failure_criterion == 5:
+            elif material.failure_criterion == 5:
                 pass
         else:
-            if failure_criterion == 1:
+            if material.failure_criterion == 1:
                 pass
-            elif failure_criterion == 2:
+            elif material.failure_criterion == 2:
                 pass
-            elif failure_criterion == 3:
+            elif material.failure_criterion == 3:
                 pass
-            elif failure_criterion == 4:
+            elif material.failure_criterion == 4:
                 # Tsai-Wu
                 strength = [
                     material.get('x1t'), material.get('x2t'), material.get('x3t'),
@@ -1162,13 +1170,13 @@ def _writeMaterial(
                     material.get('x23'), material.get('x13'), material.get('x12'),
                     # strength_constants['r'], m.strength_constants['t'], m.strength_constants['s'],
                 ]
-            elif failure_criterion == 5:
+            elif material.failure_criterion == 5:
                 pass
 
         sutl.writeFormatIntegers(
             file,
             # (m.strength['criterion'], len(m.strength['constants'])),
-            [failure_criterion, len(strength)],
+            [material.failure_criterion, len(strength)],
             sfi
         )
         # file.write((sff+'\n').format(m.strength['chara_len']))
@@ -1185,7 +1193,8 @@ def _writeMaterial(
 
 
 def _writeMaterials(
-    dict_materials, file, thermal_flag=0, sfi:str='8d', sff:str='20.12e'):
+    dict_materials, file, analysis, thermal_flag=0,
+    sfi:str='8d', sff:str='20.12e'):
     """
     """
 
@@ -1193,7 +1202,14 @@ def _writeMaterials(
 
     # counter = 0
     for mid, m in dict_materials.items():
-        _writeMaterial(mid, m, file, thermal_flag, sfi, sff)
+        _writeMaterial(
+            mid=mid,
+            material=m,
+            file=file,
+            analysis=analysis,
+            thermal_flag=thermal_flag,
+            sfi=sfi,
+            sff=sff)
 
     file.write('\n')
     return
