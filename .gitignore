@@ -4,6 +4,7 @@ build*/
 .vscode/
 
 *.pyc
+*.exe
 
 *.deb
 SCInt

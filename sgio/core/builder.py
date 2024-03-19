@@ -12,10 +12,10 @@ logger = logging.getLogger(__name__)
 
 
 def buildSG1D(
-    name, layup, sgdb, smdim, mesh_size=0,
+    name, layup, sgdb, model, mesh_size=0,
     k11=0, k22=0, lame1=1, lame2=1,
     load_cases=[], analysis='', physics=0,
-    submodel=0, geo_correct=None, elem_type=5,
+    geo_correct=None, elem_type=5,
     sgdb_map = {},
     ):
     """Build a 1D structure gene
@@ -123,6 +123,8 @@ def buildSG1D(
                     m = smdl.CauchyContinuumModel()
                     m.name = _lyr_m_name
 
+                    mprop = mprop['property']
+
                     m.density = float(mprop['density'])
                     m.temperature = float(mprop.get('temperature', 0))
 
@@ -178,16 +180,16 @@ def buildSG1D(
 
     # Global model settings
     # ----------------------------------------------------------------
-    sg.smdim = smdim
-    sg.model = submodel  # model (0: classical, 1: shear refined)
+    sg.smdim = smdl.getModelDim(model)
+    sg.model = int(model[2:]) - 1  # model (0: classical, 1: shear refined)
     sg.trans_element = 1  # Always include element orientation data
     # sg.geo_correct = geo_correct
     sg.initial_curvature = [k11, k22]
     sg.lame_params = [lame1, lame2]
 
-    if smdim == 2:
+    if sg.smdim == 2:
         sg.omega = 1
-    elif smdim == 3:
+    elif sg.smdim == 3:
         sg.omega = tt
 
 
