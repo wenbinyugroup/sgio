@@ -8,9 +8,9 @@ import csv
 from sgio.core.sg import StructureGene
 import sgio.model as sgmodel
 
-import sgio.io._abaqus as _abaqus
-import sgio.io._swiftcomp as _swiftcomp
-import sgio.io._vabs as _vabs
+import sgio.iofunc._abaqus as _abaqus
+import sgio.iofunc._swiftcomp as _swiftcomp
+import sgio.iofunc._vabs as _vabs
 import sgio.meshio as meshio
 import sgio._global as GLOBAL
 
@@ -181,8 +181,12 @@ def write(
     with open(fn, 'w', encoding='utf-8') as file:
         if mesh_only:
             sg.mesh.write(
-                file, file_format, sgdim=sg.sgdim,
-                int_fmt=sfi, float_fmt=sff)
+                file,
+                file_format,
+                # sgdim=sg.sgdim,
+                int_fmt=sfi,
+                float_fmt=sff
+                )
 
         else:
             if _file_format.startswith('s'):

@@ -45,7 +45,8 @@ def _read_nodes(f, nnodes:int, sgdim:int=3):
     counter = 0
     while counter < nnodes:
         line = f.readline()
-        if line.strip() == "":
+        line = line.split('#')[0].strip()
+        if line == "":
             continue
 
         line = line.strip().split()

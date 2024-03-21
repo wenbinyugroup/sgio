@@ -4,7 +4,7 @@ import argparse
 import logging
 logger = logging.getLogger(__name__)
 
-from .io import convert
+from .iofunc import convert
 
 
 def cli(*args):
@@ -12,7 +12,7 @@ def cli(*args):
 
     root_parser = argparse.ArgumentParser(
         prog='sgio',
-        description='SG I/O functions',
+        description='CS/SG I/O functions',
         # formatter_class=argparse.RawTextHelpFormatter,
     )
     root_parser.set_defaults(func=None)
@@ -34,27 +34,31 @@ def cli(*args):
     # Convert
     parser = sub_parser.add_parser(
         'convert', aliases=['c',],
-        help='Convert SG data file')
+        help='Convert CS/SG data file')
     parser.set_defaults(func='convert')
     parser.add_argument(
         'from', type=str,
-        help='SG file to be read from')
+        help='CS/SG file to be read from')
     parser.add_argument(
         '-ff', '--from-format', type=str,
-        help='SG file format to be read from')
+        help='CS/SG file format to be read from')
     parser.add_argument(
         'to', type=str,
-        help='SG file to be written to')
+        help='CS/SG file to be written to')
     parser.add_argument(
         '-tf', '--to-format', type=str,
-        help='SG file format to be written to')
+        help='CS/SG file format to be written to')
     parser.add_argument(
         '-d', '--sgdim', type=int, default=2,
-        help='SG dimension'
+        help='SG dimension (SwiftComp only)'
     )
     parser.add_argument(
         '-m', '--model', type=str, default='BM2',
-        help='SG model'
+        help='CS/SG model'
+    )
+    parser.add_argument(
+        '-mo', '--mesh-only', action='store_true',
+        help='Mesh only conversion'
     )
 
     pargs = root_parser.parse_args(args[1:])
@@ -83,4 +87,5 @@ def main(func, **kwargs):
             file_format_out=kwargs['to_format'],
             sgdim=kwargs['sgdim'],
             model=kwargs['model'],
+            mesh_only=kwargs['mesh_only'],
         )

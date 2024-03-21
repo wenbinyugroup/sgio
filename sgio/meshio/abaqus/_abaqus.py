@@ -611,8 +611,9 @@ def _read_material(f):
 # ====================================================================
 
 def write(
-    filename, mesh: Mesh, float_fmt: str = ".16e", translate_cell_names: bool = True
-) -> None:
+    filename, mesh: Mesh, float_fmt: str = ".16e",
+    translate_cell_names: bool = True, **kwargs
+    ) -> None:
     with open_file(filename, "wt") as f:
         f.write("*HEADING\n")
         f.write("Abaqus DataFile Version 6.14\n")

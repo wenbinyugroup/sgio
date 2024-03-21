@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import Protocol, Iterable
 from numbers import Number
 import sgio.utils.io as sui

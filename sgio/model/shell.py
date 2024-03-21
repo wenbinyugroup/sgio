@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 class KirchhoffLovePlateShellModel():
     """Kirchhoff-Love Plate/Shell Model
     """
