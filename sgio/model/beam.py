@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import math
+
 # from dataclasses import dataclass
 
 # @dataclass
@@ -96,6 +98,13 @@ class EulerBernoulliBeamModel:
         # self.ga33 = None
         # #: float: Principal shear axes rotation angle in degree
         # self.phi_psa = None
+
+    @property
+    def gyr1(self): return self.rg
+    @property
+    def gyr2(self): return math.sqrt(self.i22/self.mu)
+    @property
+    def gyr3(self): return math.sqrt(self.i33/self.mu)
 
 
     def __repr__(self):
@@ -293,6 +302,12 @@ class EulerBernoulliBeamModel:
                 return self.i22
             if name == 'mmoi3':
                 return self.i33
+            if name in ['gyr1', 'gyrx']:
+                return self.gyr1
+            if name in ['gyr2', 'gyry']:
+                return self.gyr2
+            if name in ['gyr3', 'gyrz']:
+                return self.gyr3
 
             # Stiffness
             if name.startswith('stf'):
@@ -464,6 +479,13 @@ class TimoshenkoBeamModel:
         self.ga33 = None
         #: float: Principal shear axes rotation angle in degree
         self.phi_psa = 0
+
+    @property
+    def gyr1(self): return self.rg
+    @property
+    def gyr2(self): return math.sqrt(self.i22/self.mu)
+    @property
+    def gyr3(self): return math.sqrt(self.i33/self.mu)
 
 
     def __repr__(self):
@@ -694,6 +716,12 @@ class TimoshenkoBeamModel:
                 return self.i22
             if name == 'mmoi3':
                 return self.i33
+            if name in ['gyr1', 'gyrx']:
+                return self.gyr1
+            if name in ['gyr2', 'gyry']:
+                return self.gyr2
+            if name in ['gyr3', 'gyrz']:
+                return self.gyr3
 
             # Stiffness
             if name.startswith('stf'):
