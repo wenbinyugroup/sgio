@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import copy
 from typing import Protocol, Iterable
 from numbers import Number
 import sgio.utils.io as sui
@@ -71,10 +72,12 @@ class State():
     def __init__(
         self, name:str='', data:list|dict={}, label:list[str]=[],
         location:str=''):
-        self._name:str = name
-        self._label:list[str] = label
-        self._location:str = location  # Choose from 'node', 'element'
-        self._data:list|dict = data
+        self.name:str = name
+        self.label:list[str] = label
+        self.location:str = location  # Choose from 'node', 'element'
+        # print(f'data = {data}')
+        self.data:list|dict = data
+        # print(f'self.data = {self.data}')
         """
         point data: []
         field data: {
@@ -84,32 +87,36 @@ class State():
         }
         """
 
-    @property
-    def name(self): return self._name
-    @property
-    def data(self): return self._data
-    @property
-    def label(self): return self._label
-    @property
-    def location(self): return self._location
+    # @property
+    # def name(self): return self._name
+    # @property
+    # def data(self): return self._data
+    # @property
+    # def label(self): return self._label
+    # @property
+    # def location(self): return self._location
 
     def __repr__(self):
         _str = [
-            f'state: {self._name} ({self._label})',
+            f'state: {self.name} ({self.label})',
         ]
-        if isinstance(self._data, list):
-            _str.append(f'  point data: {self._data}')
-        elif isinstance(self._data, dict):
-            _str.append(f'  field data: {len(self._data)} {self._location} data')
+
+        if isinstance(self.data, list):
+            _str.append(f'  point data: {self.data}')
+
+        elif isinstance(self.data, dict):
+            _str.append(f'  field data: {len(self.data)} {self.location} data')
+            for _k, _v in self.data.items():
+                _str.append(f'    {_k}: {_v}')
 
         return '\n'.join(_str)
 
     def toDictionary(self):
         return {
-            'name': self._name,
-            'data': self._data,
-            'label': self._label,
-            'location': self._location
+            'name': self.name,
+            'data': self.data,
+            'label': self.label,
+            'location': self.location
         }
 
     """
@@ -127,11 +134,19 @@ class State():
     """
     def at(self, locs:Iterable):
         data = []
-        if isinstance(self._data, list):
-            data = self._data
-        elif isinstance(self._data, dict):
-            data = [self._data[i] for i in locs]
-        return State(self._name, data, self._label, self._location)
+        if isinstance(self.data, list):
+            data = self.data
+        elif isinstance(self.data, dict):
+            if len(locs) == 1:
+                data = self.data[locs[0]]
+            else:
+                data = dict([(i, self.data[i]) for i in locs])
+        return State(
+            self.name,
+            copy.deepcopy(data),
+            self.label,
+            self.location
+            )
 
 
 
@@ -141,12 +156,29 @@ class StateCase():
     """
     def __init__(self, case:dict={}, states:dict={}):
         self._case:dict = case
+        """
+        {
+            'tag1': value1,
+            'tag2': value2,
+            ...
+        }
+        """
+
         self._states:dict = states
+        """
+        {
+            'name': State,
+            ...
+        }
+        """
 
     @property
     def case(self): return self._case
     @property
     def states(self): return self._states
+
+    def getState(self, name):
+        return self._states[name]
 
     @property
     def displacement(self):
@@ -189,27 +221,64 @@ class StateCase():
 
         return '\n'.join(lines)
 
-    def addState(self, name:str, state:State):
-        self._states[name] = state
+    def toDictionary(self):
+        return {
+            'case': self._case,
+            'states': dict([(k, v.toDictionary()) for k, v in self._states.items()])
+        }
 
-    """
-    A function returning all states with data
-    at a list of given locations.
+    def addState(
+        self, name:str, state:State=None,
+        data=None, entity_id=None, value=None
+        ):
+        if not name in self._states.keys():
+            self._states[name] = State(
+                name=name,
+                data={}
+                )
 
-    Parameters
-    ----------
-    locs : list
-        List of locations.
+        if not state is None:
+            self._states[name] = state
 
-    Returns
-    -------
-    StateCase
-        A copy of the StateCase object with the states at the given locations.
-    """
-    def at(self, locs:Iterable):
+        elif not data is None:
+            if isinstance(data, list):
+                self._states[name].data = data
+            elif isinstance(data, dict):
+                self._states[name].data.update(data)
+
+        elif not entity_id is None and not value is None:
+            self._states[name].data[entity_id] = value
+
+        # print(f'added state {self._states[name]}')
+
+    def at(self, locs:Iterable, state_name=None):
+        """
+        A function returning all states with data
+        at a list of given locations.
+
+        Parameters
+        ----------
+        locs : list
+            List of locations.
+
+        Returns
+        -------
+        StateCase
+            A copy of the StateCase object with the states at the given locations.
+        """
         states = {}
-        for _name, _state in self._states.items():
-            states[_name] = _state.at(locs)
+
+        _state_names = []
+        if state_name is None:
+            _state_names = self._states.keys()
+        elif isinstance(state_name, str):
+            _state_names = [state_name,]
+        elif isinstance(state_name, list):
+            _state_names = state_name
+
+        for _name in _state_names:
+            states[_name] = self.states[_name].at(locs)
+
         return StateCase(
             case=self._case,
             states=states
