@@ -119,6 +119,12 @@ class State():
             'location': self.location
         }
 
+    def addData(self, data:list, loc=None):
+        if loc is None:
+            self.data = data
+        elif isinstance(self.data, dict):
+            self.data[loc] = data
+
     """
     A function returning the state data at a list of given locations.
 
@@ -133,17 +139,31 @@ class State():
         A copy of the State object with the data at the given locations.
     """
     def at(self, locs:Iterable):
-        data = []
+        _data = []
+
         if isinstance(self.data, list):
-            data = self.data
+            _data = self.data
         elif isinstance(self.data, dict):
             if len(locs) == 1:
-                data = self.data[locs[0]]
+                try:
+                    _data = self.data[locs[0]]
+                except KeyError:
+                    pass
             else:
-                data = dict([(i, self.data[i]) for i in locs])
+                _data = {}
+                for _i in locs:
+                    try:
+                        _data[_i] = self.data[_i]
+                    except KeyError:
+                        pass
+                # data = dict([(i, self.data[i]) for i in locs])
+
+        if len(_data) == 0:
+            return None
+
         return State(
             self.name,
-            copy.deepcopy(data),
+            copy.deepcopy(_data),
             self.label,
             self.location
             )
@@ -229,25 +249,29 @@ class StateCase():
 
     def addState(
         self, name:str, state:State=None,
-        data=None, entity_id=None, value=None
+        data=None, entity_id=None, loc_type=''
         ):
         if not name in self._states.keys():
             self._states[name] = State(
                 name=name,
-                data={}
+                data={},
+                location=loc_type
                 )
 
         if not state is None:
             self._states[name] = state
 
-        elif not data is None:
+        elif not entity_id is None:
+            self._states[name].addData(
+                data=data, loc=entity_id
+            )
+            # self._states[name].data[entity_id] = value
+
+        else:
             if isinstance(data, list):
                 self._states[name].data = data
             elif isinstance(data, dict):
                 self._states[name].data.update(data)
-
-        elif not entity_id is None and not value is None:
-            self._states[name].data[entity_id] = value
 
         # print(f'added state {self._states[name]}')
 
@@ -277,7 +301,12 @@ class StateCase():
             _state_names = state_name
 
         for _name in _state_names:
-            states[_name] = self.states[_name].at(locs)
+            _state = self.states[_name].at(locs)
+            if not _state is None:
+                states[_name] = self.states[_name].at(locs)
+
+        if len(states) == 0:
+            return None
 
         return StateCase(
             case=self._case,

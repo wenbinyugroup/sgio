@@ -10,6 +10,12 @@ def initConstantName():
 def initConstantLabel():
     return ['E1', 'E2', 'E3', 'G12', 'G13', 'G23', 'nu12', 'nu13', 'nu23']
 
+def initStrengthName():
+    return ['x1t', 'x2t', 'x3t', 'x1c', 'x2c', 'x3c', 'x23', 'x13', 'x12']
+
+def initStrengthLabel():
+    return ['X1t', 'X2t', 'X3t', 'X1c', 'X2c', 'X3c', 'X23', 'X13', 'X12']
+
 @dataclass
 class CauchyContinuumProperty:
     density:float = 0
@@ -40,6 +46,9 @@ class CauchyContinuumProperty:
     nu23:float = None
 
     # Strength properties
+    strength_name:Iterable[str] = field(default_factory=initStrengthName)
+    strength_label:Iterable[str] = field(default_factory=initStrengthLabel)
+
     x1t:float = None  # xt
     x2t:float = None  # yt
     x3t:float = None  # zt
@@ -54,6 +63,8 @@ class CauchyContinuumProperty:
 
     strength_constants:Iterable[float] = None
 
+    char_len:float = 0
+
     cte:Iterable[float] = None
     specific_heat:float = 0
 
@@ -63,7 +74,7 @@ class CauchyContinuumProperty:
             f'isotropy = {self.isotropy}'
         ]
 
-        s.append('----------------')
+        s.append('-'*20)
         s.append('stiffness matrix')
         if not self.stff is None:
             for i in range(6):
@@ -84,13 +95,19 @@ class CauchyContinuumProperty:
         else:
             s.append('NONE')
 
-        s.append('---------------------')
+        s.append('-'*20)
         s.append('engineering constants')
         for _label, _name in zip(self.constant_label, self.constant_name):
             _value = eval(f'self.{_name}')
             s.append(f'{_label} = {_value}')
 
-        s.append('---------------------')
+        s.append('-'*20)
+        s.append('strength')
+        for _label, _name in zip(self.strength_label, self.strength_name):
+            _value = eval(f'self.{_name}')
+            s.append(f'{_label} = {_value}')
+
+        s.append('-'*20)
         s.append('cte')
         if not self.cte is None:
             s.append('  '.join(list(map(str, self.cte))))
@@ -125,7 +142,7 @@ class CauchyContinuumModel:
         self.temperature : float = 0
 
         # self.strength_constants : Iterable = None
-        self.failure_criterion = None
+        self.failure_criterion = 0
 
         # Thermal
         # -------
@@ -146,6 +163,8 @@ class CauchyContinuumModel:
         ]
 
         s.append(str(self.property))
+
+        s.append(f'failure criterion = {self.failure_criterion}')
 
         return '\n'.join(s)
 
@@ -242,9 +261,12 @@ class CauchyContinuumModel:
             v = eval(f'self.property.{name}')
         elif name == 'strength':
             v = self.property.strength_constants
+        elif name == 'char_len':
+            v = self.property.char_len
         elif name == 'failure_criterion':
             v = self.failure_criterion
 
+        # Thermal
         elif name == 'cte':
             v = self.property.cte
         elif name == 'specific_heat':
@@ -298,6 +320,20 @@ class CauchyContinuumModel:
 
         elif name == 'elastic':
             self.setElastic(value, **kwargs)
+
+        elif name == 'strength_constants':
+            if len(value) == 9:
+                self.property.x1t = value[0]
+                self.property.x2t = value[1]
+                self.property.x3t = value[2]
+                self.property.x1c = value[3]
+                self.property.x2c = value[4]
+                self.property.x3c = value[5]
+                self.property.x23 = value[6]
+                self.property.x13 = value[7]
+                self.property.x12 = value[8]
+
+            self.property.strength_constants = value
 
         else:
             exec(f'self.property.{name} = {value}')

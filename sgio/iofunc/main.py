@@ -70,7 +70,7 @@ def read(
 
 
 def readOutput(
-    fn:str, file_format:str, analysis=0, smdim:int=1,
+    fn:str, file_format:str, analysis=0,
     sg:StructureGene=None, **kwargs
     ):
     """Read SG analysis output file.
@@ -98,8 +98,14 @@ def readOutput(
     # print(f'file_format: {file_format}, analysis: {analysis}, smdim: {smdim}...')
 
     if file_format.lower().startswith('s'):
-        with open(fn, 'r') as file:
-            return _swiftcomp.readOutputBuffer(file, analysis, smdim, sg, **kwargs)
+        if analysis == 'h':
+            with open(fn, 'r') as file:
+                return _swiftcomp.readOutputBuffer(file, analysis, sg, **kwargs)
+
+        elif analysis == 'fi':
+            _fn = f'{fn}.fi'
+            with open(_fn, 'r') as file:
+                return _swiftcomp.readOutputBuffer(file, analysis, sg, **kwargs)
 
     elif file_format.lower().startswith('v'):
         if analysis == 'h':
@@ -139,7 +145,7 @@ def readOutput(
 def write(
     sg:StructureGene, fn:str, file_format:str,
     format_version:str='', analysis='h', sg_fmt:int=1,
-    macro_responses:list[sgmodel.StateCase]=[], model=0,
+    macro_responses:list[sgmodel.StateCase]=[], model=0, load_type=0,
     sfi:str='8d', sff:str='20.12e', mesh_only=False
     ):
     """Write analysis input
@@ -192,15 +198,19 @@ def write(
             if _file_format.startswith('s'):
                 if format_version == '':
                     format_version = GLOBAL.SC_VERSION_DEFAULT
+
                 _swiftcomp.writeBuffer(
                     sg, file,
-                    analysis=analysis,
+                    analysis=analysis, model=model,
+                    macro_responses=macro_responses,
+                    load_type=load_type,
                     sfi=sfi, sff=sff, version=format_version,
                     )
 
             elif _file_format.startswith('v'):
                 if format_version == '':
                     format_version = GLOBAL.VABS_VERSION_DEFAULT
+
                 _vabs.writeBuffer(
                     sg, file,
                     analysis=analysis, sg_fmt=sg_fmt,

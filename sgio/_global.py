@@ -1,3 +1,5 @@
+import logging
+from rich.logging import RichHandler
 
 SC_VERSION_DEFAULT = '2.1'
 VABS_VERSION_DEFAULT = '4.0'

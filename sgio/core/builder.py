@@ -61,7 +61,8 @@ def buildSG1D(
         Structure gene
     """
 
-    logger.info('building 1D SG: {}...'.format(name))
+    print(f'building 1D SG: {name}...')
+    logger.info(f'building 1D SG: {name}...')
 
     sg = StructureGene(name, 1)
 
@@ -114,6 +115,7 @@ def buildSG1D(
 
                 # mprop = sgdb[_lyr_m_name][0]['property']['md3']
                 mprop = sgdb[f'{_lyr_m_name}']
+                # print(f'mprop: {mprop}')
 
                 if isinstance(mprop, smdl.CauchyContinuumModel):
                     m = mprop
@@ -145,9 +147,13 @@ def buildSG1D(
 
                     # Strength properties
                     # -------------------
-                    m.strength_constants = mprop.get('strength', None)
-                    m.failure_criterion = mprop.get('failure_criterion', None)
-                    m.char_len = float(mprop.get('char_len', 0))
+                    m.failure_criterion = mprop.get('failure_criterion', 0)
+
+                    _strength_constants = list(map(float, mprop.get('strength', [])))
+                    # print('strength_constants:', _strength_constants)
+                    m.set('strength_constants', _strength_constants)
+                    _char_len = float(mprop.get('char_len', 0))
+                    m.set('char_len', _char_len)
 
                 sg.materials[mid] = m
 

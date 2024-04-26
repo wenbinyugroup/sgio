@@ -922,7 +922,7 @@ def _readOutputFailureIndex(file):
 def writeBuffer(
     sg:StructureGene, file, analysis='h', sg_fmt:int=1, model=0,
     macro_responses:list[smdl.StateCase]=[],
-    sfi:str='8d', sff:str='20.12e', version=None, mesh_only=False
+    sfi:str='8d', sff:str='20.12e', version=None
     ):
     """Write analysis input
 
