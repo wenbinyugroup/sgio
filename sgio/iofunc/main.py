@@ -1,7 +1,8 @@
 from __future__ import annotations
 
+import sgio._global as GLOBAL
 import logging
-logger = logging.getLogger(__name__)
+logger = logging.getLogger(GLOBAL.LOGGER_NAME)
 
 import csv
 

@@ -1,13 +1,13 @@
 from __future__ import annotations
 
-import logging
-
 from sgio.core.sg import StructureGene
 import sgio.utils as sutl
 import sgio.model as smdl
 import sgio.meshio as smsh
 
-logger = logging.getLogger(__name__)
+import sgio._global as GLOBAL
+import logging
+logger = logging.getLogger(GLOBAL.LOGGER_NAME)
 
 
 def readBuffer(f, file_format:str, format_version:str, model:int|str):

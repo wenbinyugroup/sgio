@@ -1,15 +1,14 @@
 from __future__ import annotations
 
-import logging
-
 from sgio.core.sg import StructureGene
 # from sgio.model import Model
 import sgio.utils as sutl
 import sgio.model as smdl
 import sgio.meshio as smsh
 
-
-logger = logging.getLogger(__name__)
+import sgio._global as GLOBAL
+import logging
+logger = logging.getLogger(GLOBAL.LOGGER_NAME)
 
 
 # ====================================================================
@@ -1390,7 +1389,7 @@ def _writeMOCombos(sg, file, sfi, sff):
     ssff = '{:' + sff + '}'
     count = 0
     for cid, combo in sg.mocombos.items():
-        print(f'cid: {cid}, combo: {combo}')
+        # print(f'cid: {cid}, combo: {combo}')
         count += 1
         file.write((ssfi + ssfi + ssff).format(cid, combo[0], combo[1]))
         if count == 1:
@@ -1421,7 +1420,7 @@ def _writeMaterial(
 
     # print('writing material {}'.format(mid))
 
-    print(material)
+    # print(material)
 
     # cm = m.constitutive
 

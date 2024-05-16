@@ -7,8 +7,9 @@ from .sg import StructureGene
 from sgio.meshio._mesh import Mesh
 import sgio.model as smdl
 
+import sgio._global as GLOBAL
 import logging
-logger = logging.getLogger(__name__)
+logger = logging.getLogger(GLOBAL.LOGGER_NAME)
 
 
 def buildSG1D(
@@ -61,7 +62,7 @@ def buildSG1D(
         Structure gene
     """
 
-    print(f'building 1D SG: {name}...')
+    # print(f'building 1D SG: {name}...')
     logger.info(f'building 1D SG: {name}...')
 
     sg = StructureGene(name, 1)

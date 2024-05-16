@@ -1,8 +1,9 @@
 # import sys
 import argparse
 
+import sgio._global as GLOBAL
 import logging
-logger = logging.getLogger(__name__)
+logger = logging.getLogger(GLOBAL.LOGGER_NAME)
 
 from .iofunc import convert
 

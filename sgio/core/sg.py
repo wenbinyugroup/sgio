@@ -1,6 +1,5 @@
 import copy
 # import math
-import logging
 
 import numpy as np
 # from numpy.typing import ArrayLike
@@ -15,8 +14,9 @@ import numpy as np
 
 from sgio.meshio._mesh import Mesh
 
-
-logger = logging.getLogger(__name__)
+import sgio._global as GLOBAL
+import logging
+logger = logging.getLogger(GLOBAL.LOGGER_NAME)
 
 
 class SGMacroModel():
