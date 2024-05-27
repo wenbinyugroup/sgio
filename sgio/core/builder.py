@@ -63,7 +63,7 @@ def buildSG1D(
     """
 
     # print(f'building 1D SG: {name}...')
-    logger.info(f'building 1D SG: {name}...')
+    logger.debug(f'building 1D SG: {name}...')
 
     sg = StructureGene(name, 1)
 
@@ -128,7 +128,9 @@ def buildSG1D(
 
                     mprop = mprop['property']
 
-                    m.density = float(mprop['density'])
+                    # m.density = float(mprop['density'])
+                    _density = float(mprop['density'])
+                    m.set('density', _density)
                     m.temperature = float(mprop.get('temperature', 0))
 
                     # Constitutive model
@@ -155,6 +157,9 @@ def buildSG1D(
                     m.set('strength_constants', _strength_constants)
                     _char_len = float(mprop.get('char_len', 0))
                     m.set('char_len', _char_len)
+
+                # print('m.property')
+                # print(m.property)
 
                 sg.materials[mid] = m
 

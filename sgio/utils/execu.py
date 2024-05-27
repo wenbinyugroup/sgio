@@ -19,7 +19,7 @@ logger = logging.getLogger(GLOBAL.LOGGER_NAME)
 
 def run(cmd, timeout, max_try=3, **kwargs):
 
-    logger.info(' '.join(cmd))
+    logger.debug(' '.join(cmd))
     # proc = sbp.Popen(cmd, stdout=sbp.PIPE, stderr=sbp.PIPE)
     # print('command: ', cmd)
 
@@ -47,9 +47,9 @@ def run(cmd, timeout, max_try=3, **kwargs):
                 # Success
                 if ('finished successfully' in message[-2]) or ('finished successfully' in message[-1]):
                     if cmd[0].lower().startswith('s'):
-                        logger.info(message[-1])
+                        logger.debug(message[-1])
                     elif cmd[0].lower().startswith('v'):
-                        logger.info(message[-2])
+                        logger.debug(message[-2])
                     # return
 
                 # Errors

@@ -173,7 +173,7 @@ def write(
         If write meshing data only
     """
 
-    logger.info(f'writting sg data to {fn} (format: {file_format})...')
+    logger.debug(f'writting sg data to {fn} (format: {file_format})...')
 
     # logger.debug(f'local variables:\n{sutils.convertToPrettyString(locals())}')
 
@@ -375,7 +375,7 @@ def readSGInterfacePairs(fn):
     # if logger is None:
     #     logger = mul.initLogger(__name__)
 
-    logger.info('reading sg interface paris: {0}...'.format(fn))
+    logger.debug('reading sg interface paris: {0}...'.format(fn))
 
     itf_pairs = []
 
@@ -406,13 +406,13 @@ def readSGInterfacePairs(fn):
 
 
 def readSGInterfaceNodes(fn):
-    r"""
+    """
     """
 
     # if logger is None:
     #     logger = mul.initLogger(__name__)
 
-    logger.info('reading sg interface nodes: {0}...'.format(fn))
+    logger.debug('reading sg interface nodes: {0}...'.format(fn))
 
     itf_nodes = []
 
@@ -453,7 +453,7 @@ def readLoadCsv(
     """
     """
 
-    logger.info('reading structural response file {}...'.format(fn))
+    logger.debug('reading structural response file {}...'.format(fn))
 
     if len(load_tags) == 0:
         if smdim == 1:

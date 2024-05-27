@@ -1097,7 +1097,7 @@ def _readOutputFailureIndex(file):
     """
     """
 
-    logger.info('reading sg failure indices and strengh ratios...')
+    logger.debug('reading sg failure indices and strengh ratios...')
 
     fi = {}
     sr = {}
