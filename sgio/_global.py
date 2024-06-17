@@ -48,4 +48,5 @@ class SwiftCompError(Exception):
 class VABSError(Exception):
     pass
 
-
+class OutputFileError(Exception):
+    pass

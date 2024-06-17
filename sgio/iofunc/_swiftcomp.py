@@ -851,6 +851,42 @@ def _readKirchhoffLovePlateShellModel(file):
 
         line = file.readline()
 
+
+    if model.mass is None:
+        raise GLOBAL.OutputFileError('No mass matrix found.')
+
+    if model.stff is None:
+        raise GLOBAL.OutputFileError('No stiffness matrix found.')
+    if model.cmpl is None:
+        raise GLOBAL.OutputFileError('No compliance matrix found.')
+
+    if model.e1_i is None:
+        raise GLOBAL.OutputFileError('No in-plane E1 found.')
+    if model.e2_i is None:
+        raise GLOBAL.OutputFileError('No in-plane E2 found.')
+    if model.g12_i is None:
+        raise GLOBAL.OutputFileError('No in-plane G12 found.')
+    if model.nu12_i is None:
+        raise GLOBAL.OutputFileError('No in-plane nu12 found.')
+    if model.eta121_i is None:
+        raise GLOBAL.OutputFileError('No in-plane eta121 found.')
+    if model.eta122_i is None:
+        raise GLOBAL.OutputFileError('No in-plane eta122 found.')
+
+    if model.e1_o is None:
+        raise GLOBAL.OutputFileError('No flexural E1 found.')
+    if model.e2_o is None:
+        raise GLOBAL.OutputFileError('No flexural E2 found.')
+    if model.g12_o is None:
+        raise GLOBAL.OutputFileError('No flexural G12 found.')
+    if model.nu12_o is None:
+        raise GLOBAL.OutputFileError('No flexural nu12 found.')
+    if model.eta121_o is None:
+        raise GLOBAL.OutputFileError('No flexural eta121 found.')
+    if model.eta122_o is None:
+        raise GLOBAL.OutputFileError('No flexural eta122 found.')
+
+
     return model
 
 
