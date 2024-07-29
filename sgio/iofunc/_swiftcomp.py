@@ -1139,6 +1139,9 @@ def _readOutputFailureIndex(file):
     sr = {}
     eids_sr_min = []
 
+    _sr_min = -1
+    _eid_sr_min = 0
+
     for i, line in enumerate(file):
         line = line.strip()
         if (line == ''):
@@ -1158,11 +1161,22 @@ def _readOutputFailureIndex(file):
         line = line.split()
         if len(line) == 3:
             # lines.append(line)
-            fi[int(line[0])] = float(line[1])
-            sr[int(line[0])] = float(line[2])
+            _eid = int(line[0])
+            _fi = float(line[1])
+            _sr = float(line[2])
+
+            fi[_eid] = _fi
+            sr[_eid] = _sr
+
+            if _sr_min == -1 or _sr < _sr_min:
+                _sr_min = _sr
+                _eid_sr_min = _eid
 
     if len(sr) == 1 and len(eids_sr_min) == 0:
         eids_sr_min.append(1)
+
+    if len(eids_sr_min) == 0:
+        eids_sr_min.append(_eid_sr_min)
 
     return fi, sr, eids_sr_min
 
