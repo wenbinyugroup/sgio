@@ -41,8 +41,8 @@ def initLogger(name=GLOBAL.LOGGER_NAME, cout_level='INFO', fout_level='INFO', fi
     fh = logging.FileHandler(filename)
     fh.setLevel(fout_level.upper())
     ff = logging.Formatter(
-        fmt='{levelname:8s} [{asctime}] {module}.{funcName} :: {message} ',
-        datefmt='%Y-%m-%d %H:%M:%S', style='{'
+        fmt='[{asctime}] {levelname:8s} {module}.{funcName} :: {message} ',
+        datefmt='%H:%M:%S', style='{'
     )
     fh.setFormatter(ff)
     logger.addHandler(fh)
