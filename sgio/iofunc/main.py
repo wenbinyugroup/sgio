@@ -71,7 +71,7 @@ def read(
 
 
 def readOutput(
-    fn:str, file_format:str, analysis=0,
+    fn:str, file_format:str, analysis=0, model_type='',
     sg:StructureGene=None, **kwargs
     ):
     """Read SG analysis output file.
@@ -83,9 +83,11 @@ def readOutput(
     file_format
         Format of the SG data file
     analysis
-        Indicator of SG analysis
-    smdim
-        Dimension of the macro structural model
+        Indicator of SG analysis.
+        Choose one from 'h', 'd', 'l', 'fi'.
+    model_type
+        Type of the macro structural model.
+        Choose one from 'SD1', 'PL1', 'PL2', 'BM1', 'BM2'.
     sg
         Structure gene object
 
@@ -111,7 +113,8 @@ def readOutput(
     elif file_format.lower().startswith('v'):
         if analysis == 'h':
             with open(fn, 'r') as file:
-                return _vabs.readOutputBuffer(file, analysis, sg, **kwargs)
+                return _vabs.readOutputBuffer(
+                    file, analysis, sg, model_type=model_type, **kwargs)
 
         elif analysis == 'fi':
             _fn = f'{fn}.fi'
