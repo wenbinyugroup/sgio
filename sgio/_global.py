@@ -1,5 +1,12 @@
 # import logging
 # from rich.logging import RichHandler
+from rich.console import Console
+from rich.pretty import Pretty
+
+console = Console()
+
+def pprint(*args, **kwargs):
+    console.print(Pretty(*args), **kwargs)
 
 LOGGER_NAME = 'sgio'
 

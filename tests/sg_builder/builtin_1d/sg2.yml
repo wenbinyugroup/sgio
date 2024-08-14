@@ -1,5 +1,5 @@
 layup:
-  name: "laminate_1"
+  name: "laminate_2"
   # type: "1dsg"
   # dim: 1
   # parameter:
@@ -7,13 +7,13 @@ layup:
   #   _k11: 1
   #   _k22: 2
   design:
-    symmetry: 2
+    symmetry: 1
     layers:
       - material: "m1"
         ply_thickness: 0.0072
-        number_of_plies: 1
-        in-plane_orientation: 45
-      - material: "m1"
+        # number_of_plies: 1
+        in-plane_orientation: [45, -45, 0, 90]
+      - material: "m2"
         ply_thickness: 0.0072
         number_of_plies: 2
         in-plane_orientation: 0
@@ -43,7 +43,7 @@ material:
       density: 0.0574
       elasticity: [18.83e6, 1.317e6, 1.317e6, 7.672e5, 7.672e5, 5.065e5, 0.32, 0.32, 0.3]
       strength: [2.999e5, 1.925e4, 1.925e4, 1.680e5, 2.898e4, 2.898e4, 1.688e4, 1.688e4, 1.206e4]
-  - name: "l1"
+  - name: "m2"
     # type: "lamina"
     property:
       # md3:
