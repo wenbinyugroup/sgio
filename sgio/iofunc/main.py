@@ -100,16 +100,22 @@ def readOutput(
     # print(f'reading {file_format} output file {fn}...')
     # print(f'file_format: {file_format}, analysis: {analysis}, smdim: {smdim}...')
 
+    # SwiftComp
     if file_format.lower().startswith('s'):
         if analysis == 'h':
             with open(fn, 'r') as file:
-                return _swiftcomp.readOutputBuffer(file, analysis, sg, **kwargs)
+                return _swiftcomp.readOutputBuffer(
+                    file, analysis=analysis, model_type=model_type,
+                    **kwargs)
 
         elif analysis == 'fi':
             _fn = f'{fn}.fi'
             with open(_fn, 'r') as file:
-                return _swiftcomp.readOutputBuffer(file, analysis, sg, **kwargs)
+                return _swiftcomp.readOutputBuffer(
+                    file, analysis=analysis, model_type=model_type,
+                    **kwargs)
 
+    # VABS
     elif file_format.lower().startswith('v'):
         if analysis == 'h':
             with open(fn, 'r') as file:

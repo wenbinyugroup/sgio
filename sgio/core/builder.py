@@ -75,7 +75,7 @@ def buildSG1D(
     # nsym = layup.get('symmetry', 0)
     # layers = layup['layers']
     # print(f'layers: {layers}')
-    GLOBAL.pprint(layers)
+    logger.debug(layers)
 
     # Record used materials and create material-orientation combinations
     mid = 0
@@ -300,10 +300,10 @@ def generateLayerList(layup_design):
     """Generate the list of layers from the layup design input
     """
 
-    logger.info('generating layer list...')
+    logger.debug('generating layer list...')
 
-    print('layup_design')
-    print(layup_design)
+    logger.debug('layup_design')
+    logger.debug(layup_design)
 
     layers = []
 

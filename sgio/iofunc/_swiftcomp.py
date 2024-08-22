@@ -266,13 +266,14 @@ def _readElasticProperty(file, isotropy:int):
 # Read output
 # -----------
 def readOutputBuffer(
-    file, analysis=0,
-    sg:StructureGene=None, **kwargs
+    file, analysis=0, model_type=None,
+    # sg:StructureGene=None,
+    **kwargs
     ):
     # print('reading output buffer...')
 
     if analysis == 0 or analysis == 'h' or analysis == '':
-        return _readOutputH(file, **kwargs)
+        return _readOutputH(file, model_type=model_type, **kwargs)
 
     elif analysis == 1 or analysis == 2 or analysis == 'dl' or analysis == 'd' or analysis == 'l':
         pass
@@ -297,7 +298,7 @@ def readOutputBuffer(
 
 
 
-def _readOutputH(file, **kwargs):
+def _readOutputH(file, model_type, **kwargs):
     """Read SwiftComp homogenization results.
 
     :param fn: SwiftComp output file (e.g. example.sg.k)
@@ -308,15 +309,17 @@ def _readOutputH(file, **kwargs):
     """
     # print('reading homogenization output...')
 
-    try:
-        model_type = kwargs['model_type']
-    except KeyError:
-        model_type = kwargs['submodel']
+    # try:
+    #     model_type = kwargs['model_type']
+    # except KeyError:
+    #     model_type = kwargs['submodel']
 
     if model_type.upper().startswith('BM'):
         out = _readOutputBeamModel(file, model=model_type)
+
     elif model_type.upper().startswith('PL'):
         out = _readOutputShellModel(file, model=model_type)
+
     elif  model_type.upper().startswith('SD'):
         out = _readOutputCauchyContinuumModel(file)
 
