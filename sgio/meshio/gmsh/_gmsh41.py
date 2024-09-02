@@ -408,7 +408,12 @@ def _write_entities(fh, cells, tag_data, cell_sets, point_data, binary):
     if "gmsh:dim_tags" not in point_data:
         return
 
-    fh.write(b"$Entities\n")
+    # print(f'tag_data: {tag_data}')
+
+    if binary:
+        fh.write(b"$Entities\n")
+    else:
+        fh.write("$Entities\n")
 
     # Array of entity tag (first row) and dimension (second row) per node.
     # We need to combine the two, since entity tags are reset for each dimension.
@@ -423,7 +428,7 @@ def _write_entities(fh, cells, tag_data, cell_sets, point_data, binary):
     if binary:
         num_occ.astype(c_size_t).tofile(fh)
     else:
-        fh.write(f"{num_occ[0]} {num_occ[1]} {num_occ[2]} {num_occ[3]}\n".encode())
+        fh.write(f"{num_occ[0]} {num_occ[1]} {num_occ[2]} {num_occ[3]}\n")
 
     # Array of dimension and entity tag per cell. Will be compared with the
     # similar not array.
@@ -459,7 +464,7 @@ def _write_entities(fh, cells, tag_data, cell_sets, point_data, binary):
         if binary:
             np.array([tag], dtype=c_int).tofile(fh)
         else:
-            fh.write(f"{tag} ".encode())
+            fh.write(f"{tag} ")
 
         # Min-max coordinates for the entity. For now, simply put zeros here,
         # and hope that gmsh does not complain. To expand this, the point
@@ -471,31 +476,34 @@ def _write_entities(fh, cells, tag_data, cell_sets, point_data, binary):
             if binary:
                 np.zeros(3, dtype=c_double).tofile(fh)
             else:
-                fh.write(b"0 0 0 ")
+                fh.write("0 0 0 ")
         else:
             # Bounding box has six coordinates
             if binary:
                 np.zeros(6, dtype=c_double).tofile(fh)
             else:
-                fh.write(b"0 0 0 0 0 0 ")
+                fh.write("0 0 0 0 0 0 ")
 
         # If there is a corresponding cell block, write physical tags (if any)
         # and bounding entities (if any)
         if matching_cell_block.size > 0:
             # entity has a physical tag, write this
             # ASSUMPTION: There is a single physical tag for this
-            physical_tag = tag_data["gmsh:physical"][matching_cell_block[0]][0]
-            if binary:
-                np.array([1], dtype=c_size_t).tofile(fh)
-                np.array([physical_tag], dtype=c_int).tofile(fh)
-            else:
-                fh.write(f"1 {physical_tag} ".encode())
+            try:
+                physical_tag = tag_data["gmsh:physical"][matching_cell_block[0]][0]
+                if binary:
+                    np.array([1], dtype=c_size_t).tofile(fh)
+                    np.array([physical_tag], dtype=c_int).tofile(fh)
+                else:
+                    fh.write(f"1 {physical_tag} ")
+            except KeyError:
+                pass
         else:
             # The number of physical tags is zero
             if binary:
                 np.array([0], dtype=c_size_t).tofile(fh)
             else:
-                fh.write(b"0 ")
+                fh.write("0 ")
 
         if dim > 0:
             # Entities not of the lowest dimension can have their
@@ -509,32 +517,36 @@ def _write_entities(fh, cells, tag_data, cell_sets, point_data, binary):
                         np.array(num_bounds, dtype=c_size_t).tofile(fh)
                         np.array(bounds, dtype=c_int).tofile(fh)
                     else:
-                        fh.write(f"{num_bounds} ".encode())
+                        fh.write(f"{num_bounds} ")
                         for bi in bounds:
-                            fh.write(f"{bi} ".encode())
-                        fh.write(b"\n")
+                            fh.write(f"{bi} ")
+                        fh.write("\n")
                 else:
                     # Register that there are no bounding elements
                     if binary:
                         np.array([0], dtype=c_size_t).tofile(fh)
                     else:
-                        fh.write(b"0\n")
+                        fh.write("0\n")
 
             else:
                 # Register that there are no bounding elements
                 if binary:
                     np.array([0], dtype=c_size_t).tofile(fh)
                 else:
-                    fh.write(b"0\n")
+                    fh.write("0\n")
         else:
             # If ascii, enforce line change
             if not binary:
-                fh.write(b"\n")
+                fh.write("\n")
 
     if binary:
         fh.write(b"\n")
     # raise NotImplementedError
-    fh.write(b"$EndEntities\n")
+        fh.write(b"$EndEntities\n")
+    else:
+        fh.write("\n")
+    # raise NotImplementedError
+        fh.write("$EndEntities\n")
 
 
 def _write_nodes(fh, points, cells, point_data, float_fmt, binary):
