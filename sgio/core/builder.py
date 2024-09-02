@@ -341,7 +341,8 @@ def generateLayerList(layup_design):
         # lyr_thk = layer['ply_thickness'] * _lyr_np
         # print('lyr_thk =', lyr_thk)
         # tt += lyr_thk
-        layers.append(layer)
+        if _lyr_np > 0:
+            layers.append(layer)
 
     # Symmetry
     for i in range(nsym):

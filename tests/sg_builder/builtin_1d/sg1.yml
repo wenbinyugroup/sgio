@@ -15,7 +15,7 @@ layup:
         in-plane_orientation: 45
       - material: "m1"
         ply_thickness: 0.0072
-        number_of_plies: 2
+        number_of_plies: 0
         in-plane_orientation: 0
       # - material: "m1"
       #   ply_thickness: 0.0072
