@@ -838,7 +838,13 @@ def _readOutputFailureIndex(file):
     sr = {}
     eids_sr_min = []
 
-    for i, line in enumerate(file):
+    # for i, line in enumerate(file):
+    while True:
+        line = file.readline()
+
+        if not line:  # EOF
+            break
+
         line = line.strip()
         if (line == ''):
             continue
@@ -849,7 +855,12 @@ def _readOutputFailureIndex(file):
             line = line.split()
             # _loc = line.index('existing')
             # _sr_min = float(line[tmp_id - 1])
-            _eid = int(line[-1])
+            try:
+                _eid = int(line[-1])
+            except ValueError:
+                line = file.readline().split()
+                _eid = int(line[0])
+
             eids_sr_min.append(_eid)
             # lines.pop()
             continue
