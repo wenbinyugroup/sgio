@@ -11,17 +11,19 @@ name_e = [
     'e11', '2e12', '2e13', 'e22', '2e23', 'e33'
 ]
 
-sg = sgio.read(fn_sg, 'vabs', sgdim=2, smdim=1)
+sg = sgio.read(fn_sg, 'vabs', sgdim=2, model='bm2')
 # print(sg.nelems)
-state_field = sgio.readOutput(fn_sg, 'v', 'd')
-_u = state_field.getDisplacementField()
+state_case = sgio.readOutput(fn_sg, 'v', 'd')
+# print(state_case)
+
+# _u = state_field.getDisplacementField()
 # print(_u)
-sgio.addPointDictDataToMesh(name_u, _u, sg.mesh)
-_ee = state_field.getStrainField(where='e', cs='s')
+sgio.addPointDictDataToMesh(name_u, state_case.getState('u').data, sg.mesh)
+# _ee = state_field.getStrainField(where='e', cs='s')
 # print(_ee)
-sgio.addCellDictDataToMesh(name_e, _ee, sg.mesh)
+sgio.addCellDictDataToMesh(name_e, state_case.getState('ee').data, sg.mesh)
 
-print(sg)
+# print(sg)
 
-sgio.write(sg, fn_msh, 'gmsh22', mesh_only=True)
+sgio.write(sg, fn_msh, 'gmsh', mesh_only=True)
 

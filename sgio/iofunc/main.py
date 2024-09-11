@@ -100,52 +100,70 @@ def readOutput(
     # print(f'reading {file_format} output file {fn}...')
     # print(f'file_format: {file_format}, analysis: {analysis}, smdim: {smdim}...')
 
-    # SwiftComp
-    if file_format.lower().startswith('s'):
-        if analysis == 'h':
-            with open(fn, 'r') as file:
+    if analysis == 'h':
+        with open(fn, 'r') as file:
+            if file_format.lower().startswith('s'):
                 return _swiftcomp.readOutputBuffer(
                     file, analysis=analysis, model_type=model_type,
                     **kwargs)
+            elif file_format.lower().startswith('v'):
+                return _vabs.readOutputBuffer(
+                    file, analysis, sg, model_type=model_type,
+                    **kwargs)
 
-        elif analysis == 'fi':
+    elif analysis == 'fi':
+        if file_format.lower().startswith('s'):
             _fn = f'{fn}.fi'
             with open(_fn, 'r') as file:
                 return _swiftcomp.readOutputBuffer(
                     file, analysis=analysis, model_type=model_type,
                     **kwargs)
-
-    # VABS
-    elif file_format.lower().startswith('v'):
-        if analysis == 'h':
-            with open(fn, 'r') as file:
-                return _vabs.readOutputBuffer(
-                    file, analysis, sg, model_type=model_type, **kwargs)
-
-        elif analysis == 'fi':
+        elif file_format.lower().startswith('v'):
             _fn = f'{fn}.fi'
             with open(_fn, 'r') as file:
                 return _vabs.readOutputBuffer(file, analysis, sg, **kwargs)
 
-        elif analysis == 'd' or analysis == 'l':
+    elif analysis == 'd' or analysis == 'l':
+        if file_format.lower().startswith('s'):
+            pass
+
+        elif file_format.lower().startswith('v'):
+            state_case = sgmodel.StateCase()
+
             # Displacement
             _u = None
             _fn = f'{fn}.U'
             with open(_fn, 'r') as file:
                 _u = _vabs.readOutputBuffer(file, analysis, ext='u', **kwargs)
+            _state = sgmodel.State(
+                name='u', data=_u, label=['u1', 'u2', 'u3'], location='node')
+            state_case.addState(name='u', state=_state)
 
             # Element strain and stress
             _ee, _es, _eem, _esm = None, None, None, None
             _fn = f'{fn}.ELE'
             with open(_fn, 'r') as file:
                 _ee, _es, _eem, _esm = _vabs.readOutputBuffer(file, analysis, ext='ele', **kwargs)
+            _state = sgmodel.State(
+                name='ee', data=_ee, label=['e11', 'e12', 'e13', 'e22', 'e23', 'e33'], location='element')
+            state_case.addState(name='ee', state=_state)
+            _state = sgmodel.State(
+                name='es', data=_es, label=['s11', 's12', 's13', 's22', 's23', 's33'], location='element')
+            state_case.addState(name='es', state=_state)
+            _state = sgmodel.State(
+                name='eem', data=_eem, label=['em11', 'em12', 'em13', 'em22', 'em23', 'em33'], location='element')
+            state_case.addState(name='eem', state=_state)
+            _state = sgmodel.State(
+                name='esm', data=_esm, label=['sm11', 'sm12', 'sm13', 'sm22', 'sm23', 'sm33'], location='element')
+            state_case.addState(name='esm', state=_state)
 
-            state_field = sgmodel.StateField(
-                node_displ=_u,
-                elem_strain=_ee, elem_stress=_es, elem_strain_m=_eem, elem_stress_m=_esm
-            )
+            # state_field = sgmodel.StateField(
+            #     node_displ=_u,
+            #     elem_strain=_ee, elem_stress=_es, elem_strain_m=_eem, elem_stress_m=_esm
+            # )
 
-            return state_field
+            return state_case
+
 
     return
 
