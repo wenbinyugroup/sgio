@@ -1,7 +1,9 @@
 import copy
+
 import numpy as np
+from sgio.meshio._mesh import CellBlock, Mesh
+
 from .sg import StructureGene
-from sgio.meshio._mesh import Mesh, CellBlock
 
 
 def combineSG(sg1:StructureGene, sg2:StructureGene) -> StructureGene:

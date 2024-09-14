@@ -1,15 +1,15 @@
 from __future__ import annotations
 
-import sgio._global as GLOBAL
 import logging
+
+import sgio._global as GLOBAL
+
 logger = logging.getLogger(GLOBAL.LOGGER_NAME)
 
-from sgio.core.sg import StructureGene
 import sgio.meshio as smsh
 import sgio.model as smdl
-
+from sgio.core.sg import StructureGene
 from sgio.meshio.abaqus._abaqus import get_param_map
-
 
 # ====================================================================
 # Readers

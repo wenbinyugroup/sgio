@@ -1,12 +1,13 @@
 from __future__ import annotations
 
-from sgio.core.sg import StructureGene
-import sgio.utils as sutl
-import sgio.model as smdl
-import sgio.meshio as smsh
+import logging
 
 import sgio._global as GLOBAL
-import logging
+import sgio.meshio as smsh
+import sgio.model as smdl
+import sgio.utils as sutl
+from sgio.core.sg import StructureGene
+
 logger = logging.getLogger(GLOBAL.LOGGER_NAME)
 
 

@@ -1,7 +1,12 @@
 import copy
-# import math
+import logging
 
 import numpy as np
+import sgio._global as GLOBAL
+from sgio.meshio._mesh import Mesh
+
+# import math
+
 # from numpy.typing import ArrayLike
 
 # import sgio.core.solid as scs
@@ -12,10 +17,7 @@ import numpy as np
 # import meshio
 # import sgio.meshio as mpm
 
-from sgio.meshio._mesh import Mesh
 
-import sgio._global as GLOBAL
-import logging
 logger = logging.getLogger(GLOBAL.LOGGER_NAME)
 
 

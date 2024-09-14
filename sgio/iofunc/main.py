@@ -1,22 +1,21 @@
 from __future__ import annotations
 
-import sgio._global as GLOBAL
 import logging
+
+import sgio._global as GLOBAL
+
 logger = logging.getLogger(GLOBAL.LOGGER_NAME)
 
 import csv
 
-from sgio.core.sg import StructureGene
-import sgio.model as sgmodel
-
+import sgio._global as GLOBAL
 import sgio.iofunc._abaqus as _abaqus
 import sgio.iofunc._swiftcomp as _swiftcomp
 import sgio.iofunc._vabs as _vabs
 import sgio.meshio as meshio
-import sgio._global as GLOBAL
-
+import sgio.model as sgmodel
 import sgio.utils as sutils
-
+from sgio.core.sg import StructureGene
 
 
 def read(

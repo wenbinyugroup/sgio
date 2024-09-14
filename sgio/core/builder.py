@@ -1,14 +1,15 @@
 import copy
-import numpy as np
+import logging
 
-from .sg import StructureGene
+import numpy as np
+import sgio._global as GLOBAL
+import sgio.model as smdl
 # from sgio.model.solid import MaterialProperty
 # from sgio.model import CauchyContinuumModel
 from sgio.meshio._mesh import Mesh
-import sgio.model as smdl
 
-import sgio._global as GLOBAL
-import logging
+from .sg import StructureGene
+
 logger = logging.getLogger(GLOBAL.LOGGER_NAME)
 
 

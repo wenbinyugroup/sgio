@@ -3,6 +3,7 @@ from __future__ import annotations
 import numpy as np
 from sgio.meshio._mesh import Mesh
 
+
 def addPointDictDataToMesh(name:str|list, dict_data:dict[int, list], mesh:Mesh):
     """Add point/node data (dictionary) to point_data of mesh.
 
