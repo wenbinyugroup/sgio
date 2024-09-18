@@ -1,4 +1,4 @@
-# sgio
+# SGIO
 
 Structure Gene (SG) I/O
 
@@ -11,96 +11,84 @@ The package can be used to
 - read structural property from VABS/SwiftComp output
 - create 1D SG from layup input
 
-
-Supported data formats
+Supported data formats:
 - for complete SG data
   - VABS, SwiftComp, Abaqus
 - for mesh data only
-  - All formats supported by meshio
+  - all formats supported by meshio
+
+A structure gene (SG) is defined as the smallest mathematical building block of a structure.[^1]
+A cross-section (CS) is a type of 2D SG.
 
 
 ## Installation
 
+Download the package.
+
+Install dependencies.
+```shell
+pip install -r <INSTALL_DIR>/sgio/sgio/requirements.txt
+```
+
+Configure environment variables.
+- Add the package root directory to `PYTHONPATH`.
+- Add `<INSTALL_DIR>/sgio/bin` to `PATH`.
+
 
 ## Usage
 
-### I/O for SG
-
-Read an SG:
+Command line interface
 ```
-import sgio
+usage: sgio [-h] {build,b,convert,c} ...
 
-sg = sgio.read(
-    filename,  # Name of the SG file.
-    format, # Format of the SG data. See doc for more info.
-    version, # Version of the data format. See doc for more info.
-    sgdim, # Dimension of the SG.
-    smdim, # Dimension of the structural model.
-)
-```
+CS/SG I/O functions
 
-Write SG data to a file:
-```
-import sgio
+positional arguments:
+  {build,b,convert,c}  sub-command help
+    build (b)          Build 1D SG
+    convert (c)        Convert CS/SG data file
 
-sgio.write(
-    sg,  # SG data
-    filename,  # Name of the SG file.
-    format, # Format of the SG data. See doc for more info.
-    version, # Version of the data format. See doc for more info.
-    analysis, # Type of SG analysis. See doc for more info.
-)
+optional arguments:
+  -h, --help           show this help message and exit
 ```
 
+### Convert SG data
 
-### I/O for mesh data
-
-#### Use sgio functions
-
-Read a mesh:
+Command line interface
 ```
-import sgio
+usage: sgio convert [-h] [-ff FROM_FORMAT] [-tf TO_FORMAT] [-d SGDIM] [-m MODEL] [-mo] from to
 
-sg = sgio.read(
-    filename,  # Name of the SG file.
-    format, # Format of the SG data. See doc for more info.
-    version, # Version of the data format. See doc for more info.
-    sgdim, # Dimension of the SG.
-    smdim, # Dimension of the structural model.
-    mesh_only=True
-)
-```
+positional arguments:
+  from                  CS/SG file to be read from
+  to                    CS/SG file to be written to
 
-Write a mesh:
-```
-import sgio
-
-sgio.write(
-    sg,  # SG data
-    filename,  # Name of the SG file.
-    format, # Format of the SG data. See doc for more info.
-    version, # Version of the data format. See doc for more info.
-    mesh_only=True
-)
+optional arguments:
+  -h, --help            show this help message and exit
+  -ff FROM_FORMAT, --from-format FROM_FORMAT
+                        CS/SG file format to be read from
+  -tf TO_FORMAT, --to-format TO_FORMAT
+                        CS/SG file format to be written to
+  -d SGDIM, --sgdim SGDIM
+                        SG dimension (SwiftComp only)
+  -m MODEL, --model MODEL
+                        CS/SG model
+  -mo, --mesh-only      Mesh only conversion
 ```
 
-#### Use meshio functions
+#### Example: Convert cross-sectional data from Abaqus (.inp) to VABS input
 
-Read a mesh:
+Suppose a cross-section has been built in Abaqus and output to `cross-section.inp`.
+To convert the data to the VABS input (Timoshenko model) `cross-section.sg`:
 ```
-import sgio.meshio as meshio
-
-mesh = meshio.read(
-    ... # See meshio doc for instructions.
-)
+sgio convert cross-section.inp cross-section.sg -ff abaqus -tf vabs -m bm2
 ```
 
-Write a mesh:
-```
-sg.mesh.write(
-    ... # See meshio doc for instructions.
-)
-```
+Check out the example `examples/convert_cs_from_abaqus_to_vabs` for more details.
 
 
 ## License
+
+
+## Reference
+
+[^1]: https://msp.org/jomms/2016/11-4/p03.xhtml
