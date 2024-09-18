@@ -1,3 +1,14 @@
+# import logging
+# from rich.logging import RichHandler
+from rich.console import Console
+from rich.pretty import Pretty
+
+console = Console()
+
+def pprint(*args, **kwargs):
+    console.print(Pretty(*args), **kwargs)
+
+LOGGER_NAME = 'sgio'
 
 SC_VERSION_DEFAULT = '2.1'
 VABS_VERSION_DEFAULT = '4.0'
@@ -44,4 +55,5 @@ class SwiftCompError(Exception):
 class VABSError(Exception):
     pass
 
-
+class OutputFileError(Exception):
+    pass

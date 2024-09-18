@@ -15,22 +15,26 @@ fn = sys.argv[1]
 with open(fn, 'r') as fobj:
     raw_input = yaml.safe_load(fobj)
 
-sg_input = raw_input['sg'][0]
+sg_input = raw_input['layup']
 # print(sg_input)
 
-name = 'sg1'
-sgdim = 1
-smdim = 2
+sg_name = sg_input.get('name', 'laminate')
+sg_dim = 1
+
 # params = sg_input['parameters']
-layup_design = sg_input['design']
-model = sg_input['model']['md2']
-version = model.get('version', '2.2')
-sgdb = {}
-for sg in raw_input['sg']:
-    if sg['type'] == 'material':
-        sgdb[sg['name']] = [
-            {'property': sg['property']},
-        ]
+sg_design_input = sg_input['design']
+
+sg_model_input = sg_input['model']
+model_type = sg_model_input['type']
+# smdim = 2
+mesh_size = sg_model_input.get('mesh_size', 0)
+elem_type = sg_model_input.get('element_type', 2)
+version = sg_model_input.get('version', '2.2')
+
+mdb = {}
+for _m in raw_input['material']:
+    # if sg['type'] == 'material':
+    mdb[_m['name']] = {'property': _m['property']}
 
 
 # mas.substituteParams(layup, params)
@@ -38,21 +42,24 @@ for sg in raw_input['sg']:
 # mas.substituteParams(model, params)
 # print(model)
 
-elem_type = model.get('element_type', 2)
 
 # layer_list = sgio.core.builder.generateLayerList(layup_design)
 # print(layer_list)
 
 sg = sgio.buildSG1D(
-    name, layup_design, sgdb, smdim,
-    elem_type=elem_type
+    name=sg_name,
+    layup=sg_design_input,
+    sgdb=mdb,
+    model=model_type,
+    mesh_size=mesh_size,
+    elem_type=elem_type,
 )
 
 
 # sg.summary()
 print(sg)
 
-fn_sg = '{}.sg'.format(name)
+fn_sg = '{}.sg'.format(sg_name)
 sgio.write(sg, fn_sg, 'sc', format_version=version)
 
 

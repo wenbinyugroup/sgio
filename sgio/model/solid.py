@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from dataclasses import dataclass, field
 from typing import Iterable
 from numbers import Number
@@ -7,6 +9,12 @@ def initConstantName():
 
 def initConstantLabel():
     return ['E1', 'E2', 'E3', 'G12', 'G13', 'G23', 'nu12', 'nu13', 'nu23']
+
+def initStrengthName():
+    return ['x1t', 'x2t', 'x3t', 'x1c', 'x2c', 'x3c', 'x23', 'x13', 'x12']
+
+def initStrengthLabel():
+    return ['X1t', 'X2t', 'X3t', 'X1c', 'X2c', 'X3c', 'X23', 'X13', 'X12']
 
 @dataclass
 class CauchyContinuumProperty:
@@ -20,6 +28,7 @@ class CauchyContinuumProperty:
     * 2: Anisotropic
     """
 
+    # Stiffness properties
     stff:Iterable[Iterable[float]] = None
     cmpl:Iterable[Iterable[float]] = None
 
@@ -36,7 +45,25 @@ class CauchyContinuumProperty:
     nu13:float = None
     nu23:float = None
 
+    # Strength properties
+    strength_name:Iterable[str] = field(default_factory=initStrengthName)
+    strength_label:Iterable[str] = field(default_factory=initStrengthLabel)
+
+    x1t:float = None  # xt
+    x2t:float = None  # yt
+    x3t:float = None  # zt
+    x1c:float = None  # xc
+    x2c:float = None  # yc
+    x3c:float = None  # zc
+    x23:float = None  # r
+    x13:float = None  # t
+    x12:float = None  # s
+
+    strength_measure = 0  # 0: stress, 1: strain
+
     strength_constants:Iterable[float] = None
+
+    char_len:float = 0
 
     cte:Iterable[float] = None
     specific_heat:float = 0
@@ -47,7 +74,7 @@ class CauchyContinuumProperty:
             f'isotropy = {self.isotropy}'
         ]
 
-        s.append('----------------')
+        s.append('-'*20)
         s.append('stiffness matrix')
         if not self.stff is None:
             for i in range(6):
@@ -68,11 +95,24 @@ class CauchyContinuumProperty:
         else:
             s.append('NONE')
 
-        s.append('---------------------')
+        s.append('-'*20)
         s.append('engineering constants')
         for _label, _name in zip(self.constant_label, self.constant_name):
             _value = eval(f'self.{_name}')
             s.append(f'{_label} = {_value}')
+
+        s.append('-'*20)
+        s.append('strength')
+        for _label, _name in zip(self.strength_label, self.strength_name):
+            _value = eval(f'self.{_name}')
+            s.append(f'{_label} = {_value}')
+
+        s.append('-'*20)
+        s.append('cte')
+        if not self.cte is None:
+            s.append('  '.join(list(map(str, self.cte))))
+        else:
+            s.append('NONE')
 
         return '\n'.join(s)
 
@@ -88,14 +128,9 @@ class CauchyContinuumModel:
     strain_name = ['e11', 'e22', 'e33', 'e23', 'e13', 'e12']
     stress_name = ['s11', 's22', 's33', 's23', 's13', 's12']
 
-    # constant_name = [
-    #     'e1', 'e2', 'e3', 'g12', 'g13', 'g23', 'nu12', 'nu13', 'nu23']
-    # constant_label = [
-    #     'E1', 'E2', 'E3', 'G12', 'G13', 'G23', 'nu12', 'nu13', 'nu23']
+    def __init__(self, name:str=''):
 
-    def __init__(self):
-
-        self.name = ''
+        self.name = name
         self.id = None
 
         self.property = CauchyContinuumProperty()
@@ -106,30 +141,8 @@ class CauchyContinuumModel:
         # self.density : float = None
         self.temperature : float = 0
 
-        # self.isotropy : int = None
-
-        # Consitutive
-
-        #: Stiffness matrix
-        # self.cmpl: Iterable[Iterable[float]] = None
-        #: Compliance matrix
-        # self.stff: Iterable[Iterable[float]] = None
-
-        # Mechanical
-        # ----------
-
-        # self.e1 : float = None
-        # self.e2 : float = None
-        # self.e3 : float = None
-        # self.g12 : float = None
-        # self.g13 : float = None
-        # self.g23 : float = None
-        # self.nu12 : float = None
-        # self.nu13 : float = None
-        # self.nu23 : float = None
-
         # self.strength_constants : Iterable = None
-        self.failure_criterion = None
+        self.failure_criterion = 0
 
         # Thermal
         # -------
@@ -151,32 +164,7 @@ class CauchyContinuumModel:
 
         s.append(str(self.property))
 
-        # s.append('----------------')
-        # s.append('stiffness matrix')
-        # if not self.stff is None:
-        #     for i in range(6):
-        #         _row = []
-        #         for j in range(6):
-        #             _row.append(f'{self.stff[i][j]:14e}')
-        #         s.append(', '.join(_row))
-        # else:
-        #     s.append('NONE')
-
-        # s.append('compliance matrix')
-        # if not self.cmpl is None:
-        #     for i in range(6):
-        #         _row = []
-        #         for j in range(6):
-        #             _row.append(f'{self.cmpl[i][j]:14e}')
-        #         s.append(', '.join(_row))
-        # else:
-        #     s.append('NONE')
-
-        # s.append('---------------------')
-        # s.append('engineering constants')
-        # for _label, _name in zip(self.constant_label, self.constant_name):
-        #     _value = eval(f'self.{_name}')
-        #     s.append(f'{_label} = {_value}')
+        s.append(f'failure criterion = {self.failure_criterion}')
 
         return '\n'.join(s)
 
@@ -253,6 +241,7 @@ class CauchyContinuumModel:
         elif name == 'isotropy':
             v = self.property.isotropy
 
+        # Stiffness
         elif name == 'e':
             v = self.property.e1
         elif name == 'nu':
@@ -265,11 +254,19 @@ class CauchyContinuumModel:
         elif name == 's':
             v = self.property.cmpl
 
+        # Strength
+        elif name == 'x':
+            v = self.property.x1t
+        elif name in ['x1t', 'x2t', 'x3t', 'x1c', 'x2c', 'x3c', 'x23', 'x13', 'x12']:
+            v = eval(f'self.property.{name}')
         elif name == 'strength':
             v = self.property.strength_constants
+        elif name == 'char_len':
+            v = self.property.char_len
         elif name == 'failure_criterion':
             v = self.failure_criterion
 
+        # Thermal
         elif name == 'cte':
             v = self.property.cte
         elif name == 'specific_heat':
@@ -322,7 +319,21 @@ class CauchyContinuumModel:
                 self.property.isotropy = value
 
         elif name == 'elastic':
-            self.setElastic(value, kwargs['input_type'])
+            self.setElastic(value, **kwargs)
+
+        elif name == 'strength_constants':
+            if len(value) == 9:
+                self.property.x1t = value[0]
+                self.property.x2t = value[1]
+                self.property.x3t = value[2]
+                self.property.x1c = value[3]
+                self.property.x2c = value[4]
+                self.property.x3c = value[5]
+                self.property.x23 = value[6]
+                self.property.x13 = value[7]
+                self.property.x12 = value[8]
+
+            self.property.strength_constants = value
 
         else:
             exec(f'self.property.{name} = {value}')
@@ -330,7 +341,7 @@ class CauchyContinuumModel:
         return
 
 
-    def setElastic(self, consts:Iterable, input_type):
+    def setElastic(self, consts:Iterable, input_type='', **kwargs):
         if self.property.isotropy == 0:
             self.property.e1 = float(consts[0])
             self.property.nu12 = float(consts[1])

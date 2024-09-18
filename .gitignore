@@ -4,9 +4,35 @@ build*/
 .vscode/
 
 *.pyc
+*.exe
 
 *.deb
 SCInt
 SCReal
 SCTemp
 SCWork
+
+*.zip
+*.gz
+*.tar
+
+*.u
+*.sn
+*.snm
+*.fi
+
+*.ech
+*.v0
+*.v1S
+*.v22
+
+*.U
+*.E
+*.EM
+*.EN
+*.EMN
+*.S
+*.SM
+*.SN
+*.SMN
+*.ELE

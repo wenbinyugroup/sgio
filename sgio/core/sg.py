@@ -1,8 +1,12 @@
 import copy
-# import math
 import logging
 
 import numpy as np
+import sgio._global as GLOBAL
+from sgio.meshio._mesh import Mesh
+
+# import math
+
 # from numpy.typing import ArrayLike
 
 # import sgio.core.solid as scs
@@ -13,13 +17,33 @@ import numpy as np
 # import meshio
 # import sgio.meshio as mpm
 
-from sgio.meshio._mesh import Mesh
+
+logger = logging.getLogger(GLOBAL.LOGGER_NAME)
 
 
-logger = logging.getLogger(__name__)
+class SGMacroModel():
+    """Configuration of SG analysis, independent on the geometry.
+    """
+    def __init__(self, kwd='SD1'):
+        self._kwd = kwd
+        self._physics = 0
+        self._geo_correct = False
+        self._do_damping = 0
+        self._is_temp_nonuniform = 0
+
+    @property
+    def smdim(self):
+        if self._kwd[:2] == 'SD':
+            return 3
+        if self._kwd[:2] == 'PL':
+            return 2
+        if self._kwd[:2] == 'BM':
+            return 1
 
 
-class StructureGene(object):
+
+
+class StructureGene():
     r"""A finite element level structure gene model in the theory of MSG.
 
     Parameters
@@ -144,66 +168,62 @@ class StructureGene(object):
         self.node_elements = []
 
 
-        # Global response
-        # ------------------------------------------------------------
+        # # Global response
+        # # ------------------------------------------------------------
 
-        #: list of floats: Global displacements.
-        #:
-        #: `[u1, u2, u3]`
-        self.global_displacements = []
-        #: list of lists floats: Global rotation matrix.
-        #:
-        #: `[[C11, C12, C13], [C21, C22, C23], [C31, C32, C33]]`
-        self.global_rotations = []
-        #: int: Global load type.
-        #:
-        #: * 0 - generalized stresses
-        #: * 1 - generalized strains
-        self.global_loads_type = 0
+        # #: list of floats: Global displacements.
+        # #:
+        # #: `[u1, u2, u3]`
+        # self.global_displacements = []
+        # #: list of lists floats: Global rotation matrix.
+        # #:
+        # #: `[[C11, C12, C13], [C21, C22, C23], [C31, C32, C33]]`
+        # self.global_rotations = []
+        # #: int: Global load type.
+        # #:
+        # #: * 0 - generalized stresses
+        # #: * 1 - generalized strains
+        # self.global_loads_type = 0
 
-        self.global_loads = []
-        """list of list of floats: Global loads
+        # self.global_loads = []
+        # """list of list of floats: Global loads
 
-        ============================ ========================================== ============================================
-        Model                        Generalized stresses                       Generalized strains
-        ============================ ========================================== ============================================
-        Continuum                    `[s11, s22, s33, s23, s13, s12]`           `[e11, e22, e33, e23, e13, e12]`
-        Kirchhoff-Love plate/shell   `[N11, N22, N12, M11, M22, M12]`           `[e11, e22, 2e12, k11, k22, 2k12]`
-        Reissner-Mindlin plate/shell `[N11, N22, N12, M11, M22, M12, N13, N23]` `[e11, e22, 2e12, k11, k22, 2k12, g13, g23]`
-        Euler-Bernoulli beam         `[F1, M1, M2, M3]`                         `[e11, k11, k12, k13]`
-        Timoshenko beam              `[F1, F2, F3, M1, M2, M3]`                 `[e11, g12, g13, k11, k12, k13]`
-        ============================ ========================================== ============================================
-        """
+        # ============================ ========================================== ============================================
+        # Model                        Generalized stresses                       Generalized strains
+        # ============================ ========================================== ============================================
+        # Continuum                    `[s11, s22, s33, s23, s13, s12]`           `[e11, e22, e33, e23, e13, e12]`
+        # Kirchhoff-Love plate/shell   `[N11, N22, N12, M11, M22, M12]`           `[e11, e22, 2e12, k11, k22, 2k12]`
+        # Reissner-Mindlin plate/shell `[N11, N22, N12, M11, M22, M12, N13, N23]` `[e11, e22, 2e12, k11, k22, 2k12, g13, g23]`
+        # Euler-Bernoulli beam         `[F1, M1, M2, M3]`                         `[e11, k11, k12, k13]`
+        # Timoshenko beam              `[F1, F2, F3, M1, M2, M3]`                 `[e11, g12, g13, k11, k12, k13]`
+        # ============================ ========================================== ============================================
+        # """
 
-        #: list of lists of floats:
-        #: Distributed loads for Timoshenko beam model (VABS only)
-        self.global_loads_dist = []
+        # #: list of lists of floats:
+        # #: Distributed loads for Timoshenko beam model (VABS only)
+        # self.global_loads_dist = []
 
-        # if logger:
-        #     self.logger = logger
-        # else:
-        #     self.logger = mul.initLogger(__name__)
+        # # if logger:
+        # #     self.logger = logger
+        # # else:
+        # #     self.logger = mul.initLogger(__name__)
 
 
     @property
     def nnodes(self):
         return len(self.mesh.points)
 
-
     @property
     def nelems(self):
         return sum([len(cell.data) for cell in self.mesh.cells])
-
 
     @property
     def nma_combs(self):
         return len(self.mocombos)
 
-
     @property
     def nmates(self):
         return len(self.materials)
-
 
     @property
     def use_elem_local_orient(self):
@@ -299,9 +319,14 @@ class StructureGene(object):
         int
             Combination id. 0 if not found.
         """
+        # print(f'findComboByMaterialOrientation: {name}, {angle}')
         for i, mo in self.mocombos.items():
+            # print(f'  {i}, {mo}')
+            # print(f'  {self.materials[mo[0]].name}, {mo[1]}')
             if (self.materials[mo[0]].name == name) and (mo[1] == angle):
+                # print(f'  found: {i}')
                 return i
+        # print('  not found')
         return 0
 
 

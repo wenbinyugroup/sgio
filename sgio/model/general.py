@@ -1,9 +1,14 @@
+from __future__ import annotations
+
+import copy
 from typing import Protocol, Iterable
 from numbers import Number
 import sgio.utils.io as sui
 # import sgio.model as sm
 
 class Model(Protocol):
+    """
+    """
     def __repr__(self) -> str:
         ...
 
@@ -18,198 +23,390 @@ class Model(Protocol):
 
 
 
-# class MaterialSection(object):
-#     """A macroscopic structure model. Stores material or structural
-#     properties.
 
-#     Parameters
-#     ----------
-#     smdim : int, default 3
-#         Dimension of material/structure model.
-#         Beam (1), plate/shell (2), or 3D continuum (3).
-#         Defualt to 3.
+def getModelDim(model:str) -> int:
+    """
+    """
+
+    mdim = 0
+    if model[:2].lower() == 'sd':
+        mdim = 3
+    elif model[:2].lower() == 'pl':
+        mdim = 2
+    elif model[:2].lower() == 'bm':
+        mdim = 1
+
+    return mdim
+
+
+
+
+# class State():
+#     """Generalized strain and stress.
 #     """
+#     def __init__(self, strain=[], stress=[]):
+#         self._e = strain
+#         self._s = stress
 
-#     def __init__(self, name:str='', smdim:int=3):
-#         #: int: Dimension of material/structure model.
-#         self.smdim = smdim
-#         #: str: Name of the material/structure.
-#         self.name = name
+#     @property
+#     def strain(self): return self._e
+#     @strain.setter
+#     def strain(self, value): self._e = value
+#     @property
+#     def stress(self): return self._s
+#     @stress.setter
+#     def stress(self, value): self._s = value
 
-#         # Mass property
-#         # -------------
-#         #: list of lists of floats: Mass matrix at the origin.
-#         self.mass_origin = None
-#         #: list of lists of floats: Mass matrix at the mass center.
-#         self.mass_mc = None
-#         #: float: Density of the material/structure.
-#         self.density = None
-#         #: list of floats: Mass moments of inertia.
-#         self.mmoi = [0, 0, 0]
-#         #: float: Mass-weighted radius of gyration.
-#         self.mwrg = None
-#         #: list of floats: Mass center. [x1, x2, x3]
-#         self.mass_center = None
+#     # def getStrain(self):
+#     #     return self._e
 
-#         # Geometry property
-#         # -----------------
-#         #: float: Geometric center
-#         self.gc = None
-
-#         # Constitutive property
-#         self.constitutive = None
+#     # def getStress(self):
+#     #     return self._s
 
 
-#         # Elastic property
-#         # ----------------
-#         #: int: (continuum model) Isotropy type.
-#         #: Isotropic (0), orthotropic (1), anisotropic (2).
-#         # self.type = None
-#         #: dict of {str, float}: Engineering constants.
-#         #: Keys: `e1`, `e2`, `e3`, `nu12`, `nu13`, `nu23`, `g12`, `g13`, `g23`
-#         self.constants = {}
-#         #: list of lists of floats: Stiffness matrix.
-#         self.stff = None
-#         # self.stiffness = None
-#         #: list of lists floats: Compliance matrix.
-#         self.cmpl = None
-#         # self.compliance = None
-
-#         #: list of lists of floats:
-#         #: (beam/plate/shell models) Refined stiffness matrix
-#         # self.stiffness_refined = None
-#         #: list of lists of floats:
-#         #: (beam/plate/shell models) Refined compliance matrix
-#         # self.compliance_refined = None
-#         #: list of floats: (beam model) Neutral axes/Tension center. [x1, x2, x3]
-#         self.tension_center = None
-#         #: list of floats: (beam model) Elastic axis/Shear center. [x1, x2, x3]
-#         self.shear_center = None
-
-#         # Strength property
-#         # -----------------
-#         #: int: Failure criterion.
-#         self.failure_criterion = None
-#         #: dict: Strength properties.
-#         # {
-#         #   'xt|x1t':,
-#         #   'yt|x2t':,
-#         #   'zt|x3t':,
-#         #   'xc|x1c':,
-#         #   'yc|x2c':,
-#         #   'zc|x3c':,
-#         #   'r|x23':,
-#         #   't|x13':,
-#         #   's|x12':
-#         # }
-#         self.strength_constants = {}
-
-#         self.char_len = 0
 
 
-#     def __repr__(self):
-#         s = '\n'
-#         s += f'name: {self.name}\n'
-#         s += 'effective properties\n'
-#         s += f'structural model dimension: {self.smdim}\n'
-#         if self.smdim == 3:
-#             pass
-#         elif self.smdim == 2:
-#             pass
-#         elif self.smdim == 1:
-#             pass
+class State():
+    """
+    """
+    def __init__(
+        self, name:str='', data:list|dict={}, label:list[str]=[],
+        location:str=''):
+        self.name:str = name
+        self.label:list[str] = label
+        self.location:str = location  # Choose from 'node', 'element'
+        # print(f'data = {data}')
+        self.data:list|dict = data
+        # print(f'self.data = {self.data}')
+        """
+        point data: []
+        field data: {
+            1: [],
+            2: [],
+            ...
+        }
+        """
 
-#         return s
+    # @property
+    # def name(self): return self._name
+    # @property
+    # def data(self): return self._data
+    # @property
+    # def label(self): return self._label
+    # @property
+    # def location(self): return self._location
+
+    def __repr__(self):
+        _str = [
+            f'state: {self.name} ({self.label})',
+        ]
+
+        if isinstance(self.data, list):
+            _str.append(f'  point data: {self.data}')
+
+        elif isinstance(self.data, dict):
+            _str.append(f'  field data: {len(self.data)} {self.location} data')
+            for _k, _v in self.data.items():
+                _str.append(f'    {_k}: {_v}')
+
+        return '\n'.join(_str)
+
+    def toDictionary(self):
+        return {
+            'name': self.name,
+            'data': self.data,
+            'label': self.label,
+            'location': self.location
+        }
+
+    def addData(self, data:list, loc=None):
+        if loc is None:
+            self.data = data
+        elif isinstance(self.data, dict):
+            self.data[loc] = data
+
+    """
+    A function returning the state data at a list of given locations.
+
+    Parameters
+    ----------
+    locs : list
+        List of locations.
+
+    Returns
+    -------
+    State
+        A copy of the State object with the data at the given locations.
+    """
+    def at(self, locs:Iterable):
+        _data = []
+
+        if isinstance(self.data, list):
+            _data = self.data
+        elif isinstance(self.data, dict):
+            if len(locs) == 1:
+                try:
+                    _data = self.data[locs[0]]
+                except KeyError:
+                    pass
+            else:
+                _data = {}
+                for _i in locs:
+                    try:
+                        _data[_i] = self.data[_i]
+                    except KeyError:
+                        pass
+                # data = dict([(i, self.data[i]) for i in locs])
+
+        if len(_data) == 0:
+            return None
+
+        return State(
+            self.name,
+            copy.deepcopy(_data),
+            self.label,
+            self.location
+            )
 
 
-#     def summary(self):
-#         print('')
-#         print('Effective properties of the SG')
-#         print('Structure model dimension: {0}'.format(self.smdim))
-
-#         ep = self.eff_props[self.smdim]
-#         if self.smdim == 3:
-#             pass
-#         elif self.smdim == 2:
-#             pass
-#         elif self.smdim == 1:
-#             stf = ep['stiffness']
-#             print('The Effective Stiffness Matrix')
-#             for row in stf['classical']:
-#                 print(row)
-#             if len(stf['refined']) > 0:
-#                 print('Generalized Timoshenko Stiffness')
-#                 for row in stf['refined']:
-#                     print(row)
 
 
-#     def get(self, name):
-#         r"""
+class StateCase():
+    """
+    """
+    def __init__(self, case:dict={}, states:dict={}):
+        self._case:dict = case
+        """
+        {
+            'tag1': value1,
+            'tag2': value2,
+            ...
+        }
+        """
+
+        self._states:dict = states
+        """
+        {
+            'name': State,
+            ...
+        }
+        """
+
+    @property
+    def case(self): return self._case
+    @property
+    def states(self): return self._states
+
+    def getState(self, name):
+        return self._states[name]
+
+    @property
+    def displacement(self):
+        try:
+            return self._states['displacement']
+        except KeyError:
+            return None
+
+    @property
+    def rotation(self):
+        try:
+            return self._states['rotation']
+        except KeyError:
+            return None
+
+    @property
+    def load(self):
+        try:
+            return self._states['load']
+        except KeyError:
+            return None
+
+    @property
+    def distributed_load(self):
+        try:
+            return self._states['distributed_load']
+        except KeyError:
+            return None
+
+    def __repr__(self):
+        lines = [
+            'state case',
+            'case:',
+        ]
+        for _k, _v in self._case.items():
+            lines.append(f'  {_k}: {_v}')
+        lines.append('states:')
+        for _k, _v in self._states.items():
+            lines.append(f'  {str(_v)}')
+
+        return '\n'.join(lines)
+
+    def toDictionary(self):
+        return {
+            'case': self._case,
+            'states': dict([(k, v.toDictionary()) for k, v in self._states.items()])
+        }
+
+    def addState(
+        self, name:str, state:State=None,
+        data=None, entity_id=None, loc_type=''
+        ):
+        if not name in self._states.keys():
+            self._states[name] = State(
+                name=name,
+                data={},
+                location=loc_type
+                )
+
+        if not state is None:
+            self._states[name] = state
+
+        elif not entity_id is None:
+            self._states[name].addData(
+                data=data, loc=entity_id
+            )
+            # self._states[name].data[entity_id] = value
+
+        else:
+            if isinstance(data, list):
+                self._states[name].data = data
+            elif isinstance(data, dict):
+                self._states[name].data.update(data)
+
+        # print(f'added state {self._states[name]}')
+
+    def at(self, locs:Iterable, state_name=None):
+        """
+        A function returning all states with data
+        at a list of given locations.
+
+        Parameters
+        ----------
+        locs : list
+            List of locations.
+
+        Returns
+        -------
+        StateCase
+            A copy of the StateCase object with the states at the given locations.
+        """
+        states = {}
+
+        _state_names = []
+        if state_name is None:
+            _state_names = self._states.keys()
+        elif isinstance(state_name, str):
+            _state_names = [state_name,]
+        elif isinstance(state_name, list):
+            _state_names = state_name
+
+        for _name in _state_names:
+            _state = self.states[_name].at(locs)
+            if not _state is None:
+                states[_name] = self.states[_name].at(locs)
+
+        if len(states) == 0:
+            return None
+
+        return StateCase(
+            case=self._case,
+            states=states
+            )
+
+
+# class StateFields():
+#     """Generalized strain and stress fields.
+#     """
+#     def __init__(self, node_displ={},
+#         intp_strain={}, intp_stress={}, intp_strain_m={}, intp_stress_m={},
+#         node_strain={}, node_stress={}, node_strain_m={}, node_stress_m={},
+#         elem_strain={}, elem_stress={}, elem_strain_m={}, elem_stress_m={},
+#         ):
+#         # Displacement
+#         self._node_displ = node_displ
+
+#         # State at integration points [coordinates, state]
+#         self._intp_strain = intp_strain
+#         self._intp_stress = intp_stress
+#         self._intp_strain_m = intp_strain_m
+#         self._intp_stress_m = intp_stress_m
+
+#         # State at nodes [nid, state]
+#         self._node_strain = node_strain
+#         self._node_stress = node_stress
+#         self._node_strain_m = node_strain_m
+#         self._node_stress_m = node_stress_m
+
+#         # Averaged state at elements [eid, state]
+#         self._elem_strain = elem_strain
+#         self._elem_stress = elem_stress
+#         self._elem_strain_m = elem_strain_m
+#         self._elem_stress_m = elem_stress_m
+
+#     def getDisplacementField(self):
+#         return self._node_displ
+
+#     def getStrainField(self, where:str='element', cs:str='structure'):
 #         """
-#         v = None
 
-#         if self.smdim == 1:
-#             return self.constitutive.get(name)
-
-#         if name == 'density':
-#             v = self.density
-
-#         elif name in ['xt', 'yt', 'zt', 'xc', 'yc', 'zc', 'r', 't', 's']:
-#             v = self.strength_constants[name]
-
-#         elif self.smdim == 3:
-#             if name in ['e', 'e1', 'e2', 'e3', 'g12', 'g13', 'g23', 'nu', 'nu12', 'nu13', 'nu23']:
-#                 # v = self.constitutive.get(name)
-#                 v = self.constants.get(name)
-
-#         return v
-    
-
-#     def getAll(self):
-#         """Get all beam properties.
-
-#         Returns
-#         -------
-#         dict:
-#             A Dictionary of all beam properties.
-
-#         Notes
-#         -----
-
-#         Names are
-
-#         - mu, mmoi1, mmoi2, mmoi3
-#         - ea, ga22, ga33, gj, ei22, ei33
-#         - mc2, mc3, tc2, tc3, sc2, sc3
-#         - msij, stfijc, cmpijc, stfijr, cmpijr
-
+#         Parameters
+#         ----------
+#         where
+#             Location of the field.
+#             - 'i': integration points
+#             - 'n': nodes
+#             - 'e': elements
+#         cs
+#             Reference coordinate system.
+#             - 's': structural model frame
+#             - 'm': material frame
 #         """
-#         return self.constitutive.getAll()
-#         # names = [
-#         #     'mu', 'mmoi1', 'mmoi2', 'mmoi3',
-#         #     'ea', 'ga22', 'ga33', 'gj', 'ei22', 'ei33',
-#         #     'mc2', 'mc3', 'tc2', 'tc3', 'sc2', 'sc3'
-#         # ]
-#         # for i in range(4):
-#         #     for j in range(4):
-#         #         names.append('stf{}{}c'.format(i+1, j+1))
-#         #         names.append('cmp{}{}c'.format(i+1, j+1))
-#         # for i in range(6):
-#         #     for j in range(6):
-#         #         names.append('ms{}{}'.format(i+1, j+1))
-#         #         names.append('stf{}{}r'.format(i+1, j+1))
-#         #         names.append('cmp{}{}r'.format(i+1, j+1))
+#         if where.startswith('i'):
+#             if cs.startswith('s'):
+#                 return self._intp_strain
+#             elif cs.startswith('m'):
+#                 return self._intp_strain_m
+#         elif where.startswith('n'):
+#             if cs.startswith('s'):
+#                 return self._node_strain
+#             elif cs.startswith('m'):
+#                 return self._node_strain_m
+#         elif where.startswith('e'):
+#             if cs.startswith('s'):
+#                 return self._elem_strain
+#             elif cs.startswith('m'):
+#                 return self._elem_strain_m
 
-#         # dict_prop = {}
-#         # for n in names:
-#         #     dict_prop[n] = self.get(n)
+#     def getStressField(self, where:str='element', cs:str='structure'):
+#         """
 
-#         # return dict_prop
-
-
-
-
-
+#         Parameters
+#         ----------
+#         where
+#             Location of the field.
+#             - 'i': integration points
+#             - 'n': nodes
+#             - 'e': elements
+#         cs
+#             Reference coordinate system.
+#             - 's': structural model frame
+#             - 'm': material frame
+#         """
+#         if where.startswith('i'):
+#             if cs.startswith('s'):
+#                 return self._intp_stress
+#             elif cs.startswith('m'):
+#                 return self._intp_stress_m
+#         elif where.startswith('n'):
+#             if cs.startswith('s'):
+#                 return self._node_stress
+#             elif cs.startswith('m'):
+#                 return self._node_stress_m
+#         elif where.startswith('e'):
+#             if cs.startswith('s'):
+#                 return self._elem_stress
+#             elif cs.startswith('m'):
+#                 return self._elem_stress_m
 
 
 
@@ -269,6 +466,22 @@ class SectionResponse():
         self.distr_load_d2 = [0, 0, 0, 0, 0, 0]
         self.distr_load_d3 = [0, 0, 0, 0, 0, 0]
 
+    def getDisplacement(self):
+        return self.displacement
+
+    def getDirectionCosine(self):
+        return self.directional_cosine
+
+    def getLoad(self):
+        return self.load
+
+    def getDistributedLoad(self):
+        return [
+            self.distr_load,
+            self.distr_load_d1,
+            self.distr_load_d2,
+            self.distr_load_d3
+        ]
 
     def strU(self, float_format='16.6e', delimiter=','):
         fstr = '{:'+float_format+'}'
@@ -334,6 +547,58 @@ class SectionResponse():
 
 
 
+class StructureResponseCase():
+    """
+    """
+    def __init__(self):
+        self._loc_tags = []
+        self._loc_values = []
+        self._cond_tags = []
+        self._cond_values = []
+        self._response:SectionResponse = None
+
+    def __repr__(self):
+        lines = []
+        lines.append('Location:')
+        for t, v in zip(self._loc_tags, self._loc_values):
+            lines.append(f'  {t} = {v}')
+        lines.append('Condition:')
+        for t, v in zip(self._cond_tags, self._cond_values):
+            lines.append(f'  {t} = {v}')
+        lines.append(str(self._response))
+        return '\n'.join(lines)
+
+    def getLocation(self, tag):
+        """
+        """
+        value = None
+        for _t, _v in zip(self._loc_tags, self._loc_values):
+            if tag == _t:
+                value = _v
+                break
+        return value
+
+    def getCondition(self, tag):
+        """
+        """
+        value = None
+        for _t, _v in zip(self._cond_tags, self._cond_values):
+            if tag == _t:
+                value = _v
+                break
+        return value
+
+    def getLocationOrCondition(self, tag):
+        """
+        """
+        value = self.getLocation(tag)
+        if value is None:
+            value = self.getCondition(tag)
+        return value
+
+
+
+
 class StructureResponseCases():
     """Cases of generalized stress/strain.
     """
@@ -346,35 +611,20 @@ class StructureResponseCases():
         """Response condition tags
         """
 
-        self.responses = []
+        self.responses:list[StructureResponseCase] = []
         """Responses
-
-        ..  code-block::
-
-            [
-                {
-                    'loc_tag1': loc_value1,
-                    'loc_tag2': loc_value2,
-                    ...,
-                    'condition_tag1': condition_value1,
-                    'condition_tag2': condition_value2,
-                    ...,
-                    'response': SectionResponse
-                },
-                {...},
-                ...
-            ]
         """
 
     def __repr__(self):
         lines = []
         for _resp in self.responses:
             lines.append('-'*20)
-            lines.append('Location:')
-            lines.append('\n'.join(['  {} = {}'.format(t, _resp[t]) for t in self.loc_tags]))
-            lines.append('Condition:')
-            lines.append('\n'.join(['  {} = {}'.format(t, _resp[t]) for t in self.cond_tags]))
-            lines.append(str(_resp['response']))
+            lines.append(str(_resp))
+            # lines.append('Location:')
+            # lines.append('\n'.join(['  {} = {}'.format(t, _resp[t]) for t in self.loc_tags]))
+            # lines.append('Condition:')
+            # lines.append('\n'.join(['  {} = {}'.format(t, _resp[t]) for t in self.cond_tags]))
+            # lines.append(str(_resp['response']))
         lines.append('-'*20)
         return '\n'.join(lines)
 
@@ -389,7 +639,8 @@ class StructureResponseCases():
             # resp = _resp
             found = True
             for _k, _v in kwargs.items():
-                if _v != _resp[_k]:
+                # if _v != _resp[_k]:
+                if _v != _resp.getLocationOrCondition(_k):
                     found = False
                     break
             if found:

@@ -8,30 +8,34 @@ test_cases = [
     {
         'fn_base': 'sg21eb_tri6_sc21',
         'file_format': 'sc',
-        'smdim': 1,
-        'submodel': 1
+        'model': 'BM1',
+        # 'smdim': 1,
+        # 'submodel': 1
     },
     {
         'fn_base': 'sg21eb_tri3_vabs40',
         'file_format': 'vabs',
-        'smdim': 1,
-        'submodel': 1
+        'model': 'BM1',
+        # 'smdim': 1,
+        # 'submodel': 1
     },
     {
         'fn_base': 'sg21t_tri6_sc21',
         'file_format': 'sc',
-        'smdim': 1,
-        'submodel': 2
+        'model': 'BM2',
+        # 'smdim': 1,
+        # 'submodel': 2
     },
     {
         'fn_base': 'sg21t_tri3_vabs40',
         'file_format': 'vabs',
-        'smdim': 1,
-        'submodel': 2
+        'model': 'BM2',
+        # 'smdim': 1,
+        # 'submodel': 2
     },
 ]
 
-analysis = 0
+analysis = 'h'
 
 for _case in test_cases:
 
@@ -39,6 +43,11 @@ for _case in test_cases:
 
     model = sgio.readOutput(
         fn, _case['file_format'],
-        analysis=analysis, smdim=_case['smdim'], submodel=_case['submodel'])
+        analysis=analysis, model_type=_case['model'],
+        # smdim=_case['smdim'], submodel=_case['submodel']
+    )
+
+    print('\n')
     print('='*32)
+    print(model.dim)
     print(model)

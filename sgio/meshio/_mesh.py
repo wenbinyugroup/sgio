@@ -379,6 +379,14 @@ class Mesh:
         )
 
     @property
+    def num_points(self):
+        return len(self.points)
+
+    @property
+    def num_cells(self):
+        return sum(len(c.data) for c in self.cells)
+
+    @property
     def cells_dict(self):
         """
         """

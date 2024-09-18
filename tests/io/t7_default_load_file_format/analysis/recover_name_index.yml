@@ -1,9 +1,0 @@
-case1:
-  node_id: 30
-  aoa: 2.0
-case2:
-  node_id: 30
-  aoa: 5.0
-case3:
-  node_id: 30
-  aoa: 8.0

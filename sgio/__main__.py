@@ -1,6 +1,6 @@
 import sys
 
 if __name__ == "__main__":
-    from .app import main
+    from .app import cli
 
-    main(*sys.argv[1:])
+    cli(*sys.argv)

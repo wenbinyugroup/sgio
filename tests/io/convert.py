@@ -21,4 +21,4 @@ file_format_out = sys.argv[i]
 
 
 sg = sgio.read(fn_in, file_format_in, format_version, smdim)
-sg.write(fn_out, file_format_out, mesh_only=True)
+sgio.write(sg, fn_out, file_format_out, mesh_only=True)

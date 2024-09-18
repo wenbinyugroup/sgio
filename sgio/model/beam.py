@@ -1,3 +1,7 @@
+from __future__ import annotations
+
+import math
+
 # from dataclasses import dataclass
 
 # @dataclass
@@ -46,7 +50,7 @@ class EulerBernoulliBeamModel:
         #: float: Principle mass moments of inertia i33
         self.i33 = None
         #: float: Principal inertial axes rotation angle in degree
-        self.phi_pia = None
+        self.phi_pia = 0
         #: float: mass-weighted radius of gyration
         self.rg = None
 
@@ -75,7 +79,7 @@ class EulerBernoulliBeamModel:
         #: float: Principal bending stiffness EI33
         self.ei33 = None
         #: float: Principle bending axes rotation angle in degree
-        self.phi_pba = None
+        self.phi_pba = 0
 
         # #: list of lists of floats:
         # #: Timoshenko stiffness matrix (1-extension; 2,3-shear, 4-twist; 5,6-bending)
@@ -94,6 +98,13 @@ class EulerBernoulliBeamModel:
         # self.ga33 = None
         # #: float: Principal shear axes rotation angle in degree
         # self.phi_psa = None
+
+    @property
+    def gyr1(self): return self.rg
+    @property
+    def gyr2(self): return math.sqrt(self.i22/self.mu)
+    @property
+    def gyr3(self): return math.sqrt(self.i33/self.mu)
 
 
     def __repr__(self):
@@ -291,6 +302,12 @@ class EulerBernoulliBeamModel:
                 return self.i22
             if name == 'mmoi3':
                 return self.i33
+            if name in ['gyr1', 'gyrx']:
+                return self.gyr1
+            if name in ['gyr2', 'gyry']:
+                return self.gyr2
+            if name in ['gyr3', 'gyrz']:
+                return self.gyr3
 
             # Stiffness
             if name.startswith('stf'):
@@ -414,7 +431,7 @@ class TimoshenkoBeamModel:
         #: float: Principle mass moments of inertia i33
         self.i33 = None
         #: float: Principal inertial axes rotation angle in degree
-        self.phi_pia = None
+        self.phi_pia = 0
         #: float: mass-weighted radius of gyration
         self.rg = None
 
@@ -450,7 +467,7 @@ class TimoshenkoBeamModel:
         #: float: Principal bending stiffness EI33
         self.ei33 = None
         #: float: Principle bending axes rotation angle in degree
-        self.phi_pba = None
+        self.phi_pba = 0
 
         #: float: Generalized shear center location in x2 direction
         self.xs2 = None
@@ -461,7 +478,14 @@ class TimoshenkoBeamModel:
         #: float: Principal shear stiffness GA33
         self.ga33 = None
         #: float: Principal shear axes rotation angle in degree
-        self.phi_psa = None
+        self.phi_psa = 0
+
+    @property
+    def gyr1(self): return self.rg
+    @property
+    def gyr2(self): return math.sqrt(self.i22/self.mu)
+    @property
+    def gyr3(self): return math.sqrt(self.i33/self.mu)
 
 
     def __repr__(self):
@@ -692,6 +716,12 @@ class TimoshenkoBeamModel:
                 return self.i22
             if name == 'mmoi3':
                 return self.i33
+            if name in ['gyr1', 'gyrx']:
+                return self.gyr1
+            if name in ['gyr2', 'gyry']:
+                return self.gyr2
+            if name in ['gyr3', 'gyrz']:
+                return self.gyr3
 
             # Stiffness
             if name.startswith('stf'):

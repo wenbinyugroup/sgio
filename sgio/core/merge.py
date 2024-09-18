@@ -1,7 +1,9 @@
 import copy
+
 import numpy as np
+from sgio.meshio._mesh import CellBlock, Mesh
+
 from .sg import StructureGene
-from sgio.meshio._mesh import Mesh, CellBlock
 
 
 def combineSG(sg1:StructureGene, sg2:StructureGene) -> StructureGene:
@@ -84,21 +86,15 @@ def combineSG(sg1:StructureGene, sg2:StructureGene) -> StructureGene:
     # print('\ncid_sg2 (updated)')
     # print(cid_sg2)
 
+
     # Combine elements
     # ----------------
     cells_c = copy.deepcopy(sg1.mesh.cells)
-    prop_id_c = copy.deepcopy(sg1.mesh.cell_data.get('property_id')).tolist()
-    # print(np.shape(prop_id_c))
-    prop_sys_c = copy.deepcopy(sg1.mesh.cell_data.get('property_ref_csys')).tolist()
+    # prop_id_c = copy.deepcopy(sg1.mesh.cell_data.get('property_id'))
+    prop_id_c = [_data.tolist() for _data in sg1.mesh.cell_data.get('property_id')]
+    # prop_sys_c = copy.deepcopy(sg1.mesh.cell_data.get('property_ref_csys'))
+    prop_sys_c = [_data.tolist() for _data in sg1.mesh.cell_data.get('property_ref_csys')]
 
-    # sg1_cell_types = [cb.type for cb in sg1.mesh.cells]
-    # sg2_cell_types = [cb.type for cb in sg2.mesh.cells]
-    # print(sg1_cell_types)
-    # print(sg2_cell_types)
-
-    # Copy the cells from SG1 to the combined dictionary
-    # for _i, _type in enumerate(sg1_cell_types):
-    #     cells_c[_type] = sg1.mesh.get_cells_type(_type)
 
     # Increase the element node id for SG2 and add them to the combined dictionary
     for _i, _cb2 in enumerate(sg2.mesh.cells):
@@ -106,7 +102,6 @@ def combineSG(sg1:StructureGene, sg2:StructureGene) -> StructureGene:
         _pi2 = sg2.mesh.cell_data.get('property_id')[_i]
         _ps2 = sg2.mesh.cell_data.get('property_ref_csys')[_i]
 
-        # _cells = sg2.mesh.get_cells_type(_type)
         _cb2.data += sg1_nnode  # Increment the nodal id
         _cbj = -1
 
@@ -121,22 +116,22 @@ def combineSG(sg1:StructureGene, sg2:StructureGene) -> StructureGene:
             prop_sys_c.append(_ps2)
         else:
             cells_c[_cbj].data = np.concatenate((cells_c[_cbj].data, _cb2.data))
-            # print(prop_id_c[_cbj].shape)
-            # print(_pi2.shape)
-            # _temp = np.concatenate((prop_id_c[_cbj], _pi2))
-            # print(_temp.shape)
             prop_id_c[_cbj].extend(_pi2)
-            # prop_sys_c[_cbj] = np.concatenate((prop_sys_c[_cbj], _ps2))
             prop_sys_c[_cbj].extend(_ps2)
 
     cell_data_c['property_id'] = np.asarray(prop_id_c)
     cell_data_c['property_ref_csys'] = np.asarray(prop_sys_c)
 
+
     # Create combined mesh
     # --------------------
     mesh_c = Mesh(
-        points_c, cells_c,
-        point_data=point_data_c, cell_data=cell_data_c)
+        points=points_c,
+        cells=cells_c,
+        point_data=point_data_c, 
+        cell_data=cell_data_c
+        )
+
 
     # Create combined SG
     # ==================
@@ -144,5 +139,6 @@ def combineSG(sg1:StructureGene, sg2:StructureGene) -> StructureGene:
     sg_c = StructureGene()
     sg_c.mesh = mesh_c
     sg_c.materials = material_c
+    sg_c.mocombos = mocombo_c
 
     return sg_c

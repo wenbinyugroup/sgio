@@ -162,9 +162,18 @@ def read_buffer(f, mesh_only:bool=True):
             )
             cells.append(CellBlock(cell_type, cells_data))
             cell_ids.append(ids)
+            # print(cell_ids)
             if sets:
                 cell_sets_element.update(sets)
                 cell_sets_element_order += list(sets.keys())
+
+            if not 'element_id' in cell_data.keys():
+                cell_data['element_id'] = []
+            _element_id = [0,]*len(ids)
+            for _eid, _cid in ids.items():
+                _element_id[_cid] = _eid
+            # print(_element_id)
+            cell_data['element_id'].append(_element_id)
 
         elif keyword == "NSET":
             params_map = get_param_map(line, required_keys=["NSET"])
@@ -275,7 +284,12 @@ def read_buffer(f, mesh_only:bool=True):
                 ext_input_file = cd / ext_input_file
 
             # Read contents from external input file into mesh object
-            out = read(ext_input_file)
+            try:
+                out = read(ext_input_file)
+            except FileNotFoundError:
+                print(f'warning: include file ({ext_input_file}) not found.')
+                line = f.readline()
+                continue
 
             # Merge contents of external file only if it is containing mesh data
             if len(out.points) > 0:
@@ -597,8 +611,9 @@ def _read_material(f):
 # ====================================================================
 
 def write(
-    filename, mesh: Mesh, float_fmt: str = ".16e", translate_cell_names: bool = True
-) -> None:
+    filename, mesh: Mesh, float_fmt: str = ".16e",
+    translate_cell_names: bool = True, **kwargs
+    ) -> None:
     with open_file(filename, "wt") as f:
         f.write("*HEADING\n")
         f.write("Abaqus DataFile Version 6.14\n")

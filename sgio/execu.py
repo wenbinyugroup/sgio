@@ -1,6 +1,5 @@
 # import os
 import traceback
-import logging
 # import subprocess as sbp
 
 # import sgio.utils.logger as mul
@@ -11,7 +10,9 @@ import sgio.utils.execu as sue
 # import msgpi.utils as utils
 
 
-logger = logging.getLogger(__name__)
+import sgio._global as GLOBAL
+import logging
+logger = logging.getLogger(GLOBAL.LOGGER_NAME)
 
 
 def run(

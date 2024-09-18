@@ -1,47 +1,53 @@
-sg:
-  - name: "layup"
-    type: "1dsg"
-    parameter:
-      _theta1: 45
-      _k11: 1
-      _k22: 2
-    design:
-      dim: 1
-      # layup:
-      symmetry: 2
-      layers:
-        - material: "m1"
-          ply_thickness: 0.0072
-          number_of_plies: 1
-          in-plane_orientation: 45
-        - material: "m1"
-          ply_thickness: 0.0072
-          number_of_plies: 2
-          in-plane_orientation: 0
-        # - material: "m1"
-        #   ply_thickness: 0.0072
-        #   number_of_plies: 1
-        #   in-plane_orientation: 90
-    model:
-      md2:
-        mesh_size: -1
-        k11: _k11
-        k22: _k22
-        element_type: 3
-        version: '2.1'
+layup:
+  name: "laminate_1"
+  # type: "1dsg"
+  # dim: 1
+  # parameter:
+  #   _theta1: 45
+  #   _k11: 1
+  #   _k22: 2
+  design:
+    symmetry: 2
+    layers:
+      - material: "m1"
+        ply_thickness: 0.0072
+        number_of_plies: 1
+        in-plane_orientation: 45
+      - material: "m1"
+        ply_thickness: 0.0072
+        number_of_plies: 0
+        in-plane_orientation: 0
+      # - material: "m1"
+      #   ply_thickness: 0.0072
+      #   number_of_plies: 1
+      #   in-plane_orientation: 90
+  model:
+    type: 'PL1'
+    mesh_size: -1
+    # k11: _k11
+    # k22: _k22
+    element_type: 3
+    # tool: 'swiftcomp'
+    version: '2.1'
+
+
+
+
+material:
   - name: "m1"
-    type: "material"
+    # type: "material"
+    # model:
+    #   type: 'SD1'
     property:
-      md3:
-        type: "engineering"
-        density: 0.0574
-        elasticity: [18.83e6, 1.317e6, 1.317e6, 7.672e5, 7.672e5, 5.065e5, 0.32, 0.32, 0.3]
-        strength: [2.999e5, 1.925e4, 1.925e4, 1.680e5, 2.898e4, 2.898e4, 1.688e4, 1.688e4, 1.206e4]
+      type: "engineering"
+      density: 0.0574
+      elasticity: [18.83e6, 1.317e6, 1.317e6, 7.672e5, 7.672e5, 5.065e5, 0.32, 0.32, 0.3]
+      strength: [2.999e5, 1.925e4, 1.925e4, 1.680e5, 2.898e4, 2.898e4, 1.688e4, 1.688e4, 1.206e4]
   - name: "l1"
-    type: "lamina"
+    # type: "lamina"
     property:
-      md3:
-        type: "engineering"
-        density: 0.0574
-        elasticity: [18.83e6, 1.317e6, 1.317e6, 7.672e5, 7.672e5, 5.065e5, 0.32, 0.32, 0.3]
-        strength: [2.999e5, 1.925e4, 1.925e4, 1.680e5, 2.898e4, 2.898e4, 1.688e4, 1.688e4, 1.206e4]
+      # md3:
+      type: "engineering"
+      density: 0.0574
+      elasticity: [18.83e6, 1.317e6, 1.317e6, 7.672e5, 7.672e5, 5.065e5, 0.32, 0.32, 0.3]
+      strength: [2.999e5, 1.925e4, 1.925e4, 1.680e5, 2.898e4, 2.898e4, 1.688e4, 1.688e4, 1.206e4]

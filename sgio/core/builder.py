@@ -1,49 +1,82 @@
 import copy
-import numpy as np
+import logging
 
-from .sg import StructureGene
+import numpy as np
+import sgio._global as GLOBAL
+import sgio.model as smdl
 # from sgio.model.solid import MaterialProperty
 # from sgio.model import CauchyContinuumModel
 from sgio.meshio._mesh import Mesh
-import sgio.model as smdl
 
-import logging
-logger = logging.getLogger(__name__)
+from .sg import StructureGene
+
+logger = logging.getLogger(GLOBAL.LOGGER_NAME)
 
 
 def buildSG1D(
-    name, layup, sgdb, smdim, mesh_size=0,
+    name, layup, sgdb, model, mesh_size=0,
     k11=0, k22=0, lame1=1, lame2=1,
     load_cases=[], analysis='', physics=0,
-    submodel=0, geo_correct=None, elem_type=5,
+    geo_correct=None, elem_type=5,
     sgdb_map = {},
     ):
-    """Preprocessor of 1D SG.
+    """Build a 1D structure gene
 
     Parameters
     ----------
-    layup : msgpi.materials.Layup
-        Layup design.
-    material_db : dict
-        Material database.
+    name : str
+        Name of the structure gene
+    layup : dict
+        Layup design
+    sgdb : dict
+        Material database
+    smdim : int
+        Spatial dimension (2 or 3)
+    mesh_size : float
+        Mesh size
+    k11 : float
+        Curvature in the 1-direction
+    k22 : float
+        Curvature in the 2-direction
+    lame1 : float
+        Lame constant 1
+    lame2 : float
+        Lame constant 2
+    load_cases : list
+        List of load cases
+    analysis : str
+        Analysis type
+    physics : int
+        Physics type
+    submodel : int
+        Submodel type
+    geo_correct : dict
+        Geometric correction
+    elem_type : int
+        Element type
+    sgdb_map : dict
+        Material database map
 
     Returns
     -------
-    msgpi.sg.sg.StructureGene
-        1D structure gene.
+    sg : StructureGene
+        Structure gene
     """
 
-    logger.info('building 1D SG: {}...'.format(name))
+    # print(f'building 1D SG: {name}...')
+    logger.debug(f'building 1D SG: {name}...')
 
     sg = StructureGene(name, 1)
-    # sg = mss.StructureGene(name, 1)
 
     # Design
     # ----------------------------------------------------------------
 
-    # Layup
-    nsym = layup.get('symmetry', 0)
-    layers = layup['layers']
+    # Generate complete layup data from design inputs
+    layers = generateLayerList(layup)
+    # nsym = layup.get('symmetry', 0)
+    # layers = layup['layers']
+    # print(f'layers: {layers}')
+    logger.debug(layers)
 
     # Record used materials and create material-orientation combinations
     mid = 0
@@ -51,21 +84,9 @@ def buildSG1D(
     tt = 0.0  # total thickness
     for layer in layers:
         _lyr_m_name = layer['material']
-        # print('_lm_name:', _lyr_m_name)
-
-        try:
-            _lyr_ipo = layer['in-plane_rotation']
-        except KeyError:
-            try:
-                _lyr_ipo = layer['in-plane_orientation']
-            except KeyError:
-                _lyr_ipo = 0
-
-        try:
-            _lyr_np = layer['number_of_plies']
-        except KeyError:
-            _lyr_np = 1
-            layer['number_of_plies'] = _lyr_np
+        _lyr_ply_thk = layer['ply_thickness']
+        _lyr_ipo = layer['in-plane_rotation']
+        _lyr_np = layer['number_of_plies']
 
         # print(_lyr_np)
 
@@ -74,7 +95,9 @@ def buildSG1D(
             _lyr_m_name = sgdb_map[_lyr_m_name]
         except KeyError:
             pass
-        logger.debug('checking material {}...'.format(_lyr_m_name))
+
+        logger.debug(f'checking material {_lyr_m_name}...')
+
         cid = sg.findComboByMaterialOrientation(_lyr_m_name, _lyr_ipo)
         if cid == 0:
             # Not found
@@ -84,44 +107,14 @@ def buildSG1D(
             if mid == 0:
                 # Not found
                 mid = len(sg.materials) + 1
-                # m = MaterialProperty(_lyr_m_name)
-                # m = smdl.MaterialSection(_lyr_m_name)
-                # m = mms.MaterialProperty(_lyr_m_name)
-                m = smdl.CauchyContinuumModel()
-                m.name = _lyr_m_name
-                # print(sgdb)
-                # mprop = sgdb[_lyr_m_name][0]['property']['md3']
-                # mprop = muc.getValueByKey(sgdb[_lyr_m_name][0], 'prop')
-                mprop = sgdb[_lyr_m_name][0]['property']['md3']
-                # print(f'mprop = {mprop}')
 
-                m.density = float(mprop['density'])
-                m.temperature = float(mprop.get('temperature', 0))
+                mprop = sgdb[f'{_lyr_m_name}']
+                # print(f'mprop: {mprop}')
 
-                # Constitutive model
-                # ------------------
-                _isotropy = mprop.get('type', 'isotropic')
-                m.set('isotropy', _isotropy)
-                # cm = smdl.Cauchy()
-
-                # Elastic property
-                # _c = mprop.get('stiffness', [])
-                # cm.setElasticProperty(mprop['elasticity'], _isotropy)
-                _elastic = mprop.get('elasticity')
-                # print(f'_elastic = {_elastic}')
-                m.set('elastic', _elastic, input_type=_isotropy)
-
-                # Thermal property
-                m.cte = list(map(float, mprop.get('cte', [])))
-                m.specific_heat = float(mprop.get('specific_heat', 0))
-
-                # m.constitutive = cm
-
-                # Strength properties
-                # -------------------
-                m.strength_constants = mprop.get('strength', None)
-                m.failure_criterion = mprop.get('failure_criterion', None)
-                m.char_len = float(mprop.get('char_len', 0))
+                if isinstance(mprop, smdl.CauchyContinuumModel):
+                    m = mprop
+                else:
+                    m = addMaterial(_lyr_m_name, mprop['property'])
 
                 sg.materials[mid] = m
 
@@ -129,41 +122,23 @@ def buildSG1D(
             sg.mocombos[cid] = [mid, _lyr_ipo]
             # sg.prop_elem[cid] = []
         layer['mocombo'] = cid
-        lyr_thk = layer['ply_thickness'] * _lyr_np
+        lyr_thk = _lyr_ply_thk * _lyr_np
         # print('lyr_thk =', lyr_thk)
         tt += lyr_thk
-
-    # Symmetry
-    for i in range(nsym):
-        # print('i =', i)
-        # printLayers(layers, 'layers')
-        layers[-1]['number_of_plies'] *= 2
-        temp = layers[:-1]
-        # printLayers(temp, 'temp')
-        for layer in temp[::-1]:
-            layers.append(copy.deepcopy(layer))
-        # printLayers(layers, 'layers')
-        tt = tt * 2
-
-    # print('tt =', tt)
-    # printLayers(layers, 'layers')
-    logger.debug('full layers')
-    for layer in layers:
-        logger.debug(layer)
 
 
     # Global model settings
     # ----------------------------------------------------------------
-    sg.smdim = smdim
-    sg.model = submodel  # model (0: classical, 1: shear refined)
+    sg.smdim = smdl.getModelDim(model)
+    sg.model = int(model[2:]) - 1  # model (0: classical, 1: shear refined)
     sg.trans_element = 1  # Always include element orientation data
     # sg.geo_correct = geo_correct
     sg.initial_curvature = [k11, k22]
     sg.lame_params = [lame1, lame2]
 
-    if smdim == 2:
+    if sg.smdim == 2:
         sg.omega = 1
-    elif smdim == 3:
+    elif sg.smdim == 3:
         sg.omega = tt
 
 
@@ -322,123 +297,113 @@ def buildSG1D(
 
 
 
-# TODO
-# def generateLayerList(layup_design):
-#     """Generate the list of layers from the layup design input
-#     """
+def generateLayerList(layup_design):
+    """Generate the list of layers from the layup design input
+    """
 
-#     print('layup_design')
-#     print(layup_design)
+    logger.debug('generating layer list...')
 
-#     layers = []
+    logger.debug('layup_design')
+    logger.debug(layup_design)
 
-#     # Layup
-#     nsym = layup_design.get('symmetry', 0)
-#     # layers = layup_design['layers']
+    layers = []
 
-#     # Record used materials and create material-orientation combinations
-#     mid = 0
-#     cid = 0
-#     tt = 0.0  # total thickness
-#     for layer in layup_design['layers']:
-#         _lyr_m_name = layer['material']
-#         # print('_lm_name:', _lyr_m_name)
+    nsym = layup_design.get('symmetry', 0)
 
-#         try:
-#             _lyr_ipo = layer['in-plane_rotation']
-#         except KeyError:
-#             try:
-#                 _lyr_ipo = layer['in-plane_orientation']
-#             except KeyError:
-#                 _lyr_ipo = 0
+    # Record used materials and create material-orientation combinations
+    # tt = 0.0  # total thickness
+    for layer_design in layup_design['layers']:
+        layer = {}
 
-#         try:
-#             _lyr_np = layer['number_of_plies']
-#         except KeyError:
-#             _lyr_np = 1
-#             layer['number_of_plies'] = _lyr_np
+        _lyr_m_name = layer_design['material']
+        layer['material'] = _lyr_m_name
 
-#         # print(_lyr_np)
+        _lyr_ply_thk = layer_design['ply_thickness']
+        layer['ply_thickness'] = _lyr_ply_thk
 
-#         # Check used material-orientation combination first
-#         try:
-#             _lyr_m_name = sgdb_map[_lyr_m_name]
-#         except KeyError:
-#             pass
-#         logger.debug('checking material {}...'.format(_lyr_m_name))
-#         cid = sg.findComboByMaterialOrientation(_lyr_m_name, _lyr_ipo)
-#         if cid == 0:
-#             # Not found
-#             # Check used material
-#             mid = sg.findMaterialByName(_lyr_m_name)
+        try:
+            _lyr_ipo = layer_design['in-plane_rotation']
+        except KeyError:
+            try:
+                _lyr_ipo = layer_design['in-plane_orientation']
+            except KeyError:
+                _lyr_ipo = 0
+        layer['in-plane_rotation'] = _lyr_ipo
 
-#             if mid == 0:
-#                 # Not found
-#                 mid = len(sg.materials) + 1
-#                 m = MaterialProperty(_lyr_m_name)
-#                 # m = mms.MaterialProperty(_lyr_m_name)
-#                 # print(sgdb)
-#                 # mprop = sgdb[_lyr_m_name][0]['property']['md3']
-#                 # mprop = muc.getValueByKey(sgdb[_lyr_m_name][0], 'prop')
-#                 mprop = sgdb[_lyr_m_name][0]['property']['md3']
-#                 # mprop = mprop['md3']
+        try:
+            _lyr_np = layer_design['number_of_plies']
+        except KeyError:
+            _lyr_np = 1
+        layer['number_of_plies'] = _lyr_np
 
-#                 m.density = float(mprop['density'])
+        # print(_lyr_np)
 
-#                 try:
-#                     m.stff = mprop['stiffness']
-#                 except KeyError:
-#                     pass
+        # layer['mocombo'] = cid
+        # lyr_thk = layer['ply_thickness'] * _lyr_np
+        # print('lyr_thk =', lyr_thk)
+        # tt += lyr_thk
+        if _lyr_np > 0:
+            layers.append(layer)
 
-#                 # Add elastic properties
-#                 m.setElasticProperty(mprop['elasticity'], mprop['type'])
+    # Symmetry
+    for i in range(nsym):
+        # print('i =', i)
+        # printLayers(layers, 'layers')
+        layers[-1]['number_of_plies'] *= 2
+        temp = layers[:-1]
+        # printLayers(temp, 'temp')
+        for layer in temp[::-1]:
+            layers.append(copy.deepcopy(layer))
+        # printLayers(layers, 'layers')
+        # tt = tt * 2
 
-#                 # Add strength properties (if any)
-#                 try:
-#                     m.strength_constants = mprop['strength']
-#                 except KeyError:
-#                     pass
+    return layers
 
-#                 try:
-#                     m.failure_criterion = mprop['failure_criterion']
-#                 except KeyError:
-#                     pass
 
-#                 try:
-#                     m.char_len = float(mprop['char_len'])
-#                 except KeyError:
-#                     pass
 
-#                 try:
-#                     m.cte = list(map(float, mprop['cte']))
-#                 except KeyError:
-#                     pass
 
-#                 try:
-#                     m.specific_heat = float(mprop['specific_heat'])
-#                 except KeyError:
-#                     pass
 
-#                 sg.materials[mid] = m
 
-#             cid = len(sg.mocombos) + 1
-#             sg.mocombos[cid] = [mid, _lyr_ipo]
-#             sg.prop_elem[cid] = []
-#         layer['mocombo'] = cid
-#         lyr_thk = layer['ply_thickness'] * _lyr_np
-#         # print('lyr_thk =', lyr_thk)
-#         tt += lyr_thk
 
-#     # Symmetry
-#     for i in range(nsym):
-#         # print('i =', i)
-#         # printLayers(layers, 'layers')
-#         layers[-1]['number_of_plies'] *= 2
-#         temp = layers[:-1]
-#         # printLayers(temp, 'temp')
-#         for layer in temp[::-1]:
-#             layers.append(copy.deepcopy(layer))
-#         # printLayers(layers, 'layers')
-#         tt = tt * 2
 
-#     return layers
+
+def addMaterial(mname, mprop):
+    """
+    """
+
+    m = smdl.CauchyContinuumModel()
+    m.name = mname
+
+    # mprop = mprop['property']
+
+    # m.density = float(mprop['density'])
+    _density = float(mprop['density'])
+    m.set('density', _density)
+    m.temperature = float(mprop.get('temperature', 0))
+
+    # Constitutive model
+    # ------------------
+    _isotropy = mprop.get('type', 'isotropic')
+    m.set('isotropy', _isotropy)
+
+    # Elastic property
+    _elastic = mprop.get('elasticity')
+    m.set('elastic', _elastic, input_type=_isotropy)
+
+    # Thermal property
+    _cte = list(map(float, mprop.get('cte', [])))
+    m.set('cte', _cte)
+    _specific_heat = float(mprop.get('specific_heat', 0))
+    m.set('specific_heat', _specific_heat)
+
+    # Strength properties
+    # -------------------
+    m.failure_criterion = mprop.get('failure_criterion', 0)
+
+    _strength_constants = list(map(float, mprop.get('strength', [])))
+    # print('strength_constants:', _strength_constants)
+    m.set('strength_constants', _strength_constants)
+    _char_len = float(mprop.get('char_len', 0))
+    m.set('char_len', _char_len)
+
+    return m

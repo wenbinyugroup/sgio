@@ -64,7 +64,8 @@ def read_buffer(f, sgdim:int, nnode:int, nelem:int, **kwargs):
     # for _cell_type, _cell_points in cells_dict.items():
     #     cells.append(CellBlock(_cell_type, _cell_points))
     #     cell_type_to_id[_cell_type] = len(cells) - 1
-    cell_data['element_id'] = np.asarray(elem_ids)
+    # print(elem_ids)
+    cell_data['element_id'] = elem_ids
 
     # Read element property id and csys rotation (theta_1)
     # _cd = []
@@ -75,8 +76,8 @@ def read_buffer(f, sgdim:int, nnode:int, nelem:int, **kwargs):
 
     # Read local coordinate system for sectional properties
     cell_prop_id, cell_csys = _read_property_id_ref_csys(f, nelem, cells, elem_id_to_cell_id)
-    cell_data['property_id'] = np.asarray(cell_prop_id)
-    cell_data['property_ref_csys'] = np.asarray(cell_csys)
+    cell_data['property_id'] = cell_prop_id
+    cell_data['property_ref_csys'] = cell_csys
 
     return Mesh(
         points,
@@ -102,7 +103,8 @@ def _read_elements(f, nelem:int, point_ids):
 
     counter = 0
     while counter < nelem:
-        line = f.readline().strip()
+        line = f.readline()
+        line = line.split('#')[0].strip()
         if line == "": continue
 
         line = line.split()
@@ -160,7 +162,8 @@ def _read_property_id_ref_csys(file, nelem, cells, elem_id_to_cell_id):
 
     counter = 0
     while counter < nelem:
-        line = file.readline().strip()
+        line = file.readline()
+        line = line.split('#')[0].strip()
         if line == "": continue
 
         line = line.split()
