@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "sgio"
+version = "0.1.0"
+description = ""
+authors = ["Su Tian"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+rich = "^13.8.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
