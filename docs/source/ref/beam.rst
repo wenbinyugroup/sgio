@@ -1,7 +1,7 @@
 Beam
 ============
 
-.. currentmodule:: sgio.model.beam
+.. currentmodule:: model.beam
 
 .. highlight:: python
 

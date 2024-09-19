@@ -1,7 +1,7 @@
 General
 ===============
 
-.. currentmodule:: sgio.model.general
+.. currentmodule:: model.general
 
 .. highlight:: python
 
@@ -9,7 +9,23 @@ General
 
     sgio.model.general.Model
 
-
 ..  autoclass:: Model
     :members:
     :inherited-members:
+
+
+::
+
+    sgio.model.general.State
+
+..  autoclass:: State
+    :members:
+
+
+::
+
+    sgio.model.general.StateCase
+
+..  autoclass:: StateCase
+    :members:
+

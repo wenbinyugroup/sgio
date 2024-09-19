@@ -12,21 +12,12 @@
 
 ..  toctree::
     :maxdepth: 2
-    :caption: Guide:
+    :caption: Contents
 
-    guide/io
-    guide/sg
-    guide/model/index
-    .. guide/convert
+    guide/index
+    examples/index
+    ref/index
 
-
-..  toctree::
-    :maxdepth: 1
-    :caption: Reference:
-
-    ref/sg
-    ref/model
-    ref/io
 
 .. Indices and tables
 .. ==================

@@ -1,7 +1,7 @@
 Solid
 ===============
 
-.. currentmodule:: sgio.model.solid
+.. currentmodule:: model.solid
 
 .. highlight:: python
 

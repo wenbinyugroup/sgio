@@ -2,7 +2,7 @@ I/O Functions
 ==============
 
 
-.. currentmodule:: sgio
+.. currentmodule:: iofunc
 
 .. highlight:: python
 
@@ -12,7 +12,7 @@ Reading functions
 ..  autosummary::
     :toctree: _temp
 
-    sgio.read
-    sgio.readOutput
-    sgio.write
+    read
+    readOutput
+    write
 

@@ -1,7 +1,7 @@
 Structure Gene
 ================
 
-.. currentmodule:: sgio.core.sg
+.. currentmodule:: core.sg
 
 .. highlight:: python
 
