@@ -1,0 +1,9 @@
+sphinx
+sphinx-comments
+sphinx-sitemap
+sphinx-design
+sphinx-gallery
+pydata-sphinx-theme
+sphinx-prompt
+sphinx-copybutton
+myst-parser
