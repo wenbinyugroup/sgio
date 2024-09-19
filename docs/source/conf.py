@@ -12,9 +12,9 @@
 #
 import os
 import sys
-sys.path.insert(0, os.path.abspath('..'))
-sys.path.insert(0, os.path.abspath(os.path.join('..', '..')))
-sys.path.insert(0, os.path.abspath(os.path.join('..', '..', '..')))
+sys.path.insert(0, os.path.abspath('.'))
+# sys.path.insert(0, os.path.abspath(os.path.join('..', '..')))
+sys.path.insert(0, os.path.abspath(os.path.join('..', '..', 'sgio')))
 print(f'sys.path: {sys.path}')
 
 # -- Project information -----------------------------------------------------
@@ -62,6 +62,22 @@ html_theme = 'pydata_sphinx_theme'
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
+
+html_theme_options = {
+    'logo': {
+        'text': 'sgio',
+    },
+    'show_nav_level': 2,
+    # "path_to_docs": "doc/source",
+    # 'use_edit_page_button': True,
+    # "use_repository_button": True,
+    # "use_issues_button": True,
+    # 'collapse_navigation': True,
+    'navigation_depth': 4,
+    "announcement": "Documentation is under construction.",
+}
+
+html_logo = '_static/logo.png'
 
 # -- Extension configuration -------------------------------------------------
 autodoc_member_order = 'groupwise'

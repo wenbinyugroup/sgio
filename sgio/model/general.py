@@ -79,12 +79,16 @@ class State():
         self.data:list|dict = data
         # print(f'self.data = {self.data}')
         """
-        point data: []
-        field data: {
-            1: [],
-            2: [],
-            ...
-        }
+        For point data::
+            []
+
+        For field data::
+            {
+                1: [],
+                2: [],
+                ...
+            }
+
         """
 
     # @property

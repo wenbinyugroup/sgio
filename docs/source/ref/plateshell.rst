@@ -1,7 +1,7 @@
 Plate and Shell
 ================
 
-.. currentmodule:: sgio.model.shell
+.. currentmodule:: model.shell
 
 .. highlight:: python
 
