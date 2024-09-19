@@ -26,7 +26,7 @@ jobs:
         run: |
           pwd
           ls -al
-          cd sgio/docs
+          cd docs
           make html
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
