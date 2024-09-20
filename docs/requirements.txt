@@ -1,3 +1,5 @@
+rich
+numpy
 sphinx
 sphinx-comments
 sphinx-sitemap
