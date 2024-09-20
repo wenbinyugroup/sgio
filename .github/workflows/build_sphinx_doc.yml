@@ -30,6 +30,7 @@ jobs:
           pwd
           ls -al
           cd docs
+          make clean
           make html
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
