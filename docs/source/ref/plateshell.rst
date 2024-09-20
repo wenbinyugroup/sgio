@@ -1,28 +1,34 @@
 Plate and Shell
 ================
 
-.. currentmodule:: model.shell
+.. .. currentmodule:: model.shell
 
-.. highlight:: python
-
-
+.. .. highlight:: python
 
 
-::
-
-    sgio.model.shell.KirchhoffLovePlateShellModel
 
 
-..  autoclass:: KirchhoffLovePlateShellModel
+.. ::
+
+..     sgio.model.shell.KirchhoffLovePlateShellModel
+
+
+.. ..  autoclass:: KirchhoffLovePlateShellModel
+..     :members:
+
+
+
+
+.. ::
+
+..     sgio.model.shell.ReissnerMindlinPlateShellModel
+
+
+.. ..  autoclass:: ReissnerMindlinPlateShellModel
+..     :members:
+
+
+..  automodule:: sgio.model.shell
     :members:
-
-
-
-
-::
-
-    sgio.model.shell.ReissnerMindlinPlateShellModel
-
-
-..  autoclass:: ReissnerMindlinPlateShellModel
-    :members:
+    :undoc-members:
+    :show-inheritance:

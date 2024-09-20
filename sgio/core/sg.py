@@ -44,22 +44,24 @@ class SGMacroModel():
 
 
 class StructureGene():
-    r"""A finite element level structure gene model in the theory of MSG.
+    """A finite element level structure gene model in the theory of MSG.
 
     Parameters
     ----------
-    name
+    name : str, optional
         Name of the SG.
-    sgdim
+    sgdim : int, optional
         Dimension of the SG.
-    smdim
+    smdim : int, optional
         Dimension of the material/structural model.
         Beam (1), plate/shell (2), 3D continuum (3).
-    spdim
+    spdim : int, optional
         Dimension of the space.
     """
 
-    def __init__(self, name:str='', sgdim:int=None, smdim:int=None, spdim:int=None):
+    def __init__(
+        self, name='', sgdim=None, smdim=None, spdim=None
+        ):
         #: str: Name of the SG.
         self.name = name
         #: int: Dimension of the SG.

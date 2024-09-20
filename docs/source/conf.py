@@ -12,9 +12,10 @@
 #
 import os
 import sys
-sys.path.insert(0, os.path.abspath('.'))
-# sys.path.insert(0, os.path.abspath(os.path.join('..', '..')))
-sys.path.insert(0, os.path.abspath(os.path.join('..', '..', 'sgio')))
+sys.path.append(os.path.abspath(os.path.join('..', '..', 'sgio')))
+sys.path.append(os.path.abspath(os.path.join('..', '..')))
+sys.path.append(os.path.abspath('.'))
+sys.path.append('.')
 print(f'sys.path: {sys.path}')
 
 # -- Project information -----------------------------------------------------
@@ -37,7 +38,8 @@ extensions = [
     'sphinx.ext.autosummary',
     'sphinx.ext.mathjax',
     'sphinx.ext.napoleon',
-    'myst_parser'
+    'myst_parser',
+    "sphinx.ext.githubpages",
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -77,7 +79,7 @@ html_theme_options = {
     "announcement": "Documentation is under construction.",
 }
 
-html_logo = '_static/logo.png'
+# html_logo = '_static/logo.png'
 
 # -- Extension configuration -------------------------------------------------
 autodoc_member_order = 'groupwise'
