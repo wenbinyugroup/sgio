@@ -1,22 +1,28 @@
 Solid
 ===============
 
-.. currentmodule:: model.solid
+.. .. currentmodule:: model.solid
 
-.. highlight:: python
+.. .. highlight:: python
+
+.. .. ::
+
+.. ..     sgio.model.solid.CauchyContinuumProperty
+
+
+.. .. ..  autoclass:: CauchyContinuumProperty
+.. ..     :members:
 
 .. ::
 
-..     sgio.model.solid.CauchyContinuumProperty
+..     sgio.model.solid.CauchyContinuumModel
 
 
-.. ..  autoclass:: CauchyContinuumProperty
+.. ..  autoclass:: CauchyContinuumModel
 ..     :members:
 
-::
 
-    sgio.model.solid.CauchyContinuumModel
-
-
-..  autoclass:: CauchyContinuumModel
+..  automodule:: sgio.model.solid
     :members:
+    :undoc-members:
+    :show-inheritance:

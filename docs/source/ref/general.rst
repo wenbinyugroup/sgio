@@ -1,31 +1,37 @@
 General
 ===============
 
-.. currentmodule:: model.general
+.. .. currentmodule:: model.general
 
-.. highlight:: python
+.. .. highlight:: python
 
-::
+.. ::
 
-    sgio.model.general.Model
+..     sgio.model.general.Model
 
-..  autoclass:: Model
+.. ..  autoclass:: Model
+..     :members:
+..     :inherited-members:
+
+
+.. ::
+
+..     sgio.model.general.State
+
+.. ..  autoclass:: State
+..     :members:
+
+
+.. ::
+
+..     sgio.model.general.StateCase
+
+.. ..  autoclass:: StateCase
+..     :members:
+
+
+..  automodule:: sgio.model.general
     :members:
-    :inherited-members:
-
-
-::
-
-    sgio.model.general.State
-
-..  autoclass:: State
-    :members:
-
-
-::
-
-    sgio.model.general.StateCase
-
-..  autoclass:: StateCase
-    :members:
+    :undoc-members:
+    :show-inheritance:
 

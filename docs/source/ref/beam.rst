@@ -1,30 +1,36 @@
 Beam
 ============
 
-.. currentmodule:: model.beam
+.. .. currentmodule:: model.beam
 
-.. highlight:: python
-
-
-
-::
-
-    sgio.model.beam.EulerBernoulliBeamModel
+.. .. highlight:: python
 
 
-..  autoclass:: EulerBernoulliBeamModel
+
+.. ::
+
+..     sgio.model.beam.EulerBernoulliBeamModel
+
+
+.. ..  autoclass:: EulerBernoulliBeamModel
+..     :members:
+
+
+
+
+
+
+.. ::
+
+..     sgio.model.beam.TimoshenkoBeamModel
+
+
+.. ..  autoclass:: TimoshenkoBeamModel
+..     :members:
+
+
+
+..  automodule:: sgio.model.beam
     :members:
-
-
-
-
-
-
-::
-
-    sgio.model.beam.TimoshenkoBeamModel
-
-
-..  autoclass:: TimoshenkoBeamModel
-    :members:
-
+    :undoc-members:
+    :show-inheritance:
