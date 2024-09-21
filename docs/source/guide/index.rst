@@ -6,8 +6,8 @@ Guide
     :maxdepth: 2
     :caption: Contents
 
-    io
     sg
+    io
     model/index
 
 ..    guide/convert

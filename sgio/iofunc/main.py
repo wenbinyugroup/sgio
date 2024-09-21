@@ -19,26 +19,26 @@ from sgio.core.sg import StructureGene
 
 
 def read(
-    fn:str, file_format:str, format_version:str='',
-    sgdim:int=3, model:int|str=3, sg:StructureGene=None,
-    mesh_only:bool=False):
+    fn, file_format, format_version='',
+    sgdim=3, model=3, sg=None,
+    mesh_only=False, **kwargs):
     """Read SG data file.
 
     Parameters
     ----------
-    fn
+    fn : str
         Name of the SG data file
-    file_format
+    file_format : str
         Format of the SG data file
-    format_version
+    format_version : str
         Version of the format
-    sgdim
+    sgdim : int
         Dimension of the geometry
-    smdim
+    smdim : int
         Dimension of the macro structural model
-    sg
+    sg : StructureGene
         Structure gene object
-    mesh_only
+    mesh_only : bool
         If read meshing data only
 
     Returns
@@ -69,25 +69,159 @@ def read(
 
 
 
+def readOutputModel(
+    fn, file_format, model_type='', sg=None, **kwargs
+    ):
+    """Read SG homogenization output file.
+
+    Parameters
+    ----------
+    fn : str
+        Name of the SG analysis output file
+    file_format : str
+        Format of the SG data file
+    model_type : str
+        Type of the macro structural model.
+        Choose one from 'SD1', 'PL1', 'PL2', 'BM1', 'BM2'.
+    sg : :obj:`StructureGene`
+        Structure gene object
+
+    Returns
+    -------
+    :obj:`sgmodel.Model`
+        Consitutive model
+    """
+
+    model = None
+
+    with open(fn, 'r') as file:
+        if file_format.lower().startswith('s'):
+            model = _swiftcomp.readOutputBuffer(
+                file, analysis='h', model_type=model_type,
+                **kwargs)
+
+        elif file_format.lower().startswith('v'):
+            model = _vabs.readOutputBuffer(
+                file, analysis='h', sg=sg, model_type=model_type,
+                **kwargs)
+
+    return model
+
+
+
+
+def readOutputState(
+    fn, file_format, analysis, model_type='',
+    sg=None, **kwargs
+    ):
+    """Read SG dehomogenization or failure analysis output.
+
+    Parameters
+    ----------
+    fn : str
+        Name of the SG analysis output file
+    file_format : str
+        Format of the SG data file
+    analysis : str
+        Indicator of SG analysis.
+        Choose one from 'd', 'l', 'fi'.
+    model_type : str
+        Type of the macro structural model.
+        Choose one from 'SD1', 'PL1', 'PL2', 'BM1', 'BM2'.
+    sg : :obj:`StructureGene`
+        Structure gene object
+    """
+
+    state_case = sgmodel.StateCase()
+
+    if analysis == 'fi':
+        if file_format.lower().startswith('s'):
+            _fn = f'{fn}.fi'
+            with open(_fn, 'r') as file:
+                return _swiftcomp.readOutputBuffer(
+                    file, analysis=analysis, model_type=model_type,
+                    **kwargs)
+
+        elif file_format.lower().startswith('v'):
+            _fn = f'{fn}.fi'
+            with open(_fn, 'r') as file:
+                _fi, _sr, _eids_sr_min = _vabs.readOutputBuffer(file, analysis, sg, **kwargs)
+            _state = sgmodel.State(
+                name='fi', data=_fi, label=['fi'], location='element')
+            state_case.addState(name='fi', state=_state)
+            _state = sgmodel.State(
+                name='sr', data=_sr, label=['sr'], location='element')
+            state_case.addState(name='sr', state=_state)
+            _sr_min = {}
+            for _eid in _eids_sr_min:
+                _sr_min[_eid] = _sr[_eid]
+            _state = sgmodel.State(
+                name='sr_min', data=_sr_min, label=['sr_min'], location='element')
+            state_case.addState(name='sr_min', state=_state)
+
+    elif analysis == 'd' or analysis == 'l':
+        if file_format.lower().startswith('s'):
+            pass
+
+        elif file_format.lower().startswith('v'):
+            # state_case = sgmodel.StateCase()
+
+            # Displacement
+            _u = None
+            _fn = f'{fn}.U'
+            with open(_fn, 'r') as file:
+                _u = _vabs.readOutputBuffer(file, analysis, ext='u', **kwargs)
+            _state = sgmodel.State(
+                name='u', data=_u, label=['u1', 'u2', 'u3'], location='node')
+            state_case.addState(name='u', state=_state)
+
+            # Element strain and stress
+            _ee, _es, _eem, _esm = None, None, None, None
+            _fn = f'{fn}.ELE'
+            with open(_fn, 'r') as file:
+                _ee, _es, _eem, _esm = _vabs.readOutputBuffer(file, analysis, ext='ele', **kwargs)
+            _state = sgmodel.State(
+                name='ee', data=_ee, label=['e11', 'e12', 'e13', 'e22', 'e23', 'e33'], location='element')
+            state_case.addState(name='ee', state=_state)
+            _state = sgmodel.State(
+                name='es', data=_es, label=['s11', 's12', 's13', 's22', 's23', 's33'], location='element')
+            state_case.addState(name='es', state=_state)
+            _state = sgmodel.State(
+                name='eem', data=_eem, label=['em11', 'em12', 'em13', 'em22', 'em23', 'em33'], location='element')
+            state_case.addState(name='eem', state=_state)
+            _state = sgmodel.State(
+                name='esm', data=_esm, label=['sm11', 'sm12', 'sm13', 'sm22', 'sm23', 'sm33'], location='element')
+            state_case.addState(name='esm', state=_state)
+
+            # state_field = sgmodel.StateField(
+            #     node_displ=_u,
+            #     elem_strain=_ee, elem_stress=_es, elem_strain_m=_eem, elem_stress_m=_esm
+            # )
+
+    return state_case
+
+
+
+
 def readOutput(
-    fn:str, file_format:str, analysis=0, model_type='',
-    sg:StructureGene=None, **kwargs
+    fn, file_format, analysis='h', model_type='',
+    sg=None, **kwargs
     ):
     """Read SG analysis output file.
 
     Parameters
     ----------
-    fn
+    fn : str
         Name of the SG analysis output file
-    file_format
+    file_format : str
         Format of the SG data file
-    analysis
+    analysis : str
         Indicator of SG analysis.
         Choose one from 'h', 'd', 'l', 'fi'.
-    model_type
+    model_type : str
         Type of the macro structural model.
         Choose one from 'SD1', 'PL1', 'PL2', 'BM1', 'BM2'.
-    sg
+    sg : :obj:`StructureGene`
         Structure gene object
 
 

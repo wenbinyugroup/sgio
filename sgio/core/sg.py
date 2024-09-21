@@ -148,19 +148,6 @@ class StructureGene():
         #: int: Number of slave nodes
         self.num_slavenodes = 0
 
-        #: dict of {int, int}: Material/Combination id for each element.
-        #:
-        #: `{eid: mid/cid, ...}`
-        # self.elem_prop = {}
-        #: dict of {int, int}: Element id for each material/combination.
-        #:
-        #: `{mid/cid: [eid, ...], ...}`
-        # self.prop_elem = {}
-
-        #: dict of {int, list of lists of floats}: Element local orientations.
-        #:
-        #: `{eid: [[a1, a2, a3], [b1, b2, b3], [c1, c2, c3]], ...}`
-        # self.elem_orient = {}
 
         #: float: Omega (see SwiftComp manual).
         self.omega = 1
@@ -169,46 +156,6 @@ class StructureGene():
         self.itf_nodes = []
         self.node_elements = []
 
-
-        # # Global response
-        # # ------------------------------------------------------------
-
-        # #: list of floats: Global displacements.
-        # #:
-        # #: `[u1, u2, u3]`
-        # self.global_displacements = []
-        # #: list of lists floats: Global rotation matrix.
-        # #:
-        # #: `[[C11, C12, C13], [C21, C22, C23], [C31, C32, C33]]`
-        # self.global_rotations = []
-        # #: int: Global load type.
-        # #:
-        # #: * 0 - generalized stresses
-        # #: * 1 - generalized strains
-        # self.global_loads_type = 0
-
-        # self.global_loads = []
-        # """list of list of floats: Global loads
-
-        # ============================ ========================================== ============================================
-        # Model                        Generalized stresses                       Generalized strains
-        # ============================ ========================================== ============================================
-        # Continuum                    `[s11, s22, s33, s23, s13, s12]`           `[e11, e22, e33, e23, e13, e12]`
-        # Kirchhoff-Love plate/shell   `[N11, N22, N12, M11, M22, M12]`           `[e11, e22, 2e12, k11, k22, 2k12]`
-        # Reissner-Mindlin plate/shell `[N11, N22, N12, M11, M22, M12, N13, N23]` `[e11, e22, 2e12, k11, k22, 2k12, g13, g23]`
-        # Euler-Bernoulli beam         `[F1, M1, M2, M3]`                         `[e11, k11, k12, k13]`
-        # Timoshenko beam              `[F1, F2, F3, M1, M2, M3]`                 `[e11, g12, g13, k11, k12, k13]`
-        # ============================ ========================================== ============================================
-        # """
-
-        # #: list of lists of floats:
-        # #: Distributed loads for Timoshenko beam model (VABS only)
-        # self.global_loads_dist = []
-
-        # # if logger:
-        # #     self.logger = logger
-        # # else:
-        # #     self.logger = mul.initLogger(__name__)
 
 
     @property
@@ -330,51 +277,5 @@ class StructureGene():
                 return i
         # print('  not found')
         return 0
-
-
-
-
-
-
-
-
-
-    # def write(
-    #     self, fn, file_format:str, analysis='h', sg_fmt:int=1,
-    #     sfi:str='8d', sff:str='20.12e', version=None, mesh_only=False
-    #     ):
-    #     """Write analysis input
-
-    #     Parameters
-    #     ----------
-    #     fn : str
-    #         Name of the input file
-    #     file_format : {'vabs' (or 'v'), 'swfitcomp' (or 'sc', 's')}
-    #         file_format of the analysis
-    #     analysis : {0, 1, 2, 3, '', 'h', 'dn', 'dl', 'd', 'l', 'fi'}, optional
-    #         Analysis type, by default 'h'
-    #     sg_fmt : {0, 1}, optional
-    #         Format for the VABS input, by default 1
-
-    #     Returns
-    #     -------
-    #     str
-    #         Name of the input file
-    #     """
-
-
-    #     # string format
-    #     # sfi = '8d'
-    #     # sff = '16.6e'
-
-    #     _file_format = file_format.lower()
-
-    #     if analysis.lower().startswith('h'):
-    #         self.writeInput(fn, _file_format, sfi, sff, sg_fmt, version, mesh_only)
-
-    #     elif (analysis.lower().startswith('d')) or (analysis.lower().startswith('l')) or (analysis.lower().startswith('f')):
-    #         self.writeInputGlobal(fn+'.glb', _file_format, sfi, sff, analysis, version)
-
-    #     return fn
 
 

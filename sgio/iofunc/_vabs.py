@@ -262,7 +262,25 @@ def _readElasticProperty(file, isotropy:int):
 # ====================================================================
 def readOutputBuffer(
     file, analysis='h', sg:StructureGene=None, ext:str='', model_type='BM1', **kwargs):
-    """
+    """Read VABS output file buffer.
+
+    Parameters
+    ----------
+    file: file
+        File object of the output file.
+    analysis: str, optional
+        Analysis type. Default is homogenization.
+    sg: StructureGene, optional
+        StructureGene object.
+    ext: str, optional
+        File extension of the output file.
+    model_type: str, optional
+        Model type. Default is 'BM1'.
+
+    Returns
+    -------
+    Model or list of dict:
+        Model object or list of dictionaries containing the output data.
     """
 
     if analysis == 0 or analysis == 'h' or analysis == '':
@@ -283,13 +301,15 @@ def readOutputBuffer(
         pass
 
     elif analysis == 'fi' or analysis == 5:
-        output = {}
-        _fi, _sr, _eids_sr_min = _readOutputFailureIndex(file)
-        output['failure_index'] = _fi
-        output['strength_ratio'] = _sr
-        output['elems_sr_min'] = _eids_sr_min
+        return _readOutputFailureIndex(file)
 
-        return output
+        # output = {}
+        # _fi, _sr, _eids_sr_min = _readOutputFailureIndex(file)
+        # output['failure_index'] = _fi
+        # output['strength_ratio'] = _sr
+        # output['elems_sr_min'] = _eids_sr_min
+
+        # return output
 
     return
 
