@@ -13,8 +13,8 @@ name_e = [
 
 sg = sgio.read(fn_sg, 'vabs', sgdim=2, model='bm2')
 # print(sg.nelems)
-state_case = sgio.readOutput(fn_sg, 'v', 'd')
-# print(state_case)
+state_case = sgio.readOutputState(fn_sg, 'v', 'd')
+print(state_case)
 
 # _u = state_field.getDisplacementField()
 # print(_u)

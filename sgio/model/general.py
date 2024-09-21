@@ -110,8 +110,14 @@ class State():
 
         elif isinstance(self.data, dict):
             _str.append(f'  field data: {len(self.data)} {self.location} data')
+            _i = 0
             for _k, _v in self.data.items():
                 _str.append(f'    {_k}: {_v}')
+                if _i >= 4:
+                    if len(self.data) > 5:
+                        _str.append('    ...')
+                    break
+                _i += 1
 
         return '\n'.join(_str)
 
@@ -129,20 +135,19 @@ class State():
         elif isinstance(self.data, dict):
             self.data[loc] = data
 
-    """
-    A function returning the state data at a list of given locations.
-
-    Parameters
-    ----------
-    locs : list
-        List of locations.
-
-    Returns
-    -------
-    State
-        A copy of the State object with the data at the given locations.
-    """
     def at(self, locs:Iterable):
+        """Get the state data at a list of given locations.
+
+        Parameters
+        ----------
+        locs : list
+            List of locations.
+
+        Returns
+        -------
+        State
+            A copy of the State object with the data at the given locations.
+        """
         _data = []
 
         if isinstance(self.data, list):
@@ -202,6 +207,18 @@ class StateCase():
     def states(self): return self._states
 
     def getState(self, name):
+        """Get state by name.
+
+        Parameters
+        ----------
+        name : str
+            State name.
+
+        Returns
+        -------
+        State
+            State object.
+        """
         return self._states[name]
 
     @property

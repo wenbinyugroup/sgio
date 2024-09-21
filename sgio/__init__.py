@@ -8,7 +8,8 @@ from .core.merge import combineSG
 from .model import *
 
 from .iofunc import (
-    read, readOutput, readLoadCsv, write, convert,
+    read, readOutput, readOutputModel, readOutputState,
+    readLoadCsv, write, convert,
     addPointDictDataToMesh,
     addCellDictDataToMesh,
     )

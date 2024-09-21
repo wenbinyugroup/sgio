@@ -181,13 +181,13 @@ def readOutputState(
             with open(_fn, 'r') as file:
                 _ee, _es, _eem, _esm = _vabs.readOutputBuffer(file, analysis, ext='ele', **kwargs)
             _state = sgmodel.State(
-                name='ee', data=_ee, label=['e11', 'e12', 'e13', 'e22', 'e23', 'e33'], location='element')
+                name='ee', data=_ee, label=['e11', '2e12', '2e13', 'e22', '2e23', 'e33'], location='element')
             state_case.addState(name='ee', state=_state)
             _state = sgmodel.State(
                 name='es', data=_es, label=['s11', 's12', 's13', 's22', 's23', 's33'], location='element')
             state_case.addState(name='es', state=_state)
             _state = sgmodel.State(
-                name='eem', data=_eem, label=['em11', 'em12', 'em13', 'em22', 'em23', 'em33'], location='element')
+                name='eem', data=_eem, label=['em11', '2em12', '2em13', 'em22', '2em23', 'em33'], location='element')
             state_case.addState(name='eem', state=_state)
             _state = sgmodel.State(
                 name='esm', data=_esm, label=['sm11', 'sm12', 'sm13', 'sm22', 'sm23', 'sm33'], location='element')

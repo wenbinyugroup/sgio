@@ -10,9 +10,11 @@ name_sr = 'strength ratio'
 sg = sgio.read(fn_sg, 'vabs', sgdim=2, smdim=1)
 print(sg)
 
-output = sgio.readOutput(fn_sg, 'v', 'fi')
-_sr = output['strength_ratio']
+state_case = sgio.readOutputState(fn_sg, 'v', 'fi')
+print(state_case)
+_sr = state_case.getState('fi').data
+# print(_sr)
 sgio.addCellDictDataToMesh(name_sr, _sr, sg.mesh)
 
-sgio.write(sg, fn_msh, 'gmsh22', mesh_only=True)
+sgio.write(sg, fn_msh, 'gmsh', mesh_only=True)
 
