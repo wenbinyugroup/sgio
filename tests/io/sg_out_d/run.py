@@ -17,6 +17,13 @@ sg = sgio.read(fn_sg, 'vabs', sgdim=2, model='bm2')
 state_case = sgio.readOutputState(fn_sg, 'v', 'd', sg=sg, tool_ver=ver)
 print(state_case)
 
+eid = 1
+print(f'element {eid}')
+print("strain global: ", *[f"{v:e}" for v in state_case.getState('ee').data[eid]])
+print("stress global: ", *[f"{v:e}" for v in state_case.getState('es').data[eid]])
+print("strain material: ", *[f"{v:e}" for v in state_case.getState('eem').data[eid]])
+print("stress material: ", *[f"{v:e}" for v in state_case.getState('esm').data[eid]])
+
 # _u = state_field.getDisplacementField()
 # print(_u)
 sgio.addPointDictDataToMesh(name_u, state_case.getState('u').data, sg.mesh)
