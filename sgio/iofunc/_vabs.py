@@ -261,7 +261,9 @@ def _readElasticProperty(file, isotropy:int):
 # Read output
 # ====================================================================
 def readOutputBuffer(
-    file, analysis='h', sg:StructureGene=None, ext:str='', model_type='BM1', **kwargs):
+    file, analysis='h', sg:StructureGene=None, ext:str='', model_type='BM1',
+    tool_ver='', ncase=1, nelem=0,
+    **kwargs):
     """Read VABS output file buffer.
 
     Parameters
@@ -276,6 +278,12 @@ def readOutputBuffer(
         File extension of the output file.
     model_type: str, optional
         Model type. Default is 'BM1'.
+    tool_ver: str, optional
+        Tool version.
+    ncase: int, optional
+        Number of load cases. Default is 1.
+    nelem: int, optional
+        Number of elements.
 
     Returns
     -------
@@ -290,7 +298,16 @@ def readOutputBuffer(
         if ext == 'u':
             return _readOutputNodeDisplacement(file)
         elif ext == 'ele':
-            return _readOutputElementStrainStress(file)
+            if nelem == 0:
+                nelem = sg.nelems
+
+            if ncase == 1:
+                if float(tool_ver) > 4:
+                    line = file.readline()  # skip the first line
+                return _readOutputElementStrainStressCase(file, nelem)
+            else:
+                #TODO
+                pass
 
     elif analysis == 'f' or analysis == 3:
         # return readSCOutFailure(file, analysis)
@@ -301,7 +318,16 @@ def readOutputBuffer(
         pass
 
     elif analysis == 'fi' or analysis == 5:
-        return _readOutputFailureIndex(file)
+        if nelem == 0:
+            nelem = sg.nelems
+
+        if ncase == 1:
+            if float(tool_ver) > 4:
+                line = file.readline()  # skip the first line
+            return _readOutputFailureIndexCase(file, nelem)
+        else:
+            #TODO
+            pass
 
         # output = {}
         # _fi, _sr, _eids_sr_min = _readOutputFailureIndex(file)
@@ -796,13 +822,15 @@ def _readOutputNodeDisplacement(file):
 
 
 
-def _readOutputElementStrainStress(file):
+def _readOutputElementStrainStressCase(file, nelem):
     """Read VABS output averaged strains and stressed on elements.
 
     Parameters
     ----------
     file:
         File object of the output file.
+    nelem: int
+        Number of elements.
 
     Returns
     -------
@@ -817,8 +845,10 @@ def _readOutputElementStrainStress(file):
     """
 
     e, s, em, sm = {}, {}, {}, {}
-    for i, line in enumerate(file):
-        line = line.strip()
+    i = 0
+    # for i, line in enumerate(file):
+    while i < nelem:
+        line = file.readline().strip()
         if line == '':
             continue
 
@@ -834,12 +864,14 @@ def _readOutputElementStrainStress(file):
         em[_eid] = _emi
         sm[_eid] = _smi
 
+        i += 1
+
     return e, s, em, sm
 
 
 
 
-def _readOutputFailureIndex(file):
+def _readOutputFailureIndexCase(file, nelem):
     """Read VABS output initial failure indices and strength ratios for elements.
 
     Parameters
@@ -859,20 +891,27 @@ def _readOutputFailureIndex(file):
     sr = {}
     eids_sr_min = []
 
+    i = 0
     # for i, line in enumerate(file):
-    while True:
-        line = file.readline()
-
-        if not line:  # EOF
-            break
-
-        line = line.strip()
-        if (line == ''):
+    while i <= nelem:
+        line = file.readline().strip()
+        if line == '':
             continue
-        if line.startswith('Failure index'):
-            continue
+        # if line.startswith('Failure index'):
+        #     continue
 
-        if (line.startswith('The sectional strength ratio is')):
+        # Read the initial failure indices and strength ratios
+        if i < nelem:
+            line = line.split()
+            if len(line) == 3:
+                # lines.append(line)
+                fi[int(line[0])] = float(line[1])
+                sr[int(line[0])] = float(line[2])
+
+        # Read the last line of sectional strength ratio
+        # if (line.startswith('The sectional strength ratio is')):
+        elif i == nelem:
+            # line = file.readline().strip()
             line = line.split()
             # _loc = line.index('existing')
             # _sr_min = float(line[tmp_id - 1])
@@ -884,13 +923,9 @@ def _readOutputFailureIndex(file):
 
             eids_sr_min.append(_eid)
             # lines.pop()
-            continue
+            # continue
 
-        line = line.split()
-        if len(line) == 3:
-            # lines.append(line)
-            fi[int(line[0])] = float(line[1])
-            sr[int(line[0])] = float(line[2])
+        i += 1
 
     # result = []
     # # fis = []

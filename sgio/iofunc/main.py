@@ -112,8 +112,8 @@ def readOutputModel(
 
 def readOutputState(
     fn, file_format, analysis, model_type='',
-    sg=None, **kwargs
-    ):
+    sg=None, tool_ver='', ncase=1, nelem=0,
+    **kwargs):
     """Read SG dehomogenization or failure analysis output.
 
     Parameters
@@ -130,6 +130,10 @@ def readOutputState(
         Choose one from 'SD1', 'PL1', 'PL2', 'BM1', 'BM2'.
     sg : :obj:`StructureGene`
         Structure gene object
+    tool_ver : str
+        Version of the tool
+    ncase : int
+        Number of load cases
     """
 
     state_case = sgmodel.StateCase()
@@ -145,7 +149,9 @@ def readOutputState(
         elif file_format.lower().startswith('v'):
             _fn = f'{fn}.fi'
             with open(_fn, 'r') as file:
-                _fi, _sr, _eids_sr_min = _vabs.readOutputBuffer(file, analysis, sg, **kwargs)
+                _fi, _sr, _eids_sr_min = _vabs.readOutputBuffer(
+                    file, analysis, sg, tool_ver=tool_ver,
+                    ncase=ncase, nelem=nelem, **kwargs)
             _state = sgmodel.State(
                 name='fi', data=_fi, label=['fi'], location='element')
             state_case.addState(name='fi', state=_state)
@@ -179,7 +185,9 @@ def readOutputState(
             _ee, _es, _eem, _esm = None, None, None, None
             _fn = f'{fn}.ELE'
             with open(_fn, 'r') as file:
-                _ee, _es, _eem, _esm = _vabs.readOutputBuffer(file, analysis, ext='ele', **kwargs)
+                _ee, _es, _eem, _esm = _vabs.readOutputBuffer(
+                    file, analysis, sg=sg, ext='ele', tool_ver=tool_ver,
+                    ncase=ncase, nelem=nelem, **kwargs)
             _state = sgmodel.State(
                 name='ee', data=_ee, label=['e11', '2e12', '2e13', 'e22', '2e23', 'e33'], location='element')
             state_case.addState(name='ee', state=_state)

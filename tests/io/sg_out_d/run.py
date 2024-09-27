@@ -1,6 +1,7 @@
 import sgio
 
-fn_base = 'uh60a'
+ver = '4.1'
+fn_base = 'vabs41/uh60a'
 fn_sg = f'{fn_base}.sg'
 fn_sg_ele = f'{fn_sg}.ele'
 fn_msh = f'{fn_base}.msh'
@@ -13,7 +14,7 @@ name_e = [
 
 sg = sgio.read(fn_sg, 'vabs', sgdim=2, model='bm2')
 # print(sg.nelems)
-state_case = sgio.readOutputState(fn_sg, 'v', 'd')
+state_case = sgio.readOutputState(fn_sg, 'v', 'd', sg=sg, tool_ver=ver)
 print(state_case)
 
 # _u = state_field.getDisplacementField()
