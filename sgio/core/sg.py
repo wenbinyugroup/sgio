@@ -228,9 +228,10 @@ class StructureGene():
 
 
     def translate(self, v):
+        if self.mesh is None:
+            raise ValueError('Mesh is not defined.')
         v = np.asarray(v)
         self.mesh.points += v
-        return
 
 
     def findMaterialByName(self, name):
