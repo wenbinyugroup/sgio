@@ -25,6 +25,11 @@ def combineSG(sg1:StructureGene, sg2:StructureGene) -> StructureGene:
         sg1.mesh.points, sg2.mesh.points
     ))
 
+    # Combine point data
+    # ------------------
+    for _name, _data in sg1.mesh.point_data.items():
+        point_data_c[_name] = np.concatenate((_data, sg2.mesh.point_data[_name]))
+
     # Combine materials
     # -----------------
     material_c = copy.deepcopy(sg1.materials)
@@ -90,37 +95,49 @@ def combineSG(sg1:StructureGene, sg2:StructureGene) -> StructureGene:
     # Combine elements
     # ----------------
     cells_c = copy.deepcopy(sg1.mesh.cells)
+    for _name, _data in sg1.mesh.cell_data.items():
+        cell_data_c[_name] = [_d.tolist() for _d in _data]
     # prop_id_c = copy.deepcopy(sg1.mesh.cell_data.get('property_id'))
-    prop_id_c = [_data.tolist() for _data in sg1.mesh.cell_data.get('property_id')]
+    # prop_id_c = [_data.tolist() for _data in sg1.mesh.cell_data.get('property_id')]
     # prop_sys_c = copy.deepcopy(sg1.mesh.cell_data.get('property_ref_csys'))
-    prop_sys_c = [_data.tolist() for _data in sg1.mesh.cell_data.get('property_ref_csys')]
+    # prop_sys_c = [_data.tolist() for _data in sg1.mesh.cell_data.get('property_ref_csys')]
 
 
     # Increase the element node id for SG2 and add them to the combined dictionary
     for _i, _cb2 in enumerate(sg2.mesh.cells):
 
-        _pi2 = sg2.mesh.cell_data.get('property_id')[_i]
-        _ps2 = sg2.mesh.cell_data.get('property_ref_csys')[_i]
+        # Increment the nodal id
+        _cb2.data += sg1_nnode
 
-        _cb2.data += sg1_nnode  # Increment the nodal id
+        # Merge the cell data
+        # _pi2 = sg2.mesh.cell_data.get('property_id')[_i].tolist()
+        # _ps2 = sg2.mesh.cell_data.get('property_ref_csys')[_i].tolist()
+
+        # Check if the cell block (element type) is already in the combined sg mesh
         _cbj = -1
-
         for _j, _cb1 in enumerate(cells_c):
             if _cb2.type == _cb1.type:
                 _cbj = _j
                 break
 
+        # If the cell block is not in the combined sg mesh, add it
         if _cbj == -1:
             cells_c.append(_cb2)
-            prop_id_c.append(_pi2)
-            prop_sys_c.append(_ps2)
+            for _name, _data in sg2.mesh.cell_data.items():
+                cell_data_c[_name].append(_data[_i].tolist())
+            # prop_id_c.append(_pi2)
+            # prop_sys_c.append(_ps2)
+
+        # If the cell block is in the combined sg mesh, concatenate the data
         else:
             cells_c[_cbj].data = np.concatenate((cells_c[_cbj].data, _cb2.data))
-            prop_id_c[_cbj].extend(_pi2)
-            prop_sys_c[_cbj].extend(_ps2)
+            for _name, _data in sg2.mesh.cell_data.items():
+                cell_data_c[_name][_cbj].extend(_data[_i].tolist())
+            # prop_id_c[_cbj].extend(_pi2)
+            # prop_sys_c[_cbj].extend(_ps2)
 
-    cell_data_c['property_id'] = np.asarray(prop_id_c)
-    cell_data_c['property_ref_csys'] = np.asarray(prop_sys_c)
+    # cell_data_c['property_id'] = np.asarray(prop_id_c)
+    # cell_data_c['property_ref_csys'] = np.asarray(prop_sys_c)
 
 
     # Create combined mesh
