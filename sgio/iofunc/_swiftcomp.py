@@ -286,13 +286,15 @@ def readOutputBuffer(
         # return readSCOutFailure(file, analysis)
         pass
     elif analysis == 'fi' or analysis == 5:
-        output = {}
-        _fi, _sr, _eids_sr_min = _readOutputFailureIndex(file)
-        output['failure_index'] = _fi
-        output['strength_ratio'] = _sr
-        output['elems_sr_min'] = _eids_sr_min
+        return _readOutputFailureIndex(file)
 
-        return output
+        # output = {}
+        # _fi, _sr, _eids_sr_min = _readOutputFailureIndex(file)
+        # output['failure_index'] = _fi
+        # output['strength_ratio'] = _sr
+        # output['elems_sr_min'] = _eids_sr_min
+
+        # return output
 
     return
 
