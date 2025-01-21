@@ -39,7 +39,7 @@ analysis = 'h'
 
 for _case in test_cases:
 
-    fn = f"../../files/{_case['fn_base']}.sg.k"
+    fn = f"../../../files/{_case['fn_base']}.sg.k"
 
     model = sgio.readOutput(
         fn, _case['file_format'],

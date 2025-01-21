@@ -1,6 +1,12 @@
 Plate and Shell
 ================
 
+.. toctree::
+   :maxdepth: 1
+
+   kirchhoff_love
+   reissner_mindlin
+
 .. .. currentmodule:: model.shell
 
 .. .. highlight:: python
@@ -28,7 +34,7 @@ Plate and Shell
 ..     :members:
 
 
-..  automodule:: sgio.model.shell
-    :members:
-    :undoc-members:
-    :show-inheritance:
+.. ..  automodule:: sgio.model.shell
+..     :members:
+..     :undoc-members:
+..     :show-inheritance:

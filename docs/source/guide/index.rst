@@ -1,3 +1,5 @@
+.. _guide:
+
 Guide
 =====
 
@@ -8,6 +10,7 @@ Guide
 
     sg
     io
+    io_model
     model/index
 
 ..    guide/convert

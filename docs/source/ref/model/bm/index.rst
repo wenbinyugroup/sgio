@@ -1,5 +1,13 @@
+.. _ref_model_beam:
+
 Beam
 ============
+
+.. toctree::
+   :maxdepth: 1
+
+   euler_bernoulli
+   timoshenko
 
 .. .. currentmodule:: model.beam
 
@@ -30,7 +38,7 @@ Beam
 
 
 
-..  automodule:: sgio.model.beam
-    :members:
-    :undoc-members:
-    :show-inheritance:
+.. ..  automodule:: sgio.model.beam
+..     :members:
+..     :undoc-members:
+..     :show-inheritance:

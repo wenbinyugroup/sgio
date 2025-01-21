@@ -1,6 +1,11 @@
 Solid
 ===============
 
+.. toctree::
+   :maxdepth: 1
+
+   cauchy
+
 .. .. currentmodule:: model.solid
 
 .. .. highlight:: python
@@ -22,7 +27,7 @@ Solid
 ..     :members:
 
 
-..  automodule:: sgio.model.solid
-    :members:
-    :undoc-members:
-    :show-inheritance:
+.. ..  automodule:: sgio.model.solid
+..     :members:
+..     :undoc-members:
+..     :show-inheritance:
