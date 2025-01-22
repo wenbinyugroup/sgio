@@ -40,6 +40,7 @@ extensions = [
     'sphinx.ext.napoleon',
     'myst_parser',
     "sphinx.ext.githubpages",
+    'sphinx_immaterial',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -58,7 +59,8 @@ root_doc = 'index'
 # a list of builtin themes.
 #
 # html_theme = 'sphinx_book_theme'
-html_theme = 'pydata_sphinx_theme'
+# html_theme = 'pydata_sphinx_theme'
+html_theme = 'sphinx_immaterial'
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,

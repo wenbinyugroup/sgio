@@ -20,7 +20,7 @@ from sgio.core.sg import StructureGene
 
 def read(
     fn, file_format, format_version='',
-    sgdim=3, model=3, sg=None,
+    sgdim:int=3, model='SD1', sg=None,
     mesh_only=False, **kwargs):
     """Read SG data file.
 
@@ -29,21 +29,21 @@ def read(
     fn : str
         Name of the SG data file
     file_format : str
-        Format of the SG data file
+        Format of the SG data file.
+        Choose one from 'abaqus', 'vabs', 'sc', 'swiftcomp'.
     format_version : str
         Version of the format
     sgdim : int
         Dimension of the geometry
-    smdim : int
-        Dimension of the macro structural model
+    model : str
+        Type of the macro structural model.
+        Choose one from 'SD1', 'PL1', 'PL2', 'BM1', 'BM2'.
     sg : StructureGene
         Structure gene object
-    mesh_only : bool
-        If read meshing data only
 
     Returns
     -------
-    :obj:`Structure gene`
+    :obj:`StructureGene`
     """
 
     file_format = file_format.lower()
@@ -79,12 +79,18 @@ def readOutputModel(
     fn : str
         Name of the SG analysis output file
     file_format : str
-        Format of the SG data file
+        Format of the SG data file.
+        Choose one from 'vabs', 'sc', 'swiftcomp'.
     model_type : str
         Type of the macro structural model.
-        Choose one from 'SD1', 'PL1', 'PL2', 'BM1', 'BM2'.
-    sg : :obj:`StructureGene`
-        Structure gene object
+        Choose one from
+        * 'SD1': Cauchy continuum model
+        * 'PL1': Kirchhoff-Love plate/shell model
+        * 'PL2': Reissner-Mindlin plate/shell model
+        * 'BM1': Euler-Bernoulli beam model
+        * 'BM2': Timoshenko beam model
+    sg : :obj:`StructureGene`, optional
+        SG object.
 
     Returns
     -------
@@ -321,22 +327,28 @@ def write(
 
     Parameters
     ----------
-    sg
+    sg : StructureGene
         Structure gene object
-    fn
+    fn : str
         Name of the input file
-    file_format
-        file_format of the analysis
-    analysis : {0, 1, 2, 3, '', 'h', 'dn', 'dl', 'd', 'l', 'fi'}, optional
+    file_format : str
+        Format of the SG data file
+    format_version : str, optional
+        Version of the format, by default ''
+    analysis : str {0, 1, 2, 3, '', 'h', 'dn', 'dl', 'd', 'l', 'fi'}, optional
         Analysis type, by default 'h'
     sg_fmt : {0, 1}, optional
         Format for the VABS input, by default 1
+    macro_responses : list[StateCase], optional
+        Macroscopic responses, by default []
+    model : int, optional
+        Type of the macro structural model, by default 0
+    load_type : int, optional
+        Type of the load, by default 0
     sfi
         String formating integers
     sff
         String formating floats
-    version
-        Version of the format
     mesh_only
         If write meshing data only
     """
@@ -403,10 +415,32 @@ def convert(
 
     Parameters
     ----------
-    file_name_in
+    file_name_in : str
         File name before conversion
-    file_name_out
+    file_name_out : str
         File name after conversion
+    file_format_in : str, optional
+        Format of the input file, by default ''
+    file_format_out : str, optional
+        Format of the output file, by default ''
+    format_version_in : str, optional
+        Version of the input file, by default ''
+    format_version_out : str, optional
+        Version of the output file, by default ''
+    analysis : str|int, optional
+        Analysis to be carried out, by default 'h'
+    sgdim : int, optional
+        Dimension of the geometry, by default 3
+    model : int|str, optional
+        Type of the macro structural model, by default 'SD1'
+    sg_fmt : int, optional
+        Format for the VABS input, by default 1
+    sfi : str, optional
+        String formating integers, by default '8d'
+    sff : str, optional
+        String formating floats, by default '20.12e'
+    mesh_only : bool, optional
+        If write meshing data only, by default False
     """
 
     sg = read(

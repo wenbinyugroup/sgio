@@ -41,64 +41,63 @@ def getModelDim(model:str) -> int:
 
 
 
-# class State():
-#     """Generalized strain and stress.
-#     """
-#     def __init__(self, strain=[], stress=[]):
-#         self._e = strain
-#         self._s = stress
-
-#     @property
-#     def strain(self): return self._e
-#     @strain.setter
-#     def strain(self, value): self._e = value
-#     @property
-#     def stress(self): return self._s
-#     @stress.setter
-#     def stress(self, value): self._s = value
-
-#     # def getStrain(self):
-#     #     return self._e
-
-#     # def getStress(self):
-#     #     return self._s
 
 
 
 
 class State():
     """
+    A class to represent a state with associated data, labels, and location.
+
+    Attributes
+    ----------
+    name : str
+        The name of the state.
+    data : list or dict
+        The data associated with the state.
+        It can be a list for point data or a dictionary for field data.
+
+        For point data::
+
+            data = [
+                value_for_label_1,
+                value_for_label_2,
+                ...
+            ]
+
+        For field data::
+
+            data = {
+                1: [],  # Point data for note/element 1
+                2: [],  # Point data for note/element 2
+                ...
+            }
+    label : list of str
+        The labels associated with the state.
+    location : str
+        The location type of the state, either 'node' or 'element'.
     """
     def __init__(
         self, name:str='', data:list|dict={}, label:list[str]=[],
         location:str=''):
+        """Construct a State object.
+
+        Parameters
+        ----------
+        name : str
+            The name of the state.
+        data : list or dict
+            The data associated with the state. It can be a list for point data or a dictionary for field data.
+        label : list of str
+            The labels associated with the state.
+        location : str
+            The location type of the state, either 'node' or 'element'.
+        """
+
         self.name:str = name
         self.label:list[str] = label
-        self.location:str = location  # Choose from 'node', 'element'
-        # print(f'data = {data}')
+        self.location:str = location
         self.data:list|dict = data
-        # print(f'self.data = {self.data}')
-        """
-        For point data::
-            []
-
-        For field data::
-            {
-                1: [],
-                2: [],
-                ...
-            }
-
-        """
-
-    # @property
-    # def name(self): return self._name
-    # @property
-    # def data(self): return self._data
-    # @property
-    # def label(self): return self._label
-    # @property
-    # def location(self): return self._location
 
     def __repr__(self):
         _str = [
@@ -122,6 +121,22 @@ class State():
         return '\n'.join(_str)
 
     def toDictionary(self):
+        """Convert the State object to a dictionary.
+        
+        Returns
+        -------
+        dict
+            A dictionary representation of the State object.
+
+            ..  code-block::
+            
+                {
+                    'name': name,
+                    'data': data,
+                    'label': label,
+                    'location': location
+                }
+        """
         return {
             'name': self.name,
             'data': self.data,
@@ -130,6 +145,15 @@ class State():
         }
 
     def addData(self, data:list, loc=None):
+        """Add data to the state.
+        
+        Parameters
+        ----------
+        data : list
+            Data to be added.
+        loc : int, optional
+            Location index. Default is None.
+        """
         if loc is None:
             self.data = data
         elif isinstance(self.data, dict):
@@ -141,7 +165,7 @@ class State():
         Parameters
         ----------
         locs : list
-            List of locations.
+            List of note/element IDs.
 
         Returns
         -------
@@ -263,6 +287,24 @@ class StateCase():
         return '\n'.join(lines)
 
     def toDictionary(self):
+        """Convert the StateCase object to a dictionary.
+        
+        Returns
+        -------
+        dict
+            A dictionary representation of the StateCase object.
+
+            ..  code-block::
+            
+                {
+                    'case': case,
+                    'states': {
+                        'name1': state1.toDictionary(),
+                        'name2': state2.toDictionary(),
+                        ...
+                    }
+                }
+        """
         return {
             'case': self._case,
             'states': dict([(k, v.toDictionary()) for k, v in self._states.items()])
@@ -272,6 +314,21 @@ class StateCase():
         self, name:str, state:State=None,
         data=None, entity_id=None, loc_type=''
         ):
+        """Add a state to the StateCase object.
+        
+        Parameters
+        ----------
+        name : str
+            State name.
+        state : State, optional
+            State object. Default is None.
+        data : list or dict, optional
+            Data to be added. Default is None.
+        entity_id : int, optional
+            Entity ID. Default is None.
+        loc_type : str, optional
+            Location type. Default is ''.
+        """
         if not name in self._states.keys():
             self._states[name] = State(
                 name=name,
@@ -298,13 +355,14 @@ class StateCase():
 
     def at(self, locs:Iterable, state_name=None):
         """
-        A function returning all states with data
-        at a list of given locations.
+        A function returning all states with data at a list of given locations.
 
         Parameters
         ----------
         locs : list
             List of locations.
+        state_name : str or list, optional
+            State name(s). Default is None.
 
         Returns
         -------

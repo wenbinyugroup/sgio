@@ -3,14 +3,22 @@
 Model
 ==============
 
-.. toctree::
-   :maxdepth: 2
+..  toctree::
+    :maxdepth: 2
+    :caption: Structural models
 
-   general
-   sd/index
-   pl/index
-   bm/index
+    sd/index
+    pl/index
+    bm/index
 
+
+
+..  toctree::
+    :maxdepth: 1
+    :caption: Local states
+
+    state
+    statecase
 
 
 .. Beam

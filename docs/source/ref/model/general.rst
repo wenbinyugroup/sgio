@@ -30,8 +30,8 @@ General
 ..     :members:
 
 
-..  automodule:: sgio.model.general
-    :members:
-    :undoc-members:
-    :show-inheritance:
+.. ..  automodule:: sgio.model.general
+..     :members:
+..     :undoc-members:
+..     :show-inheritance:
 

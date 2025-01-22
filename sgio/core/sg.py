@@ -45,36 +45,38 @@ class SGMacroModel():
 
 class StructureGene():
     """A finite element level structure gene model in the theory of MSG.
-
-    Parameters
-    ----------
-    name : str, optional
-        Name of the SG.
-    sgdim : int, optional
-        Dimension of the SG.
-    smdim : int, optional
-        Dimension of the material/structural model.
-        Beam (1), plate/shell (2), 3D continuum (3).
-    spdim : int, optional
-        Dimension of the space.
     """
 
     def __init__(
         self, name='', sgdim=None, smdim=None, spdim=None
         ):
+        """Initialize the SG model.
+        
+        Parameters
+        ----------
+        name : str, optional
+            Name of the SG.
+        sgdim : int, optional
+            Dimension of the SG.
+        smdim : int, optional
+            Dimension of the material/structural model.
+        spdim : int, optional
+            Dimension of the space containing SG.
+        """
+
         #: str: Name of the SG.
         self.name = name
+
         #: int: Dimension of the SG.
         self.sgdim = sgdim
+
         #: int: Dimension of the material/structural model.
         self.smdim = smdim
-        #: int: Dimension of the space containing SG
-        if not spdim:
-            self.spdim = sgdim
-        else:
-            self.spdim = spdim
 
-        # self.design = None
+        #: int: Dimension of the space containing SG
+        self.spdim = sgdim
+        if not spdim is None:
+            self.spdim = spdim
 
         #: int: Analysis configurations
         #:
@@ -83,7 +85,8 @@ class StructureGene():
         #: * 2 - failure (SwiftComp only)
         self.analysis = 0
 
-        self.fn_gmsh_msh = self.name + '.msh'  #: File name of the Gmsh mesh file
+        #: File name of the Gmsh mesh file
+        self.fn_gmsh_msh = self.name + '.msh'
 
         #: int: Physics included in the analysis
         #:
@@ -103,6 +106,8 @@ class StructureGene():
         #: * 2 - Vlasov model (beam only)
         #: * 3 - trapeze effect (beam only)
         self.model = 0
+
+        #: int: Flag of geometrically corrected shell model
         self.geo_correct = False
 
         #: int: Flag of damping computation
@@ -110,16 +115,22 @@ class StructureGene():
 
         #: int: Flag of transformation of elements
         # self.use_elem_local_orient = 0
+
         #: int: Flag of uniform temperature
         self.is_temp_nonuniform = 0
 
+        #: float: Force flag
         self.force_flag = 0
+
+        #: float: Steer flag
         self.steer_flag = 0
 
         #: float: Initial twist (beam only)
         self.initial_twist = 0.0
+
         #: list of floats: Initial curvature
         self.initial_curvature = [0.0, 0.0]
+
         #: list of floats: Oblique (beam only)
         self.oblique = [1.0, 0.0]
 
@@ -145,6 +156,7 @@ class StructureGene():
 
         #: int: Flag of the type of elements (SC)
         self.ndim_degen_elem = 0
+
         #: int: Number of slave nodes
         self.num_slavenodes = 0
 
@@ -153,29 +165,36 @@ class StructureGene():
         self.omega = 1
 
         self.itf_pairs = []
+
         self.itf_nodes = []
+
         self.node_elements = []
 
 
 
     @property
     def nnodes(self):
+        """Number of nodes in the mesh."""
         return len(self.mesh.points)
 
     @property
     def nelems(self):
+        """Number of elements in the mesh."""
         return sum([len(cell.data) for cell in self.mesh.cells])
 
     @property
     def nma_combs(self):
+        """Number of material-orientation combinations."""
         return len(self.mocombos)
 
     @property
     def nmates(self):
+        """Number of materials."""
         return len(self.materials)
 
     @property
     def use_elem_local_orient(self):
+        """Flag of using element local orientation."""
         if 'property_ref_csys' in self.mesh.cell_data.keys():
             return 1
         else:
@@ -228,6 +247,17 @@ class StructureGene():
 
 
     def translate(self, v):
+        """Translate the mesh.
+        
+        Parameters
+        ----------
+        v : array_like
+            Translation vector.
+
+        Returns
+        -------
+        None
+        """
         if self.mesh is None:
             raise ValueError('Mesh is not defined.')
         v = np.asarray(v)
