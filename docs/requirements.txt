@@ -6,6 +6,7 @@ sphinx-sitemap
 sphinx-design
 sphinx-gallery
 pydata-sphinx-theme
+sphinx-immaterial
 sphinx-prompt
 sphinx-copybutton
 myst-parser

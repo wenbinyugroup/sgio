@@ -84,18 +84,25 @@ def readOutputModel(
     model_type : str
         Type of the macro structural model.
         Choose one from
+
         * 'SD1': Cauchy continuum model
         * 'PL1': Kirchhoff-Love plate/shell model
         * 'PL2': Reissner-Mindlin plate/shell model
         * 'BM1': Euler-Bernoulli beam model
         * 'BM2': Timoshenko beam model
-    sg : :obj:`StructureGene`, optional
+    sg : :obj:`sgio.core.sg.StructureGene`, optional
         SG object.
 
     Returns
     -------
-    :obj:`sgmodel.Model`
-        Consitutive model
+    Model
+        If `analysis` is 'h', return the consitutive model.
+
+        * :obj:`sgio.model.EulerBernoulliBeamModel` if `model_type` is 'BM1'
+        * :obj:`sgio.model.TimoshenkoBeamModel` if `model_type` is 'BM2'
+        * :obj:`sgio.model.KirchhoffLovePlateShellModel` if `model_type` is 'PL1' and `file_format` is 'sc' or 'swiftcomp'
+        * :obj:`sgio.model.ReissnerMindlinPlateShellModel` if `model_type` is 'PL2' and `file_format` is 'sc' or 'swiftcomp'
+        * :obj:`sgio.model.CauchyContinuumModel` if `model_type` is 'SD1' and `file_format` is 'sc' or 'swiftcomp'
     """
 
     model = None
@@ -127,19 +134,34 @@ def readOutputState(
     fn : str
         Name of the SG analysis output file
     file_format : str
-        Format of the SG data file
+        Format of the SG data file.
+        Choose one from 'vabs', 'sc', 'swiftcomp'.
     analysis : str
         Indicator of SG analysis.
-        Choose one from 'd', 'l', 'fi'.
+        Choose one from
+
+        * 'd' or 'l': Dehomogenization
+        * 'fi': Initial failure indices and strength ratios
     model_type : str
         Type of the macro structural model.
-        Choose one from 'SD1', 'PL1', 'PL2', 'BM1', 'BM2'.
-    sg : :obj:`StructureGene`
+        Choose one from
+
+        * 'SD1': Cauchy continuum model
+        * 'PL1': Kirchhoff-Love plate/shell model
+        * 'PL2': Reissner-Mindlin plate/shell model
+        * 'BM1': Euler-Bernoulli beam model
+        * 'BM2': Timoshenko beam model
+    sg : :obj:`sgio.core.sg.StructureGene`
         Structure gene object
     tool_ver : str
         Version of the tool
     ncase : int
         Number of load cases
+
+    Returns
+    -------
+    StateCase
+        State case object
     """
 
     state_case = sgmodel.StateCase()
@@ -226,22 +248,39 @@ def readOutput(
     Parameters
     ----------
     fn : str
-        Name of the SG analysis output file
+        Name of the SG analysis output file.
     file_format : str
-        Format of the SG data file
-    analysis : str
+        Format of the SG data file.
+        Choose one from 'vabs', 'sc', 'swiftcomp'.
+    analysis : str, optional
         Indicator of SG analysis.
-        Choose one from 'h', 'd', 'l', 'fi'.
+        Default is 'h'.
+        Choose one from
+        * 'h': Homogenization
+        * 'd' or 'l': Dehomogenization
+        * 'fi': Initial failure indices and strength ratios
     model_type : str
         Type of the macro structural model.
-        Choose one from 'SD1', 'PL1', 'PL2', 'BM1', 'BM2'.
+        Choose one from
+        * 'SD1': Cauchy continuum model
+        * 'PL1': Kirchhoff-Love plate/shell model
+        * 'PL2': Reissner-Mindlin plate/shell model
+        * 'BM1': Euler-Bernoulli beam model
+        * 'BM2': Timoshenko beam model
     sg : :obj:`StructureGene`
         Structure gene object
-
 
     Returns
     -------
     Model
+        If `analysis` is 'h', return the consitutive model.
+        * :obj:`EulerBernoulliBeamModel` if `model_type` is 'BM1'
+        * :obj:`TimoshenkoBeamModel` if `model_type` is 'BM2'
+        * :obj:`KirchhoffLovePlateModel` if `model_type` is 'PL1' and `file_format` is 'sc' or 'swiftcomp'
+        * :obj:`ReissnerMindlinPlateModel` if `model_type` is 'PL2' and `file_format` is 'sc' or 'swiftcomp'
+        * :obj:`CauchyContinuumModel` if `model_type` is 'SD1' and `file_format` is 'sc' or 'swiftcomp'
+    StateCase
+        If `analysis` is 'd' or 'l', return the state case.
     """
 
     # print(f'reading {file_format} output file {fn}...')
