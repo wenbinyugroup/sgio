@@ -1,3 +1,5 @@
+.. _guide_model_bm_timoshenko:
+
 Timoshenko Beam Model
 ========================
 

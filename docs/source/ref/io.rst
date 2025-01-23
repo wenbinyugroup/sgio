@@ -4,7 +4,7 @@ I/O Functions
 ==============
 
 
-.. currentmodule:: sgio.iofunc
+.. currentmodule:: sgio
 
 .. .. highlight:: python
 
@@ -18,6 +18,7 @@ I/O Functions
     readOutputModel
     readOutputState
     write
+    convert
 
 
 .. ..  automodule:: sgio.iofunc.main

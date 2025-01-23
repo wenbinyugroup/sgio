@@ -20,8 +20,8 @@ from sgio.core.sg import StructureGene
 
 def read(
     fn, file_format, format_version='',
-    sgdim:int=3, model='SD1', sg=None,
-    mesh_only=False, **kwargs):
+    sgdim=3, model_type='SD1', sg=None,
+    **kwargs):
     """Read SG data file.
 
     Parameters
@@ -34,16 +34,24 @@ def read(
     format_version : str
         Version of the format
     sgdim : int
-        Dimension of the geometry
+        Dimension of the geometry. Default is 3.
+        Choose one from 1, 2, 3.
     model : str
         Type of the macro structural model.
-        Choose one from 'SD1', 'PL1', 'PL2', 'BM1', 'BM2'.
-    sg : StructureGene
+        Choose one from
+
+        * 'SD1': Cauchy continuum model
+        * 'PL1': Kirchhoff-Love plate/shell model
+        * 'PL2': Reissner-Mindlin plate/shell model
+        * 'BM1': Euler-Bernoulli beam model
+        * 'BM2': Timoshenko beam model
+    sg : sgio.core.sg.StructureGene, optional
         Structure gene object
 
     Returns
     -------
-    :obj:`StructureGene`
+    :obj:`sgio.core.sg.StructureGene`
+        Structure gene object
     """
 
     file_format = file_format.lower()
@@ -51,17 +59,17 @@ def read(
     # if file_format.lower() in ['vabs', 'sc', 'swiftcomp']:
     if file_format in ['sc', 'swiftcomp']:
         with open(fn, 'r') as file:
-            sg = _swiftcomp.readInputBuffer(file, format_version, model)
+            sg = _swiftcomp.readInputBuffer(file, format_version, model_type)
     elif file_format == 'vabs':
         with open(fn, 'r') as file:
-            sg = _vabs.readBuffer(file, file_format, format_version, model)
+            sg = _vabs.readBuffer(file, file_format, format_version, model_type)
     elif file_format == 'abaqus':
         with open(fn, 'r') as file:
-            sg = _abaqus.readInputBuffer(file, sgdim=sgdim, model=model)
+            sg = _abaqus.readInputBuffer(file, sgdim=sgdim, model=model_type)
 
     else:
         if not sg:
-            sg = StructureGene(sgdim=sgdim, smdim=model)
+            sg = StructureGene(sgdim=sgdim, smdim=model_type)
         sg.mesh, _, _ = meshio.read(fn, file_format)
 
     return sg
@@ -70,7 +78,8 @@ def read(
 
 
 def readOutputModel(
-    fn, file_format, model_type='', sg=None, **kwargs
+    fn, file_format, model_type='', sg=None,
+    **kwargs
     ):
     """Read SG homogenization output file.
 
@@ -90,7 +99,7 @@ def readOutputModel(
         * 'PL2': Reissner-Mindlin plate/shell model
         * 'BM1': Euler-Bernoulli beam model
         * 'BM2': Timoshenko beam model
-    sg : :obj:`sgio.core.sg.StructureGene`, optional
+    sg : sgio.core.sg.StructureGene, optional
         SG object.
 
     Returns
@@ -151,7 +160,7 @@ def readOutputState(
         * 'PL2': Reissner-Mindlin plate/shell model
         * 'BM1': Euler-Bernoulli beam model
         * 'BM2': Timoshenko beam model
-    sg : :obj:`sgio.core.sg.StructureGene`
+    sg : sgio.core.sg.StructureGene
         Structure gene object
     tool_ver : str
         Version of the tool
@@ -359,37 +368,50 @@ def readOutput(
 def write(
     sg:StructureGene, fn:str, file_format:str,
     format_version:str='', analysis='h', sg_fmt:int=1,
-    macro_responses:list[sgmodel.StateCase]=[], model=0, load_type=0,
+    macro_responses:list[sgmodel.StateCase]=[], model_type='SD1', load_type=0,
     sfi:str='8d', sff:str='20.12e', mesh_only=False
     ):
     """Write analysis input
 
     Parameters
     ----------
-    sg : StructureGene
+    sg : sgio.core.StructureGene
         Structure gene object
     fn : str
         Name of the input file
     file_format : str
-        Format of the SG data file
+        Format of the SG data file.
+        Choose one from 'vabs', 'sc', 'swiftcomp'.
     format_version : str, optional
-        Version of the format, by default ''
-    analysis : str {0, 1, 2, 3, '', 'h', 'dn', 'dl', 'd', 'l', 'fi'}, optional
-        Analysis type, by default 'h'
+        Version of the format. Default is ''
+    analysis : str, optional
+        Indicator of SG analysis.
+        Default is 'h'.
+        Choose one from
+        * 'h': Homogenization
+        * 'd' or 'l': Dehomogenization
+        * 'fi': Initial failure indices and strength ratios
     sg_fmt : {0, 1}, optional
-        Format for the VABS input, by default 1
+        Format for the VABS input. Default is 1
     macro_responses : list[StateCase], optional
-        Macroscopic responses, by default []
-    model : int, optional
-        Type of the macro structural model, by default 0
+        Macroscopic responses. Default is `[]`.
+    model_type : str
+        Type of the macro structural model.
+        Default is 'SD1'.
+        Choose one from
+        * 'SD1': Cauchy continuum model
+        * 'PL1': Kirchhoff-Love plate/shell model
+        * 'PL2': Reissner-Mindlin plate/shell model
+        * 'BM1': Euler-Bernoulli beam model
+        * 'BM2': Timoshenko beam model
     load_type : int, optional
-        Type of the load, by default 0
+        Type of the load. Default is 0
     sfi
-        String formating integers
+        String formating integers. Default is '8d'
     sff
-        String formating floats
+        String formating floats. Default is '20.12e'
     mesh_only
-        If write meshing data only
+        If write meshing data only. Default is False
     """
 
     logger.debug(f'writting sg data to {fn} (format: {file_format})...')
@@ -421,7 +443,7 @@ def write(
 
                 _swiftcomp.writeBuffer(
                     sg, file,
-                    analysis=analysis, model=model,
+                    analysis=analysis, model=model_type,
                     macro_responses=macro_responses,
                     load_type=load_type,
                     sfi=sfi, sff=sff, version=format_version,
@@ -434,7 +456,7 @@ def write(
                 _vabs.writeBuffer(
                     sg, file,
                     analysis=analysis, sg_fmt=sg_fmt,
-                    macro_responses=macro_responses, model=model,
+                    macro_responses=macro_responses, model=model_type,
                     sfi=sfi, sff=sff, version=format_version,
                     mesh_only=mesh_only)
 
@@ -444,10 +466,10 @@ def write(
 
 
 def convert(
-    file_name_in:str, file_name_out:str,
-    file_format_in:str='', file_format_out:str='',
+    file_name_in, file_name_out,
+    file_format_in, file_format_out,
     format_version_in:str='', format_version_out:str='',
-    analysis:str|int='h', sgdim:int=3, model:int|str='SD1', sg_fmt:int=1,
+    analysis='h', sgdim:int=3, model_type='SD1', sg_fmt:int=1,
     sfi:str='8d', sff:str='20.12e', mesh_only:bool=False
     ):
     """Convert the SG data file format.
@@ -459,19 +481,34 @@ def convert(
     file_name_out : str
         File name after conversion
     file_format_in : str, optional
-        Format of the input file, by default ''
+        Format of the input file.
+        Choose one from 'vabs', 'sc', 'swiftcomp'.
     file_format_out : str, optional
-        Format of the output file, by default ''
+        Format of the output file.
+        Choose one from 'vabs', 'sc', 'swiftcomp'.
     format_version_in : str, optional
         Version of the input file, by default ''
     format_version_out : str, optional
         Version of the output file, by default ''
-    analysis : str|int, optional
-        Analysis to be carried out, by default 'h'
-    sgdim : int, optional
-        Dimension of the geometry, by default 3
-    model : int|str, optional
-        Type of the macro structural model, by default 'SD1'
+    analysis : str, optional
+        Indicator of SG analysis.
+        Default is 'h'.
+        Choose one from
+        * 'h': Homogenization
+        * 'd' or 'l': Dehomogenization
+        * 'fi': Initial failure indices and strength ratios
+    sgdim : int
+        Dimension of the geometry. Default is 3.
+        Choose one from 1, 2, 3.
+    model_type : str
+        Type of the macro structural model.
+        Default is 'SD1'.
+        Choose one from
+        * 'SD1': Cauchy continuum model
+        * 'PL1': Kirchhoff-Love plate/shell model
+        * 'PL2': Reissner-Mindlin plate/shell model
+        * 'BM1': Euler-Bernoulli beam model
+        * 'BM2': Timoshenko beam model
     sg_fmt : int, optional
         Format for the VABS input, by default 1
     sfi : str, optional
@@ -487,7 +524,7 @@ def convert(
         file_format=file_format_in,
         format_version=format_version_in,
         sgdim=sgdim,
-        model=model,
+        model=model_type,
         mesh_only=mesh_only)
 
     write(

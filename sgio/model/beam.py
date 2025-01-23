@@ -219,13 +219,13 @@ class EulerBernoulliBeamModel:
 
         Parameters
         ----------
-        name : str
-            Name of the property that will be returned.
+        name : str or list of str
+            Name(s) of the property that will be returned.
 
         Returns
         -------
-        float:
-            Value of the specified beam property.
+        float or list of float:
+            Value(s) of the specified beam property.
 
         Notes
         -----
@@ -235,10 +235,8 @@ class EulerBernoulliBeamModel:
 
             * - Name
               - Description
-            * - ``msijo`` (``i``, ``j`` = 1 to 6)
+            * - ``msij`` (``i``, ``j`` = 1 to 6)
               - Entry (i, j) of the 6x6 mass matrix at the origin
-            * - ``msijc`` (``i``, ``j`` = 1 to 6)
-              - Entry (i, j) of the 6x6 mass matrix at the mass center
             * - ``mu``
               - Mass per unit length
             * - ``mmoi1`` | ``mmoi2`` | ``mmoi3``
@@ -249,22 +247,18 @@ class EulerBernoulliBeamModel:
 
             * - Name
               - Description
-            * - ``stfijc`` (``i``, ``j`` = 1 to 6)
+            * - ``stfij`` (``i``, ``j`` = 1 to 6)
               - Entry (i, j) of the 4x4 classical stiffness matrix
-            * - ``stfijr`` (``i``, ``j`` = 1 to 6)
-              - Entry (i, j) of the 6x6 refined stiffness matrix
-            * - ``eac`` | ``ear``
-              - Axial stiffness of the classical/refined model
-            * - ``gjc`` | ``gjr``
-              - Torsional stiffness of the classical/refined model
-            * - ``ei2c`` | ``eifc`` | ``ei2r`` | ``eifr``
-              - Bending stiffness around x2 (flapwise) of the classical/refined model
-            * - ``ei3c`` | ``eicc`` | ``ei3r`` | ``eicr``
-              - Bending stiffness around x3 (chordwise or lead-lag) of the classical/refined model
-            * - ``cmpijc`` (``i``, ``j`` = 1 to 6)
+            * - ``cmpij`` (``i``, ``j`` = 1 to 6)
               - Entry (i, j) of the 4x4 classical compliance matrix
-            * - ``cmpijr`` (``i``, ``j`` = 1 to 6)
-              - Entry (i, j) of the 6x6 refined compliance matrix
+            * - ``ea``
+              - Axial stiffness of the model
+            * - ``gj``
+              - Torsional stiffness of the model
+            * - ``ei22`` | ``eiyy``
+              - Bending stiffness around x2 (flapwise) of the model
+            * - ``ei33`` | ``eizz``
+              - Bending stiffness around x3 (chordwise or lead-lag) of the model
 
         ..  list-table:: Center offsets
             :header-rows: 1
@@ -279,12 +273,6 @@ class EulerBernoulliBeamModel:
               - y (or x2) component of the tension center
             * - ``tcz`` | ``tc3``
               - z (or x3) component of the tension center
-            * - ``scy`` | ``sc2``
-              - y (or x2) component of the shear center
-            * - ``scz`` | ``sc3``
-              - z (or x3) component of the shear center
-
-        .
 
         """
 
