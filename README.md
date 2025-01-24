@@ -2,42 +2,40 @@
 
 Structure Gene (SG) I/O
 
-Python package interfacing VABS and SwiftComp.
-The package is developed based on [meshio](https://github.com/nschloe/meshio), which is used for converting meshing data.
+Python package interfacing VABS and SwiftComp. The package is developed based on [meshio](https://github.com/nschloe/meshio), which is used for converting meshing data.
 
-The package can be used to
-- read/write SG data from/to different formats
-- convert SG/mesh data between different formats
-- read structural property from VABS/SwiftComp output
-- create 1D SG from layup input
+## Features
 
-Supported data formats:
-- for complete SG data
+The package can be used to:
+- Read/write SG data from/to different formats
+- Convert SG/mesh data between different formats
+- Read structural property from VABS/SwiftComp output
+- Create 1D SG from layup input
+
+### Supported Data Formats
+
+- For complete SG data:
   - VABS, SwiftComp, Abaqus
-- for mesh data only
-  - all formats supported by meshio
+- For mesh data only:
+  - All formats supported by meshio
 
-A structure gene (SG) is defined as the smallest mathematical building block of a structure.[^1]
-A cross-section (CS) is a type of 2D SG.
-
+A structure gene (SG) is defined as the smallest mathematical building block of a structure.[^1] A cross-section (CS) is a type of 2D SG.
 
 ## Installation
 
-Download the package.
-
-Install dependencies.
-```shell
-pip install -r <INSTALL_DIR>/sgio/sgio/requirements.txt
-```
-
-Configure environment variables.
-- Add the package root directory to `PYTHONPATH`.
-- Add `<INSTALL_DIR>/sgio/bin` to `PATH`.
-
+1. Download the package.
+2. Install dependencies:
+    ```shell
+    pip install -r <INSTALL_DIR>/sgio/sgio/requirements.txt
+    ```
+3. Configure environment variables:
+    - Add the package root directory to `PYTHONPATH`.
+    - Add `<INSTALL_DIR>/sgio/bin` to `PATH`.
 
 ## Usage
 
-Command line interface
+### Command Line Interface
+
 ```
 usage: sgio [-h] {build,b,convert,c} ...
 
@@ -52,9 +50,8 @@ optional arguments:
   -h, --help           show this help message and exit
 ```
 
-### Convert SG data
+### Convert SG Data
 
-Command line interface
 ```
 usage: sgio convert [-h] [-ff FROM_FORMAT] [-tf TO_FORMAT] [-d SGDIM] [-m MODEL] [-mo] from to
 
@@ -75,19 +72,18 @@ optional arguments:
   -mo, --mesh-only      Mesh only conversion
 ```
 
-#### Example: Convert cross-sectional data from Abaqus (.inp) to VABS input
+#### Example: Convert Cross-Sectional Data from Abaqus (.inp) to VABS Input
 
-Suppose a cross-section has been built in Abaqus and output to `cross-section.inp`.
-To convert the data to the VABS input (Timoshenko model) `cross-section.sg`:
+Suppose a cross-section has been built in Abaqus and output to `cross-section.inp`. To convert the data to the VABS input (Timoshenko model) `cross-section.sg`:
 ```
 sgio convert cross-section.inp cross-section.sg -ff abaqus -tf vabs -m bm2
 ```
 
 Check out the example `examples/convert_cs_from_abaqus_to_vabs` for more details.
 
-
 ## License
 
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
 ## Reference
 
