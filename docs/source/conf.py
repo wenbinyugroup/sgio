@@ -68,9 +68,14 @@ html_theme = 'sphinx_immaterial'
 html_static_path = ['_static']
 
 html_theme_options = {
-    'logo': {
-        'text': 'sgio',
+    'site_url': 'https://wenbinyugroup.github.io/sgio/',
+    'repo_url': 'https://github.com/wenbinyugroup/sgio',
+    'palette': {
+        'primary': 'cyan'
     },
+    # 'logo': {
+    #     'text': 'sgio',
+    # },
     'show_nav_level': 2,
     # "path_to_docs": "doc/source",
     # 'use_edit_page_button': True,

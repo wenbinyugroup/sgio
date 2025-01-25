@@ -19,8 +19,8 @@ from sgio.core.sg import StructureGene
 
 
 def read(
-    fn, file_format, format_version='',
-    sgdim=3, model_type='SD1', sg=None,
+    fn, file_format, format_version='', model_type='SD1',
+    sgdim=3, sg=None,
     **kwargs):
     """Read SG data file.
 

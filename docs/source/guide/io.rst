@@ -2,53 +2,41 @@ Read and Write SG Data
 ===========================
 
 
+
 Read SG data
 --------------
 
-..  code-block::
-
-    import sgio
-
-    sg = sgio.read(
-        filename,  # Name of the SG file.
-        format, # Format of the SG data. See doc for more info.
-        version, # Version of the data format. See doc for more info.
-        sgdim, # Dimension of the SG.
-        smdim, # Dimension of the structural model.
-    )
-
-
-
-Write SG data
-----------------
-
-..  code-block::
-
-    import sgio
-
-    sgio.write(
-        sg,  # SG data
-        filename,  # Name of the SG file.
-        format, # Format of the SG data. See doc for more info.
-        version, # Version of the data format. See doc for more info.
-        analysis, # Type of SG analysis. See doc for more info.
-    )
-
-
-
-Read mesh data
-------------------
+Use the :func:`sgio.read` function.
 
 ..  code-block::
 
     import sgio
 
     sg = sgio.read(
-        filename,  # Name of the SG file.
-        format, # Format of the SG data. See doc for more info.
-        version, # Version of the data format. See doc for more info.
-        sgdim, # Dimension of the SG.
-        smdim, # Dimension of the structural model.
+        file_name,
+        file_format,
+        sgdim,
+        model_type,
+    )
+
+``file_name`` is the name of the SG file to be read.
+``file_format`` is the format of the SG file.
+``sgdim`` is the dimension of the SG data.
+``model_type`` is the type of the SG model.
+
+
+For Meshing Data Only
+^^^^^^^^^^^^^^^^^^^^^
+
+..  code-block::
+
+    import sgio
+
+    sg = sgio.read(
+        file_name,
+        file_format,
+        sgdim,
+        model_type,
         mesh_only=True
     )
 
@@ -63,18 +51,37 @@ Users can also directly use `meshio` functions to read mesh data:
     )
 
 
-Write mesh data
--------------------
+
+Write SG data
+----------------
+
+Use the :func:`sgio.write` function.
 
 ..  code-block::
 
     import sgio
 
     sgio.write(
-        sg,  # SG data
-        filename,  # Name of the SG file.
-        format, # Format of the SG data. See doc for more info.
-        version, # Version of the data format. See doc for more info.
+        sg,
+        file_name,
+        file_format,
+        version,
+        analysis,
+    )
+
+
+For Meshing Data Only
+^^^^^^^^^^^^^^^^^^^^^
+
+..  code-block::
+
+    import sgio
+
+    sgio.write(
+        sg,
+        file_name,
+        file_format,
+        version,
         mesh_only=True
     )
 
@@ -90,11 +97,12 @@ Users can also directly use `meshio` functions to write mesh data:
     )
 
 
-Supported formats and data
------------------------------
 
-All formats supported by meshio are also supported by sgio.
-However, not all of those formats can store the complete SG data.
+Supported Data Formats
+-----------------------
+
+``mehsio`` supports a wide range of formats.
+However, not all of those formats can store the complete SG data and be supported by ``sgio``.
 
 Formats that can be used for complete SG data:
 
@@ -102,8 +110,4 @@ Formats that can be used for complete SG data:
 * SwiftComp
 * Abaqus
 
-Formats that could be used for complete SG data:
-
-* ANSYS
-
-These formats will be developed for complete SG data in the future.
+Other formats will be developed for complete SG data in the future.

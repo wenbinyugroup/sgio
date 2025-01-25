@@ -11,8 +11,8 @@
 
 
 ..  toctree::
+    :hidden:
     :maxdepth: 2
-    :caption: Contents
 
     guide/index
     examples/index

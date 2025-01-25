@@ -2,9 +2,10 @@
 
 Structure Gene (SG) I/O
 
-Python package interfacing VABS and SwiftComp. The package is developed based on [meshio](https://github.com/nschloe/meshio), which is used for converting meshing data.
+Python package interfacing VABS and SwiftComp.
+The package is developed based on [meshio](https://github.com/nschloe/meshio), which is used for converting meshing data.
 
-## Features
+**Features**
 
 The package can be used to:
 - Read/write SG data from/to different formats
@@ -12,18 +13,21 @@ The package can be used to:
 - Read structural property from VABS/SwiftComp output
 - Create 1D SG from layup input
 
-### Supported Data Formats
+**Supported Data Formats**
 
 - For complete SG data:
   - VABS, SwiftComp, Abaqus
 - For mesh data only:
   - All formats supported by meshio
 
-A structure gene (SG) is defined as the smallest mathematical building block of a structure.[^1] A cross-section (CS) is a type of 2D SG.
+A structure gene (SG) is defined as the smallest mathematical building block of a structure.[^1]
+A cross-section (CS) is a type of 2D SG.
+
+Online [documentation](https://wenbinyugroup.github.io/sgio/)
 
 ## Installation
 
-1. Download the package.
+1. [Download](https://github.com/wenbinyugroup/sgio) the package.
 2. Install dependencies:
     ```shell
     pip install -r <INSTALL_DIR>/sgio/sgio/requirements.txt
@@ -34,9 +38,29 @@ A structure gene (SG) is defined as the smallest mathematical building block of 
 
 ## Usage
 
+### API
+
+#### Example: Read Beam Properties from VABS Output File
+
+```python
+import sgio
+
+model = sgio.readOutputModel('my_cross_section.sg.k', 'vabs', 'BM1')
+```
+
 ### Command Line Interface
 
+#### Example: Convert Cross-Sectional Data from Abaqus (.inp) to VABS Input
+
+Suppose a cross-section has been built in Abaqus and output to `cross-section.inp`.
+To convert the data to the VABS input (Timoshenko model) `cross-section.sg`:
+```shell
+sgio convert cross-section.inp cross-section.sg -ff abaqus -tf vabs -m bm2
 ```
+
+#### Complete Options
+
+```text
 usage: sgio [-h] {build,b,convert,c} ...
 
 CS/SG I/O functions
@@ -50,9 +74,9 @@ optional arguments:
   -h, --help           show this help message and exit
 ```
 
-### Convert SG Data
+##### Convert SG Data
 
-```
+```text
 usage: sgio convert [-h] [-ff FROM_FORMAT] [-tf TO_FORMAT] [-d SGDIM] [-m MODEL] [-mo] from to
 
 positional arguments:
@@ -72,18 +96,12 @@ optional arguments:
   -mo, --mesh-only      Mesh only conversion
 ```
 
-#### Example: Convert Cross-Sectional Data from Abaqus (.inp) to VABS Input
-
-Suppose a cross-section has been built in Abaqus and output to `cross-section.inp`. To convert the data to the VABS input (Timoshenko model) `cross-section.sg`:
-```
-sgio convert cross-section.inp cross-section.sg -ff abaqus -tf vabs -m bm2
-```
-
 Check out the example `examples/convert_cs_from_abaqus_to_vabs` for more details.
 
 ## License
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+<!-- This project is licensed under the MIT License.
+See the [LICENSE](LICENSE) file for details. -->
 
 ## Reference
 
