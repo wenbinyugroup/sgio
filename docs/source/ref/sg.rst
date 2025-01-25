@@ -1,7 +1,7 @@
 Structure Gene
 ================
 
-..  autoclass:: sgio.core.sg.StructureGene
+..  autoclass:: sgio.StructureGene
     :members:
     :show-inheritance:
 

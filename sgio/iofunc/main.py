@@ -19,8 +19,8 @@ from sgio.core.sg import StructureGene
 
 
 def read(
-    fn, file_format, format_version='', model_type='SD1',
-    sgdim=3, sg=None,
+    fn, file_format, model_type='SD1',
+    format_version='', sgdim=3, sg=None,
     **kwargs):
     """Read SG data file.
 
@@ -468,9 +468,9 @@ def write(
 def convert(
     file_name_in, file_name_out,
     file_format_in, file_format_out,
-    format_version_in:str='', format_version_out:str='',
-    analysis='h', sgdim:int=3, model_type='SD1', sg_fmt:int=1,
-    sfi:str='8d', sff:str='20.12e', mesh_only:bool=False
+    format_version_in='', format_version_out='',
+    analysis='h', sgdim=3, model_type='SD1', sg_fmt=1,
+    sfi='8d', sff='20.12e', mesh_only=False
     ):
     """Convert the SG data file format.
 
@@ -494,6 +494,7 @@ def convert(
         Indicator of SG analysis.
         Default is 'h'.
         Choose one from
+
         * 'h': Homogenization
         * 'd' or 'l': Dehomogenization
         * 'fi': Initial failure indices and strength ratios
@@ -504,6 +505,7 @@ def convert(
         Type of the macro structural model.
         Default is 'SD1'.
         Choose one from
+
         * 'SD1': Cauchy continuum model
         * 'PL1': Kirchhoff-Love plate/shell model
         * 'PL2': Reissner-Mindlin plate/shell model
@@ -522,15 +524,16 @@ def convert(
     sg = read(
         fn=file_name_in,
         file_format=file_format_in,
+        model_type=model_type,
         format_version=format_version_in,
         sgdim=sgdim,
-        model=model_type,
         mesh_only=mesh_only)
 
     write(
         sg=sg,
         fn=file_name_out,
         file_format=file_format_out,
+        model_type=model_type,
         format_version=format_version_out,
         analysis=analysis,
         sg_fmt=sg_fmt,

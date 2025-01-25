@@ -78,8 +78,8 @@ class State():
         The location type of the state, either 'node' or 'element'.
     """
     def __init__(
-        self, name:str='', data:list|dict={}, label:list[str]=[],
-        location:str=''):
+        self, name='', data={}, label=[],
+        location=''):
         """Construct a State object.
 
         Parameters
@@ -87,7 +87,8 @@ class State():
         name : str
             The name of the state.
         data : list or dict
-            The data associated with the state. It can be a list for point data or a dictionary for field data.
+            The data associated with the state.
+            It can be a list for point data or a dictionary for field data.
         label : list of str
             The labels associated with the state.
         location : str

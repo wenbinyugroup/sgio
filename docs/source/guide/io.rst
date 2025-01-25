@@ -6,7 +6,7 @@ Read and Write SG Data
 Read SG data
 --------------
 
-Use the :func:`sgio.read` function.
+To read SG data from a file, use the :func:`sgio.read` function.
 
 ..  code-block::
 
@@ -15,14 +15,19 @@ Use the :func:`sgio.read` function.
     sg = sgio.read(
         file_name,
         file_format,
-        sgdim,
         model_type,
+        sgdim,
     )
 
 ``file_name`` is the name of the SG file to be read.
 ``file_format`` is the format of the SG file.
-``sgdim`` is the dimension of the SG data.
+It can be 'vabs' for VABS, 'sc' or 'swiftcomp' for SwiftComp.
 ``model_type`` is the type of the SG model.
+``sgdim`` is the dimension of the SG data.
+It can be 1, 2, or 3.
+For VABS, the SG is a cross-section, so the dimension is 2, which can be omitted.
+
+The function returns a :class:`sgio.StructureGene` object.
 
 
 For Meshing Data Only
@@ -35,12 +40,12 @@ For Meshing Data Only
     sg = sgio.read(
         file_name,
         file_format,
-        sgdim,
         model_type,
+        sgdim,
         mesh_only=True
     )
 
-Users can also directly use `meshio` functions to read mesh data:
+Users can also directly use ``meshio`` functions to read mesh data:
 
 ..  code-block::
 
@@ -85,7 +90,7 @@ For Meshing Data Only
         mesh_only=True
     )
 
-Users can also directly use `meshio` functions to write mesh data:
+Users can also directly use ``meshio`` functions to write mesh data:
 
 ..  code-block::
 

@@ -346,14 +346,14 @@ class EulerBernoulliBeamModel:
 
         - mu, mmoi1, mmoi2, mmoi3
         - ea, ga22, ga33, gj, ei22, ei33
-        - mc2, mc3, tc2, tc3, sc2, sc3
-        - msij, stfijc, cmpijc, stfijr, cmpijr
+        - mc2, mc3, tc2, tc3
+        - stfij, cmpij
 
         """
         names = [
             'mu', 'mmoi1', 'mmoi2', 'mmoi3',
             'ea', 'ga22', 'ga33', 'gj', 'ei22', 'ei33',
-            'mc2', 'mc3', 'tc2', 'tc3', 'sc2', 'sc3'
+            'mc2', 'mc3', 'tc2', 'tc3'
         ]
         for i in range(4):
             for j in range(4):
