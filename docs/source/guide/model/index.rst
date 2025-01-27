@@ -1,24 +1,64 @@
+.. _guide_model:
+
 Material and Structural Models
 =================================
 
+Solid (SD)
+-----------
 
-..  toctree::
-    :maxdepth: 1
-    :caption: Solid
+..  list-table::
+    :header-rows: 1
 
-    sd_cauchy
+    * - Tag
+      - Model
+    * - SD1
+      - :doc:`sd_cauchy`
 
-..  toctree::
-    :maxdepth: 1
-    :caption: Plate/shell
+Plate and shell (PL)
+---------------------
 
-    pl_kirchhoff
-    pl_reissner
+..  list-table::
+    :header-rows: 1
 
-..  toctree::
-    :maxdepth: 1
-    :caption: Beam
+    * - Tag
+      - Model
+    * - PL1
+      - :doc:`pl_kirchhoff`
+    * - PL2
+      - :doc:`pl_reissner`
 
-    bm_euler
-    bm_timoshenko
+
+Beam (BM)
+---------
+
+..  list-table::
+    :header-rows: 1
+
+    * - Tag
+      - Model
+    * - BM1
+      - :doc:`bm_euler`
+    * - BM2
+      - :doc:`bm_timoshenko`
+
+
+.. ..  toctree::
+..     :maxdepth: 1
+..     :caption: Solid
+
+..     sd_cauchy
+
+.. ..  toctree::
+..     :maxdepth: 1
+..     :caption: Plate/shell
+
+..     pl_kirchhoff
+..     pl_reissner
+
+.. ..  toctree::
+..     :maxdepth: 1
+..     :caption: Beam
+
+..     bm_euler
+..     bm_timoshenko
 

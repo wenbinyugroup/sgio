@@ -7,5 +7,5 @@ Reference
     :caption: Contents
 
     sg
-    model
+    model/index
     io

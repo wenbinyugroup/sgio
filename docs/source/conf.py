@@ -40,6 +40,7 @@ extensions = [
     'sphinx.ext.napoleon',
     'myst_parser',
     "sphinx.ext.githubpages",
+    'sphinx_immaterial',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -58,7 +59,8 @@ root_doc = 'index'
 # a list of builtin themes.
 #
 # html_theme = 'sphinx_book_theme'
-html_theme = 'pydata_sphinx_theme'
+# html_theme = 'pydata_sphinx_theme'
+html_theme = 'sphinx_immaterial'
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
@@ -66,9 +68,14 @@ html_theme = 'pydata_sphinx_theme'
 html_static_path = ['_static']
 
 html_theme_options = {
-    'logo': {
-        'text': 'sgio',
+    'site_url': 'https://wenbinyugroup.github.io/sgio/',
+    'repo_url': 'https://github.com/wenbinyugroup/sgio',
+    'palette': {
+        'primary': 'red'
     },
+    # 'logo': {
+    #     'text': 'sgio',
+    # },
     'show_nav_level': 2,
     # "path_to_docs": "doc/source",
     # 'use_edit_page_button': True,

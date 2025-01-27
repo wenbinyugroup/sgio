@@ -2,6 +2,7 @@ _temp*/
 __pycache__/
 build*/
 .vscode/
+.pytest_cache/
 
 *.pyc
 *.exe
@@ -16,23 +17,23 @@ SCWork
 *.gz
 *.tar
 
-*.u
-*.sn
-*.snm
-*.fi
+tests/*.u
+tests/*.sn
+tests/*.snm
+tests/*.fi
 
-*.ech
-*.v0
-*.v1S
-*.v22
+tests/*.ech
+tests/*.v0
+tests/*.v1S
+tests/*.v22
 
-*.U
-*.E
-*.EM
-*.EN
-*.EMN
-*.S
-*.SM
-*.SN
-*.SMN
-*.ELE
+tests/*.U
+tests/*.E
+tests/*.EM
+tests/*.EN
+tests/*.EMN
+tests/*.S
+tests/*.SM
+tests/*.SN
+tests/*.SMN
+tests/*.ELE

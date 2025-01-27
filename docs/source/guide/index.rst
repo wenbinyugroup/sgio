@@ -1,3 +1,5 @@
+.. _guide:
+
 Guide
 =====
 
@@ -6,8 +8,11 @@ Guide
     :maxdepth: 2
     :caption: Contents
 
-    io
     sg
+    io
+    convert
+    io_model
+    io_state
     model/index
 
 ..    guide/convert

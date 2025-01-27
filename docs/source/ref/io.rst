@@ -1,24 +1,28 @@
+.. _ref_io:
+
 I/O Functions
 ==============
 
 
-.. .. currentmodule:: iofunc
+.. currentmodule:: sgio
 
 .. .. highlight:: python
 
 .. Reading functions
 .. ---------------------------
 
-.. ..  autosummary::
-..     :toctree: _temp
+..  autosummary::
+    :toctree: _temp
 
-..     read
-..     readOutput
-..     write
+    read
+    readOutputModel
+    readOutputState
+    write
+    convert
 
 
-..  automodule:: sgio.iofunc.main
-    :members:
-    :undoc-members:
-    :show-inheritance:
-    :noindex:
+.. ..  automodule:: sgio.iofunc.main
+..     :members:
+..     :undoc-members:
+..     :show-inheritance:
+..     :noindex:

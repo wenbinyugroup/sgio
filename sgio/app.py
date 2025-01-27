@@ -87,6 +87,6 @@ def main(func, **kwargs):
             file_format_in=kwargs['from_format'],
             file_format_out=kwargs['to_format'],
             sgdim=kwargs['sgdim'],
-            model=kwargs['model'],
+            model_type=kwargs['model'],
             mesh_only=kwargs['mesh_only'],
         )

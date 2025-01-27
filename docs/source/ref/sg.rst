@@ -1,6 +1,10 @@
 Structure Gene
 ================
 
+..  autoclass:: sgio.StructureGene
+    :members:
+    :show-inheritance:
+
 .. .. currentmodule:: core.sg
 
 .. .. highlight:: python
@@ -14,7 +18,7 @@ Structure Gene
 ..     :members:
 
 
-.. automodule:: sgio.core.sg
-    :members:
-    :undoc-members:
-    :show-inheritance:
+.. .. automodule:: sgio.core.sg
+..     :members:
+..     :undoc-members:
+..     :show-inheritance:

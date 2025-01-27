@@ -1,3 +1,5 @@
+.. _guide_model_bm_euler:
+
 Euler-Bernoulli Beam Model
 ============================
 
