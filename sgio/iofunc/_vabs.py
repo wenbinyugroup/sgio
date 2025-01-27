@@ -134,9 +134,9 @@ def _readMaterialRotationCombinations(file, ncomb):
 
     counter = 0
     while counter < ncomb:
-        line = file.readline().split('#')[0].strip()
+        line = file.readline().split('!')[0].strip()
         while line == '':
-            line = file.readline().split('#')[0].strip()
+            line = file.readline().split('!')[0].strip()
 
         line = line.split()
         comb_id = int(line[0])
@@ -167,9 +167,9 @@ def _readMaterials(file, file_format:str, nmate:int):
 
     counter = 0
     while counter < nmate:
-        line = file.readline().split('#')[0].strip()
+        line = file.readline().split('!')[0].strip()
         while line == '':
-            line = file.readline().split('#')[0].strip()
+            line = file.readline().split('!')[0].strip()
 
         line = line.split()
 
@@ -206,9 +206,9 @@ def _readMaterial(file, file_format:str, isotropy:int, ntemp:int=1):
         elastic_props = _readElasticProperty(file, isotropy)
         mp.setElastic(elastic_props, isotropy)
 
-        line = file.readline().split('#')[0].strip()
+        line = file.readline().split('!')[0].strip()
         while line == '':
-            line = file.readline().split('#')[0].strip()
+            line = file.readline().split('!')[0].strip()
         density = float(line)
 
         # mp.density = density
@@ -242,9 +242,9 @@ def _readElasticProperty(file, isotropy:int):
         nrow = 6
 
     for i in range(nrow):
-        line = file.readline().split('#')[0].strip()
+        line = file.readline().split('!')[0].strip()
         while line == '':
-            line = file.readline().split('#')[0].strip()
+            line = file.readline().split('!')[0].strip()
         constants.extend(list(map(float, line.split())))
 
     return constants

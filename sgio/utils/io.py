@@ -7,9 +7,9 @@ def convertToPrettyString(v):
 
 
 def readNextNonEmptyLine(file):
-    line = file.readline().strip()
+    line = file.readline().split('!')[0].strip()
     while line == '':
-        line = file.readline().strip()
+        line = file.readline().split('!')[0].strip()
     return line
 
 

@@ -104,7 +104,7 @@ def _read_elements(f, nelem:int, point_ids):
     counter = 0
     while counter < nelem:
         line = f.readline()
-        line = line.split('#')[0].strip()
+        line = line.split('!')[0].strip()
         if line == "": continue
 
         line = line.split()
@@ -163,7 +163,7 @@ def _read_property_id_ref_csys(file, nelem, cells, elem_id_to_cell_id):
     counter = 0
     while counter < nelem:
         line = file.readline()
-        line = line.split('#')[0].strip()
+        line = line.split('!')[0].strip()
         if line == "": continue
 
         line = line.split()

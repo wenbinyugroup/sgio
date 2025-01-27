@@ -10,6 +10,7 @@ Guide
 
     sg
     io
+    convert
     io_model
     io_state
     model/index

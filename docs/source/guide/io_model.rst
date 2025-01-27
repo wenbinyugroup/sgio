@@ -22,12 +22,8 @@ The function returns a structural model (:ref:`ref_model`).
 
 
 
-Examples
---------
-
-
-Get Euler-Bernoulli beam properties from a VABS output file
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Get Euler-Bernoulli Beam Properties from a VABS Output File
+-----------------------------------------------------------
 
 Consider the following VABS output file (``sgio/examples/files/sg21eb_tri3_vabs40.sg.K``):
 
