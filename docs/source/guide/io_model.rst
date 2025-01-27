@@ -29,9 +29,9 @@ Examples
 Get Euler-Bernoulli beam properties from a VABS output file
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Consider the following VABS output file (``sgio/examples/read_vabs_output_k/sg21eb_tri3_vabs40.sg.K``):
+Consider the following VABS output file (``sgio/examples/files/sg21eb_tri3_vabs40.sg.K``):
 
-..  literalinclude:: ../../../examples/read_vabs_output_k/sg21eb_tri3_vabs40.sg.K
+..  literalinclude:: ../../../examples/files/sg21eb_tri3_vabs40.sg.K
     :language: text
 
 The following code shows how to read the output file and get some Euler-Bernoulli beam properties:

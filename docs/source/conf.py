@@ -71,7 +71,7 @@ html_theme_options = {
     'site_url': 'https://wenbinyugroup.github.io/sgio/',
     'repo_url': 'https://github.com/wenbinyugroup/sgio',
     'palette': {
-        'primary': 'cyan'
+        'primary': 'red'
     },
     # 'logo': {
     #     'text': 'sgio',
