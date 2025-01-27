@@ -1,0 +1,6 @@
+﻿sgio.readOutputState
+====================
+
+.. currentmodule:: sgio
+
+.. autofunction:: readOutputState

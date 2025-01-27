@@ -1,0 +1,6 @@
+﻿sgio.write
+==========
+
+.. currentmodule:: sgio
+
+.. autofunction:: write
