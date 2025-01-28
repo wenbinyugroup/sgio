@@ -1,9 +1,17 @@
 import sgio
 
 model = sgio.readOutputModel(
-    "sg21eb_tri3_vabs40.sg.k",
+    "files/cs_box_t_vabs41.sg.K",
     "vabs",
-    model_type="BM1"
+    model_type="BM2"
 )
 
-print(model)
+ea = model.get('ea')
+gj = model.get('gj')
+ei22 = model.get('ei22')
+ei33 = model.get('ei33')
+
+print(f'EA = {ea}')
+print(f'GJ = {gj}')
+print(f'EI22 = {ei22}')
+print(f'EI33 = {ei33}')

@@ -1,5 +1,6 @@
 # SGIO
 
+
 Structure Gene (SG) I/O
 
 Python package interfacing VABS and SwiftComp.

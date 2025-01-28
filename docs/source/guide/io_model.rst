@@ -22,26 +22,26 @@ The function returns a structural model (:ref:`ref_model`).
 
 
 
-Get Euler-Bernoulli Beam Properties from a VABS Output File
+Get Timoshenko Beam Properties from a VABS Output File
 -----------------------------------------------------------
 
-Consider the following VABS output file (``sgio/examples/files/sg21eb_tri3_vabs40.sg.K``):
+Consider the following VABS output file (``sgio/examples/files/cs_box_t_vabs41.sg.K``):
 
 ..  literalinclude:: ../../../examples/files/sg21eb_tri3_vabs40.sg.K
     :language: text
 
-The following code shows how to read the output file and get some Euler-Bernoulli beam properties:
+The following code (``sgio/examples/read_vabs_output_h.py``) shows how to read the output file and get some Timoshenko beam properties:
 
-..  code-block::
+..  literalinclude:: ../../../examples/read_vabs_output_h.py
+    :language: python
 
-    import sgio
+The output should be:
 
-    model = sgio.readOutputModel(
-        'sg21eb_tri3_vabs40.sg.K',  # Name of the output file.
-        'vabs',           # Format of the output file.
-        'BM1',     # Type of the structural model.
-    )
+..  code-block:: text
 
-    ea = model.get('ea')
+    EA = 1653700.125
+    GJ = 6322.4210975
+    EI22 = 79466.796504
+    EI33 = 200742.66655
 
-Checkout :func:`sgio.model.EulerBernoulliBeamModel.get` for more information on the properties that can be retrieved.
+Checkout :func:`sgio.model.TimoshenkoBeamModel.get` for more information on the properties that can be retrieved.
