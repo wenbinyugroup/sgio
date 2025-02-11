@@ -1,0 +1,114 @@
+1
+
+   Abaqus 2023                                  Date 09-Feb-2025   Time 18:19:24
+   For use by PURDUE UNIVERSITY under license from Dassault Systemes or its subsidiary.
+
+
+
+                         The Abaqus Software is a product of:
+
+                           Dassault Systemes SIMULIA Corp.
+                           1301 Atwood Avenue, Suite 101W
+                              Johnston, RI 02919, USA
+ 
+
+
+                   The Abaqus Software is available only under license
+                   from Dassault Systemes or its subsidiary and may be
+                   used or reproduced only in accordance with the terms
+                   of such license.
+ 
+                          On machine stn-w-xps 
+                          you are authorized to run
+                          Abaqus/Foundation until 31-Jan-2026
+
+                          Your site id is: 100000000002199 
+
+
+ 
+                    For assistance or any other information you may
+                    obtain contact information for your local office
+                    from the world wide web at:
+
+                      http://www.3ds.com/products/simulia/locations/
+
+ 
+                * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
+                *                                                         * 
+                *                   *****************                     * 
+                *                   *  N O T I C E  *                     * 
+                *                   *****************                     * 
+                *                                                         * 
+                *                                                         * 
+                *                       Abaqus 2023                       * 
+                *                                                         * 
+                *          BUILD ID: 2022_09_28-14.11.55 183150           * 
+                *                                                         * 
+                *                                                         * 
+                *  Please make sure you are using                         * 
+                *  release Abaqus 2023 manuals                            * 
+                *  plus the notes accompanying this release.              * 
+                *                                                         * 
+                *                                                         * 
+                *                                                         * 
+                *                                                         * 
+                * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
+
+
+ 
+
+
+
+     PROCESSING PART, INSTANCE, AND ASSEMBLY INFORMATION
+   *******************************************************
+
+
+     END PROCESSING PART, INSTANCE, AND ASSEMBLY INFORMATION
+   ***********************************************************
+
+
+
+
+     OPTIONS BEING PROCESSED
+   ***************************
+
+
+  *Heading
+  *Node
+  *Element, type=WARPF2D4
+  *Nset, nset=ASSEMBLY_PART-1-1_SET-1
+  *Nset, nset=ASSEMBLY_PART-1-1_SET-10
+  *Nset, nset=ASSEMBLY_PART-1-1_SET-2
+  *Elset, elset=ASSEMBLY_PART-1-1_COMPOSITELAYUP-1-1
+  *Elset, elset=ASSEMBLY_PART-1-1_SET-1
+  *Elset, elset=ASSEMBLY_PART-1-1_SET-10
+  *Elset, elset=ASSEMBLY_PART-1-1_SET-2
+  *distribution, name=ASSEMBLY_PART-1-1_ORI-1-DISCORIENT, location=ELEMENT, table=ORI-1-DISCORIENT_TABLE
+  *material, name=MATERIAL-1
+  *elastic, type=ENGINEERINGCONSTANTS
+  *orientation, name=ASSEMBLY_PART-1-1_ORI-1, system=RECTANGULAR
+  *solidsection, elset=ASSEMBLY_PART-1-1_COMPOSITELAYUP-1-1, layup=COMPOSITELAYUP-1, composite, orientation=ASSEMBLY_PART-1-1_ORI-1, stackdirection=3
+  *solidsection, elset=ASSEMBLY_PART-1-1_COMPOSITELAYUP-1-1, layup=COMPOSITELAYUP-1, composite, orientation=ASSEMBLY_PART-1-1_ORI-1, stackdirection=3
+
+ ***WARNING: THE AREA OF THE SOLID SECTION FOR WARPING ELEMENT HAS TO BE EQUAL 
+             1.0. USER GIVEN VALUE 4.94066-324 WILL BE RESET TO 1.0.
+
+ ***ERROR: ELEMENT 1 INSTANCE PART-1-1 WILL BE UNDER-INTEGRATED. A MINIMUM OF 4 
+           SECTION POINTS ARE REQUIRED THROUGH THE THICKNESS.
+ ***NOTE: DUE TO AN INPUT ERROR THE ANALYSIS PRE-PROCESSOR HAS BEEN UNABLE TO 
+          INTERPRET SOME DATA.  SUBSEQUENT ERRORS MAY BE CAUSED BY THIS OMISSION
+
+ ***ERROR: ELEMENT 1 INSTANCE PART-1-1: LAYERED MATERIAL PROPERTIES CAN NOT BE 
+           SPECIFIED FOR THIS ELEMENT TYPE.
+
+
+
+                              END OF USER INPUT PROCESSING
+
+
+
+     JOB TIME SUMMARY
+       USER TIME (SEC)      =      0.0    
+       SYSTEM TIME (SEC)    =      0.0    
+       TOTAL CPU TIME (SEC) =      0.0    
+       WALLCLOCK TIME (SEC) =            0

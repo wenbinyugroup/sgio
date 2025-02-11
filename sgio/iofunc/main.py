@@ -31,12 +31,7 @@ def read(
     file_format : str
         Format of the SG data file.
         Choose one from 'abaqus', 'vabs', 'sc', 'swiftcomp'.
-    format_version : str
-        Version of the format
-    sgdim : int
-        Dimension of the geometry. Default is 3.
-        Choose one from 1, 2, 3.
-    model : str
+    model_type : str
         Type of the macro structural model.
         Choose one from
 
@@ -45,6 +40,11 @@ def read(
         * 'PL2': Reissner-Mindlin plate/shell model
         * 'BM1': Euler-Bernoulli beam model
         * 'BM2': Timoshenko beam model
+    format_version : str
+        Version of the format
+    sgdim : int
+        Dimension of the geometry. Default is 3.
+        Choose one from 1, 2, 3.
     sg : sgio.core.sg.StructureGene, optional
         Structure gene object
 
@@ -133,7 +133,7 @@ def readOutputModel(
 
 
 def readOutputState(
-    fn, file_format, analysis, model_type='',
+    fn, file_format, analysis, model_type='', ext='ele',
     sg=None, tool_ver='', ncase=1, nelem=0,
     **kwargs):
     """Read SG dehomogenization or failure analysis output.
@@ -160,6 +160,13 @@ def readOutputState(
         * 'PL2': Reissner-Mindlin plate/shell model
         * 'BM1': Euler-Bernoulli beam model
         * 'BM2': Timoshenko beam model
+    ext : str or list of str
+        Extension of the output data.
+        Default is 'ele'.
+        Include one or more of the following keywords:
+
+        * 'u': Displacement
+        * 'ele': Element strain and stress
     sg : sgio.core.sg.StructureGene
         Structure gene object
     tool_ver : str
@@ -207,36 +214,40 @@ def readOutputState(
             pass
 
         elif file_format.lower().startswith('v'):
-            # state_case = sgmodel.StateCase()
+            if not isinstance(ext, list):
+                ext = [ext,]
+            ext = [e.lower() for e in ext]
 
             # Displacement
-            _u = None
-            _fn = f'{fn}.U'
-            with open(_fn, 'r') as file:
-                _u = _vabs.readOutputBuffer(file, analysis, ext='u', **kwargs)
-            _state = sgmodel.State(
-                name='u', data=_u, label=['u1', 'u2', 'u3'], location='node')
-            state_case.addState(name='u', state=_state)
+            if 'u' in ext:
+                _u = None
+                _fn = f'{fn}.U'
+                with open(_fn, 'r') as file:
+                    _u = _vabs.readOutputBuffer(file, analysis, ext='u', **kwargs)
+                _state = sgmodel.State(
+                    name='u', data=_u, label=['u1', 'u2', 'u3'], location='node')
+                state_case.addState(name='u', state=_state)
 
             # Element strain and stress
-            _ee, _es, _eem, _esm = None, None, None, None
-            _fn = f'{fn}.ELE'
-            with open(_fn, 'r') as file:
-                _ee, _es, _eem, _esm = _vabs.readOutputBuffer(
-                    file, analysis, sg=sg, ext='ele', tool_ver=tool_ver,
-                    ncase=ncase, nelem=nelem, **kwargs)
-            _state = sgmodel.State(
-                name='ee', data=_ee, label=['e11', '2e12', '2e13', 'e22', '2e23', 'e33'], location='element')
-            state_case.addState(name='ee', state=_state)
-            _state = sgmodel.State(
-                name='es', data=_es, label=['s11', 's12', 's13', 's22', 's23', 's33'], location='element')
-            state_case.addState(name='es', state=_state)
-            _state = sgmodel.State(
-                name='eem', data=_eem, label=['em11', '2em12', '2em13', 'em22', '2em23', 'em33'], location='element')
-            state_case.addState(name='eem', state=_state)
-            _state = sgmodel.State(
-                name='esm', data=_esm, label=['sm11', 'sm12', 'sm13', 'sm22', 'sm23', 'sm33'], location='element')
-            state_case.addState(name='esm', state=_state)
+            if 'ele' in ext:
+                _ee, _es, _eem, _esm = None, None, None, None
+                _fn = f'{fn}.ELE'
+                with open(_fn, 'r') as file:
+                    _ee, _es, _eem, _esm = _vabs.readOutputBuffer(
+                        file, analysis, sg=sg, ext='ele', tool_ver=tool_ver,
+                        ncase=ncase, nelem=nelem, **kwargs)
+                _state = sgmodel.State(
+                    name='ee', data=_ee, label=['e11', '2e12', '2e13', 'e22', '2e23', 'e33'], location='element')
+                state_case.addState(name='ee', state=_state)
+                _state = sgmodel.State(
+                    name='es', data=_es, label=['s11', 's12', 's13', 's22', 's23', 's33'], location='element')
+                state_case.addState(name='es', state=_state)
+                _state = sgmodel.State(
+                    name='eem', data=_eem, label=['em11', '2em12', '2em13', 'em22', '2em23', 'em33'], location='element')
+                state_case.addState(name='eem', state=_state)
+                _state = sgmodel.State(
+                    name='esm', data=_esm, label=['sm11', 'sm12', 'sm13', 'sm22', 'sm23', 'sm33'], location='element')
+                state_case.addState(name='esm', state=_state)
 
             # state_field = sgmodel.StateField(
             #     node_displ=_u,
@@ -388,6 +399,7 @@ def write(
         Indicator of SG analysis.
         Default is 'h'.
         Choose one from
+
         * 'h': Homogenization
         * 'd' or 'l': Dehomogenization
         * 'fi': Initial failure indices and strength ratios
@@ -399,6 +411,7 @@ def write(
         Type of the macro structural model.
         Default is 'SD1'.
         Choose one from
+
         * 'SD1': Cauchy continuum model
         * 'PL1': Kirchhoff-Love plate/shell model
         * 'PL2': Reissner-Mindlin plate/shell model

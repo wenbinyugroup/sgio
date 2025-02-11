@@ -3,11 +3,18 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-.. Welcome to sgio's documentation!
-.. ================================
+SGIO
+================================
+
+..  figure:: images/sgio.png
+    :align: center
+    :width: 70%
+
+
 
 ..  include:: ../../README.md
     :parser: myst_parser.sphinx_
+    :start-line: 2
 
 
 ..  toctree::

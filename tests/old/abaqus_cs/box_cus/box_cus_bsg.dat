@@ -1,0 +1,202 @@
+1
+
+   Abaqus 2023                                  Date 09-Feb-2025   Time 18:12:48
+   For use by PURDUE UNIVERSITY under license from Dassault Systemes or its subsidiary.
+
+
+
+                         The Abaqus Software is a product of:
+
+                           Dassault Systemes SIMULIA Corp.
+                           1301 Atwood Avenue, Suite 101W
+                              Johnston, RI 02919, USA
+ 
+
+
+                   The Abaqus Software is available only under license
+                   from Dassault Systemes or its subsidiary and may be
+                   used or reproduced only in accordance with the terms
+                   of such license.
+ 
+                          On machine stn-w-xps 
+                          you are authorized to run
+                          Abaqus/Foundation until 31-Jan-2026
+
+                          Your site id is: 100000000002199 
+
+
+ 
+                    For assistance or any other information you may
+                    obtain contact information for your local office
+                    from the world wide web at:
+
+                      http://www.3ds.com/products/simulia/locations/
+
+ 
+                * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
+                *                                                         * 
+                *                   *****************                     * 
+                *                   *  N O T I C E  *                     * 
+                *                   *****************                     * 
+                *                                                         * 
+                *                                                         * 
+                *                       Abaqus 2023                       * 
+                *                                                         * 
+                *          BUILD ID: 2022_09_28-14.11.55 183150           * 
+                *                                                         * 
+                *                                                         * 
+                *  Please make sure you are using                         * 
+                *  release Abaqus 2023 manuals                            * 
+                *  plus the notes accompanying this release.              * 
+                *                                                         * 
+                *                                                         * 
+                *                                                         * 
+                *                                                         * 
+                * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
+
+
+ 
+
+
+
+     PROCESSING PART, INSTANCE, AND ASSEMBLY INFORMATION
+   *******************************************************
+
+
+     END PROCESSING PART, INSTANCE, AND ASSEMBLY INFORMATION
+   ***********************************************************
+
+
+
+
+     OPTIONS BEING PROCESSED
+   ***************************
+
+
+  *Heading
+  *Node
+  *Element, type=WARPF2D4
+  *Nset, nset=ASSEMBLY_PART-1-1_SET-1
+  *Nset, nset=ASSEMBLY_PART-1-1_SET-2
+  *Elset, elset=ASSEMBLY_PART-1-1_SET-1
+  *Elset, elset=ASSEMBLY_PART-1-1_SET-2
+  *distribution, name=ASSEMBLY_PART-1-1_ORI-1-DISCORIENT, location=ELEMENT, table=ORI-1-DISCORIENT_TABLE
+  *material, name=MATERIAL-1
+  *elastic, type=ENGINEERINGCONSTANTS
+  *orientation, name=ASSEMBLY_PART-1-1_ORI-1, system=RECTANGULAR
+  *solidsection, elset=ASSEMBLY_PART-1-1_SET-1, orientation=ASSEMBLY_PART-1-1_ORI-1, material=MATERIAL-1
+  *solidsection, elset=ASSEMBLY_PART-1-1_SET-1, orientation=ASSEMBLY_PART-1-1_ORI-1, material=MATERIAL-1
+  *Step, name=Step-1, nlgeom=NO
+  *Step, name=Step-1, nlgeom=NO
+  *Step, name=Step-1, nlgeom=NO
+  *beamsectiongenerate
+  *endstep
+  *Step, name=Step-1, nlgeom=NO
+  *beamsectiongenerate
+  *endstep
+
+
+
+                            P R O B L E M   S I Z E
+
+
+          NUMBER OF ELEMENTS IS                                  1800
+          NUMBER OF NODES IS                                     2100
+          NUMBER OF NODES DEFINED BY THE USER                    2100
+          TOTAL NUMBER OF VARIABLES IN THE MODEL                 6300
+          (DEGREES OF FREEDOM PLUS MAX NO. OF ANY LAGRANGE MULTIPLIER
+           VARIABLES. INCLUDE *PRINT,SOLVE=YES TO GET THE ACTUAL NUMBER.)
+
+
+
+                              END OF USER INPUT PROCESSING
+
+
+
+     JOB TIME SUMMARY
+       USER TIME (SEC)      =     0.10    
+       SYSTEM TIME (SEC)    =      0.0    
+       TOTAL CPU TIME (SEC) =     0.10    
+       WALLCLOCK TIME (SEC) =            1
+1
+
+   Abaqus 2023                                  Date 09-Feb-2025   Time 18:12:52
+   For use by PURDUE UNIVERSITY under license from Dassault Systemes or its subsidiary.
+
+                                                                                               STEP    1  INCREMENT    1
+                                                                                          TIME COMPLETED IN THIS STEP   0.00    
+
+
+                        S T E P       1     B E A M  S E C T I O N  G E N E R A T E
+
+
+          SECTION ORIGIN COORDINATES:   x1=   0.000       x2=   0.000       x3=   0.000    
+
+     THIS IS A LINEAR PERTURBATION STEP.
+     ALL LOADS ARE DEFINED AS CHANGE IN LOAD TO THE REFERENCE STATE
+
+          UNSYMMETRIC MATRIX STORAGE AND SOLUTION WILL BE USED
+
+
+                    LOCATION OF THE CENTROID OF THE MODEL
+
+                       0.000000           0.000000           0.000000    
+
+
+                    LOCATION OF THE SHEAR CENTER OF THE MODEL
+
+                       0.000000           0.000000           0.000000    
+
+
+                    INTEGRATED  MESHED  BEAM  CROSS-SECTION  PROPERTIES
+
+                            (GIVEN ABOUT CENTROID AND SHEAR CENTER)
+
+     AXIAL STIFFNESS (EA)                     =    121263.6    
+     BENDING STIFFNESS (EI(11))               =    5819.762    
+     CROSS-BENDING STIFFNESS (EI(12))         =    0.000000    
+     BENDING STIFFNESS (EI(22))               =    14684.91    
+     TORSIONAL RIGIDITY (GJ)                  =    7970.981    
+     SHEAR STIFFNESS (GA(11))                 =    18618.52    
+     SHEAR STIFFNESS (GA(12))                 =    0.000000    
+     SHEAR STIFFNESS (GA(22))                 =    44398.61    
+
+                            (GIVEN ABOUT CROSS SECTION ORIGIN)
+
+     AXIAL STIFFNESS (D(11))                                            =    121263.6    
+     SHEAR STIFFNESS IN 1-DIRECTION (D(22))                             =    44398.61    
+     SHEAR STIFFNESS IN 2-DIRECTION (D(33))                             =    18618.52    
+     TORSION STIFFNESS (D(44))                                          =    7970.981    
+     BENDING STIFFNESS ABOUT 1-AXIS (D(55))                             =    5819.762    
+     BENDING STIFFNESS ABOUT 2-AXIS (D(66))                             =    14684.91    
+     AXIAL STRETCH - SHEAR IN 1-DIRECTION COUPLING STIFFNESS (D(12))    =    0.000000    
+     AXIAL STRETCH - SHEAR IN 2-DIRECTION COUPLING STIFFNESS (D(13))    =    0.000000    
+     AXIAL STRETCH - TORSION COUPLING STIFFNESS (D(14))                 =    0.000000    
+     AXIAL STRETCH - BEND ABOUT 1-AXIS COUPLING STIFFNESS (D(15))       =    0.000000    
+     AXIAL STRETCH - BEND ABOUT 2-AXIS COUPLING STIFFNESS (D(16))       =    0.000000    
+     CROSS-SHEAR STIFFNESS COUPLING STIFFNESS (D(23))                   =    0.000000    
+     SHEAR IN 1-DIRECTION - TORSION COUPLING STIFFNESS (D(24))          =    0.000000    
+     SHEAR IN 1-DIRECTION - BEND ABOUT 1-AXIS COUPLING STIFFNESS (D(25))=    0.000000    
+     SHEAR IN 1-DIRECTION - BEND ABOUT 2-AXIS COUPLING STIFFNESS (D(26))=    0.000000    
+     SHEAR IN 2-DIRECTION - TORSION COUPLING STIFFNESS (D(34))          =    0.000000    
+     SHEAR IN 2-DIRECTION - BEND ABOUT 1-AXIS COUPLING STIFFNESS (D(35))=    0.000000    
+     SHEAR IN 2-DIRECTION - BEND ABOUT 2-AXIS COUPLING STIFFNESS (D(36))=    0.000000    
+     TORSION - BEND ABOUT 1-AXIS COUPLING STIFFNESS (D(45))             =    0.000000    
+     TORSION - BEND ABOUT 2-AXIS COUPLING STIFFNESS (D(46))             =    0.000000    
+     CROSS-BENDING STIFFNESS (D(56))                                    =    0.000000    
+
+
+          THE ANALYSIS HAS BEEN COMPLETED
+
+
+
+                              ANALYSIS COMPLETE
+                              WITH      1 WARNING MESSAGES ON THE MSG FILE
+
+
+
+     JOB TIME SUMMARY
+       USER TIME (SEC)      =     0.50    
+       SYSTEM TIME (SEC)    =     0.10    
+       TOTAL CPU TIME (SEC) =     0.60    
+       WALLCLOCK TIME (SEC) =            0

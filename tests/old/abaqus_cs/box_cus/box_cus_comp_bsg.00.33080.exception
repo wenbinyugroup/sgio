@@ -1,0 +1,59 @@
+<Description>
+   ABAQUS/pre rank 0 received the ABORT signal
+
+</Description>
+
+<PriorErrors>
+1) ELEMENT 1 INSTANCE PART-1-1: LAYERED MATERIAL PROPERTIES CAN NOT BE SPECIFIED FOR THIS ELEMENT TYPE.
+</PriorErrors>
+
+<Context>
+   PRE
+</Context>
+
+<Phase>
+   pre | Matref | Mref | Mref-Dbsetup | SMAPre_mref
+</Phase>
+
+<Callstack>
+  1)  ucrtbase.dll                abort                                   
+  2)  ucrtbase.dll                terminate                               
+  3)  ucrtbase.dll                _std_terminate                          
+  4)  ucrtbase.dll                is_exception_typeof                     
+  5)  ucrtbase.dll                tanf                                    
+  6)  ucrtbase.dll                is_exception_typeof                     
+  7)  ucrtbase.dll                _CxxFrameHandler3                       
+  8)  ntdll.dll                   RtlUnwindEx                             
+  9)  VCRUNTIME140_1.dll        unknown                                 
+</Callstack>
+
+<Memory>
+   <Current>            5 GB </Current>
+   <Resident>           0 GB </Resident>
+   <Physical>          31 GB </Physical>
+   <Limit>             20 GB </Limit>
+   <Accessible>        31 GB </Accessible>
+   <Available>         11 GB </Available>
+   <Allocator>            DL </Allocator>
+</Memory>
+
+<Swap>
+       <Size>          53 GB </Size>
+       <Used>          47 GB </Used>
+       <Free>           6 GB </Free>
+</Swap>
+
+<Directories>
+  <current> C:\Users\tian50\AppData\Local\Temp\tian50_box_cus_comp_bsg_15460 </current> <free>    612 GB </free>   <used>    340 GB </used> 
+    <indir> C:\Users\tian50\work\dev\sgio\tests\old\abaqus_cs\box_cus </indir>   <free>    612 GB </free>  
+   <outdir> C:\Users\tian50\work\dev\sgio\tests\old\abaqus_cs\box_cus </outdir>  <free>    612 GB </free> 
+   <tmpdir> C:\Users\tian50\AppData\Local\Temp\tian50_box_cus_comp_bsg_15460 </tmpdir>  <free>    612 GB </free> 
+     <temp> C:\Users\tian50\AppData\Local\Temp </temp>    <free>    612 GB </free>
+</Directories>
+
+<Installation>
+     <Version> 2023 6.23-1 </Version>
+       <Build> 2022_09_28-14.11.55 183150 </Build>
+  <Executable> C:\SIMULIA\EstProducts\2023\win_b64\code\bin\pre.exe </Executable>
+</Installation>
+

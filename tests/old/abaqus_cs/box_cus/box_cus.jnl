@@ -1,0 +1,248 @@
+# -*- coding: mbcs -*-
+from part import *
+from material import *
+from section import *
+from assembly import *
+from step import *
+from interaction import *
+from load import *
+from mesh import *
+from optimization import *
+from job import *
+from sketch import *
+from visualization import *
+from connectorBehavior import *
+mdb.models['Model-1'].ConstrainedSketch(name='__profile__', sheetSize=5.0)
+mdb.models['Model-1'].sketches['__profile__'].ConstructionLine(point1=(-0.15, 
+    0.0), point2=(0.125, 0.0))
+mdb.models['Model-1'].sketches['__profile__'].HorizontalConstraint(
+    addUndoState=False, entity=
+    mdb.models['Model-1'].sketches['__profile__'].geometry[2])
+mdb.models['Model-1'].sketches['__profile__'].ConstructionLine(point1=(0.0, 
+    -0.125), point2=(0.0, 0.125))
+mdb.models['Model-1'].sketches['__profile__'].VerticalConstraint(addUndoState=
+    False, entity=mdb.models['Model-1'].sketches['__profile__'].geometry[3])
+mdb.models['Model-1'].sketches['__profile__'].FixedConstraint(entity=
+    mdb.models['Model-1'].sketches['__profile__'].geometry[2])
+mdb.models['Model-1'].sketches['__profile__'].FixedConstraint(entity=
+    mdb.models['Model-1'].sketches['__profile__'].geometry[3])
+mdb.models['Model-1'].sketches['__profile__'].rectangle(point1=(-0.575, 0.35), 
+    point2=(0.65, -0.45))
+mdb.models['Model-1'].sketches['__profile__'].rectangle(point1=(-0.35, 0.175), 
+    point2=(0.35, -0.25))
+mdb.models['Model-1'].sketches['__profile__'].SymmetryConstraint(entity1=
+    mdb.models['Model-1'].sketches['__profile__'].geometry[4], entity2=
+    mdb.models['Model-1'].sketches['__profile__'].geometry[6], symmetryAxis=
+    mdb.models['Model-1'].sketches['__profile__'].geometry[3])
+mdb.models['Model-1'].sketches['__profile__'].SymmetryConstraint(entity1=
+    mdb.models['Model-1'].sketches['__profile__'].geometry[8], entity2=
+    mdb.models['Model-1'].sketches['__profile__'].geometry[10], symmetryAxis=
+    mdb.models['Model-1'].sketches['__profile__'].geometry[3])
+mdb.models['Model-1'].sketches['__profile__'].SymmetryConstraint(entity1=
+    mdb.models['Model-1'].sketches['__profile__'].geometry[5], entity2=
+    mdb.models['Model-1'].sketches['__profile__'].geometry[7], symmetryAxis=
+    mdb.models['Model-1'].sketches['__profile__'].geometry[2])
+mdb.models['Model-1'].sketches['__profile__'].SymmetryConstraint(entity1=
+    mdb.models['Model-1'].sketches['__profile__'].geometry[9], entity2=
+    mdb.models['Model-1'].sketches['__profile__'].geometry[11], symmetryAxis=
+    mdb.models['Model-1'].sketches['__profile__'].geometry[2])
+mdb.models['Model-1'].sketches['__profile__'].DistanceDimension(entity1=
+    mdb.models['Model-1'].sketches['__profile__'].geometry[10], entity2=
+    mdb.models['Model-1'].sketches['__profile__'].geometry[6], textPoint=(
+    0.459094643592834, -0.183035671710968), value=0.03)
+mdb.models['Model-1'].sketches['__profile__'].DistanceDimension(entity1=
+    mdb.models['Model-1'].sketches['__profile__'].geometry[11], entity2=
+    mdb.models['Model-1'].sketches['__profile__'].geometry[7], textPoint=(
+    0.318350434303284, 0.499999940395355), value=0.03)
+mdb.models['Model-1'].sketches['__profile__'].ObliqueDimension(textPoint=(
+    0.146329402923584, -0.43303570151329), value=0.953, vertex1=
+    mdb.models['Model-1'].sketches['__profile__'].vertices[1], vertex2=
+    mdb.models['Model-1'].sketches['__profile__'].vertices[2])
+mdb.models['Model-1'].sketches['__profile__'].ObliqueDimension(textPoint=(
+    0.655689835548401, 0.151785671710968), value=0.53, vertex1=
+    mdb.models['Model-1'].sketches['__profile__'].vertices[2], vertex2=
+    mdb.models['Model-1'].sketches['__profile__'].vertices[3])
+mdb.models['Model-1'].Part(dimensionality=TWO_D_PLANAR, name='Part-1', type=
+    DEFORMABLE_BODY)
+mdb.models['Model-1'].parts['Part-1'].BaseShell(sketch=
+    mdb.models['Model-1'].sketches['__profile__'])
+del mdb.models['Model-1'].sketches['__profile__']
+mdb.models['Model-1'].parts['Part-1'].PartitionFaceByShortestPath(faces=
+    mdb.models['Model-1'].parts['Part-1'].faces.getSequenceFromMask(('[#1 ]', 
+    ), ), point1=mdb.models['Model-1'].parts['Part-1'].vertices[5], point2=
+    mdb.models['Model-1'].parts['Part-1'].vertices[0])
+mdb.models['Model-1'].parts['Part-1'].PartitionFaceByShortestPath(faces=
+    mdb.models['Model-1'].parts['Part-1'].faces.getSequenceFromMask(('[#1 ]', 
+    ), ), point1=mdb.models['Model-1'].parts['Part-1'].vertices[5], point2=
+    mdb.models['Model-1'].parts['Part-1'].vertices[3])
+mdb.models['Model-1'].parts['Part-1'].PartitionFaceByShortestPath(faces=
+    mdb.models['Model-1'].parts['Part-1'].faces.getSequenceFromMask(('[#2 ]', 
+    ), ), point1=mdb.models['Model-1'].parts['Part-1'].vertices[5], point2=
+    mdb.models['Model-1'].parts['Part-1'].vertices[6])
+mdb.models['Model-1'].parts['Part-1'].PartitionFaceByShortestPath(faces=
+    mdb.models['Model-1'].parts['Part-1'].faces.getSequenceFromMask(('[#1 ]', 
+    ), ), point1=mdb.models['Model-1'].parts['Part-1'].vertices[5], point2=
+    mdb.models['Model-1'].parts['Part-1'].vertices[2])
+# Save by tian50 on 2025_02_09-18.07.07; build 2023 2022_09_28-14.11.55 183150
+from part import *
+from material import *
+from section import *
+from assembly import *
+from step import *
+from interaction import *
+from load import *
+from mesh import *
+from optimization import *
+from job import *
+from sketch import *
+from visualization import *
+from connectorBehavior import *
+mdb.models['Model-1'].Material(name='Material-1')
+mdb.models['Model-1'].materials['Material-1'].Elastic(table=((20590000.0, 
+    1420000.0, 1420000.0, 0.3, 0.3, 0.34, 870000.0, 870000.0, 696000.0), ), 
+    type=ENGINEERING_CONSTANTS)
+mdb.models['Model-1'].HomogeneousSolidSection(material='Material-1', name=
+    'Section-1', thickness=None)
+mdb.models['Model-1'].parts['Part-1'].Set(faces=
+    mdb.models['Model-1'].parts['Part-1'].faces.getSequenceFromMask(('[#f ]', 
+    ), ), name='Set-1')
+mdb.models['Model-1'].parts['Part-1'].SectionAssignment(offset=0.0, 
+    offsetField='', offsetType=MIDDLE_SURFACE, region=
+    mdb.models['Model-1'].parts['Part-1'].sets['Set-1'], sectionName=
+    'Section-1', thicknessAssignment=FROM_SECTION)
+mdb.models['Model-1'].parts['Part-1'].Set(edges=
+    mdb.models['Model-1'].parts['Part-1'].edges.getSequenceFromMask(('[#618 ]', 
+    ), ), name='Set-2')
+mdb.models['Model-1'].parts['Part-1'].MaterialOrientation(
+    additionalRotationField='', additionalRotationType=ROTATION_NONE, angle=0.0
+    , axis=AXIS_3, flipNormalDirection=False, flipPrimaryDirection=True, 
+    normalAxisDefinition=VECTOR, normalAxisDirection=AXIS_3, normalAxisVector=(
+    0.0, 0.0, 1.0), orientationType=DISCRETE, primaryAxisDefinition=EDGE, 
+    primaryAxisDirection=AXIS_1, primaryAxisRegion=
+    mdb.models['Model-1'].parts['Part-1'].sets['Set-2'], region=Region(
+    faces=mdb.models['Model-1'].parts['Part-1'].faces.getSequenceFromMask(
+    mask=('[#f ]', ), )), stackDirection=STACK_3)
+# Save by tian50 on 2025_02_09-18.09.12; build 2023 2022_09_28-14.11.55 183150
+from part import *
+from material import *
+from section import *
+from assembly import *
+from step import *
+from interaction import *
+from load import *
+from mesh import *
+from optimization import *
+from job import *
+from sketch import *
+from visualization import *
+from connectorBehavior import *
+mdb.models['Model-1'].rootAssembly.DatumCsysByDefault(CARTESIAN)
+mdb.models['Model-1'].rootAssembly.Instance(dependent=ON, name='Part-1-1', 
+    part=mdb.models['Model-1'].parts['Part-1'])
+mdb.models['Model-1'].StaticStep(name='Step-1', previous='Initial')
+mdb.models['Model-1'].parts['Part-1'].setMeshControls(elemShape=QUAD, regions=
+    mdb.models['Model-1'].parts['Part-1'].faces.getSequenceFromMask(('[#f ]', 
+    ), ), technique=STRUCTURED)
+mdb.models['Model-1'].parts['Part-1'].seedEdgeByNumber(constraint=FINER, edges=
+    mdb.models['Model-1'].parts['Part-1'].edges.getSequenceFromMask(('[#c0a ]', 
+    ), ), number=20)
+mdb.models['Model-1'].parts['Part-1'].seedEdgeByNumber(constraint=FINER, edges=
+    mdb.models['Model-1'].parts['Part-1'].edges.getSequenceFromMask(('[#c0a ]', 
+    ), ), number=40)
+mdb.models['Model-1'].parts['Part-1'].seedEdgeByNumber(constraint=FINER, edges=
+    mdb.models['Model-1'].parts['Part-1'].edges.getSequenceFromMask(('[#c0a ]', 
+    ), ), number=100)
+mdb.models['Model-1'].parts['Part-1'].seedEdgeByNumber(constraint=FINER, edges=
+    mdb.models['Model-1'].parts['Part-1'].edges.getSequenceFromMask(('[#2d0 ]', 
+    ), ), number=50)
+mdb.models['Model-1'].parts['Part-1'].seedEdgeByNumber(constraint=FINER, edges=
+    mdb.models['Model-1'].parts['Part-1'].edges.getSequenceFromMask(('[#125 ]', 
+    ), ), number=6)
+mdb.models['Model-1'].parts['Part-1'].generateMesh()
+mdb.models['Model-1'].parts['Part-1'].setElementType(elemTypes=(ElemType(
+    elemCode=WARP2D4, elemLibrary=STANDARD, secondOrderAccuracy=OFF), ElemType(
+    elemCode=WARP2D3, elemLibrary=STANDARD)), regions=(
+    mdb.models['Model-1'].parts['Part-1'].faces.getSequenceFromMask(('[#f ]', 
+    ), ), ))
+# Save by tian50 on 2025_02_09-18.11.15; build 2023 2022_09_28-14.11.55 183150
+from part import *
+from material import *
+from section import *
+from assembly import *
+from step import *
+from interaction import *
+from load import *
+from mesh import *
+from optimization import *
+from job import *
+from sketch import *
+from visualization import *
+from connectorBehavior import *
+mdb.models['Model-1'].rootAssembly.regenerate()
+mdb.Job(atTime=None, contactPrint=OFF, description='', echoPrint=OFF, 
+    explicitPrecision=SINGLE, getMemoryFromAnalysis=True, historyPrint=OFF, 
+    memory=90, memoryUnits=PERCENTAGE, model='Model-1', modelPrint=OFF, 
+    multiprocessingMode=DEFAULT, name='box_cus', nodalOutputPrecision=SINGLE, 
+    numCpus=1, numGPUs=0, numThreadsPerMpiProcess=1, queue=None, resultsFormat=
+    ODB, scratch='', type=ANALYSIS, userSubroutine='', waitHours=0, 
+    waitMinutes=0)
+mdb.Model(name='Model-2', objectToCopy=mdb.models['Model-1'])
+del mdb.models['Model-2'].parts['Part-1'].sectionAssignments[0]
+del mdb.models['Model-2'].parts['Part-1'].materialOrientations[0]
+mdb.models['Model-2'].parts['Part-1'].Set(edges=
+    mdb.models['Model-2'].parts['Part-1'].edges.getSequenceFromMask(('[#618 ]', 
+    ), ), name='Set-10')
+mdb.models['Model-2'].parts['Part-1'].CompositeLayup(description='', 
+    elementType=SOLID, name='CompositeLayup-1', symmetric=False, 
+    thicknessAssignment=FROM_SECTION)
+mdb.models['Model-2'].parts['Part-1'].compositeLayups['CompositeLayup-1'].CompositePly(
+    additionalRotationField='', additionalRotationType=ROTATION_NONE, angle=0.0
+    , axis=AXIS_3, material='Material-1', numIntPoints=1, orientationType=
+    SPECIFY_ORIENT, orientationValue=15.0, plyName='Ply-1', region=Region(
+    faces=mdb.models['Model-2'].parts['Part-1'].faces.getSequenceFromMask(
+    mask=('[#f ]', ), )), suppressed=False, thickness=1.0, thicknessType=
+    SPECIFY_THICKNESS)
+mdb.models['Model-2'].parts['Part-1'].compositeLayups['CompositeLayup-1'].ReferenceOrientation(
+    additionalRotationField='', additionalRotationType=ROTATION_NONE, angle=0.0
+    , axis=AXIS_2, flipNormalDirection=False, flipPrimaryDirection=True, 
+    localCsys=None, normalAxisDefinition=VECTOR, normalAxisDirection=AXIS_3, 
+    normalAxisVector=(0.0, 0.0, 1.0), orientationType=DISCRETE, 
+    primaryAxisDefinition=EDGE, primaryAxisDirection=AXIS_1, primaryAxisRegion=
+    mdb.models['Model-2'].parts['Part-1'].sets['Set-10'], stackDirection=
+    STACK_3)
+# Save by tian50 on 2025_02_09-18.17.20; build 2023 2022_09_28-14.11.55 183150
+from part import *
+from material import *
+from section import *
+from assembly import *
+from step import *
+from interaction import *
+from load import *
+from mesh import *
+from optimization import *
+from job import *
+from sketch import *
+from visualization import *
+from connectorBehavior import *
+mdb.models['Model-2'].rootAssembly.regenerate()
+mdb.Job(atTime=None, contactPrint=OFF, description='', echoPrint=OFF, 
+    explicitPrecision=SINGLE, getMemoryFromAnalysis=True, historyPrint=OFF, 
+    memory=90, memoryUnits=PERCENTAGE, model='Model-2', modelPrint=OFF, 
+    multiprocessingMode=DEFAULT, name='box_cus_comp', nodalOutputPrecision=
+    SINGLE, numCpus=1, numGPUs=0, numThreadsPerMpiProcess=1, queue=None, 
+    resultsFormat=ODB, scratch='', type=ANALYSIS, userSubroutine='', waitHours=
+    0, waitMinutes=0)
+mdb.models['Model-2'].parts['Part-1'].compositeLayups['CompositeLayup-1'].orientation.setValues(
+    additionalRotationField='', additionalRotationType=ROTATION_ANGLE, angle=
+    15.0)
+mdb.models['Model-2'].parts['Part-1'].compositeLayups['CompositeLayup-1'].deletePlies(
+    )
+mdb.models['Model-2'].parts['Part-1'].compositeLayups['CompositeLayup-1'].CompositePly(
+    additionalRotationField='', additionalRotationType=ROTATION_NONE, angle=0.0
+    , axis=AXIS_3, material='Material-1', numIntPoints=1, orientationType=
+    SPECIFY_ORIENT, orientationValue=0.0, plyName='Ply-1', region=Region(
+    faces=mdb.models['Model-2'].parts['Part-1'].faces.getSequenceFromMask(
+    mask=('[#f ]', ), )), suppressed=False, thickness=1.0, thicknessType=
+    SPECIFY_THICKNESS)
+mdb.models['Model-2'].rootAssembly.regenerate()
+# Save by tian50 on 2025_02_09-19.34.28; build 2023 2022_09_28-14.11.55 183150
