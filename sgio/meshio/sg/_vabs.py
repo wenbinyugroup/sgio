@@ -338,7 +338,7 @@ def _write_elements(f, cells, elem_id, int_fmt:str='8d'):
             f.write(fmt.format(*_nums))
             # logger.debug('sfi = {}'.format(sfi))
             # sui.writeFormatIntegers(f, _nums, fmt=sfi, newline=False)
-            if k == 0 and i == 0:  f.write('  # element connectivity')
+            if k == 0 and i == 0:  f.write('  ! element connectivity')
             f.write('\n')
 
             # _cid_to_eid.append(_eid)
@@ -379,8 +379,13 @@ def _write_property_id_ref_csys(
                     _csys = theta_1
                     _vx2 = np.array([1, 0, 0])
                     _vy2 = np.array(_csys[:3])
-                    _cos_theta_1 = np.dot(_vx2, _vy2) / (np.linalg.norm(_vx2) * np.linalg.norm(_vy2))
-                    theta_1 = np.rad2deg(np.arccos(_cos_theta_1))
+                    # print(f'_vy2 = {_vy2}')
+                    # _cos_theta_1 = np.dot(_vx2, _vy2) / (np.linalg.norm(_vx2) * np.linalg.norm(_vy2))
+                    # print(f'_cos_theta_1 = {_cos_theta_1}')
+                    # theta_1 = np.rad2deg(np.arccos(_cos_theta_1))
+                    # print(f'theta_1 = {theta_1}')
+                    theta_1 = np.rad2deg(np.arctan2(_vy2[1], _vy2[0]))
+                    # print(f'theta_1 = {theta_1}')
             except TypeError:
                 theta_1 = 0
 

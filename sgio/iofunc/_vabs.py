@@ -1155,7 +1155,7 @@ def _writeMOCombos(sg, file, sfi:str='8d', sff:str='20.12e'):
         count += 1
         file.write((ssfi + ssfi + ssff).format(cid, combo[0], combo[1]))
         if count == 1:
-            file.write('  # combination id, material id, in-plane rotation angle')
+            file.write('  ! combination id, material id, in-plane rotation angle')
         file.write('\n')
     file.write('\n')
     return
@@ -1176,7 +1176,7 @@ def _writeMaterial(
         # Write material properties for homogenization
 
         sutl.writeFormatIntegers(file, (mid, anisotropy), sfi, newline=False)
-        file.write('  # material id, anisotropy\n')
+        file.write('  ! material id, anisotropy\n')
 
         # Write elastic properties
         if anisotropy == 0:
@@ -1303,12 +1303,12 @@ def _writeHeader(
 
     # format_flag  nlayer
     sutl.writeFormatIntegers(file, [format_flag, nlayer], newline=False)
-    file.write('  # format_flag, nlayer\n\n')
+    file.write('  ! format_flag, nlayer\n\n')
 
     # timoshenko_flag  damping_flag  thermal_flag
     sutl.writeFormatIntegers(
         file, [timoshenko_flag, damping_flag, thermal_flag], sfi, newline=False)
-    file.write('  # model_flag, damping_flag, thermal_flag\n\n')
+    file.write('  ! model_flag, damping_flag, thermal_flag\n\n')
 
     # curve_flag  oblique_flag  trapeze_flag  vlasov_flag
     line = [curve_flag, oblique_flag, trapeze_flag, vlasov_flag]
@@ -1317,24 +1317,24 @@ def _writeHeader(
     # if (sg.oblique[0] != 1.0) or (sg.oblique[1] != 0.0):
     #     line[1] = 1
     sutl.writeFormatIntegers(file, line, sfi, newline=False)
-    file.write('  # curve_flag, oblique_flag, trapeze_flag, vlasov_flag\n\n')
+    file.write('  ! curve_flag, oblique_flag, trapeze_flag, vlasov_flag\n\n')
 
     # k1  k2  k3
     if line[0] == 1:
         sutl.writeFormatFloats(
             file, initial_curvatures, sff, newline=False
         )
-        file.write('  # k11, k12, k13 (initial curvatures)\n\n')
+        file.write('  ! k11, k12, k13 (initial curvatures)\n\n')
     
     # oblique1  oblique2
     if line[1] == 1:
         sutl.writeFormatFloats(file, obliqueness, sff, newline=False)
-        file.write('  # cos11, cos21 (obliqueness)\n\n')
+        file.write('  ! cos11, cos21 (obliqueness)\n\n')
     
     # nnode  nelem  nmate
     sutl.writeFormatIntegers(
         file, [nnode, nelem, nmate], sfi, newline=False)
-    file.write('  # nnode, nelem, nmate\n\n')
+    file.write('  ! nnode, nelem, nmate\n\n')
 
     return
 

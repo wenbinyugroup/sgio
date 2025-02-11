@@ -5803,7 +5803,7 @@ Ori-1-DiscOrient
     1,  1800,     1
 ** Section: CompositeLayup-1-1
 *Solid Section, elset=CompositeLayup-1-1, composite, orientation=Ori-1, stack direction=3, layup=CompositeLayup-1
-1., 1, Material-1, 0., Ply-1
+1., 1, Material-1, 15., Ply-1
 *End Part
 **  
 **

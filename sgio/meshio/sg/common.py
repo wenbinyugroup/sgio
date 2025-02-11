@@ -200,7 +200,7 @@ def _write_nodes(f, points, sgdim, int_fmt:str='8d', float_fmt:str='20.9e'):
         #     sui.writeFormatFloats(f, ncoord, fmt=sff, newline=False)
 
         if i == 0:
-            f.write('  # nodal coordinates')
+            f.write('  ! nodal coordinates')
 
         f.write('\n')
 
