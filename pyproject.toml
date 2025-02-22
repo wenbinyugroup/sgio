@@ -1,0 +1,23 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "sgio"
+version = "0.1.0"
+description = "I/O for VABS and SwiftComp"
+authors = [
+    { name = "Su Tian", email = "sutian@analyswift.com" }
+]
+readme = "README.md"
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+]
+license = "MIT"
+license-files = ["LICEN[CS]E*"]
+
+[project.urls]
+Homepage = "https://github.com/wenbinyugroup/sgio"
+Documentation = "https://wenbinyugroup.github.io/sgio/"

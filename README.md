@@ -6,7 +6,7 @@ Structure Gene (SG) I/O
 Python package interfacing VABS and SwiftComp.
 The package is developed based on [meshio](https://github.com/nschloe/meshio), which is used for converting meshing data.
 
-**Features**
+## Features
 
 The package can be used to:
 - Read/write SG data from/to different formats
@@ -101,8 +101,8 @@ Check out the example `examples/convert_cs_from_abaqus_to_vabs` for more details
 
 ## License
 
-<!-- This project is licensed under the MIT License.
-See the [LICENSE](LICENSE) file for details. -->
+This project is licensed under the MIT License.
+See the [LICENSE](LICENSE) file for details.
 
 ## Reference
 
