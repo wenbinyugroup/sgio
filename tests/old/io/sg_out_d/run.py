@@ -1,7 +1,7 @@
 import sgio
 
-ver = '4.1'
-fn_base = 'vabs41/uh60a'
+ver = '4.0'
+fn_base = 'vabs40/uh60a'
 fn_sg = f'{fn_base}.sg'
 fn_sg_ele = f'{fn_sg}.ele'
 fn_msh = f'{fn_base}.msh'
@@ -10,6 +10,9 @@ name_u = 'u'
 # name_u = ['u1', 'u2', 'u3']
 name_e = [
     'e11', '2e12', '2e13', 'e22', '2e23', 'e33'
+]
+name_sm = [
+    's11m', 's12m', 's13m', 's22m', 's23m', 's33m'
 ]
 
 sg = sgio.read(fn_sg, 'vabs', sgdim=2, model='bm2')
@@ -26,10 +29,11 @@ print("stress material: ", *[f"{v:e}" for v in state_case.getState('esm').data[e
 
 # _u = state_field.getDisplacementField()
 # print(_u)
-sgio.addPointDictDataToMesh(name_u, state_case.getState('u').data, sg.mesh)
+# sgio.addPointDictDataToMesh(name_u, state_case.getState('u').data, sg.mesh)
 # _ee = state_field.getStrainField(where='e', cs='s')
 # print(_ee)
 sgio.addCellDictDataToMesh(name_e, state_case.getState('ee').data, sg.mesh)
+sgio.addCellDictDataToMesh(name_sm, state_case.getState('esm').data, sg.mesh)
 
 # print(sg)
 

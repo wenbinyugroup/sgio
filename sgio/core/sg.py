@@ -45,6 +45,69 @@ class SGMacroModel():
 
 class StructureGene():
     """A finite element level structure gene model in the theory of MSG.
+
+    Attributes
+    ----------
+    name : str
+        Name of the SG.
+    sgdim : int
+        Dimension of the SG.
+    smdim : int
+        Dimension of the material/structural model.
+    spdim : int
+        Dimension of the space containing SG.
+    analysis : int
+        Analysis configurations.
+        * 0 - homogenization (default)
+        * 1 - dehomogenization/localization/recover
+        * 2 - failure (SwiftComp only)
+    fn_gmsh_msh : str
+        File name of the Gmsh mesh file.
+    physics : int
+        Physics included in the analysis.
+        * 0 - elastic (default)
+        * 1 - thermoelastic
+        * 2 - conduction
+        * 3 - piezoelectric/piezomagnetic
+        * 4 - thermopiezoelectric/thermopiezomagnetic
+        * 5 - piezoelectromagnetic
+        * 6 - thermopiezoelectromagnetic
+    model : int
+        Macroscopic structural model.
+        * 0 - classical (default)
+        * 1 - refined (e.g., generalized Timoshenko)
+        * 2 - Vlasov model (beam only)
+        * 3 - trapeze effect (beam only)
+    geo_correct : bool
+        Flag of geometrically corrected shell model.
+    do_damping : int
+        Flag of damping computation.
+    is_temp_nonuniform : int
+        Flag of uniform temperature.
+    force_flag : float
+        Force flag.
+    steer_flag : float
+        Steer flag.
+    initial_twist : float
+        Initial twist (beam only).
+    initial_curvature : list of floats
+        Initial curvature.
+    oblique : list of floats
+        Oblique (beam only).
+    lame_params : list of floats
+        Lame parameters for geometrically corrected shell model.
+    materials : dict
+        Dictionary of materials.
+    mocombos : dict
+        Dictionary of material-orientation combinations.
+    mesh : Mesh
+        Mesh of the SG.
+    ndim_degen_elem : int
+        Number of degenerate elements.
+    num_slavenodes : int
+        Number of slave nodes.
+    omega : float
+        Omega (see SwiftComp manual).
     """
 
     def __init__(
@@ -64,104 +127,35 @@ class StructureGene():
             Dimension of the space containing SG.
         """
 
-        #: str: Name of the SG.
         self.name = name
-
-        #: int: Dimension of the SG.
         self.sgdim = sgdim
-
-        #: int: Dimension of the material/structural model.
         self.smdim = smdim
-
-        #: int: Dimension of the space containing SG
         self.spdim = sgdim
         if not spdim is None:
             self.spdim = spdim
 
-        #: int: Analysis configurations
-        #:
-        #: * 0 - homogenization (default)
-        #: * 1 - dehomogenization/localization/recover
-        #: * 2 - failure (SwiftComp only)
         self.analysis = 0
-
-        #: File name of the Gmsh mesh file
         self.fn_gmsh_msh = self.name + '.msh'
-
-        #: int: Physics included in the analysis
-        #:
-        #: * 0 - elastic (default)
-        #: * 1 - thermoelastic
-        #: * 2 - conduction
-        #: * 3 - piezoelectric/piezomagnetic
-        #: * 4 - thermopiezoelectric/thermopiezomagnetic
-        #: * 5 - piezoelectromagnetic
-        #: * 6 - thermopiezoelectromagnetic
         self.physics = 0
-
-        #: int: Macroscopic structural model
-        #:
-        #: * 0 - classical (default)
-        #: * 1 - refined (e.g. generalized Timoshenko)
-        #: * 2 - Vlasov model (beam only)
-        #: * 3 - trapeze effect (beam only)
         self.model = 0
-
-        #: int: Flag of geometrically corrected shell model
         self.geo_correct = False
-
-        #: int: Flag of damping computation
         self.do_damping = 0
-
-        #: int: Flag of transformation of elements
-        # self.use_elem_local_orient = 0
-
-        #: int: Flag of uniform temperature
         self.is_temp_nonuniform = 0
-
-        #: float: Force flag
         self.force_flag = 0
-
-        #: float: Steer flag
         self.steer_flag = 0
-
-        #: float: Initial twist (beam only)
         self.initial_twist = 0.0
-
-        #: list of floats: Initial curvature
         self.initial_curvature = [0.0, 0.0]
-
-        #: list of floats: Oblique (beam only)
         self.oblique = [1.0, 0.0]
-
-        #: list of floats: Lame parameters for geometrically corrected shell model
         self.lame_params = [1.0, 1.0]
 
-
         # Material
-        # ------------------------------------------------------------
-
-        #: dict of {int, :obj:`msgpi.sg.MaterialProperty`}: Materials
         self.materials = {}
-
-        #: dict of {int, list of (int, float)}: Material-orientation (deg) combinations
-        #:
-        #: `{cid: [mid, orientation], ...}`
         self.mocombos = {}
 
-
         # Mesh
-        # ------------------------------------------------------------
         self.mesh : Mesh = None
-
-        #: int: Flag of the type of elements (SC)
         self.ndim_degen_elem = 0
-
-        #: int: Number of slave nodes
         self.num_slavenodes = 0
-
-
-        #: float: Omega (see SwiftComp manual).
         self.omega = 1
 
         self.itf_pairs = []

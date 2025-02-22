@@ -1,7 +1,7 @@
 import sgio
 
-ver = '4.1'
-fn_base = 'vabs41/uh60a'
+ver = '4.0'
+fn_base = 'vabs40/uh60a'
 fn_sg = f'{fn_base}.sg'
 fn_sg_fi = f'{fn_sg}.fi'
 fn_msh = f'{fn_base}.msh'

@@ -19,7 +19,7 @@ from sgio.meshio.abaqus._abaqus import get_param_map
 # Read input
 # ----------
 
-def readInputBuffer(file, **kwargs):
+def read_input_buffer(file, **kwargs):
     """
     """
     sg = StructureGene()

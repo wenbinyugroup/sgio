@@ -11,7 +11,7 @@ from sgio.core.sg import StructureGene
 logger = logging.getLogger(GLOBAL.LOGGER_NAME)
 
 
-def readBuffer(f, file_format:str, format_version:str, model:int|str):
+def read_buffer(f, file_format:str, format_version:str, model:int|str):
     """
     """
     sg = StructureGene()
@@ -260,7 +260,7 @@ def _readElasticProperty(file, isotropy:int):
 # ====================================================================
 # Read output
 # ====================================================================
-def readOutputBuffer(
+def read_output_buffer(
     file, analysis='h', sg:StructureGene=None, ext:str='', model_type='BM1',
     tool_ver='', ncase=1, nelem=0,
     **kwargs):
@@ -986,7 +986,7 @@ def _readOutputFailureIndexCase(file, nelem):
 # Writers
 
 
-def writeBuffer(
+def write_buffer(
     sg:StructureGene, file, analysis='h', sg_fmt:int=1, model=0,
     macro_responses:list[smdl.StateCase]=[],
     sfi:str='8d', sff:str='20.12e', version=None,

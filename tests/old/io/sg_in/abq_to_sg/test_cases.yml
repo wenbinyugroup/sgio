@@ -1,6 +1,7 @@
 - fn_base: 'sg33_cube'
   sgdim: 3
   smdim: 3
+  model_type: 'sd1'
   file_format_in: 'abaqus'
   file_ext_in: 'inp'
   format_version_in: ''
@@ -10,6 +11,7 @@
 - fn_base: 'sg33_udfrp'
   sgdim: 3
   smdim: 3
+  model_type: 'sd1'
   file_format_in: 'abaqus'
   file_ext_in: 'inp'
   format_version_in: ''
@@ -19,6 +21,7 @@
 - fn_base: 'sg33_inclusion_ellipsoid_meshsize01'
   sgdim: 3
   smdim: 3
+  model_type: 'sd1'
   file_format_in: 'abaqus'
   file_ext_in: 'inp'
   format_version_in: ''

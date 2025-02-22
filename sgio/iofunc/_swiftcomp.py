@@ -20,7 +20,7 @@ logger = logging.getLogger(GLOBAL.LOGGER_NAME)
 # Read input
 # ----------
 
-def readInputBuffer(file, format_version:str, model:int|str):
+def read_input_buffer(file, format_version:str, model:int|str):
     """
     """
     logger.debug(f'local variables:\n{sutl.convertToPrettyString(locals())}')
@@ -266,7 +266,7 @@ def _readElasticProperty(file, isotropy:int):
 
 # Read output
 # -----------
-def readOutputBuffer(
+def read_output_buffer(
     file, analysis=0, model_type=None,
     # sg:StructureGene=None,
     **kwargs
@@ -1258,7 +1258,7 @@ def _readOutputFailureIndex(file):
 # ====================================================================
 
 
-def writeBuffer(
+def write_buffer(
     sg:StructureGene, file, analysis='h', model='sd1',
     macro_responses:list[smdl.StateCase]=[],
     load_type=0,
