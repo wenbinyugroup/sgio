@@ -28,10 +28,16 @@ Online [documentation](https://wenbinyugroup.github.io/sgio/)
 
 ## Installation
 
+```shell
+pip install sgio
+```
+
+### Manual Installation
+
 1. [Download](https://github.com/wenbinyugroup/sgio) the package.
 2. Install dependencies:
     ```shell
-    pip install -r <INSTALL_DIR>/sgio/sgio/requirements.txt
+    pip install -r <INSTALL_DIR>/sgio/requirements.txt
     ```
 3. Configure environment variables:
     - Add the package root directory to `PYTHONPATH`.
@@ -56,7 +62,7 @@ model = sgio.readOutputModel('my_cross_section.sg.k', 'vabs', 'BM1')
 Suppose a cross-section has been built in Abaqus and output to `cross-section.inp`.
 To convert the data to the VABS input (Timoshenko model) `cross-section.sg`:
 ```shell
-sgio convert cross-section.inp cross-section.sg -ff abaqus -tf vabs -m bm2
+python -m sgio convert cross-section.inp cross-section.sg -ff abaqus -tf vabs -m bm2
 ```
 
 #### Complete Options
