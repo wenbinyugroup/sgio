@@ -1,3 +1,5 @@
+from ._version import __version__
+
 from .core.sg import StructureGene
 from .core.builder import buildSG1D
 # from .core.solid import MaterialProperty

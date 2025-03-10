@@ -1,6 +1,7 @@
 # import sys
 import argparse
 
+from sgio import __version__
 import sgio._global as GLOBAL
 import logging
 logger = logging.getLogger(GLOBAL.LOGGER_NAME)
@@ -13,10 +14,14 @@ def cli(*args):
 
     root_parser = argparse.ArgumentParser(
         prog='sgio',
-        description='CS/SG I/O functions',
+        description='I/O library for VABS (cross-section) and SwiftComp (structural gene)',
         # formatter_class=argparse.RawTextHelpFormatter,
     )
     root_parser.set_defaults(func=None)
+    root_parser.add_argument(
+        '-v', '--version', action='version', version=__version__,
+        help='Show version number and exit'
+    )
 
     sub_parser = root_parser.add_subparsers(
         help='sub-command help'

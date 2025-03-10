@@ -4,7 +4,8 @@ build-backend = "hatchling.build"
 
 [project]
 name = "sgio"
-version = "0.1.0"
+# version = "0.1.0"
+dynamic = ["version"]
 description = "I/O for VABS and SwiftComp"
 authors = [
     { name = "Su Tian", email = "sutian@analyswift.com" }
@@ -33,6 +34,11 @@ all = [
 [project.urls]
 Homepage = "https://github.com/wenbinyugroup/sgio"
 Documentation = "https://wenbinyugroup.github.io/sgio/"
+
+[tool.hatch.version]
+source = "regex"
+path = "sgio/_version.py"
+pattern = '^__version__ = "(?P<version>[^"]+)"$'
 
 [tool.hatch.build.targets.sdist]
 only-include = [
