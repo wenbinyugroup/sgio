@@ -22,6 +22,9 @@ def initLogger(name=GLOBAL.LOGGER_NAME, cout_level='INFO', fout_level='INFO', fi
     :obj:`logging.Logger`
         A logger object.
     """
+    # if name != GLOBAL.LOGGER_NAME:
+    #     GLOBAL.LOGGER_NAME = name
+
     logger = logging.getLogger(name)
     logger.setLevel('DEBUG')
 

@@ -8,6 +8,7 @@ import sgio.utils.execu as sue
 # import msgd.builder.presg as msp
 # import sgio.io as msi
 # import msgpi.utils as utils
+import sgio.utils as sutl
 
 
 import sgio._global as GLOBAL
@@ -19,7 +20,7 @@ def run(
     solver, input_name, analysis, smdim=2,
     aperiodic=False, output_gmsh_format=True, reduced_integration=False,
     scrnout=True, timeout=3600):
-    r"""Run codes.
+    """Run codes.
 
     Parameters
     ----------
@@ -49,8 +50,7 @@ def run(
     logger : logging.Logger
         Logger object
     """
-    # if logger is None:
-    #     logger = mul.initLogger(__name__)
+    logger.debug(f'local variables:\n{sutl.convertToPrettyString(locals())}')
 
     try:
         if solver.lower().startswith('v'):
@@ -178,7 +178,7 @@ def run(
 
 
 def runVABS(command, input_name, analysis, scrnout=True, timeout=3600):
-    r"""Run VABS.
+    """Run VABS.
 
     Parameters
     ----------
@@ -214,7 +214,7 @@ def runVABS(command, input_name, analysis, scrnout=True, timeout=3600):
         elif analysis == 3 or analysis == 'fi':
             cmd.append('3')
 
-        # logger.info(' '.join(cmd))
+        # logger.debug(' '.join(cmd))
 
         sue.run(cmd, timeout)
 
@@ -242,7 +242,7 @@ def runSwiftComp(
     command, input_name, analysis, smdim,
     aperiodic=False, output_gmsh_format=True, reduced_integration=False,
     scrnout=True, timeout=3600):
-    r"""Run SwiftComp.
+    """Run SwiftComp.
 
     Parameters
     ----------
@@ -306,7 +306,7 @@ def runSwiftComp(
         if reduced_integration:
             cmd.append('R')
 
-        # logger.info(' '.join(cmd))
+        # logger.debug(' '.join(cmd))
 
         sue.run(cmd, timeout)
 
