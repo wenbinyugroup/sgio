@@ -50,7 +50,7 @@ def read(filename):
     return out
 
 
-def read_buffer(f):
+def read_buffer(f, mesh_only:bool=True):
     # Skip until BEGIN BULK
     while True:
         line = f.readline()
@@ -68,6 +68,9 @@ def read_buffer(f):
     point_refs = []
     cell_refs = []
     cell_ref = None
+
+    sections = []  # for material-orientation combinations (layer type)
+    materials = []
 
     def add_cell(nastran_type, cell, cell_ref):
         cell_type = nastran_to_meshio_type[nastran_type]
@@ -212,6 +215,7 @@ def read_buffer(f):
         chunks = [chunk.strip() for chunk in chunks]
 
         keyword = chunks[0]
+        print(f'keyword: {keyword}')
 
         # Points
         if keyword in ["GRID", "GRID*"]:
