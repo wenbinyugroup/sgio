@@ -1,7 +1,8 @@
 import copy
 
 import numpy as np
-from sgio.meshio._mesh import CellBlock, Mesh
+# from meshio import CellBlock, Mesh
+from .mesh import SGMesh
 
 from .sg import StructureGene
 
@@ -142,7 +143,7 @@ def combineSG(sg1:StructureGene, sg2:StructureGene) -> StructureGene:
 
     # Create combined mesh
     # --------------------
-    mesh_c = Mesh(
+    mesh_c = SGMesh(
         points=points_c,
         cells=cells_c,
         point_data=point_data_c, 

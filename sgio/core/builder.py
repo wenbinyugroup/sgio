@@ -6,7 +6,8 @@ import sgio._global as GLOBAL
 import sgio.model as smdl
 # from sgio.model.solid import MaterialProperty
 # from sgio.model import CauchyContinuumModel
-from sgio.meshio._mesh import Mesh
+# from meshio import Mesh
+from .mesh import SGMesh
 
 from .sg import StructureGene
 
@@ -277,7 +278,7 @@ def buildSG1D(
     cells = [(cell_type, cells)]
     cell_data = {'property_id': [cell_data,]}
 
-    sg.mesh = Mesh(
+    sg.mesh = SGMesh(
         points, cells,
         point_data=point_data, cell_data=cell_data
     )

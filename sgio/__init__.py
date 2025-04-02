@@ -22,4 +22,18 @@ from .execu import run
 
 # from .meshio import *
 
-
+__all__ = [
+    'read',
+    'readOutput',
+    'readOutputModel',
+    'readOutputState',
+    'readLoadCsv',
+    'write',
+    'convert',
+    'addPointDictDataToMesh',
+    'addCellDictDataToMesh',
+    'run',
+    'StructureGene',
+    'buildSG1D',
+    'combineSG'
+]

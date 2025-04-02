@@ -3,7 +3,9 @@ import logging
 
 import numpy as np
 import sgio._global as GLOBAL
-from sgio.meshio._mesh import Mesh
+# from sgio.meshio._mesh import Mesh
+# from meshio import Mesh
+from .mesh import SGMesh
 
 # import math
 
@@ -153,7 +155,7 @@ class StructureGene():
         self.mocombos = {}
 
         # Mesh
-        self.mesh : Mesh = None
+        self.mesh : SGMesh = None
         self.ndim_degen_elem = 0
         self.num_slavenodes = 0
         self.omega = 1

@@ -9,10 +9,12 @@ logger = logging.getLogger(GLOBAL.LOGGER_NAME)
 import csv
 
 import sgio._global as GLOBAL
-import sgio.iofunc._abaqus as _abaqus
-import sgio.iofunc._swiftcomp as _swiftcomp
-import sgio.iofunc._vabs as _vabs
-import sgio.meshio as meshio
+import sgio.iofunc.abaqus._abaqus as _abaqus
+import sgio.iofunc.swiftcomp._swiftcomp as _swiftcomp
+# import sgio.iofunc.vabs.main as main
+import sgio.iofunc.vabs as _vabs
+# import sgio.meshio as meshio
+from . import _meshio
 import sgio.model as sgmodel
 import sgio.utils as sutils
 from sgio.core.sg import StructureGene
@@ -81,7 +83,7 @@ def read(
     if not sg:
         sg = StructureGene(sgdim=sgdim, smdim=model_type)
     if not sg.mesh:
-        sg.mesh, _, _ = meshio.read(filename, file_format)
+        sg.mesh, _, _ = _meshio.read(filename, file_format)
 
     return sg
 

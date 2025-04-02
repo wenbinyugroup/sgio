@@ -1,0 +1,325 @@
+"""
+I/O for VABS format
+"""
+from __future__ import annotations
+
+import numpy as np
+
+from meshio._files import is_buffer
+# from meshio._common import cell_data_from_raw, num_nodes_per_cell, raw_from_cell_data, warn
+# from meshio._exceptions import ReadError
+# from meshio import Mesh
+
+from sgio.core.mesh import SGMesh
+from sgio.iofunc._common import (
+    _meshio_to_sg_order,
+    _sg_to_meshio_order,
+    _read_nodes,
+    _write_nodes,
+)
+
+# def read(filename, sgdim:int, nnode:int, nelem:int, **kwargs):
+#     """Reads a Gmsh msh file."""
+#     if is_buffer(filename, 'r'):
+#         mesh = read_buffer(filename, sgdim, nnode, nelem)
+#     else:
+#         with open(filename, 'r') as file:
+#             mesh = read_buffer(file, sgdim, nnode, nelem)
+#     return mesh
+
+
+
+
+def read_buffer(f, sgdim:int, nnode:int, nelem:int, **kwargs):
+    """
+    """
+    # Initialize the optional data fields
+    points = []
+    cells = []
+    # cell_ids = []
+    point_sets = {}
+    cell_sets = {}
+    cell_sets_element = {}  # Handle cell sets defined in ELEMENT
+    cell_sets_element_order = []  # Order of keys is not preserved in Python 3.5
+    field_data = {}
+    cell_data = {}
+    point_data = {}
+    point_ids = None
+
+    # Read nodes
+    points, point_ids, line = _read_nodes(f, nnode, sgdim)
+
+    # Read elements
+    cells, elem_ids, elem_id_to_cell_id = _read_elements(f, nelem, point_ids)
+    # cell_type_to_id = {}
+    # for _cell_type, _cell_points in cells_dict.items():
+    #     cells.append(CellBlock(_cell_type, _cell_points))
+    #     cell_type_to_id[_cell_type] = len(cells) - 1
+    # print(elem_ids)
+    cell_data['element_id'] = elem_ids
+
+    # Read element property id and csys rotation (theta_1)
+    # _cd = []
+    # for _cb in cells:
+    #     _ct = _cb[0]
+    #     _cd.append(prop_ids[_ct])
+    # cell_data['property'] = np.array(_cd)
+
+    # Read local coordinate system for sectional properties
+    cell_prop_id, cell_csys = _read_property_id_ref_csys(f, nelem, cells, elem_id_to_cell_id)
+    cell_data['property_id'] = cell_prop_id
+    cell_data['property_ref_csys'] = cell_csys
+
+    return SGMesh(
+        points,
+        cells,
+        point_data=point_data,
+        cell_data=cell_data,
+        field_data=field_data,
+        point_sets=point_sets,
+        cell_sets=cell_sets,
+    )
+
+
+
+
+def _read_elements(f, nelem:int, point_ids):
+    """
+    """
+
+    cells = []
+    cell_type_to_index = {}
+    elem_ids = []  # Element id in the original file; Same shape as cells
+    elem_id_to_cell_id = {}
+
+    counter = 0
+    while counter < nelem:
+        line = f.readline()
+        line = line.split('!')[0].strip()
+        if line == "": continue
+
+        line = line.split()
+        # if file_format.lower().startswith('v'):
+        #     cell_id, node_ids = line[0], line[1:]
+        # elif file_format.lower().startswith('s'):
+        elem_id, node_ids = int(line[0]), line[1:]
+
+        # Check element type
+        cell_type = ''
+        if node_ids[3] == '0':  # triangle
+            node_ids = [int(_i) for _i in node_ids if _i != '0']
+            cell_type = {3: 'triangle', 6: 'triangle6'}[len(node_ids)]
+        else:  # quadrilateral
+            node_ids = [int(_i) for _i in node_ids if _i != '0']
+            cell_type = {4: 'quad', 8: 'quad8', 9: 'quad9'}[len(node_ids)]
+
+
+        if not cell_type in cell_type_to_index.keys():
+            # cells[cell_type] = []
+            cells.append([cell_type, []])
+            elem_ids.append([])
+            cell_type_to_index[cell_type] = len(cells) - 1
+            # cell_ids[cell_type] = {}
+            # prop_ids[cell_type] = []
+
+        cell_type_id = cell_type_to_index[cell_type]
+        cell_id = len(cells[cell_type_id][1])
+        cells[cell_type_id][1].append([point_ids[_i] for _i in node_ids])
+        elem_ids[cell_type_id].append(elem_id)
+        # if file_format.lower().startswith('s'):
+        # prop_ids[cell_type].append(int(prop_id))
+        elem_id_to_cell_id[elem_id] = (cell_type_id, cell_id)
+
+        counter += 1
+
+    return cells, elem_ids, elem_id_to_cell_id
+
+
+
+
+
+
+
+
+
+def _read_property_id_ref_csys(file, nelem, cells, elem_id_to_cell_id):
+    """
+    """
+
+    cell_prop_id = []
+    cell_csys = []
+    # print(cells)
+    # print(cell_ids)
+
+    counter = 0
+    while counter < nelem:
+        line = file.readline()
+        line = line.split('!')[0].strip()
+        if line == "": continue
+
+        line = line.split()
+
+        elem_id = int(line[0])
+        prop_id = int(line[1])
+        elem_csys = float(line[2])
+
+        cell_block_id, cell_id = elem_id_to_cell_id[elem_id]
+
+        if cell_block_id > len(cell_csys) - 1:
+            _ncell = len(cells[cell_block_id][1])
+            # print('_ncell =', _ncell)
+            cell_prop_id.append(np.zeros(_ncell, dtype=int))
+            cell_csys.append(np.zeros(_ncell))
+
+        # print(cell_csys[cell_block_id][cell_id])
+
+        cell_prop_id[cell_block_id][cell_id] = prop_id
+        cell_csys[cell_block_id][cell_id] = elem_csys
+
+        counter += 1
+
+    return cell_prop_id, cell_csys
+
+
+
+
+
+
+
+
+
+# ====================================================================
+
+def write(filename, mesh, sgdim, int_fmt='8d', float_fmt="20.9e"):
+    """
+    """
+    if is_buffer(filename, 'w'):
+        write_buffer(filename, mesh, sgdim, int_fmt, float_fmt)
+    else:
+        with open(filename, 'at') as file:
+            write_buffer(file, mesh, sgdim, int_fmt, float_fmt)
+
+
+
+def write_buffer(file, mesh, sgdim, int_fmt='8d', float_fmt="20.9e"):
+    _write_nodes(file, mesh.points, sgdim, int_fmt, float_fmt)
+    if not 'element_id' in mesh.cell_data.keys():
+        mesh.cell_data['element_id'] = []
+    _write_elements(file, mesh.cells, mesh.cell_data['element_id'], int_fmt)
+    # if 'property_ref_csys' in mesh.cell_data.keys():
+
+    try:
+        property_ref_csys = mesh.cell_data['property_ref_csys']
+    except KeyError:
+        property_ref_csys = None
+
+    _write_property_id_ref_csys(
+        file,
+        mesh.cell_data['property_id'],
+        property_ref_csys,
+        mesh.cell_data['element_id'],
+        int_fmt, float_fmt
+    )
+
+
+
+
+def _write_elements(f, cells, elem_id, int_fmt:str='8d'):
+    """
+    """
+    if len(elem_id) == 0:
+        generate_eid = True
+    else:
+        generate_eid = False
+    # elem_ids = []
+
+    sfi = '{:' + int_fmt + '}'
+
+    consecutive_index = 0
+    for k, cell_block in enumerate(cells):
+        cell_type = cell_block.type
+        node_idcs = _meshio_to_sg_order(cell_type, cell_block.data)
+
+        # _cid_to_eid = []
+        if generate_eid:
+            elem_id.append([])
+
+        for i, c in enumerate(node_idcs):
+
+            if generate_eid:
+                _eid = consecutive_index + i + 1
+                elem_id[k].append(_eid)
+            else:
+                _eid = elem_id[k][i]
+
+            _nums = [_eid, ]  # Element id
+
+            _nums.extend(c.tolist())  # Node ids
+
+            # Write the numbers
+            fmt = ''.join([sfi,]*len(_nums))
+            f.write(fmt.format(*_nums))
+            # logger.debug('sfi = {}'.format(sfi))
+            # sui.writeFormatIntegers(f, _nums, fmt=sfi, newline=False)
+            if k == 0 and i == 0:  f.write('  ! element connectivity')
+            f.write('\n')
+
+            # _cid_to_eid.append(_eid)
+
+        # elem_ids.append(_cid_to_eid)
+
+        consecutive_index += len(node_idcs)
+
+    f.write('\n')
+    return
+
+
+
+
+def _write_property_id_ref_csys(
+    file, cell_prop_id, cell_csys, elem_ids,
+    int_fmt:str='8d', float_fmt:str='20.12e'
+    ):
+    """
+    """
+
+    # sfi = '{:' + int_fmt + '}'
+    # sff = ''.join(['{:' + float_fmt + '}', ]*9)
+    sfmt = ''.join([
+        '{:' + int_fmt + '}',
+        '{:' + int_fmt + '}',
+        '{:' + float_fmt + '}'
+    ])
+
+    for i, block_data in enumerate(cell_prop_id):
+        for j, prop_id in enumerate(block_data):
+            elem_id = elem_ids[i][j]
+
+            try:
+                theta_1 = cell_csys[i][j]
+                if not isinstance(theta_1, float):
+                    # Calculate theta_1 from the csys
+                    _csys = theta_1
+                    _vx2 = np.array([1, 0, 0])
+                    _vy2 = np.array(_csys[:3])
+                    # print(f'_vy2 = {_vy2}')
+                    # _cos_theta_1 = np.dot(_vx2, _vy2) / (np.linalg.norm(_vx2) * np.linalg.norm(_vy2))
+                    # print(f'_cos_theta_1 = {_cos_theta_1}')
+                    # theta_1 = np.rad2deg(np.arccos(_cos_theta_1))
+                    # print(f'theta_1 = {theta_1}')
+                    theta_1 = np.rad2deg(np.arctan2(_vy2[1], _vy2[0]))
+                    # print(f'theta_1 = {theta_1}')
+            except TypeError:
+                theta_1 = 0
+
+            _nums = [elem_id, prop_id, theta_1]
+            # print(_nums)
+
+            file.write(sfmt.format(*_nums))
+            file.write('\n')
+
+    file.write('\n')
+    return
+
+
+
