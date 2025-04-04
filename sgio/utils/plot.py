@@ -5,7 +5,7 @@ from matplotlib.collections import PatchCollection
 
 from sgio.utils import math as sgmath
 
-from sgio.meshio._mesh import Mesh
+from sgio.core.mesh import SGMesh
 
 
 
@@ -86,8 +86,8 @@ def plot_2d_mesh(
     if mesh is None:
         raise ValueError('mesh argument cannot be None')
 
-    if not isinstance(mesh, Mesh):
-        raise ValueError('mesh argument must be a meshio.Mesh object')
+    if not isinstance(mesh, SGMesh):
+        raise ValueError('mesh argument must be a sgio.core.mesh.SGMesh object')
 
     if mesh.points is None:
         raise ValueError('The mesh must have points')

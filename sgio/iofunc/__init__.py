@@ -1,3 +1,10 @@
+from . import (
+    abaqus,
+    nastran,
+    swiftcomp,
+    vabs,
+)
+
 from ._common import addCellDictDataToMesh, addPointDictDataToMesh
 from .main import (
     convert,

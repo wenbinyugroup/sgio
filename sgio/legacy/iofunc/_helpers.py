@@ -11,7 +11,7 @@ from meshio import read as meshio_read, write as meshio_write
 from meshio import Mesh as MeshioMesh
 from meshio._exceptions import ReadError as MeshioReadError, WriteError as MeshioWriteError
 
-from ..core.mesh import SGMesh
+from ...core.mesh import SGMesh
 
 # Maps for SG-specific readers and writers
 sg_reader_map: Dict[str, Callable] = {}

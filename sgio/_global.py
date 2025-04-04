@@ -1,5 +1,5 @@
-# import logging
-# from rich.logging import RichHandler
+import logging
+from rich.logging import RichHandler
 from rich.console import Console
 from rich.pretty import Pretty
 
@@ -8,7 +8,13 @@ console = Console()
 def pprint(*args, **kwargs):
     console.print(Pretty(*args), **kwargs)
 
-LOGGER_NAME = 'sgio'
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(name)s: %(message)s",  # Include logger name in format
+    datefmt="[%X]",
+    handlers=[RichHandler(rich_tracebacks=True)]
+)
 
 SC_VERSION_DEFAULT = '2.1'
 VABS_VERSION_DEFAULT = '4.0'
@@ -37,23 +43,3 @@ FAILURE_CRITERION_NAME_TO_ID = {
     'hashin': 5
 }
 
-class SwiftCompLicenseError(Exception):
-    pass
-
-class VABSLicenseError(Exception):
-    pass
-
-class SwiftCompIOError(Exception):
-    pass
-
-class VABSIOError(Exception):
-    pass
-
-class SwiftCompError(Exception):
-    pass
-
-class VABSError(Exception):
-    pass
-
-class OutputFileError(Exception):
-    pass
