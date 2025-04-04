@@ -521,37 +521,37 @@ def write(
 
 
 def convert(
-    input_file_name: str,
-    output_file_name: str,
-    input_file_format: str,
-    output_file_format: str,
-    input_file_version: str = '',
-    output_file_version: str = '',
+    file_name_in: str,
+    file_name_out: str,
+    file_format_in: str,
+    file_format_out: str,
+    file_version_in: str = '',
+    file_version_out: str = '',
     analysis: str = 'h',
-    geometry_dimension: int = 3,
-    macro_model_type: str = 'SD1',
-    vabs_input_format: int = 1,
-    integer_format: str = '8d',
-    float_format: str = '20.12e',
-    write_mesh_only: bool = False
+    sgdim: int = 3,
+    model_type: str = 'SD1',
+    vabs_format_version: int = 1,
+    str_format_int: str = '8d',
+    str_format_float: str = '20.12e',
+    mesh_only: bool = False
 ) -> StructureGene:
     """Convert the Structure Gene data file format.
 
     Parameters
     ----------
-    input_file_name : str
+    file_name_in : str
         File name before conversion
-    output_file_name : str
+    file_name_out : str
         File name after conversion
-    input_file_format : str
+    file_format_in : str
         Format of the input file.
         Choose one from 'vabs', 'sc', 'swiftcomp'.
-    output_file_format : str
+    file_format_out : str
         Format of the output file.
         Choose one from 'vabs', 'sc', 'swiftcomp'.
-    input_file_version : str, optional
+    file_version_in : str, optional
         Version of the input file, by default ''
-    output_file_version : str, optional
+    file_version_out : str, optional
         Version of the output file, by default ''
     analysis : str, optional
         Indicator of Structure Gene analysis.
@@ -561,10 +561,10 @@ def convert(
         * 'h': Homogenization
         * 'd' or 'l': Dehomogenization
         * 'fi': Initial failure indices and strength ratios
-    geometry_dimension : int
+    sgdim : int
         Dimension of the geometry. Default is 3.
         Choose one from 1, 2, 3.
-    macro_model_type : str
+    model_type : str
         Type of the macro structural model.
         Default is 'SD1'.
         Choose one from
@@ -574,44 +574,44 @@ def convert(
         * 'PL2': Reissner-Mindlin plate/shell model
         * 'BM1': Euler-Bernoulli beam model
         * 'BM2': Timoshenko beam model
-    vabs_input_format : int, optional
+    vabs_format_version : int, optional
         Format for the VABS input, by default 1
-    integer_format : str, optional
+    str_format_int : str, optional
         String formating integers, by default '8d'
-    float_format : str, optional
+    str_format_float : str, optional
         String formating floats, by default '20.12e'
-    write_mesh_only : bool, optional
+    mesh_only : bool, optional
         If write meshing data only, by default False
     """
 
-    if input_file_name is None:
+    if file_name_in is None:
         raise ValueError("Input file name should not be None.")
 
-    if output_file_name is None:
+    if file_name_out is None:
         raise ValueError("Output file name should not be None.")
 
     sg = read(
-        file_name=input_file_name,
-        file_format=input_file_format,
-        model_type=macro_model_type,
-        format_version=input_file_version,
-        sgdim=geometry_dimension,
-        mesh_only=write_mesh_only)
+        filename=file_name_in,
+        file_format=file_format_in,
+        model_type=model_type,
+        format_version=file_version_in,
+        sgdim=sgdim,
+        mesh_only=mesh_only)
 
     if sg is None:
         raise ValueError("Input file is not a valid SG file.")
 
     write(
-        structure_gene=sg,
-        file_name=output_file_name,
-        file_format=output_file_format,
-        model_type=macro_model_type,
-        format_version=output_file_version,
+        sg=sg,
+        fn=file_name_out,
+        file_format=file_format_out,
+        format_version=file_version_out,
         analysis=analysis,
-        sg_format=vabs_input_format,
-        integer_format=integer_format,
-        float_format=float_format,
-        mesh_only=write_mesh_only)
+        sg_format=vabs_format_version,
+        model_type=model_type,
+        sfi=str_format_int,
+        sff=str_format_float,
+        mesh_only=mesh_only)
 
     return sg
 
