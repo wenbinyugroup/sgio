@@ -1,26 +1,15 @@
+from __future__ import annotations
+
 import copy
 import logging
 
 import numpy as np
-import sgio._global as GLOBAL
-# from sgio.meshio._mesh import Mesh
-# from meshio import Mesh
-from .mesh import SGMesh
+from meshio import Mesh
 
-# import math
-
-# from numpy.typing import ArrayLike
-
-# import sgio.core.solid as scs
-# import sgio.utils.io as sui
-# import sgio.utils.logger as mul
-# import sgio.utils.version as suv
-
-# import meshio
-# import sgio.meshio as mpm
+from sgio.core.mesh import SGMesh
 
 
-logger = logging.getLogger(GLOBAL.LOGGER_NAME)
+logger = logging.getLogger(__name__)
 
 
 class SGMacroModel():
@@ -155,7 +144,7 @@ class StructureGene():
         self.mocombos = {}
 
         # Mesh
-        self.mesh : SGMesh = None
+        self.mesh : SGMesh | Mesh | None = None
         self.ndim_degen_elem = 0
         self.num_slavenodes = 0
         self.omega = 1

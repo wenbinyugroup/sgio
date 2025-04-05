@@ -2,8 +2,10 @@ from __future__ import annotations
 
 import numpy as np
 from numpy.typing import ArrayLike
-from ..core.mesh import SGMesh
+
 from meshio._exceptions import WriteError
+
+from sgio.core.mesh import SGMesh
 
 
 c_int = np.dtype("int32")

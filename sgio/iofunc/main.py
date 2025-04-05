@@ -2,10 +2,6 @@ from __future__ import annotations
 
 import csv
 import logging
-from typing import Callable, Optional, Union
-
-
-from meshio._helpers import reader_map, _writer_map, extension_to_filetypes
 
 
 import sgio._global as GLOBAL
@@ -15,35 +11,11 @@ import sgio.iofunc.swiftcomp._swiftcomp as _swiftcomp
 # import sgio.iofunc.vabs.main as main
 import sgio.iofunc.vabs as _vabs
 # import sgio.meshio as meshio
-from sgio.core.sg import StructureGene
 import sgio.iofunc._meshio as _meshio
 # import sgio.utils as sutils
+from sgio.core.sg import StructureGene
 
 logger = logging.getLogger(__name__)
-
-# Maps for SG-specific readers and writers
-sg_reader_map: dict[str, Callable] = {}
-sg_writer_map: dict[str, Callable] = {}
-
-# Map of file extensions to format names
-sg_ext_to_filetypes: dict[str, list[str]] = {}
-
-
-
-def register_sg_format(
-    format_name: str, extensions: list[str], reader, writer
-) -> None:
-    """
-    """
-    for ext in extensions:
-        if ext not in sg_ext_to_filetypes:
-            sg_ext_to_filetypes[ext] = []
-        sg_ext_to_filetypes[ext].append(format_name)
-
-    if reader is not None:
-        sg_reader_map[format_name] = reader
-
-    sg_writer_map.update(writer)
 
 
 

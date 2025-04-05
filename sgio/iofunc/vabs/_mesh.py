@@ -4,13 +4,10 @@ I/O for VABS format
 from __future__ import annotations
 
 import numpy as np
-
 from meshio._files import is_buffer
-# from meshio._common import cell_data_from_raw, num_nodes_per_cell, raw_from_cell_data, warn
-# from meshio._exceptions import ReadError
-# from meshio import Mesh
 
 from sgio.core.mesh import SGMesh
+from sgio.iofunc._meshio import register_sgmesh_format
 from sgio.iofunc._common import (
     _meshio_to_sg_order,
     _sg_to_meshio_order,
@@ -322,4 +319,6 @@ def _write_property_id_ref_csys(
     return
 
 
+
+register_sgmesh_format('vabs', ['.vabs', '.dat', '.sg'], read_buffer, write_buffer)
 

@@ -1,10 +1,14 @@
+from __future__ import annotations
+
 import copy
+import logging
 
 import numpy as np
-# from meshio import CellBlock, Mesh
-from .mesh import SGMesh
 
-from .sg import StructureGene
+from sgio.core.mesh import SGMesh
+from sgio.core.sg import StructureGene
+
+logger = logging.getLogger(__name__)
 
 
 def combineSG(sg1:StructureGene, sg2:StructureGene) -> StructureGene:

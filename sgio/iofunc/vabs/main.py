@@ -1,12 +1,15 @@
 from __future__ import annotations
 
+import logging
+
+from sgio.iofunc._meshio import read_sgmesh_buffer, write_sgmesh_buffer
 from ._input import (
     _readHeader,
-    _readMesh,
+    # _readMesh,
     _readMaterialRotationCombinations,
     _readMaterials,
 )
-from ._mesh import *
+# from ._mesh import *
 from ._output import (
     _readOutputH,
     _readOutputNodeDisplacement,
@@ -19,14 +22,12 @@ from ._output import (
     _writeGlobalResponses,
 )
 
-import sgio._global as GLOBAL
+# import sgio._global as GLOBAL
 # import sgio.meshio as smsh
 import sgio.model as smdl
 # import sgio.utils as sutl
 from sgio.core.sg import StructureGene
-
-import logging
-logger = logging.getLogger(GLOBAL.LOGGER_NAME)
+logger = logging.getLogger(__name__)
 
 
 def read_buffer(f, file_format:str, format_version:str, model:int|str):
@@ -67,7 +68,8 @@ def read_buffer(f, file_format:str, format_version:str, model:int|str):
     nelem = configs['num_elements']
 
     # Read mesh
-    sg.mesh = _readMesh(f, file_format, sg.sgdim, nnode, nelem, _use_elem_local_orient)
+    # sg.mesh = _readMesh(f, file_format, sg.sgdim, nnode, nelem, _use_elem_local_orient)
+    sg.mesh = read_sgmesh_buffer(f, file_format, sg.sgdim, nnode, nelem, _use_elem_local_orient)
 
     # Read material in-plane angle combinations
     nma_comb = configs['num_mat_angle3_comb']
