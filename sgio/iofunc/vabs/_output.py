@@ -1,11 +1,12 @@
 from __future__ import annotations
 
-import sgio._global as GLOBAL
+import logging
+
+# import sgio._global as GLOBAL
 import sgio.utils as sutl
 import sgio.model as smdl
 
-import logging
-logger = logging.getLogger(GLOBAL.LOGGER_NAME)
+logger = logging.getLogger(__name__)
 
 
 

@@ -1,9 +1,9 @@
 import logging
 from rich.logging import RichHandler
 
-import sgio._global as GLOBAL
+# import sgio._global as GLOBAL
 
-def initLogger(name=GLOBAL.LOGGER_NAME, cout_level='INFO', fout_level='INFO', filename='log.txt'):
+def initLogger(name, cout_level='INFO', fout_level='INFO', filename='log.txt'):
     """Initialization of a logger.
 
     Parameters

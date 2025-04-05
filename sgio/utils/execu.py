@@ -1,14 +1,22 @@
 # import os
 # import platform
 # import signal
-import subprocess as sbp
-# import msgd.utils.logger as mul
-from .._global import *
-
-
-import sgio._global as GLOBAL
 import logging
-logger = logging.getLogger(GLOBAL.LOGGER_NAME)
+import subprocess as sbp
+
+
+from sgio._global import MSG_COMMANDS
+from sgio._exceptions import (
+    SwiftCompLicenseError,
+    VABSLicenseError,
+    SwiftCompIOError,
+    VABSIOError,
+    SwiftCompError,
+    VABSError,
+)
+
+
+logger = logging.getLogger(__name__)
 
 
 # class SwiftCompIOError(Exception):

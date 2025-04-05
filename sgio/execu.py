@@ -1,3 +1,4 @@
+import logging
 # import os
 import traceback
 # import subprocess as sbp
@@ -9,11 +10,9 @@ import sgio.utils.execu as sue
 # import sgio.io as msi
 # import msgpi.utils as utils
 import sgio.utils as sutl
+# import sgio._global as GLOBAL
 
-
-import sgio._global as GLOBAL
-import logging
-logger = logging.getLogger(GLOBAL.LOGGER_NAME)
+logger = logging.getLogger(__name__)
 
 
 def run(

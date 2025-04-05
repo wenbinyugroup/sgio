@@ -8,6 +8,11 @@ from ._input import (
     # _readMesh,
     _readMaterialRotationCombinations,
     _readMaterials,
+    _writeHeader,
+    _writeMesh,
+    _writeMOCombos,
+    _writeMaterials,
+    _writeGlobalResponses,
 )
 # from ._mesh import *
 from ._output import (
@@ -15,11 +20,6 @@ from ._output import (
     _readOutputNodeDisplacement,
     _readOutputElementStrainStressCase,
     _readOutputFailureIndexCase,
-    _writeHeader,
-    _writeMesh,
-    _writeMOCombos,
-    _writeMaterials,
-    _writeGlobalResponses,
 )
 
 # import sgio._global as GLOBAL

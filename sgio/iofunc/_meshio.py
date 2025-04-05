@@ -37,7 +37,8 @@ def register_sgmesh_format(
     if reader is not None:
         sgmesh_reader_map[format_name] = reader
 
-    sgmesh_writer_map.update(writer)
+    if writer is not None:
+        sgmesh_writer_map[format_name] = writer
 
 
 def read_sgmesh_buffer(file, file_format:str|None, **kwargs) -> SGMesh | Mesh | None:
@@ -90,3 +91,14 @@ def write_sgmesh_buffer(file, mesh:SGMesh, file_format:str|None, **kwargs) -> No
     if file_format is None:
         raise ValueError("File format must be given if buffer is used")
 
+    writer = None
+
+    try:
+        writer = sgmesh_writer_map[file_format]
+    except KeyError:
+        try:
+            writer = _writer_map[file_format]  # meshio writer
+        except KeyError:
+            raise ValueError(f"Unknown file format '{file_format}'")
+
+    return writer(file, mesh, **kwargs)
