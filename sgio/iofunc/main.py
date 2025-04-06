@@ -59,6 +59,9 @@ def read(
     :obj:`sgio.core.sg.StructureGene`
         Structure gene object
     """
+    logger.info('Reading file...')
+    logger.debug(locals())
+
     # sutils.check_file_exists(filename)
     file_format = file_format.lower()
     if file_format == 'sc' or file_format == 'swiftcomp':
@@ -469,6 +472,9 @@ def write(
         If write meshing data only. Default is False
     """
 
+    logger.info('Writing file...')
+    logger.debug(locals())
+
     # Check if file_format is valid
     if file_format not in ['sc', 'swiftcomp', 'vabs']:
         mesh_only = True
@@ -585,6 +591,9 @@ def convert(
         If write meshing data only, by default False
     """
 
+    logger.info('Converting file format...')
+    logger.debug(locals())
+
     if file_name_in is None:
         raise ValueError("Input file name should not be None.")
 
@@ -613,6 +622,8 @@ def convert(
         sfi=str_format_int,
         sff=str_format_float,
         mesh_only=mesh_only)
+
+    logger.info('File format converted.')
 
     return sg
 

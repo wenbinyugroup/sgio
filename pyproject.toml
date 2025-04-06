@@ -13,9 +13,10 @@ authors = [
 readme = { file = "README.md", content-type = "text/markdown" }
 requires-python = ">=3.9"
 dependencies = [
-    "importlib_metadata; python_version<'3.8'",
-    "numpy>=2",
-    "rich",
+    "meshio",
+    # "importlib_metadata; python_version<'3.8'",
+    # "numpy>=2",
+    # "rich",
     "matplotlib",
 ]
 classifiers = [
@@ -25,11 +26,11 @@ classifiers = [
 license = "MIT"
 license-files = ["LICEN[CS]E*"]
 
-[project.optional-dependencies]
-all = [
-    "h5py",
-    "netCDF4",
-]
+# [project.optional-dependencies]
+# all = [
+#     "h5py",
+#     "netCDF4",
+# ]
 
 [project.urls]
 Homepage = "https://github.com/wenbinyugroup/sgio"

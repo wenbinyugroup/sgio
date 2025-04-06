@@ -6,6 +6,10 @@ import logging
 import sgio.utils as sutl
 import sgio.model as smdl
 import sgio.iofunc._meshio as smsh
+from ._mesh import (
+    read_buffer,
+    write_buffer,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -209,12 +213,16 @@ def _readElasticProperty(file, isotropy:int):
 
 
 
-def _writeMesh(sg, file, int_fmt, float_fmt):
+def _writeMesh(mesh, file, int_fmt, float_fmt):
     """
     """
     logger.debug('writing mesh...')
 
-    sg.mesh.write(file, 'vabs', sgdim=2, int_fmt=int_fmt, float_fmt=float_fmt)
+    write_buffer(
+        file, mesh,
+        sgdim=2,
+        int_fmt=int_fmt, float_fmt=float_fmt
+    )
 
     return
 

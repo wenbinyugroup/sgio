@@ -306,7 +306,7 @@ def writeInputBuffer(
         sg.nnodes, sg.nelems, sg.nmates,
         file, sfi, sff)
 
-    _writeMesh(sg, file, int_fmt=sfi, float_fmt=sff)
+    _writeMesh(sg.mesh, file, int_fmt=sfi, float_fmt=sff)
 
     # if not mesh_only:
     _writeMOCombos(sg, file, sfi, sff)

@@ -1,12 +1,12 @@
 # import sys
 import argparse
+import logging
 
 from sgio import __version__
-import sgio._global as GLOBAL
-import logging
-logger = logging.getLogger(GLOBAL.LOGGER_NAME)
+# import sgio._global as GLOBAL
+from sgio.iofunc import convert
 
-from .iofunc import convert
+logger = logging.getLogger(__name__)
 
 
 def cli(*args):
