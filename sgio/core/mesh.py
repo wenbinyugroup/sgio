@@ -7,8 +7,29 @@ class SGMesh(Mesh):
     while maintaining compatibility with the original meshio.Mesh class.
     """
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(
+        self,
+        points, cells,
+        point_data=None,
+        cell_data=None,
+        field_data=None,
+        point_sets=None,
+        cell_sets=None,
+        gmsh_periodic=None,
+        info=None,
+        ):
+
+        super().__init__(
+            points, cells,
+            point_data=point_data,
+            cell_data=cell_data,
+            field_data=field_data,
+            point_sets=point_sets,
+            cell_sets=cell_sets,
+            gmsh_periodic=gmsh_periodic,
+            info=info,
+        )
+
     #     # Additional SG-specific attributes
     #     self.material_properties = {}
     #     self.element_materials = {}  # Mapping of element IDs to material IDs

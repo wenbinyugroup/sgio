@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import csv
 import logging
+import meshio
 
 
 import sgio._global as GLOBAL
@@ -490,12 +491,15 @@ def write(
     # Open the file and write the data
     with open(fn, 'w', encoding='utf-8') as file:
         if mesh_only:
-            sg.mesh.write(
-                file,
-                file_format,
-                int_fmt=sfi,
-                float_fmt=sff
-            )
+            meshio.write(
+                file, sg.mesh, file_format=file_format,
+                int_fmt=sfi, float_fmt=sff)
+            # sg.mesh.write(
+            #     file,
+            #     file_format,
+            #     int_fmt=sfi,
+            #     float_fmt=sff
+            # )
 
         else:
             if file_format.startswith('s'):

@@ -7,8 +7,8 @@ import numpy as np
 from meshio._files import is_buffer
 
 from sgio.core.mesh import SGMesh
-from sgio.iofunc._meshio import register_sgmesh_format
-from sgio.iofunc._common import (
+from sgio.iofunc._meshio import (
+    register_sgmesh_format,
     _meshio_to_sg_order,
     _sg_to_meshio_order,
     _read_nodes,

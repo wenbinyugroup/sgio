@@ -5,7 +5,7 @@ import logging
 # import sgio._global as GLOBAL
 import sgio.utils as sutl
 import sgio.model as smdl
-import sgio.iofunc._meshio as smsh
+# import sgio.iofunc._meshio as smsh
 from ._mesh import (
     read_buffer,
     write_buffer,
@@ -68,8 +68,8 @@ def _readMesh(file, file_format:str, sgdim:int, nnode:int, nelem:int, read_local
 
     logger.debug('reading mesh...')
 
-    mesh = smsh.read(
-        file, file_format,
+    mesh = read_buffer(
+        file,
         sgdim=sgdim, nnode=nnode, nelem=nelem, read_local_frame=read_local_frame
     )
 

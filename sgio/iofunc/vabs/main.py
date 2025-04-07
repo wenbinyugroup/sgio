@@ -2,10 +2,10 @@ from __future__ import annotations
 
 import logging
 
-from sgio.iofunc._meshio import read_sgmesh_buffer, write_sgmesh_buffer
+# from sgio.iofunc._meshio import read_sgmesh_buffer, write_sgmesh_buffer
 from ._input import (
     _readHeader,
-    # _readMesh,
+    _readMesh,
     _readMaterialRotationCombinations,
     _readMaterials,
     _writeHeader,
@@ -68,8 +68,8 @@ def read_buffer(f, file_format:str, format_version:str, model:int|str):
     nelem = configs['num_elements']
 
     # Read mesh
-    # sg.mesh = _readMesh(f, file_format, sg.sgdim, nnode, nelem, _use_elem_local_orient)
-    sg.mesh = read_sgmesh_buffer(f, file_format, sg.sgdim, nnode, nelem, _use_elem_local_orient)
+    sg.mesh = _readMesh(f, file_format, sg.sgdim, nnode, nelem, _use_elem_local_orient)
+    # sg.mesh = read_sgmesh_buffer(f, file_format, sg.sgdim, nnode, nelem, _use_elem_local_orient)
 
     # Read material in-plane angle combinations
     nma_comb = configs['num_mat_angle3_comb']

@@ -7,13 +7,21 @@ import numpy as np
 from meshio._files import is_buffer
 
 from sgio.core.mesh import SGMesh
-from sgio.iofunc._meshio import register_sgmesh_format
-from sgio.iofunc._common import (
+from sgio.iofunc._meshio import (
+    register_sgmesh_format,
     _meshio_to_sg_order,
     _sg_to_meshio_order,
     _read_nodes,
     _write_nodes,
 )
+
+vabs_to_meshio_type = {
+    3: 'triangle',
+    6: 'triangle6',
+    4: 'quad',
+    8: 'quad8',
+    9: 'quad9',
+}
 
 # def read(filename, sgdim:int, nnode:int, nelem:int, **kwargs):
 #     """Reads a Gmsh msh file."""
@@ -48,24 +56,14 @@ def read_buffer(f, sgdim:int, nnode:int, nelem:int, **kwargs):
 
     # Read elements
     cells, elem_ids, elem_id_to_cell_id = _read_elements(f, nelem, point_ids)
-    # cell_type_to_id = {}
-    # for _cell_type, _cell_points in cells_dict.items():
-    #     cells.append(CellBlock(_cell_type, _cell_points))
-    #     cell_type_to_id[_cell_type] = len(cells) - 1
-    # print(elem_ids)
     cell_data['element_id'] = elem_ids
-
-    # Read element property id and csys rotation (theta_1)
-    # _cd = []
-    # for _cb in cells:
-    #     _ct = _cb[0]
-    #     _cd.append(prop_ids[_ct])
-    # cell_data['property'] = np.array(_cd)
 
     # Read local coordinate system for sectional properties
     cell_prop_id, cell_csys = _read_property_id_ref_csys(f, nelem, cells, elem_id_to_cell_id)
     cell_data['property_id'] = cell_prop_id
     cell_data['property_ref_csys'] = cell_csys
+
+    # print(cells)
 
     return SGMesh(
         points,
@@ -102,14 +100,12 @@ def _read_elements(f, nelem:int, point_ids):
         elem_id, node_ids = int(line[0]), line[1:]
 
         # Check element type
-        cell_type = ''
-        if node_ids[3] == '0':  # triangle
-            node_ids = [int(_i) for _i in node_ids if _i != '0']
-            cell_type = {3: 'triangle', 6: 'triangle6'}[len(node_ids)]
-        else:  # quadrilateral
-            node_ids = [int(_i) for _i in node_ids if _i != '0']
-            cell_type = {4: 'quad', 8: 'quad8', 9: 'quad9'}[len(node_ids)]
-
+        # cell_type = ''
+        # if node_ids[3] == '0':  # triangle
+        #     node_ids = [int(_i) for _i in node_ids if _i != '0']
+        # else:  # quadrilateral
+        node_ids = [int(_i) for _i in node_ids if _i != '0']
+        cell_type = vabs_to_meshio_type[len(node_ids)]
 
         if not cell_type in cell_type_to_index.keys():
             # cells[cell_type] = []
@@ -128,6 +124,10 @@ def _read_elements(f, nelem:int, point_ids):
         elem_id_to_cell_id[elem_id] = (cell_type_id, cell_id)
 
         counter += 1
+
+    for _i in range(len(cells)):
+        cells[_i] = tuple(cells[_i])
+
 
     return cells, elem_ids, elem_id_to_cell_id
 
