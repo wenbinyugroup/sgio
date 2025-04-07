@@ -26,11 +26,13 @@ classifiers = [
 license = "MIT"
 license-files = ["LICEN[CS]E*"]
 
-# [project.optional-dependencies]
-# all = [
-#     "h5py",
-#     "netCDF4",
-# ]
+[project.optional-dependencies]
+all = [
+    "h5py",
+    "netCDF4",
+    "pyyaml",
+    "pytest",
+]
 
 [project.urls]
 Homepage = "https://github.com/wenbinyugroup/sgio"
