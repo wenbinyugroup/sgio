@@ -242,13 +242,13 @@ def read_mesh_buffer(f, mesh_only:bool=True):
             )
             cells.append(CellBlock(cell_type, cells_data))
             cell_ids.append(ids)
-            print('\ncell_ids:')
-            print(cell_ids)
+            # print('\ncell_ids:')
+            # print(cell_ids)
             if sets:
                 cell_sets_element.update(sets)
                 cell_sets_element_order += list(sets.keys())
-            print('\ncell_sets_element:')
-            print(cell_sets_element)
+            # print('\ncell_sets_element:')
+            # print(cell_sets_element)
 
             if not 'element_id' in cell_data.keys():
                 cell_data['element_id'] = []
