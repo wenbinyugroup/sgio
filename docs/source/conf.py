@@ -25,7 +25,8 @@ copyright = '2023, su tian'
 author = 'su tian'
 
 # The full version, including alpha/beta/rc tags
-release = '0.1'
+from sgio import __version__
+release = __version__
 
 
 # -- General configuration ---------------------------------------------------

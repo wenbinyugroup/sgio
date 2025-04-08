@@ -41,6 +41,8 @@ def test_convert(fn_test_cases, input_dir, output_dir):
             '-tf', ff_out,
         ]
 
+        logging.info(' '.join(cmd))
+
         if 'version_in' in _case:
             cmd.append('-ffv')
             cmd.append(_case['version_in'])
