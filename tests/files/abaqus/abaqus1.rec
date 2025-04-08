@@ -1,0 +1,17 @@
+# -*- coding: mbcs -*-
+from part import *
+from material import *
+from section import *
+from assembly import *
+from step import *
+from interaction import *
+from load import *
+from mesh import *
+from optimization import *
+from job import *
+from sketch import *
+from visualization import *
+from connectorBehavior import *
+mdb.ModelFromInputFile(inputFileName=
+    'C:/Users/tian50/work/dev/sgio/tests/files/abaqus/sg33_cube.inp', name=
+    'sg33_cube')

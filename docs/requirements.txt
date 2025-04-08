@@ -1,5 +1,3 @@
-rich
-numpy<2
 sphinx
 sphinx-comments
 sphinx-sitemap
