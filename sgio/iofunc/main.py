@@ -6,14 +6,12 @@ import meshio
 
 
 import sgio._global as GLOBAL
-import sgio.model as sgmodel
-import sgio.iofunc.abaqus._abaqus as _abaqus
-import sgio.iofunc.swiftcomp._swiftcomp as _swiftcomp
-# import sgio.iofunc.vabs.main as main
-import sgio.iofunc.vabs as _vabs
-# import sgio.meshio as meshio
 import sgio.iofunc._meshio as _meshio
-# import sgio.utils as sutils
+import sgio.iofunc.abaqus as _abaqus
+import sgio.iofunc.gmsh as _gmsh
+import sgio.iofunc.swiftcomp as _swiftcomp
+import sgio.iofunc.vabs as _vabs
+import sgio.model as sgmodel
 from sgio.core.sg import StructureGene
 
 logger = logging.getLogger(__name__)
@@ -77,7 +75,7 @@ def read(
             )
     elif file_format == 'abaqus':
         with open(filename, 'r') as file:
-            sg = _abaqus.read_input_buffer(
+            sg = _abaqus.read_buffer(
                 file, sgdim=sgdim, model=model_type
             )
     else:
@@ -490,7 +488,38 @@ def write(
 
     # Open the file and write the data
     with open(fn, 'w', encoding='utf-8') as file:
-        if mesh_only:
+        if file_format.startswith('s'):
+            if format_version == '':
+                format_version = GLOBAL.SC_VERSION_DEFAULT
+
+            _swiftcomp.write_buffer(
+                sg, file,
+                analysis=analysis, model=model_type,
+                macro_responses=macro_responses,
+                load_type=load_type,
+                sfi=sfi, sff=sff, version=format_version
+            )
+
+        elif file_format.startswith('v'):
+            if format_version == '':
+                format_version = GLOBAL.VABS_VERSION_DEFAULT
+
+            _vabs.write_buffer(
+                sg, file,
+                analysis=analysis, sg_format=sg_format,
+                macro_responses=macro_responses, model=model_type,
+                sfi=sfi, sff=sff, version=format_version,
+                mesh_only=mesh_only
+            )
+
+        elif file_format.startswith('gmsh'):
+            _gmsh.write_buffer(
+                file, sg.mesh,
+                format_version=format_version,
+                float_fmt=sff
+            )
+
+        else:
             meshio.write(
                 file, sg.mesh, file_format=file_format,
                 int_fmt=sfi, float_fmt=sff)
@@ -500,31 +529,6 @@ def write(
             #     int_fmt=sfi,
             #     float_fmt=sff
             # )
-
-        else:
-            if file_format.startswith('s'):
-                if format_version == '':
-                    format_version = GLOBAL.SC_VERSION_DEFAULT
-
-                _swiftcomp.write_buffer(
-                    sg, file,
-                    analysis=analysis, model=model_type,
-                    macro_responses=macro_responses,
-                    load_type=load_type,
-                    sfi=sfi, sff=sff, version=format_version
-                )
-
-            elif file_format.startswith('v'):
-                if format_version == '':
-                    format_version = GLOBAL.VABS_VERSION_DEFAULT
-
-                _vabs.write_buffer(
-                    sg, file,
-                    analysis=analysis, sg_format=sg_format,
-                    macro_responses=macro_responses, model=model_type,
-                    sfi=sfi, sff=sff, version=format_version,
-                    mesh_only=mesh_only
-                )
 
     return fn
 

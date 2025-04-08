@@ -24,7 +24,7 @@ from meshio._common import (
     join_strings,
     replace_space,
 )
-from meshio._exceptions import WriteError
+from meshio._exceptions import ReadError, WriteError
 from meshio._helpers import reader_map, _writer_map, extension_to_filetypes
 from meshio import Mesh
 

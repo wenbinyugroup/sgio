@@ -2,18 +2,19 @@ from __future__ import annotations
 
 import logging
 import pathlib
+from itertools import count
 
 import numpy as np
 from meshio import Mesh, CellBlock
 from meshio._files import is_buffer, open_file
-from meshio._exceptions import ReadError
+# from meshio._exceptions import ReadError
 from meshio.abaqus._abaqus import (
     abaqus_to_meshio_type,
     get_param_map,
     _read_nodes,
-    _read_cells,
-    _read_set,
-    merge,
+    # _read_cells,
+    # _read_set,
+    # merge,
     )
 
 # import sgio._global as GLOBAL
@@ -22,6 +23,10 @@ import sgio.model as smdl
 from sgio.core.sg import StructureGene
 # from sgio.core.mesh import SGMesh
 # from sgio.meshio.abaqus._abaqus import get_param_map
+from sgio.iofunc._meshio import (
+    ReadError,
+    num_nodes_per_cell,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -49,15 +54,15 @@ meshio_to_abaqus_type = {v: k for k, v in abaqus_to_meshio_type.items()}
 def read(filename, **kwargs):
     """Reads a Abaqus inp file."""
     if is_buffer(filename, 'r'):
-        out = read_input_buffer(filename, **kwargs)
+        out = read_buffer(filename, **kwargs)
     else:
         with open_file(filename, "r") as f:
-            out = read_input_buffer(f, **kwargs)
+            out = read_buffer(f, **kwargs)
     return out
 
 
 
-def read_input_buffer(file, **kwargs):
+def read_buffer(file, **kwargs):
     """
     """
     sg = StructureGene()
@@ -237,10 +242,13 @@ def read_mesh_buffer(f, mesh_only:bool=True):
             )
             cells.append(CellBlock(cell_type, cells_data))
             cell_ids.append(ids)
-            # print(cell_ids)
+            print('\ncell_ids:')
+            print(cell_ids)
             if sets:
                 cell_sets_element.update(sets)
                 cell_sets_element_order += list(sets.keys())
+            print('\ncell_sets_element:')
+            print(cell_sets_element)
 
             if not 'element_id' in cell_data.keys():
                 cell_data['element_id'] = []
@@ -420,6 +428,70 @@ def read_mesh_buffer(f, mesh_only:bool=True):
 
 
 
+def _read_cells(f, params_map, point_ids):
+    etype = params_map["TYPE"]
+    if etype not in abaqus_to_meshio_type.keys():
+        raise ReadError(f"Element type not available: {etype}")
+
+    cell_type = abaqus_to_meshio_type[etype]
+    # ElementID + NodesIDs
+    num_data = num_nodes_per_cell[cell_type] + 1
+
+    idx = []
+    while True:
+        line = f.readline()
+        if not line or line.startswith("*"):
+            break
+        line = line.strip()
+        if line == "":
+            continue
+        idx += [int(k) for k in filter(None, line.split(","))]
+
+    # Check for expected number of data
+    if len(idx) % num_data != 0:
+        raise ReadError("Expected number of data items does not match element type")
+
+    idx = np.array(idx).reshape((-1, num_data))
+    cell_ids = dict(zip(idx[:, 0], count(0)))
+    cells = np.array([[point_ids[node] for node in elem] for elem in idx[:, 1:]])
+
+    cell_sets = (
+        {params_map["ELSET"]: np.arange(len(cells), dtype="int32")}
+        if "ELSET" in params_map.keys()
+        else {}
+    )
+
+    return cell_type, cells, cell_ids, cell_sets, line
+
+
+
+
+def _read_set(f, params_map):
+    set_ids = []
+    set_names = []
+    while True:
+        line = f.readline()
+        if not line or line.startswith("*"):
+            break
+        if line.strip() == "":
+            continue
+
+        line = line.strip().strip(",").split(",")
+        if line[0].isnumeric():
+            set_ids += [int(k) for k in line]
+        else:
+            set_names.append(line[0])
+
+    set_ids = np.array(set_ids, dtype="int32")
+    if "GENERATE" in params_map:
+        if len(set_ids) != 3:
+            raise ReadError(set_ids)
+        set_ids = np.arange(set_ids[0], set_ids[1] + 1, set_ids[2], dtype="int32")
+    return set_ids, set_names, line
+
+
+
+
 
 def _read_distribution(f, params_map):
     # cell_ids = []
@@ -495,4 +567,57 @@ def _read_material(f):
     # print(material)
 
     return material
+
+
+
+
+def merge(
+    mesh, points, cells, point_data, cell_data, field_data, point_sets, cell_sets
+):
+    """
+    Merge Mesh object into existing containers for points, cells, sets, etc..
+
+    :param mesh:
+    :param points:
+    :param cells:
+    :param point_data:
+    :param cell_data:
+    :param field_data:
+    :param point_sets:
+    :param cell_sets:
+    :type mesh: Mesh
+    """
+    ext_points = np.array([p for p in mesh.points])
+
+    if len(points) > 0:
+        new_point_id = points.shape[0]
+        # new_cell_id = len(cells) + 1
+        points = np.concatenate([points, ext_points])
+    else:
+        # new_cell_id = 0
+        new_point_id = 0
+        points = ext_points
+
+    cnt = 0
+    for c in mesh.cells:
+        new_data = np.array([d + new_point_id for d in c.data])
+        cells.append(CellBlock(c.type, new_data))
+        cnt += 1
+
+    # The following aren't currently included in the abaqus parser, and are therefore
+    # excluded?
+    # point_data.update(mesh.point_data)
+    # cell_data.update(mesh.cell_data)
+    # field_data.update(mesh.field_data)
+
+    # Update point and cell sets to account for change in cell and point ids
+    for key, val in mesh.point_sets.items():
+        point_sets[key] = [x + new_point_id for x in val]
+
+    # Todo: Add support for merging cell sets
+    # cellblockref = [[] for i in range(cnt-new_cell_id)]
+    # for key, val in mesh.cell_sets.items():
+    #     cell_sets[key] = cellblockref + [np.array([x for x in val[0]])]
+
+    return points, cells
 

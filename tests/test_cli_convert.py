@@ -1,8 +1,7 @@
 import logging
 import os
+import subprocess as sbp
 import yaml
-
-from sgio import convert
 
 
 logging.basicConfig(level=logging.DEBUG)
@@ -18,7 +17,6 @@ test_case_files = [
 def test_convert(fn_test_cases, input_dir, output_dir):
     # file_dir = 'files'
 
-    # fn_test_cases = f'{file_dir}/test_convert_vabs_abaqus.yml'
     with open(f'{input_dir}/{fn_test_cases}', 'r') as file:
         test_cases = yaml.safe_load(file)
 
@@ -35,13 +33,27 @@ def test_convert(fn_test_cases, input_dir, output_dir):
 
         logging.info(f'Converting {fn_in} to {fn_out}...')
 
-        convert(
-            fn_in, fn_out,
-            ff_in, ff_out,
-            file_version_in=_case.get('version_in', None),
-            file_version_out=_case.get('version_out', None),
-            model_type=_case.get('model', None),
-        )
+        cmd = [
+            'python', '-m', 'sgio', 'convert',
+            fn_in,
+            fn_out,
+            '-ff', ff_in,
+            '-tf', ff_out,
+        ]
+
+        if 'version_in' in _case:
+            cmd.append('-ffv')
+            cmd.append(_case['version_in'])
+
+        if 'version_out' in _case:
+            cmd.append('-tfv')
+            cmd.append(_case['version_out'])
+
+        if 'model' in _case:
+            cmd.append('-m')
+            cmd.append(_case['model'])
+
+        sbp.run(cmd, check=True)
 
 
 

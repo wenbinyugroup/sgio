@@ -49,11 +49,17 @@ def cli(*args):
         '-ff', '--from-format', type=str,
         help='CS/SG file format to be read from')
     parser.add_argument(
+        '-ffv', '--from-format-version', type=str,
+        help='CS/SG file format version to be read from')
+    parser.add_argument(
         'to', type=str,
         help='CS/SG file to be written to')
     parser.add_argument(
         '-tf', '--to-format', type=str,
         help='CS/SG file format to be written to')
+    parser.add_argument(
+        '-tfv', '--to-format-version', type=str,
+        help='CS/SG file format version to be written to')
     parser.add_argument(
         '-d', '--sgdim', type=int, default=2,
         help='SG dimension (SwiftComp only)'
@@ -91,6 +97,8 @@ def main(func, **kwargs):
             file_name_out=kwargs['to'],
             file_format_in=kwargs['from_format'],
             file_format_out=kwargs['to_format'],
+            file_version_in=kwargs['from_format_version'],
+            file_version_out=kwargs['to_format_version'],
             sgdim=kwargs['sgdim'],
             model_type=kwargs['model'],
             mesh_only=kwargs['mesh_only'],
