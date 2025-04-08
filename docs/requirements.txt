@@ -1,3 +1,7 @@
+meshio
+matplotlib
+pyyaml
+pytest
 sphinx
 sphinx-comments
 sphinx-sitemap
