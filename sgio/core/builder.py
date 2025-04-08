@@ -1,16 +1,15 @@
+from __future__ import annotations
+
 import copy
 import logging
 
 import numpy as np
-import sgio._global as GLOBAL
+
 import sgio.model as smdl
-# from sgio.model.solid import MaterialProperty
-# from sgio.model import CauchyContinuumModel
-from sgio.meshio._mesh import Mesh
+from sgio.core.mesh import SGMesh
+from sgio.core.sg import StructureGene
 
-from .sg import StructureGene
-
-logger = logging.getLogger(GLOBAL.LOGGER_NAME)
+logger = logging.getLogger(__name__)
 
 
 def buildSG1D(
@@ -277,7 +276,7 @@ def buildSG1D(
     cells = [(cell_type, cells)]
     cell_data = {'property_id': [cell_data,]}
 
-    sg.mesh = Mesh(
+    sg.mesh = SGMesh(
         points, cells,
         point_data=point_data, cell_data=cell_data
     )

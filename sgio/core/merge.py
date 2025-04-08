@@ -1,9 +1,14 @@
+from __future__ import annotations
+
 import copy
+import logging
 
 import numpy as np
-from sgio.meshio._mesh import CellBlock, Mesh
 
-from .sg import StructureGene
+from sgio.core.mesh import SGMesh
+from sgio.core.sg import StructureGene
+
+logger = logging.getLogger(__name__)
 
 
 def combineSG(sg1:StructureGene, sg2:StructureGene) -> StructureGene:
@@ -142,7 +147,7 @@ def combineSG(sg1:StructureGene, sg2:StructureGene) -> StructureGene:
 
     # Create combined mesh
     # --------------------
-    mesh_c = Mesh(
+    mesh_c = SGMesh(
         points=points_c,
         cells=cells_c,
         point_data=point_data_c, 

@@ -1,11 +1,12 @@
 # import sys
 import argparse
-
-import sgio._global as GLOBAL
 import logging
-logger = logging.getLogger(GLOBAL.LOGGER_NAME)
 
-from .iofunc import convert
+from sgio import __version__
+# import sgio._global as GLOBAL
+from sgio.iofunc import convert
+
+logger = logging.getLogger(__name__)
 
 
 def cli(*args):
@@ -13,10 +14,14 @@ def cli(*args):
 
     root_parser = argparse.ArgumentParser(
         prog='sgio',
-        description='CS/SG I/O functions',
+        description='I/O library for VABS (cross-section) and SwiftComp (structural gene)',
         # formatter_class=argparse.RawTextHelpFormatter,
     )
     root_parser.set_defaults(func=None)
+    root_parser.add_argument(
+        '-v', '--version', action='version', version=__version__,
+        help='Show version number and exit'
+    )
 
     sub_parser = root_parser.add_subparsers(
         help='sub-command help'
@@ -44,11 +49,17 @@ def cli(*args):
         '-ff', '--from-format', type=str,
         help='CS/SG file format to be read from')
     parser.add_argument(
+        '-ffv', '--from-format-version', type=str,
+        help='CS/SG file format version to be read from')
+    parser.add_argument(
         'to', type=str,
         help='CS/SG file to be written to')
     parser.add_argument(
         '-tf', '--to-format', type=str,
         help='CS/SG file format to be written to')
+    parser.add_argument(
+        '-tfv', '--to-format-version', type=str,
+        help='CS/SG file format version to be written to')
     parser.add_argument(
         '-d', '--sgdim', type=int, default=2,
         help='SG dimension (SwiftComp only)'
@@ -86,6 +97,8 @@ def main(func, **kwargs):
             file_name_out=kwargs['to'],
             file_format_in=kwargs['from_format'],
             file_format_out=kwargs['to_format'],
+            file_version_in=kwargs['from_format_version'],
+            file_version_out=kwargs['to_format_version'],
             sgdim=kwargs['sgdim'],
             model_type=kwargs['model'],
             mesh_only=kwargs['mesh_only'],

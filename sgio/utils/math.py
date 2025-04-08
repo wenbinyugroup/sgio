@@ -4,194 +4,396 @@ import numpy as np
 # from sympy import *
 
 
-def tilde(v):
+def skew_symmetric_matrix(v):
     """
-    ~v_{ij} = -e_{ijk} * v_k
+    Compute the skew symmetric matrix of a 3x1 vector.
 
-    :param v: 3x1 vector
-    :type v: list or array-like
+    Parameters
+    ----------
+    v : array-like
+        3x1 vector
+
+    Returns
+    -------
+    vtilde : array
+        3x3 skew symmetric matrix
+
+    Examples
+    --------
+    >>> v = [0, 0, 1]
+    >>> vtilde = skew_symmetric_matrix(v)
+    >>> vtilde
+    array([[0, -1, 0],
+           [1, 0, 0],
+           [0, 0, 0]])
     """
+    if v is None:
+        raise ValueError("Input argument `v` cannot be None.")
+
+    try:
+        v0, v1, v2 = v
+    except (ValueError, TypeError):
+        raise ValueError("Input argument `v` must be a 3x1 vector.")
+
     vtilde = np.zeros((3, 3))
-    vtilde[0, 1] = -v[2, 0]
-    vtilde[0, 2] = v[1, 0]
-    vtilde[1, 0] = v[2, 0]
-    vtilde[1, 2] = -v[0, 0]
-    vtilde[2, 0] = -v[1, 0]
-    vtilde[2, 1] = v[0, 0]
+
+    vtilde[0, 1] = -v2
+    vtilde[0, 2] = v1
+    vtilde[1, 0] = v2
+    vtilde[1, 2] = -v0
+    vtilde[2, 0] = -v1
+    vtilde[2, 1] = v0
 
     return vtilde
 
 
 
 
-def calcRotationTensorFromParameters(rp, method=''):
+def calc_rotation_tensor_from_parameters(rotation_parameters, method=''):
     """Calculate rotation tensor from rotation parameters.
 
     Parameters
     ----------
-    rp : list of floats
+    rotation_parameters : array_like
         Rotation parameters (3x1).
     method : str
         Rotation parameter type.
 
         * `er` - Eular-Rodrigues
         * `wm` - Wiener-Milenkovic
+
+    Returns
+    -------
+    rotation_tensor : array_like
+        Rotation tensor (3x3)
+
+    Examples
+    --------
+    >>> rotation_parameters = [0, 0, np.pi/2]
+    >>> rotation_tensor = calc_rotation_tensor_from_parameters(rotation_parameters, method='er')
+    >>> np.allclose(rotation_tensor, [[0, -1, 0], [1, 0, 0], [0, 0, 1]])
+    True
     """
-    C = np.zeros((3, 3))
+
+    if rotation_parameters is None:
+        raise ValueError("Input argument `rotation_parameters` cannot be None.")
+
+    rotation_parameters = np.array(rotation_parameters)
+
     if method == 'er':
         # Eular-Rodrigues
-        t = np.dot(rp.T, rp)[0, 0]
-        nmr = (1 - t / 4.0) * np.eye(3) + np.dot(rp, rp.T) / 2.0 - tilde(rp)
-        dnm = 1 + t / 4.0
-        C = nmr / dnm
+        rotation_tensor = (
+            np.eye(3) - 0.5 * skew_symmetric_matrix(rotation_parameters)
+            + np.dot(
+                skew_symmetric_matrix(rotation_parameters),
+                skew_symmetric_matrix(rotation_parameters)
+            ) / (1 + np.dot(rotation_parameters, rotation_parameters))
+        )
     elif method == 'wm':
         # Wiener-Milenkovic
-        t = np.dot(rp.T, rp)[0, 0]
-        c0 = 2 - t / 8.0
-        nmr = (c0**2 - t) * np.eye(3) - 2.0 * c0 * tilde(rp) + 2.0 * np.dot(rp, rp.T)
-        dnm = (4 - c0)**2
-        C = nmr / dnm
+        c0 = 2 - np.dot(rotation_parameters, rotation_parameters) / 8
+        rotation_tensor = (
+            (c0**2 - np.dot(rotation_parameters, rotation_parameters)) * np.eye(3)
+            - 2 * c0 * skew_symmetric_matrix(rotation_parameters)
+            + 2 * np.outer(rotation_parameters, rotation_parameters)
+        ) / (4 - c0)**2
+    else:
+        raise ValueError("Input argument `method` is not supported.")
 
-    return C
+    return rotation_tensor
 
 
 
 
-def floorAbsolute(number):
-    """Round the number such that the absolute value is smaller than the given number.
+def floor_absolute(value):
+    """Round the value such that the absolute value is smaller than the given value.
 
     Parameters
     ----------
-    number : float
-        Number to be rounded.
+    value : float
+        Value to be rounded.
 
     Returns
     -------
     float
-        Rounded number
+        Rounded value
+
+    Examples
+    --------
+    >>> floor_absolute(0.7)
+    0.0
+    >>> floor_absolute(-0.7)
+    -1.0
+    >>> floor_absolute(0.0)
+    0.0
     """
-    if (number - 0.) > 1e-15:
+    if value is None:
+        raise ValueError("Input argument `value` cannot be None.")
+    if value > 1e-15:
         # Positive
-        number = np.floor(number)
-    elif (0. - number) > 1e-15:
+        return np.floor(value)
+    elif value < -1e-15:
         # Negative
-        number = np.ceil(number)
+        return np.ceil(value)
     else:
         # Very close to 0
-        number = 0.
+        return 0.0
+
+
+
+
+def angle_to_cosine_2d(angle_degrees):
+    """
+    Convert an angle in degrees to a 2x2 cosine matrix.
+
+    Parameters
+    ----------
+    angle_degrees : float
+        Angle in degrees to be converted.
+
+    Returns
+    -------
+    cosine_matrix : list of lists
+        2x2 cosine matrix
+
+    Examples
+    --------
+    >>> angle_to_cosine_2d(45)
+    [[0.7071067811865476, -0.7071067811865476],
+     [0.7071067811865476, 0.7071067811865476]]
+    """
+    if angle_degrees is None:
+        raise ValueError("Input argument `angle_degrees` cannot be None.")
     
-    return number
+    try:
+        angle_radians = radians(angle_degrees)
+    except TypeError:
+        raise ValueError("Input argument `angle_degrees` must be a number.")
 
-
-
-
-def angleToCosine2D(angle):
-    angle = radians(angle)
-    c = [
-        [cos(angle), -sin(angle)],
-        [sin(angle),  cos(angle)]
+    cosine_matrix = [
+        [cos(angle_radians), -sin(angle_radians)],
+        [sin(angle_radians),  cos(angle_radians)]
     ]
-    return c
+    return cosine_matrix
 
 
 
 
-def calcBasicRotation3D(angle, axis=1):
-    c = np.array([
-        [1.,            0.,             0.],
-        [0., np.cos(angle), -np.sin(angle)],
-        [0., np.sin(angle),  np.cos(angle)]
+def calc_basic_rotation_3d(angle, axis=1):
+    """
+    Calculate a 3D rotation matrix about a basic axis.
+
+    Parameters
+    ----------
+    angle : float
+        Rotation angle in radians.
+    axis : int, optional
+        Axis about which the rotation is performed. Must be one of [1, 2, 3].
+        Default is 1, meaning rotation about the x-axis.
+
+    Returns
+    -------
+    rotation_matrix : array_like
+        3x3 rotation matrix.
+
+    Notes
+    -----
+    The rotation matrix is generated by permuting the elements of a basic 2D
+    rotation matrix.
+
+    Examples
+    --------
+    >>> calc_basic_rotation_3d(np.pi/2, axis=1)
+    array([[1. , 0. , 0. ],
+           [0. , 6.123233995736766e-17, 1. ],
+           [0. , -1. , 6.123233995736766e-17]])
+    """
+    if angle is None:
+        raise ValueError("Input argument `angle` cannot be None.")
+    if axis is None:
+        raise ValueError("Input argument `axis` cannot be None.")
+    if axis not in [1, 2, 3]:
+        raise ValueError("Input argument `axis` must be one of [1, 2, 3]")
+
+    rotation_matrix = np.array([
+        [1.0, 0.0, 0.0],
+        [0.0, np.cos(angle), -np.sin(angle)],
+        [0.0, np.sin(angle), np.cos(angle)]
     ])
-    if axis == 2:
-        p = np.array([
-            [0., 1., 0.],
-            [0., 0., 1.],
-            [1., 0., 0.]
+
+    permutation_matrices = {
+        2: np.array([
+            [0.0, 1.0, 0.0],
+            [0.0, 0.0, 1.0],
+            [1.0, 0.0, 0.0]
+        ]),
+        3: np.array([
+            [0.0, 0.0, 1.0],
+            [1.0, 0.0, 0.0],
+            [0.0, 1.0, 0.0]
         ])
-        c = np.dot(p.T, np.dot(c, p))
-    elif axis == 3:
-        p = np.array([
-            [0., 0., 1.],
-            [1., 0., 0.],
-            [0., 1., 0.]
-        ])
-        c = np.dot(p.T, np.dot(c, p))
+    }
+    if axis != 1:
+        permutation_matrix = permutation_matrices[axis]
+        rotation_matrix = permutation_matrix.T @ rotation_matrix @ permutation_matrix
 
-    return c
+    return rotation_matrix
 
 
 
 
-def calcGeneralRotation3D(angles, order=[1, 2, 3]):
-    ''' Calculate the general rotation matrix
+def calculate_general_rotation_matrix(angles_radians, rotation_order=[1, 2, 3]):
+    """
+    Calculate the general rotation matrix.
 
-    :param angles: Three rotation angles in radians
-    :type angles: list
+    Parameters
+    ----------
+    angles_radians : list of float
+        Three rotation angles in radians.
+    rotation_order : list of int, optional
+        The order of axis of the rotation operation. Default is [1, 2, 3].
 
-    :param order: The order of axis of the rotation operation
-    :type order: list
+    Returns
+    -------
+    rotation_matrix : numpy.array
+        The general rotation matrix.
 
-    :return: The general rotation matrix
-    :rtype: numpy.array
-    '''
-    c = np.eye(3)
-    for angle, axis in zip(angles, order):
-        ci = calcBasicRotation3D(angle, axis)
-        c = np.dot(ci, c)
-    return c
+    Examples
+    --------
+    >>> rotation_matrix = calculate_general_rotation_matrix([np.pi/2, 0, 0])
+    >>> np.round(rotation_matrix, 2)
+    array([[0.  , 0.  , 1.],
+           [0.  , 1.  , 0.],
+           [-1. , 0.  , 0.]])
+    """
+
+    # Check validity of input arguments
+    if angles_radians is None:
+        raise ValueError("Input argument `angles_radians` cannot be None.")
+    if not isinstance(angles_radians, (list, tuple)) or len(angles_radians) != 3:
+        raise ValueError("`angles_radians` must be a list or tuple of three floats.")
+    if not all(isinstance(angle, (int, float)) for angle in angles_radians):
+        raise TypeError("Each angle in `angles_radians` must be an int or float.")
+
+    if rotation_order is None:
+        raise ValueError("Input argument `rotation_order` cannot be None.")
+    if not isinstance(rotation_order, (list, tuple)) or len(rotation_order) != 3:
+        raise ValueError("`rotation_order` must be a list or tuple of three integers.")
+    if not all(axis in [1, 2, 3] for axis in rotation_order):
+        raise ValueError("Each axis in `rotation_order` must be one of [1, 2, 3].")
+
+    # Calculate the rotation matrix
+    rotation_matrix = np.eye(3)
+    for angle_radians, axis in zip(angles_radians, rotation_order):
+        rotation_matrix_basic = calc_basic_rotation_3d(angle_radians, axis)
+        rotation_matrix = np.dot(rotation_matrix_basic, rotation_matrix)
+
+    return rotation_matrix
 
 
 
 
-def rotateVectorByAngle2D(v2d, angle):
-    c = angleToCosine2D(angle)
-    vp = [
-        c[0][0] * v2d[0] + c[0][1] * v2d[1],
-        c[1][0] * v2d[0] + c[1][1] * v2d[1]
+def rotate_vector_2d(vector_2d, angle_radians):
+    """
+    Rotate a 2D vector by a given angle.
+
+    Parameters
+    ----------
+    vector_2d : list or tuple of float
+        A 2D vector to be rotated.
+    angle_radians : float
+        The angle in radians to rotate the vector.
+
+    Returns
+    -------
+    rotated_vector : list of float
+        The rotated 2D vector.
+
+    Examples
+    --------
+    >>> rotate_vector_2d([1, 0], np.pi/2)
+    [0.0, 1.0]
+    """
+    if vector_2d is None:
+        raise ValueError("Input argument `vector_2d` cannot be None.")
+    if not isinstance(vector_2d, (list, tuple)) or len(vector_2d) != 2:
+        raise ValueError("`vector_2d` must be a list or tuple of two floats.")
+    if not all(isinstance(x, (int, float)) for x in vector_2d):
+        raise TypeError("Each element in `vector_2d` must be an int or float.")
+    if angle_radians is None:
+        raise ValueError("Input argument `angle_radians` cannot be None.")
+    if not isinstance(angle_radians, (int, float)):
+        raise TypeError("`angle_radians` must be an int or float.")
+
+    cosines = angle_to_cosine_2d(angle_radians)
+    if cosines is None:
+        raise ValueError("cosines is None.")
+    if not isinstance(cosines, list) or len(cosines) != 2:
+        raise ValueError("cosines must be a list of two lists.")
+    if not all(isinstance(row, list) and len(row) == 2 for row in cosines):
+        raise ValueError("Each row in cosines must be a list of two floats.")
+    if not all(isinstance(x, (int, float)) for row in cosines for x in row):
+        raise TypeError("Each element in cosines must be an int or float.")
+
+    rotated_vector = [
+        cosines[0][0] * vector_2d[0] + cosines[0][1] * vector_2d[1],
+        cosines[1][0] * vector_2d[0] + cosines[1][1] * vector_2d[1]
     ]
-    return vp
+    return rotated_vector
 
 
 
 
-def calcCab(a, b):
-    '''Calculate the direction cosine matrix between frame a and b
+def calc_direction_cosine_matrix(a_basis, b_basis):
+    """Calculate the direction cosine matrix between frame a and frame b.
 
     :math:`C_{ij} = a_i\ \cdot\ b_j`
 
     Parameters
     ----------
-    a : list of floats
-        List of three a basis (a_1, a_2, a_3).
-    b : list of floats
-        List of three b basis (b_1, b_2, b_3).
+    a_basis : list of lists of float
+        List of three a basis vectors (a1, a2, a3).
+    b_basis : list of lists of float
+        List of three b basis vectors (b1, b2, b3).
 
     Returns
     -------
-    list of lists of floats
+    direction_cosine_matrix : list of lists of float
         3x3 matrix of the direction cosine.
 
     Examples
     --------
-    >>> a = [
-    ...     [1., 0., 0.],
-    ...     [0., 1., 0.],
-    ...     [0., 0., 1.]
-    ... ]
-    >>> b = [
-    ...     [],
-    ...     [],
-    ...     []
-    ... ]
-    >>> utilities.calcCab(a, b)
-    '''
-    a = np.array(a)
-    b = np.array(b)
-    Cab = np.zeros((3, 3))
+    >>> a_basis = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
+    >>> b_basis = [[1, 0, 0], [0, np.cos(np.pi/2), -np.sin(np.pi/2)], [0, np.sin(np.pi/2), np.cos(np.pi/2)]]
+    >>> calc_direction_cosine_matrix(a_basis, b_basis)
+    [[1.0, 0.0, 0.0],
+     [0.0, 0.0, -1.0],
+     [0.0, 1.0, 0.0]]
+    """
+    if a_basis is None or b_basis is None:
+        raise ValueError("Input arguments `a_basis` and `b_basis` cannot be None.")
+    if not all(isinstance(x, (list, tuple)) for x in a_basis):
+        raise ValueError("Each element in `a_basis` must be a list or tuple.")
+    if not all(isinstance(x, (list, tuple)) for x in b_basis):
+        raise ValueError("Each element in `b_basis` must be a list or tuple.")
+    if not all(isinstance(x, (int, float)) for row in a_basis for x in row):
+        raise TypeError("Each element in `a_basis` must be an int or float.")
+    if not all(isinstance(x, (int, float)) for row in b_basis for x in row):
+        raise TypeError("Each element in `b_basis` must be an int or float.")
+    if len(a_basis) != 3 or len(b_basis) != 3:
+        raise ValueError("Input arguments `a_basis` and `b_basis` must have 3 elements each.")
+    if not all(len(row) == 3 for row in a_basis):
+        raise ValueError("Each row in `a_basis` must have 3 elements.")
+    if not all(len(row) == 3 for row in b_basis):
+        raise ValueError("Each row in `b_basis` must have 3 elements.")
+
+    a_basis = np.array(a_basis)
+    b_basis = np.array(b_basis)
+    direction_cosine_matrix = np.zeros((3, 3))
     for i in range(3):
         for j in range(3):
-            Cab[i][j] = np.dot(a[i], b[j])
-    return Cab
+            direction_cosine_matrix[i][j] = np.dot(a_basis[i], b_basis[j])
+    return direction_cosine_matrix
 
 
 
@@ -317,7 +519,7 @@ class FrameTransCylinder():
 
 
 def transformRigid3D(v0, R=None, t=None):
-    r"""Transform a point/vector rigidly in 3D.
+    """Transform a point/vector rigidly in 3D.
 
     Parameters
     ----------
@@ -340,3 +542,83 @@ def transformRigid3D(v0, R=None, t=None):
     v = np.dot(R, v) + t
 
     return v.tolist()
+
+
+
+
+def find_min_nonzero_abs(matrix):
+    """Find the non-zero value with the smallest absolute value in a matrix.
+
+    Parameters
+    ----------
+    matrix : np.ndarray
+        A 2D numpy array.
+
+    Returns
+    -------
+    float
+        The non-zero value with the smallest absolute value.
+
+    Raises
+    ------
+    ValueError
+        If the matrix is None or contains no non-zero values.
+    TypeError
+        If the input is not a numpy array.
+    """
+    if matrix is None:
+        raise ValueError("Input matrix cannot be None.")
+    
+    if not isinstance(matrix, np.ndarray):
+        raise TypeError("Input must be a numpy array.")
+    
+    non_zero_values = matrix[matrix != 0]
+    
+    if non_zero_values.size == 0:
+        raise ValueError("The matrix contains no non-zero values.")
+    
+    smallest_nonzero_abs = non_zero_values[np.argmin(np.abs(non_zero_values))]
+    
+    return smallest_nonzero_abs
+
+
+
+
+
+
+
+
+
+def find_max_nonzero_abs(matrix):
+    """
+    Find the non-zero value in the matrix with the largest absolute value.
+
+    Parameters
+    ----------
+    matrix : np.ndarray
+        A 2D numpy array.
+
+    Returns
+    -------
+    float
+        The non-zero value with the largest absolute value.
+
+    Raises
+    ------
+    ValueError
+        If the matrix contains no non-zero values.
+    TypeError
+        If the input is not a numpy array.
+    """
+    if matrix is None:
+        raise ValueError("Input matrix cannot be None.")
+    
+    if not isinstance(matrix, np.ndarray):
+        raise TypeError("Input must be a numpy array.")
+    
+    non_zero_values = matrix[matrix != 0]
+    
+    if non_zero_values.size == 0:
+        raise ValueError("The matrix contains no non-zero values.")
+    
+    return non_zero_values[np.argmax(np.abs(non_zero_values))]

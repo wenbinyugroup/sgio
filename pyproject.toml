@@ -1,0 +1,62 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "sgio"
+# version = "0.1.0"
+dynamic = ["version"]
+description = "I/O for VABS and SwiftComp"
+authors = [
+    { name = "Su Tian", email = "sutian@analyswift.com" }
+]
+readme = { file = "README.md", content-type = "text/markdown" }
+requires-python = ">=3.9"
+dependencies = [
+    "meshio",
+    # "importlib_metadata; python_version<'3.8'",
+    # "numpy>=2",
+    # "rich",
+    "matplotlib",
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+]
+license = "MIT"
+license-files = ["LICEN[CS]E*"]
+
+[project.optional-dependencies]
+all = [
+    "h5py",
+    "netCDF4",
+    "pyyaml",
+    "pytest",
+]
+
+[project.urls]
+Homepage = "https://github.com/wenbinyugroup/sgio"
+Documentation = "https://wenbinyugroup.github.io/sgio/"
+
+[tool.hatch.version]
+source = "regex"
+path = "sgio/_version.py"
+pattern = '^__version__ = "(?P<version>[^"]+)"$'
+
+[tool.hatch.build.targets.sdist]
+only-include = [
+    "sgio",
+    "LICENSE",
+    "README.md",
+    "pyproject.toml",
+]
+# exclude = [
+#   ".github",
+#   "docs",
+#   "examples",
+#   "tests",
+#   "/.gitignore",
+#   "build_and_publish.bat",
+#   "requirements.txt",
+# ]
+

@@ -1,0 +1,21 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+
+# SGIO overview
+
+This project is built upon the python package `meshio`. The goal is to convert data of different formats for SG (structure gene). An SG object contains the following data:
+
+1. nodal coordinates
+2. element connectivity
+3. material properties
+4. assignments of materials to each element
+5. local reference coordinate systems for materials of each element
+6. other configurations for analysis
+
+Items 4 and 5 can be treated as element data. Together with items 1 and 2, they will mainly be handled by the `Mesh` object from `meshio`.
+
+The main job of this package is to:
+- convert SG data of different formats

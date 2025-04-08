@@ -1,32 +1,37 @@
 from __future__ import annotations
 
-import logging
-
-import sgio._global as GLOBAL
-
-logger = logging.getLogger(GLOBAL.LOGGER_NAME)
-
 import csv
+import logging
+import meshio
+
 
 import sgio._global as GLOBAL
-import sgio.iofunc._abaqus as _abaqus
-import sgio.iofunc._swiftcomp as _swiftcomp
-import sgio.iofunc._vabs as _vabs
-import sgio.meshio as meshio
+import sgio.iofunc._meshio as _meshio
+import sgio.iofunc.abaqus as _abaqus
+import sgio.iofunc.gmsh as _gmsh
+import sgio.iofunc.swiftcomp as _swiftcomp
+import sgio.iofunc.vabs as _vabs
 import sgio.model as sgmodel
-import sgio.utils as sutils
 from sgio.core.sg import StructureGene
+
+logger = logging.getLogger(__name__)
+
 
 
 def read(
-    fn, file_format, model_type='SD1',
-    format_version='', sgdim=3, sg=None,
-    **kwargs):
+    filename: str,
+    file_format: str,
+    model_type: str = 'SD1',
+    format_version: str = '',
+    sgdim: int = 3,
+    sg: StructureGene = None,
+    **kwargs
+) -> StructureGene:
     """Read SG data file.
 
     Parameters
     ----------
-    fn : str
+    filename : str
         Name of the SG data file
     file_format : str
         Format of the SG data file.
@@ -45,7 +50,7 @@ def read(
     sgdim : int
         Dimension of the geometry. Default is 3.
         Choose one from 1, 2, 3.
-    sg : sgio.core.sg.StructureGene, optional
+    sg : :obj:`sgio.core.sg.StructureGene`, optional
         Structure gene object
 
     Returns
@@ -53,24 +58,33 @@ def read(
     :obj:`sgio.core.sg.StructureGene`
         Structure gene object
     """
+    logger.info('Reading file...')
+    logger.debug(locals())
 
+    # sutils.check_file_exists(filename)
     file_format = file_format.lower()
-
-    # if file_format.lower() in ['vabs', 'sc', 'swiftcomp']:
-    if file_format in ['sc', 'swiftcomp']:
-        with open(fn, 'r') as file:
-            sg = _swiftcomp.readInputBuffer(file, format_version, model_type)
+    if file_format == 'sc' or file_format == 'swiftcomp':
+        with open(filename, 'r') as file:
+            sg = _swiftcomp.read_input_buffer(
+                file, format_version, model_type
+            )
     elif file_format == 'vabs':
-        with open(fn, 'r') as file:
-            sg = _vabs.readBuffer(file, file_format, format_version, model_type)
+        with open(filename, 'r') as file:
+            sg = _vabs.read_buffer(
+                file, file_format, format_version, model_type
+            )
     elif file_format == 'abaqus':
-        with open(fn, 'r') as file:
-            sg = _abaqus.readInputBuffer(file, sgdim=sgdim, model=model_type)
-
+        with open(filename, 'r') as file:
+            sg = _abaqus.read_buffer(
+                file, sgdim=sgdim, model=model_type
+            )
     else:
-        if not sg:
-            sg = StructureGene(sgdim=sgdim, smdim=model_type)
-        sg.mesh, _, _ = meshio.read(fn, file_format)
+        raise ValueError(f"Unknown file format: {file_format}")
+
+    if not sg:
+        sg = StructureGene(sgdim=sgdim, smdim=model_type)
+    if not sg.mesh:
+        sg.mesh, _, _ = _meshio.read(filename, file_format)
 
     return sg
 
@@ -78,14 +92,14 @@ def read(
 
 
 def readOutputModel(
-    fn, file_format, model_type='', sg=None,
+    filename: str, file_format: str, model_type: str = "", sg: StructureGene = None,
     **kwargs
-    ):
+):
     """Read SG homogenization output file.
 
     Parameters
     ----------
-    fn : str
+    filename : str
         Name of the SG analysis output file
     file_format : str
         Format of the SG data file.
@@ -99,33 +113,30 @@ def readOutputModel(
         * 'PL2': Reissner-Mindlin plate/shell model
         * 'BM1': Euler-Bernoulli beam model
         * 'BM2': Timoshenko beam model
-    sg : sgio.core.sg.StructureGene, optional
+    sg : StructureGene, optional
         SG object.
 
     Returns
     -------
     Model
         If `analysis` is 'h', return the consitutive model.
-
-        * :obj:`sgio.model.EulerBernoulliBeamModel` if `model_type` is 'BM1'
-        * :obj:`sgio.model.TimoshenkoBeamModel` if `model_type` is 'BM2'
-        * :obj:`sgio.model.KirchhoffLovePlateShellModel` if `model_type` is 'PL1' and `file_format` is 'sc' or 'swiftcomp'
-        * :obj:`sgio.model.ReissnerMindlinPlateShellModel` if `model_type` is 'PL2' and `file_format` is 'sc' or 'swiftcomp'
-        * :obj:`sgio.model.CauchyContinuumModel` if `model_type` is 'SD1' and `file_format` is 'sc' or 'swiftcomp'
     """
 
     model = None
-
-    with open(fn, 'r') as file:
-        if file_format.lower().startswith('s'):
-            model = _swiftcomp.readOutputBuffer(
-                file, analysis='h', model_type=model_type,
-                **kwargs)
-
-        elif file_format.lower().startswith('v'):
-            model = _vabs.readOutputBuffer(
-                file, analysis='h', sg=sg, model_type=model_type,
-                **kwargs)
+    try:
+        with open(filename, "r") as file:
+            if file_format.lower().startswith("s"):
+                model = _swiftcomp.read_output_buffer(
+                    file, analysis="h", model_type=model_type, **kwargs
+                )
+            elif file_format.lower().startswith("v"):
+                model = _vabs.read_output_buffer(
+                    file, analysis="h", sg=sg, model_type=model_type, **kwargs
+                )
+    except FileNotFoundError:
+        logger.error(f"File not found: {filename}")
+    except Exception as e:
+        logger.error(f"Error: {e}")
 
     return model
 
@@ -133,14 +144,15 @@ def readOutputModel(
 
 
 def readOutputState(
-    fn, file_format, analysis, model_type='', ext='ele',
-    sg=None, tool_ver='', ncase=1, nelem=0,
-    **kwargs):
+    filename: str, file_format: str, analysis: str, model_type: str = "",
+    extension: str = "ele", sg: StructureGene = None, tool_version: str = "",
+    num_cases: int = 1, num_elements: int = 0, **kwargs
+) -> sgmodel.StateCase:
     """Read SG dehomogenization or failure analysis output.
 
     Parameters
     ----------
-    fn : str
+    filename : str
         Name of the SG analysis output file
     file_format : str
         Format of the SG data file.
@@ -160,18 +172,18 @@ def readOutputState(
         * 'PL2': Reissner-Mindlin plate/shell model
         * 'BM1': Euler-Bernoulli beam model
         * 'BM2': Timoshenko beam model
-    ext : str or list of str
+    extension : str or list of str
         Extension of the output data.
         Default is 'ele'.
         Include one or more of the following keywords:
 
         * 'u': Displacement
         * 'ele': Element strain and stress
-    sg : sgio.core.sg.StructureGene
+    sg : StructureGene
         Structure gene object
-    tool_ver : str
+    tool_version : str
         Version of the tool
-    ncase : int
+    num_cases : int
         Number of load cases
 
     Returns
@@ -182,77 +194,109 @@ def readOutputState(
 
     state_case = sgmodel.StateCase()
 
-    if analysis == 'fi':
-        if file_format.lower().startswith('s'):
-            _fn = f'{fn}.fi'
-            with open(_fn, 'r') as file:
-                return _swiftcomp.readOutputBuffer(
-                    file, analysis=analysis, model_type=model_type,
-                    **kwargs)
+    if analysis == "fi":
+        # Read failure index
+        if file_format.lower().startswith("s"):
+            with open(f"{filename}.fi", "r") as file:
+                return _swiftcomp.read_output_buffer(
+                    file, analysis=analysis, model_type=model_type, **kwargs
+                )
 
-        elif file_format.lower().startswith('v'):
-            _fn = f'{fn}.fi'
-            with open(_fn, 'r') as file:
-                _fi, _sr, _eids_sr_min = _vabs.readOutputBuffer(
-                    file, analysis, sg, tool_ver=tool_ver,
-                    ncase=ncase, nelem=nelem, **kwargs)
-            _state = sgmodel.State(
-                name='fi', data=_fi, label=['fi'], location='element')
-            state_case.addState(name='fi', state=_state)
-            _state = sgmodel.State(
-                name='sr', data=_sr, label=['sr'], location='element')
-            state_case.addState(name='sr', state=_state)
-            _sr_min = {}
-            for _eid in _eids_sr_min:
-                _sr_min[_eid] = _sr[_eid]
-            _state = sgmodel.State(
-                name='sr_min', data=_sr_min, label=['sr_min'], location='element')
-            state_case.addState(name='sr_min', state=_state)
+        elif file_format.lower().startswith("v"):
+            with open(f"{filename}.fi", "r") as file:
+                try:
+                    fi, sr, eids_sr_min = _vabs.read_output_buffer(
+                        file, analysis, sg, tool_version=tool_version,
+                        num_cases=num_cases, num_elements=num_elements, **kwargs
+                    )
+                except Exception as e:
+                    logger.error(f"Error: {e}")
+                    return None
+            if fi is None or sr is None:
+                logger.error("Error: No data read")
+                return None
+            state_case.addState(
+                name="fi", state=sgmodel.State(
+                    name="fi", data=fi, label=["fi"], location="element"
+                )
+            )
+            state_case.addState(
+                name="sr", state=sgmodel.State(
+                    name="sr", data=sr, label=["sr"], location="element"
+                )
+            )
+            sr_min = {}
+            for eid in eids_sr_min:
+                sr_min[eid] = sr[eid]
+            state_case.addState(
+                name="sr_min", state=sgmodel.State(
+                    name="sr_min", data=sr_min, label=["sr_min"], location="element"
+                )
+            )
 
-    elif analysis == 'd' or analysis == 'l':
-        if file_format.lower().startswith('s'):
+    elif analysis == "d" or analysis == "l":
+        # Read dehomogenization output
+        if file_format.lower().startswith("s"):
             pass
 
-        elif file_format.lower().startswith('v'):
-            if not isinstance(ext, list):
-                ext = [ext,]
-            ext = [e.lower() for e in ext]
+        elif file_format.lower().startswith("v"):
+            if not isinstance(extension, list):
+                extension = [extension,]
+            extension = [e.lower() for e in extension]
 
             # Displacement
-            if 'u' in ext:
-                _u = None
-                _fn = f'{fn}.U'
-                with open(_fn, 'r') as file:
-                    _u = _vabs.readOutputBuffer(file, analysis, ext='u', **kwargs)
-                _state = sgmodel.State(
-                    name='u', data=_u, label=['u1', 'u2', 'u3'], location='node')
-                state_case.addState(name='u', state=_state)
+            if "u" in extension:
+                u = None
+                with open(f"{filename}.U", "r") as file:
+                    try:
+                        u = _vabs.read_output_buffer(file, analysis, extension="u", **kwargs)
+                    except Exception as e:
+                        logger.error(f"Error: {e}")
+                        return None
+                if u is None:
+                    logger.error("Error: No data read")
+                    return None
+                state_case.addState(
+                    name="u", state=sgmodel.State(
+                        name="u", data=u, label=["u1", "u2", "u3"], location="node"
+                    )
+                )
 
             # Element strain and stress
-            if 'ele' in ext:
-                _ee, _es, _eem, _esm = None, None, None, None
-                _fn = f'{fn}.ELE'
-                with open(_fn, 'r') as file:
-                    _ee, _es, _eem, _esm = _vabs.readOutputBuffer(
-                        file, analysis, sg=sg, ext='ele', tool_ver=tool_ver,
-                        ncase=ncase, nelem=nelem, **kwargs)
-                _state = sgmodel.State(
-                    name='ee', data=_ee, label=['e11', '2e12', '2e13', 'e22', '2e23', 'e33'], location='element')
-                state_case.addState(name='ee', state=_state)
-                _state = sgmodel.State(
-                    name='es', data=_es, label=['s11', 's12', 's13', 's22', 's23', 's33'], location='element')
-                state_case.addState(name='es', state=_state)
-                _state = sgmodel.State(
-                    name='eem', data=_eem, label=['em11', '2em12', '2em13', 'em22', '2em23', 'em33'], location='element')
-                state_case.addState(name='eem', state=_state)
-                _state = sgmodel.State(
-                    name='esm', data=_esm, label=['sm11', 'sm12', 'sm13', 'sm22', 'sm23', 'sm33'], location='element')
-                state_case.addState(name='esm', state=_state)
-
-            # state_field = sgmodel.StateField(
-            #     node_displ=_u,
-            #     elem_strain=_ee, elem_stress=_es, elem_strain_m=_eem, elem_stress_m=_esm
-            # )
+            if "ele" in extension:
+                ee, es, eem, esm = None, None, None, None
+                with open(f"{filename}.ELE", "r") as file:
+                    try:
+                        ee, es, eem, esm = _vabs.read_output_buffer(
+                            file, analysis, sg=sg, extension="ele", tool_version=tool_version,
+                            num_cases=num_cases, num_elements=num_elements, **kwargs
+                        )
+                    except Exception as e:
+                        logger.error(f"Error: {e}")
+                        return None
+                if ee is None or es is None or eem is None or esm is None:
+                    logger.error("Error: No data read")
+                    return None
+                state_case.addState(
+                    name="ee", state=sgmodel.State(
+                        name="ee", data=ee, label=["e11", "2e12", "2e13", "e22", "2e23", "e33"], location="element"
+                    )
+                )
+                state_case.addState(
+                    name="es", state=sgmodel.State(
+                        name="es", data=es, label=["s11", "s12", "s13", "s22", "s23", "s33"], location="element"
+                    )
+                )
+                state_case.addState(
+                    name="eem", state=sgmodel.State(
+                        name="eem", data=eem, label=["em11", "2em12", "2em13", "em22", "2em23", "em33"], location="element"
+                    )
+                )
+                state_case.addState(
+                    name="esm", state=sgmodel.State(
+                        name="esm", data=esm, label=["sm11", "sm12", "sm13", "sm22", "sm23", "sm33"], location="element"
+                    )
+                )
 
     return state_case
 
@@ -309,11 +353,11 @@ def readOutput(
     if analysis == 'h':
         with open(fn, 'r') as file:
             if file_format.lower().startswith('s'):
-                return _swiftcomp.readOutputBuffer(
+                return _swiftcomp.read_output_buffer(
                     file, analysis=analysis, model_type=model_type,
                     **kwargs)
             elif file_format.lower().startswith('v'):
-                return _vabs.readOutputBuffer(
+                return _vabs.read_output_buffer(
                     file, analysis, sg, model_type=model_type,
                     **kwargs)
 
@@ -321,13 +365,13 @@ def readOutput(
         if file_format.lower().startswith('s'):
             _fn = f'{fn}.fi'
             with open(_fn, 'r') as file:
-                return _swiftcomp.readOutputBuffer(
+                return _swiftcomp.read_output_buffer(
                     file, analysis=analysis, model_type=model_type,
                     **kwargs)
         elif file_format.lower().startswith('v'):
             _fn = f'{fn}.fi'
             with open(_fn, 'r') as file:
-                return _vabs.readOutputBuffer(file, analysis, sg, **kwargs)
+                return _vabs.read_output_buffer(file, analysis, sg, **kwargs)
 
     elif analysis == 'd' or analysis == 'l':
         if file_format.lower().startswith('s'):
@@ -340,7 +384,7 @@ def readOutput(
             _u = None
             _fn = f'{fn}.U'
             with open(_fn, 'r') as file:
-                _u = _vabs.readOutputBuffer(file, analysis, ext='u', **kwargs)
+                _u = _vabs.read_output_buffer(file, analysis, ext='u', **kwargs)
             _state = sgmodel.State(
                 name='u', data=_u, label=['u1', 'u2', 'u3'], location='node')
             state_case.addState(name='u', state=_state)
@@ -349,7 +393,7 @@ def readOutput(
             _ee, _es, _eem, _esm = None, None, None, None
             _fn = f'{fn}.ELE'
             with open(_fn, 'r') as file:
-                _ee, _es, _eem, _esm = _vabs.readOutputBuffer(file, analysis, ext='ele', **kwargs)
+                _ee, _es, _eem, _esm = _vabs.read_output_buffer(file, analysis, ext='ele', **kwargs)
             _state = sgmodel.State(
                 name='ee', data=_ee, label=['e11', 'e12', 'e13', 'e22', 'e23', 'e33'], location='element')
             state_case.addState(name='ee', state=_state)
@@ -377,16 +421,16 @@ def readOutput(
 
 
 def write(
-    sg:StructureGene, fn:str, file_format:str,
-    format_version:str='', analysis='h', sg_fmt:int=1,
-    macro_responses:list[sgmodel.StateCase]=[], model_type='SD1', load_type=0,
-    sfi:str='8d', sff:str='20.12e', mesh_only=False
-    ):
+    sg: StructureGene, fn: str, file_format: str,
+    format_version: str = '', analysis: str = 'h', sg_format: int = 1,
+    macro_responses: list[sgmodel.StateCase] = [], model_type: str = 'SD1',
+    load_type: int = 0, sfi: str = '8d', sff: str = '20.12e', mesh_only: bool = False
+) -> str:
     """Write analysis input
 
     Parameters
     ----------
-    sg : sgio.core.StructureGene
+    sg : StructureGene
         Structure gene object
     fn : str
         Name of the input file
@@ -403,7 +447,7 @@ def write(
         * 'h': Homogenization
         * 'd' or 'l': Dehomogenization
         * 'fi': Initial failure indices and strength ratios
-    sg_fmt : {0, 1}, optional
+    sg_format : {0, 1}, optional
         Format for the VABS input. Default is 1
     macro_responses : list[StateCase], optional
         Macroscopic responses. Default is `[]`.
@@ -427,51 +471,64 @@ def write(
         If write meshing data only. Default is False
     """
 
-    logger.debug(f'writting sg data to {fn} (format: {file_format})...')
+    logger.info('Writing file...')
+    logger.debug(locals())
 
-    # logger.debug(f'local variables:\n{sutils.convertToPrettyString(locals())}')
-
-    _file_format = file_format.lower()
-
-    _format_full_data = ['sc', 'swiftcomp', 'vabs']
-
-    # Write meshing data only for partially supported formats
-    if not _file_format in _format_full_data:
+    # Check if file_format is valid
+    if file_format not in ['sc', 'swiftcomp', 'vabs']:
         mesh_only = True
 
+    # Check if structure_gene is valid
+    if sg is None:
+        raise ValueError('structure_gene is None')
+
+    # Check if structure_gene.mesh is valid
+    if sg.mesh is None:
+        raise ValueError('structure_gene.mesh is None')
+
+    # Open the file and write the data
     with open(fn, 'w', encoding='utf-8') as file:
-        if mesh_only:
-            sg.mesh.write(
-                file,
-                file_format,
-                # sgdim=sg.sgdim,
-                int_fmt=sfi,
+        if file_format.startswith('s'):
+            if format_version == '':
+                format_version = GLOBAL.SC_VERSION_DEFAULT
+
+            _swiftcomp.write_buffer(
+                sg, file,
+                analysis=analysis, model=model_type,
+                macro_responses=macro_responses,
+                load_type=load_type,
+                sfi=sfi, sff=sff, version=format_version
+            )
+
+        elif file_format.startswith('v'):
+            if format_version == '':
+                format_version = GLOBAL.VABS_VERSION_DEFAULT
+
+            _vabs.write_buffer(
+                sg, file,
+                analysis=analysis, sg_format=sg_format,
+                macro_responses=macro_responses, model=model_type,
+                sfi=sfi, sff=sff, version=format_version,
+                mesh_only=mesh_only
+            )
+
+        elif file_format.startswith('gmsh'):
+            _gmsh.write_buffer(
+                file, sg.mesh,
+                format_version=format_version,
                 float_fmt=sff
-                )
+            )
 
         else:
-            if _file_format.startswith('s'):
-                if format_version == '':
-                    format_version = GLOBAL.SC_VERSION_DEFAULT
-
-                _swiftcomp.writeBuffer(
-                    sg, file,
-                    analysis=analysis, model=model_type,
-                    macro_responses=macro_responses,
-                    load_type=load_type,
-                    sfi=sfi, sff=sff, version=format_version,
-                    )
-
-            elif _file_format.startswith('v'):
-                if format_version == '':
-                    format_version = GLOBAL.VABS_VERSION_DEFAULT
-
-                _vabs.writeBuffer(
-                    sg, file,
-                    analysis=analysis, sg_fmt=sg_fmt,
-                    macro_responses=macro_responses, model=model_type,
-                    sfi=sfi, sff=sff, version=format_version,
-                    mesh_only=mesh_only)
+            meshio.write(
+                file, sg.mesh, file_format=file_format,
+                int_fmt=sfi, float_fmt=sff)
+            # sg.mesh.write(
+            #     file,
+            #     file_format,
+            #     int_fmt=sfi,
+            #     float_fmt=sff
+            # )
 
     return fn
 
@@ -479,13 +536,21 @@ def write(
 
 
 def convert(
-    file_name_in, file_name_out,
-    file_format_in, file_format_out,
-    format_version_in='', format_version_out='',
-    analysis='h', sgdim=3, model_type='SD1', sg_fmt=1,
-    sfi='8d', sff='20.12e', mesh_only=False
-    ):
-    """Convert the SG data file format.
+    file_name_in: str,
+    file_name_out: str,
+    file_format_in: str,
+    file_format_out: str,
+    file_version_in: str = '',
+    file_version_out: str = '',
+    analysis: str = 'h',
+    sgdim: int = 3,
+    model_type: str = 'SD1',
+    vabs_format_version: int = 1,
+    str_format_int: str = '8d',
+    str_format_float: str = '20.12e',
+    mesh_only: bool = False
+) -> StructureGene:
+    """Convert the Structure Gene data file format.
 
     Parameters
     ----------
@@ -493,18 +558,18 @@ def convert(
         File name before conversion
     file_name_out : str
         File name after conversion
-    file_format_in : str, optional
+    file_format_in : str
         Format of the input file.
         Choose one from 'vabs', 'sc', 'swiftcomp'.
-    file_format_out : str, optional
+    file_format_out : str
         Format of the output file.
         Choose one from 'vabs', 'sc', 'swiftcomp'.
-    format_version_in : str, optional
+    file_version_in : str, optional
         Version of the input file, by default ''
-    format_version_out : str, optional
+    file_version_out : str, optional
         Version of the output file, by default ''
     analysis : str, optional
-        Indicator of SG analysis.
+        Indicator of Structure Gene analysis.
         Default is 'h'.
         Choose one from
 
@@ -524,35 +589,49 @@ def convert(
         * 'PL2': Reissner-Mindlin plate/shell model
         * 'BM1': Euler-Bernoulli beam model
         * 'BM2': Timoshenko beam model
-    sg_fmt : int, optional
+    vabs_format_version : int, optional
         Format for the VABS input, by default 1
-    sfi : str, optional
+    str_format_int : str, optional
         String formating integers, by default '8d'
-    sff : str, optional
+    str_format_float : str, optional
         String formating floats, by default '20.12e'
     mesh_only : bool, optional
         If write meshing data only, by default False
     """
 
+    logger.info('Converting file format...')
+    logger.debug(locals())
+
+    if file_name_in is None:
+        raise ValueError("Input file name should not be None.")
+
+    if file_name_out is None:
+        raise ValueError("Output file name should not be None.")
+
     sg = read(
-        fn=file_name_in,
+        filename=file_name_in,
         file_format=file_format_in,
         model_type=model_type,
-        format_version=format_version_in,
+        format_version=file_version_in,
         sgdim=sgdim,
         mesh_only=mesh_only)
+
+    if sg is None:
+        raise ValueError("Input file is not a valid SG file.")
 
     write(
         sg=sg,
         fn=file_name_out,
         file_format=file_format_out,
-        model_type=model_type,
-        format_version=format_version_out,
+        format_version=file_version_out,
         analysis=analysis,
-        sg_fmt=sg_fmt,
-        sfi=sfi,
-        sff=sff,
+        sg_format=vabs_format_version,
+        model_type=model_type,
+        sfi=str_format_int,
+        sff=str_format_float,
         mesh_only=mesh_only)
+
+    logger.info('File format converted.')
 
     return sg
 
@@ -663,7 +742,7 @@ def convert(
 # ====================================================================
 
 def readSGInterfacePairs(fn):
-    r"""
+    """
     """
 
     # if logger is None:
@@ -737,17 +816,56 @@ def readSGInterfaceNodes(fn):
 # ====================================================================
 
 def readLoadCsv(
-    fn:str, smdim:int, model:int, load_tags=[], load_type=0,
-    disp_tags=['u1', 'u2', 'u3'],
-    rot_tags = ['c11', 'c12', 'c13', 'c21', 'c22', 'c23', 'c31', 'c32', 'c33'],
-    loc_tags=['loc',], cond_tags=[],
-    loc_vtypes=[], cond_vtypes=[],
-    delimiter=',', nhead=1, encoding='utf-8-sig'
-    ):
+    fn: str, smdim: int, model: int, load_tags: list = [],
+    load_type: int = 0, disp_tags: list = ['u1', 'u2', 'u3'],
+    rot_tags: list = ['c11', 'c12', 'c13', 'c21', 'c22', 'c23', 'c31', 'c32', 'c33'],
+    loc_tags: list = ['loc',], cond_tags: list = [],
+    loc_vtypes: list = [], cond_vtypes: list = [],
+    delimiter: str = ',', nhead: int = 1, encoding: str = 'utf-8-sig'
+) -> sgmodel.StructureResponseCases:
     """
-    """
+    Reads a CSV file containing load data for a given structure.
+    The file should have the following format:
 
-    logger.debug('reading structural response file {}...'.format(fn))
+    loc, cond, u1, u2, u3, c11, c12, c13, c21, c22, c23, c31, c32, c33, f1, f2, ...
+    1, 1, 1, 2, 3, 0, 0, 1, 0, 1, 0, 0, 0, 1, 4, 5, ...
+
+    Parameters
+    ----------
+    fn : str
+        The filename of the CSV file to read.
+    smdim : int
+        The dimension of the structure model.
+    model : int
+        The model type of the structure.
+    load_tags : list, optional
+        The tags of the loads to be read. Defaults to an empty list.
+    load_type : int, optional
+        The type of the loads. Defaults to 0.
+    disp_tags : list, optional
+        The tags of the displacements to be read. Defaults to ['u1', 'u2', 'u3'].
+    rot_tags : list, optional
+        The tags of the rotations to be read. Defaults to ['c11', 'c12', 'c13', 'c21', 'c22', 'c23', 'c31', 'c32', 'c33'].
+    loc_tags : list, optional
+        The tags of the locations to be read. Defaults to ['loc',].
+    cond_tags : list, optional
+        The tags of the conditions to be read. Defaults to an empty list.
+    loc_vtypes : list, optional
+        The value types of the locations to be read. Defaults to an empty list.
+    cond_vtypes : list, optional
+        The value types of the conditions to be read. Defaults to an empty list.
+    delimiter : str, optional
+        The delimiter of the CSV file. Defaults to ','.
+    nhead : int, optional
+        The number of header lines to skip. Defaults to 1.
+    encoding : str, optional
+        The encoding of the CSV file. Defaults to 'utf-8-sig'.
+
+    Returns
+    -------
+    struct_resp_cases : StructureResponseCases
+        The structure response cases.
+    """
 
     if len(load_tags) == 0:
         if smdim == 1:
@@ -781,17 +899,10 @@ def readLoadCsv(
     struct_resp_cases.loc_tags = loc_tags
     struct_resp_cases.cond_tags = cond_tags
 
-    # load = {}
-
     with open(fn, 'r', encoding=encoding) as file:
         cr = csv.reader(file, delimiter=delimiter)
 
         tags_idx = {}
-        # loc_tags_idx = {}
-        # case_tags_idx = {}
-        # disp_tags_idx = {}
-        # rot_tags_idx = {}
-        # load_tags_idx = {}
 
         hi = 0
         for i, row in enumerate(cr):
@@ -801,25 +912,28 @@ def readLoadCsv(
 
             if i < nhead:
                 if hi == 0:
-                    # Get index of each tag
-                    for _tag in loc_tags:
-                        tags_idx[_tag] = row.index(_tag)
-                    for _tag in cond_tags:
-                        tags_idx[_tag] = row.index(_tag)
-                    for _tag in disp_tags:
-                        tags_idx[_tag] = row.index(_tag)
-                    for _tag in rot_tags:
-                        tags_idx[_tag] = row.index(_tag)
-                    for _tag in load_tags:
-                        tags_idx[_tag] = row.index(_tag)
-                    # print(tags_idx)
+                    for tag in loc_tags:
+                        if tag not in row:
+                            raise ValueError(f'Column {tag} not found in the file')
+                        tags_idx[tag] = row.index(tag)
+                    for tag in cond_tags:
+                        if tag not in row:
+                            raise ValueError(f'Column {tag} not found in the file')
+                        tags_idx[tag] = row.index(tag)
+                    for tag in disp_tags:
+                        if tag not in row:
+                            raise ValueError(f'Column {tag} not found in the file')
+                        tags_idx[tag] = row.index(tag)
+                    for tag in rot_tags:
+                        if tag not in row:
+                            raise ValueError(f'Column {tag} not found in the file')
+                        tags_idx[tag] = row.index(tag)
+                    for tag in load_tags:
+                        if tag not in row:
+                            raise ValueError(f'Column {tag} not found in the file')
+                        tags_idx[tag] = row.index(tag)
                 hi += 1
                 continue
-                # # Read head
-                # for label in row:
-                #     if label.lower().startswith('rotor'):
-                #         nid = int(label.split('NODE')[1])
-                #         load['node_id'].append(nid)
 
             else:
                 resp_case = {}
@@ -829,68 +943,22 @@ def readLoadCsv(
                 sect_resp.load_type = load_type
                 sect_resp.load_tags = load_tags
 
-                # Read location ids
-                for _tag, _type in zip(loc_tags, loc_vtypes):
-                    _i = tags_idx[_tag]
-                    resp_case[_tag] = eval(_type)(row[_i])
+                for tag, vtype in zip(loc_tags, loc_vtypes):
+                    sect_resp.loc[tag] = eval(vtype)(row[tags_idx[tag]])
 
-                # Read case ids
-                for _tag, _type in zip(cond_tags, cond_vtypes):
-                    _i = tags_idx[_tag]
-                    resp_case[_tag] = eval(_type)(row[_i])
+                for tag, vtype in zip(cond_tags, cond_vtypes):
+                    sect_resp.cond[tag] = eval(vtype)(row[tags_idx[tag]])
 
-                # Read loads
-                _load = []
-                for _tag in load_tags:
-                    _i = tags_idx[_tag]
-                    _load.append(float(row[_i]))
-                sect_resp.load = _load
-
-                # Read displacements
-                _disp = []
-                for _tag in disp_tags:
-                    _i = tags_idx[_tag]
-                    _disp.append(float(row[_i]))
-                sect_resp.displacement = _disp
-
-                # Read rotations
-                _rot = []
-                for _tag in rot_tags:
-                    _i = tags_idx[_tag]
-                    _rot.append(float(row[_i]))
+                sect_resp.load = [float(row[tags_idx[tag]]) for tag in load_tags]
+                sect_resp.displacement = [float(row[tags_idx[tag]]) for tag in disp_tags]
                 sect_resp.directional_cosine = [
-                    _rot[:3], _rot[3:6], _rot[6:]
+                    [float(row[tags_idx[tag]]) for tag in rot_tags[0:3]],
+                    [float(row[tags_idx[tag]]) for tag in rot_tags[3:6]],
+                    [float(row[tags_idx[tag]]) for tag in rot_tags[6:9]]
                 ]
 
                 resp_case['response'] = sect_resp
-
-                # condition = str(row[0])
-                # if not condition in load.keys():
-                #     load[condition] = {
-                #         'fx': {'a': [], 'r': [], 'v': []},
-                #         'fy': {'a': [], 'r': [], 'v': []},
-                #         'fz': {'a': [], 'r': [], 'v': []},
-                #         'mx': {'a': [], 'r': [], 'v': []},
-                #         'my': {'a': [], 'r': [], 'v': []},
-                #         'mz': {'a': [], 'r': [], 'v': []}
-                #     }
-
-                # a, r, fx, fy, fz, mx, my, mz = list(map(float, row[1:]))
-                # v = {
-                #     'fx': fx, 'fy': fy, 'fz': fz,
-                #     'mx': mx, 'my': my, 'mz': mz
-                # }
-
-                # azimuth.append(a)
-
-                # for component in ['fx', 'fy', 'fz', 'mx', 'my', 'mz']:
-                #     load[condition][component]['a'].append(a)
-                #     load[condition][component]['r'].append(r)
-                #     load[condition][component]['v'].append(v[component])
-
                 struct_resp_cases.responses.append(resp_case)
-
-    # azimuth = list(set(azimuth))
 
     return struct_resp_cases
 
