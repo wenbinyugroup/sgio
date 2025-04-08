@@ -429,14 +429,50 @@ def read_mesh_buffer(f, mesh_only:bool=True):
 
 
 def _read_cells(f, params_map, point_ids):
+    """
+    Read cell (element) data from an Abaqus input file.
+
+    Parameters
+    ----------
+    f : file object
+        File object to read from
+    params_map : dict
+        Dictionary containing element parameters including TYPE and ELSET
+    point_ids : dict
+        Dictionary mapping node IDs to their indices
+
+    Returns
+    -------
+    tuple
+        A tuple containing:
+        - cell_type : str
+            The meshio cell type
+        - cells : numpy.ndarray
+            Array of cell connectivity data
+        - cell_ids : dict
+            Dictionary mapping element IDs to their indices
+        - cell_sets : dict
+            Dictionary of element sets
+        - line : str
+            The last line read from the file
+
+    Raises
+    ------
+    ReadError
+        If the element type is not available or if the number of data items
+        does not match the expected count for the element type
+    """
+    # Get element type from parameters and verify it's supported
     etype = params_map["TYPE"]
     if etype not in abaqus_to_meshio_type.keys():
         raise ReadError(f"Element type not available: {etype}")
 
+    # Convert Abaqus element type to meshio cell type
     cell_type = abaqus_to_meshio_type[etype]
-    # ElementID + NodesIDs
+    # Calculate number of data items per element (element ID + node IDs)
     num_data = num_nodes_per_cell[cell_type] + 1
 
+    # Read element data line by line until a new section starts
     idx = []
     while True:
         line = f.readline()
@@ -445,16 +481,21 @@ def _read_cells(f, params_map, point_ids):
         line = line.strip()
         if line == "":
             continue
+        # Split line by commas and convert to integers
         idx += [int(k) for k in filter(None, line.split(","))]
 
-    # Check for expected number of data
+    # Verify the total number of data items matches the expected count
     if len(idx) % num_data != 0:
         raise ReadError("Expected number of data items does not match element type")
 
+    # Reshape data into 2D array where each row represents an element
     idx = np.array(idx).reshape((-1, num_data))
+    # Create mapping from element IDs to their indices
     cell_ids = dict(zip(idx[:, 0], count(0)))
+    # Convert node IDs to their corresponding indices using point_ids mapping
     cells = np.array([[point_ids[node] for node in elem] for elem in idx[:, 1:]])
 
+    # Create element sets if ELSET is specified in parameters
     cell_sets = (
         {params_map["ELSET"]: np.arange(len(cells), dtype="int32")}
         if "ELSET" in params_map.keys()
