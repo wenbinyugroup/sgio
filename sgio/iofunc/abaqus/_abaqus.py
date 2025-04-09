@@ -241,7 +241,7 @@ def read_mesh_buffer(f, mesh_only:bool=True):
         in_step = True if keyword == 'STEP' else (False if keyword == 'END STEP' else in_step)
 
 
-        if keyword == "NODE" and in_part:
+        if keyword == "NODE":
             points, point_ids, line = _read_nodes(f)
 
         elif keyword == "ELEMENT":
