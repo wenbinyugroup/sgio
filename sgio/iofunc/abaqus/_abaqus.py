@@ -20,6 +20,7 @@ from meshio.abaqus._abaqus import (
 # import sgio._global as GLOBAL
 # import sgio.iofunc._meshio as smsh
 import sgio.model as smdl
+# from sgio._global import pprint, pretty_string
 from sgio.core.sg import StructureGene
 # from sgio.core.mesh import SGMesh
 # from sgio.meshio.abaqus._abaqus import get_param_map
@@ -149,11 +150,18 @@ def _readMesh(file):
 
     # mesh, sections, materials = smsh.read_sgmesh_buffer(file, 'abaqus', mesh_only=False)
     mesh, sections, materials = read_mesh_buffer(file, mesh_only=False)
-    # print(mesh.cell_sets)
-    # print(sections)
-    # print(materials)
+
+    logger.debug('mesh.cell_sets:')
+    logger.debug(mesh.cell_sets)
+    logger.debug('sections:')
+    logger.debug(sections)
+    logger.debug('materials:')
+    logger.debug(materials)
 
     # Organize sections and materials
+
+    # Initialize the property_id array
+    # with the same shape as the cells
     mesh.cell_data['property_id'] = []
     for _i, _cb in enumerate(mesh.cells):
         mesh.cell_data['property_id'].append([None,]*len(_cb.data))
@@ -167,13 +175,16 @@ def _readMesh(file):
         _mname = _section['material']
         _angle = _section['rotation_angle']
 
-        _prop_id = None
+        _prop_id = None  # the property id (material-angle pair)
+
+        # check if the material-angle pair already exists
         for _k, _v in mocombos.items():
             if _v[0] == _mname and _v[1] == _angle:
                 _prop_id = _k
                 break
 
         if _prop_id is None:
+            # new material-angle pair
             _prop_id = len(mocombos) + 1
             mocombos[_prop_id] = [_mname, _angle]
 
@@ -240,23 +251,65 @@ def read_mesh_buffer(f, mesh_only:bool=True):
             cell_type, cells_data, ids, sets, line = _read_cells(
                 f, params_map, point_ids
             )
-            cells.append(CellBlock(cell_type, cells_data))
-            cell_ids.append(ids)
+
+            # logger.info('cell_type:')
+            # logger.info(cell_type)
+            # logger.info('cells_data:')
+            # logger.info(cells_data)
+            # logger.info('ids:')
+            # logger.info(ids)
+            logger.debug('sets:')
+            logger.debug(sets)
+
+            # Check if the cell type is already in the cells list
+            cbi = None
+            cb = None  # [cell_type, cells_data]
+            for _i, _cb in enumerate(cells):
+                if _cb[0] == cell_type:
+                    cbi = _i
+                    cb = _cb
+                    break
+
+            if cbi is None:
+                # new type
+                # cb = CellBlock(cell_type, cells_data)
+                cells.append([cell_type, cells_data])
+                cell_ids.append(ids)
+            else:
+                # existing type
+                cells[cbi][1] = np.concatenate([cells[cbi][1], cells_data])
+                # update cell_ids
+                _n = len(cell_ids[cbi])
+                for _eid, _cid in ids.items():
+                    cell_ids[cbi][_eid] = _n + _cid
+                # cell_ids[cbi].update(ids)
+
+            # cells.append(CellBlock(cell_type, cells_data))
+
+            # cell_ids.append(ids)
             # print('\ncell_ids:')
             # print(cell_ids)
-            if sets:
-                cell_sets_element.update(sets)
-                cell_sets_element_order += list(sets.keys())
+            # if sets:
+            for _set_name, _set_eids in sets.items():
+                # _set_name = list(sets.keys())[0]
+                try:
+                    cell_sets_element[_set_name] = np.concatenate([cell_sets_element[_set_name], _set_eids])
+                    # get the index of the set name in the cell_sets_element keys
+                    # _i = list(cell_sets_element.keys()).index(_set_name)
+                except KeyError:
+                    # cell_sets_element.update(sets)
+                    cell_sets_element[_set_name] = _set_eids
+                    cell_sets_element_order += [_set_name,]
             # print('\ncell_sets_element:')
             # print(cell_sets_element)
 
-            if not 'element_id' in cell_data.keys():
-                cell_data['element_id'] = []
-            _element_id = [0,]*len(ids)
-            for _eid, _cid in ids.items():
-                _element_id[_cid] = _eid
-            # print(_element_id)
-            cell_data['element_id'].append(_element_id)
+            # if not 'element_id' in cell_data.keys():
+            #     cell_data['element_id'] = []
+            # _element_id = [0,]*len(ids)
+            # for _eid, _cid in ids.items():
+            #     _element_id[_cid] = _eid
+            # # print(_element_id)
+            # cell_data['element_id'].append(_element_id)
 
         elif keyword == "NSET":
             params_map = get_param_map(line, required_keys=["NSET"])
@@ -294,9 +347,24 @@ def read_mesh_buffer(f, mesh_only:bool=True):
         elif keyword == "DISTRIBUTION":
             _default = [1, 0, 0, 0, 1, 0, 0, 0, 0]
             if not 'property_ref_csys' in cell_data.keys():
+                # Initialize the property_ref_csys array
+                # cell_data['property_ref_csys'] and cell_ids should have the same shape
                 cell_data['property_ref_csys'] = []
                 for _i in range(len(cell_ids)):
                     cell_data['property_ref_csys'].append([_default,]*len(cell_ids[_i]))
+
+            # logger.info('shape of cell_ids:')
+            # logger.info('block index, number of elements')
+            # for _i, _cb in enumerate(cell_ids):
+            #     logger.info(f'{_i}, {len(_cb)}')
+
+            # logger.info('shape of cell_data["property_ref_csys"]:')
+            # logger.info('block index, number of elements')
+            # for _i, _cb in enumerate(cell_data['property_ref_csys']):
+            #     logger.info(f'{_i}, {len(_cb)}')
+
+            # logger.info('cell_ids:')
+            # logger.info(cell_ids)
 
             params_map = get_param_map(line)
             # print(params_map)
@@ -311,6 +379,8 @@ def read_mesh_buffer(f, mesh_only:bool=True):
                         break
                     except KeyError:
                         continue
+
+                # logger.info(f'_i: {_i}, _j: {_j}')
 
                 cell_data['property_ref_csys'][_i][_j] = _edata
 
@@ -392,23 +462,62 @@ def read_mesh_buffer(f, mesh_only:bool=True):
             # There are just too many Abaqus keywords to explicitly skip them.
             line = f.readline()
 
+    logger.debug('cells:')
+    for _cb in cells:
+        logger.debug(f'{_cb[0]}:')
+        logger.debug(_cb[1])
+
+    logger.debug('cell_ids:')
+    logger.debug(cell_ids)
+
+    cell_data['element_id'] = []
+    for _cb in cell_ids:
+        _element_id = [0,]*len(_cb)
+        for _eid, _cid in _cb.items():
+            _element_id[_cid] = _eid
+        cell_data['element_id'].append(_element_id)
+    logger.debug('cell_data["element_id"]:')
+    logger.debug(cell_data['element_id'])
+
+    logger.debug('cell_sets_element_order:')
+    logger.debug(cell_sets_element_order)
+    logger.debug('cell_sets_element:')
+    logger.debug(cell_sets_element)
+
     # Parse cell sets defined in ELEMENT
-    for i, name in enumerate(cell_sets_element_order):
-        # Not sure whether this case would ever happen
-        if name in cell_sets.keys():
-            cell_sets[name][i] = cell_sets_element[name]
-        else:
-            cell_sets[name] = []
-            for ic in range(len(cells)):
-                cell_sets[name].append(
-                    cell_sets_element[name] if i == ic else np.array([], dtype="int32")
-                )
+    # for i, name in enumerate(cell_sets_element_order):
+    #     # Not sure whether this case would ever happen
+    #     if name in cell_sets.keys():
+    #         cell_sets[name][i] = cell_sets_element[name]
+    #     else:
+    #         cell_sets[name] = []
+    #         for ic in range(len(cells)):
+    #             cell_sets[name].append(
+    #                 cell_sets_element[name] if i == ic else np.array([], dtype="int32")
+    #             )
+    for _set_name, _set_elements in cell_sets_element.items():
+        cell_sets[_set_name] = [[] for _i in range(len(cells))]
+        for _eid in _set_elements:
+            # get the cell block index and cell index
+            for _cbi, _cb in enumerate(cell_ids):
+                try:
+                    _ci = _cb[_eid]
+                    cell_sets[_set_name][_cbi].append(_ci)
+                    break
+                except KeyError:
+                    continue
+
+    logger.debug('cell_sets:')
+    logger.debug(cell_sets)
 
     # for _key in cell_data.keys():
     #     print(f'\n\ncell_data["{_key}"]:')
     #     print(cell_data[_key][0])
     #     cell_data[_key] = np.asarray(cell_data[_key])
     # print(cell_data)
+
+    for _i in range(len(cells)):
+        cells[_i] = tuple(cells[_i])
 
     mesh = Mesh(
         points,
@@ -497,7 +606,8 @@ def _read_cells(f, params_map, point_ids):
 
     # Create element sets if ELSET is specified in parameters
     cell_sets = (
-        {params_map["ELSET"]: np.arange(len(cells), dtype="int32")}
+        # {params_map["ELSET"]: np.arange(len(cells), dtype="int32")}
+        {params_map["ELSET"]: idx[:, 0]}  # use the actual element IDs
         if "ELSET" in params_map.keys()
         else {}
     )

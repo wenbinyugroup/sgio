@@ -516,7 +516,8 @@ def write(
             _gmsh.write_buffer(
                 file, sg.mesh,
                 format_version=format_version,
-                float_fmt=sff
+                float_fmt=sff,
+                sgdim=sg.sgdim
             )
 
         else:

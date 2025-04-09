@@ -1,4 +1,4 @@
-from meshio import Mesh
+from meshio import Mesh, CellBlock
 
 class SGMesh(Mesh):
     """Extended mesh class that inherits from meshio.Mesh.
@@ -29,6 +29,15 @@ class SGMesh(Mesh):
             gmsh_periodic=gmsh_periodic,
             info=info,
         )
+
+
+    def get_cell_block_by_type(self, cell_type):
+        """
+        """
+        for _cb in self.cells:
+            if _cb.type == cell_type:
+                return _cb
+        return None
 
     #     # Additional SG-specific attributes
     #     self.material_properties = {}

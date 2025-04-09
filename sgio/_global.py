@@ -11,6 +11,10 @@ def pprint(*args, **kwargs):
     console.print(Pretty(*args), **kwargs)
 
 
+def pretty_string(v):
+    return Pretty(v).__str__()
+
+
 def configure_logging(cout_level='INFO', fout_level='INFO', filename='log.txt'):
     """Initialization of a logger.
 
@@ -48,12 +52,18 @@ def configure_logging(cout_level='INFO', fout_level='INFO', filename='log.txt'):
     ch.setFormatter(cf)
     # logger.addHandler(ch)
 
-
-    fh = logging.FileHandler(filename)
+    # fh = logging.FileHandler(filename)
+    console = Console(file=open(filename, 'w'))
+    fh = RichHandler(console=console)
     fh.setLevel(fout_level.upper())
+    # ff = logging.Formatter(
+    #     fmt='[{asctime}] {levelname:8s} {module}.{funcName} :: {message} ',
+    #     datefmt='%H:%M:%S', style='{'
+    # )
     ff = logging.Formatter(
-        fmt='[{asctime}] {levelname:8s} {module}.{funcName} :: {message} ',
-        datefmt='%H:%M:%S', style='{'
+        fmt='{message:s}',
+        style='{',
+        datefmt='[%X]'
     )
     fh.setFormatter(ff)
     # logger.addHandler(fh)
