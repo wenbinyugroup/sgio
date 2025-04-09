@@ -1,4 +1,5 @@
 from meshio import Mesh, CellBlock
+from typing import Union
 
 class SGMesh(Mesh):
     """Extended mesh class that inherits from meshio.Mesh.
@@ -86,3 +87,12 @@ class SGMesh(Mesh):
 
 
 
+
+def renumber_elements(mesh: Union[SGMesh, Mesh]):
+    """
+    """
+    eid = 0
+    for _cb in mesh.cell_data['element_id']:
+        for i in range(len(_cb)):
+            eid += 1
+            _cb[i] = eid

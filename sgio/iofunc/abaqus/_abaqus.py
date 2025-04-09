@@ -118,7 +118,7 @@ def read_buffer(file, **kwargs):
         elif _type == 'engineering_constants':
             m.set('isotropy', 1)
             _e1, _e2, _e3 = _values[:3]
-            _g12, _g13, _g23 = _values[6:]
+            _g12, _g13, _g23 = _values[6:9]
             _nu12, _nu13, _nu23 = _values[3:6]
             m.set(
                 'elastic',

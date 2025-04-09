@@ -12,7 +12,10 @@ import sgio.iofunc.gmsh as _gmsh
 import sgio.iofunc.swiftcomp as _swiftcomp
 import sgio.iofunc.vabs as _vabs
 import sgio.model as sgmodel
-from sgio.core.sg import StructureGene
+from sgio.core import (
+    StructureGene,
+    renumber_elements,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -549,7 +552,8 @@ def convert(
     vabs_format_version: int = 1,
     str_format_int: str = '8d',
     str_format_float: str = '20.12e',
-    mesh_only: bool = False
+    mesh_only: bool = False,
+    renum_elem: bool = False
 ) -> StructureGene:
     """Convert the Structure Gene data file format.
 
@@ -598,6 +602,8 @@ def convert(
         String formating floats, by default '20.12e'
     mesh_only : bool, optional
         If write meshing data only, by default False
+    renum_elem : bool, optional
+        If renumber elements, by default False
     """
 
     logger.info('Converting file format...')
@@ -619,6 +625,9 @@ def convert(
 
     if sg is None:
         raise ValueError("Input file is not a valid SG file.")
+
+    if renum_elem:
+        renumber_elements(sg.mesh)
 
     write(
         sg=sg,

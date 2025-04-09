@@ -72,6 +72,10 @@ def cli(*args):
         '-mo', '--mesh-only', action='store_true',
         help='Mesh only conversion'
     )
+    parser.add_argument(
+        '-re', '--renumber-elements', action='store_true',
+        help='Renumber elements'
+    )
 
     pargs = root_parser.parse_args(args[1:])
     # print(f'parsed args = {pargs}')
@@ -102,4 +106,5 @@ def main(func, **kwargs):
             sgdim=kwargs['sgdim'],
             model_type=kwargs['model'],
             mesh_only=kwargs['mesh_only'],
+            renum_elem=kwargs['renumber_elements'],
         )
