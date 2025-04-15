@@ -426,6 +426,7 @@ def readOutput(
 def write(
     sg: StructureGene, fn: str, file_format: str,
     format_version: str = '', analysis: str = 'h', sg_format: int = 1,
+    model_space: str = '', prop_ref_y: str = 'x',
     macro_responses: list[sgmodel.StateCase] = [], model_type: str = 'SD1',
     load_type: int = 0, sfi: str = '8d', sff: str = '20.12e', mesh_only: bool = False
 ) -> str:
@@ -499,6 +500,7 @@ def write(
                 sg, file,
                 analysis=analysis, model=model_type,
                 macro_responses=macro_responses,
+                model_space=model_space, prop_ref_y=prop_ref_y,
                 load_type=load_type,
                 sfi=sfi, sff=sff, version=format_version
             )
@@ -511,6 +513,7 @@ def write(
                 sg, file,
                 analysis=analysis, sg_format=sg_format,
                 macro_responses=macro_responses, model=model_type,
+                model_space=model_space, prop_ref_y=prop_ref_y,
                 sfi=sfi, sff=sff, version=format_version,
                 mesh_only=mesh_only
             )
@@ -548,6 +551,8 @@ def convert(
     file_version_out: str = '',
     analysis: str = 'h',
     sgdim: int = 3,
+    model_space: str = 'xy',
+    prop_ref_y: str = 'x',
     model_type: str = 'SD1',
     vabs_format_version: int = 1,
     str_format_int: str = '8d',
@@ -636,6 +641,8 @@ def convert(
         format_version=file_version_out,
         analysis=analysis,
         sg_format=vabs_format_version,
+        model_space=model_space,
+        prop_ref_y=prop_ref_y,
         model_type=model_type,
         sfi=str_format_int,
         sff=str_format_float,

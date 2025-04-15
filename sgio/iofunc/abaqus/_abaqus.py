@@ -149,7 +149,7 @@ def _readMesh(file):
     logger.debug('reading mesh...')
 
     # mesh, sections, materials = smsh.read_sgmesh_buffer(file, 'abaqus', mesh_only=False)
-    mesh, sections, materials = read_mesh_buffer(file, mesh_only=False)
+    mesh, sections, materials, distributions = read_mesh_buffer(file, mesh_only=False)
 
     logger.debug('mesh.cell_sets:')
     logger.debug(mesh.cell_sets)
@@ -222,6 +222,19 @@ def read_mesh_buffer(f, mesh_only:bool=True):
 
     sections = []
     materials = []
+
+    distributions = {}
+    """
+    distributions = {
+        'name': {
+            'data': {
+                'element_id': [ax, ay, az, bx, by, bz],
+                ...
+            }
+        },
+        ...
+    }
+    """
 
     line = f.readline()
     while True:
@@ -345,13 +358,28 @@ def read_mesh_buffer(f, mesh_only:bool=True):
                         raise ReadError(f"Unknown cell set '{set_name}'")
 
         elif keyword == "DISTRIBUTION":
-            _default = [1, 0, 0, 0, 1, 0, 0, 0, 0]
+
+            params_map = get_param_map(line)
+            # print(params_map)
+
+            # cell_data[f'distribution.{params_map["name"]}'] = {}
+
+            _default = [1, 0, 0, 0, 1, 0]
             if not 'property_ref_csys' in cell_data.keys():
                 # Initialize the property_ref_csys array
                 # cell_data['property_ref_csys'] and cell_ids should have the same shape
                 cell_data['property_ref_csys'] = []
                 for _i in range(len(cell_ids)):
                     cell_data['property_ref_csys'].append([_default,]*len(cell_ids[_i]))
+                cell_data['property_ref_x'] = []
+                for _i in range(len(cell_ids)):
+                    cell_data['property_ref_x'].append([[0, 0, 0],]*len(cell_ids[_i]))
+                cell_data['property_ref_y'] = []
+                for _i in range(len(cell_ids)):
+                    cell_data['property_ref_y'].append([[0, 0, 0],]*len(cell_ids[_i]))
+                cell_data['property_ref_z'] = []
+                for _i in range(len(cell_ids)):
+                    cell_data['property_ref_z'].append([[0, 0, 0],]*len(cell_ids[_i]))
 
             # logger.info('shape of cell_ids:')
             # logger.info('block index, number of elements')
@@ -365,16 +393,18 @@ def read_mesh_buffer(f, mesh_only:bool=True):
 
             # logger.info('cell_ids:')
             # logger.info(cell_ids)
-
-            params_map = get_param_map(line)
-            # print(params_map)
             # print(cell_ids)
-            _dict_cell_data, line = _read_distribution(f, params_map)
+            _dict_cell_data, line, first_axis, second_axis = _read_distribution(f, params_map)
             # _name = params_map['NAME']
+
+            # cell_data[f'distribution.{params_map["name"]}'] = {
+            #     'data': _dict_cell_data,
+            # }
 
             for _eid, _edata in _dict_cell_data.items():
                 for _i, _block in enumerate(cell_ids):
                     try:
+                        # Get the cell index from the element id
                         _j = _block[_eid]
                         break
                     except KeyError:
@@ -383,6 +413,21 @@ def read_mesh_buffer(f, mesh_only:bool=True):
                 # logger.info(f'_i: {_i}, _j: {_j}')
 
                 cell_data['property_ref_csys'][_i][_j] = _edata
+
+                if first_axis == 'x':
+                    cell_data['property_ref_x'][_i][_j] = _edata[:3]
+                elif first_axis == 'y':
+                    cell_data['property_ref_y'][_i][_j] = _edata[:3]
+                elif first_axis == 'z':
+                    cell_data['property_ref_z'][_i][_j] = _edata[:3]
+
+                if second_axis == 'x':
+                    cell_data['property_ref_x'][_i][_j] = _edata[3:6]
+                elif second_axis == 'y':
+                    cell_data['property_ref_y'][_i][_j] = _edata[3:6]
+                elif second_axis == 'z':
+                    cell_data['property_ref_z'][_i][_j] = _edata[3:6]
+
 
         elif keyword.split()[-1] == "SECTION":
             """
@@ -532,7 +577,7 @@ def read_mesh_buffer(f, mesh_only:bool=True):
     if mesh_only:
         return mesh
     else:
-        return mesh, sections, materials
+        return mesh, sections, materials, distributions
 
 
 
@@ -647,6 +692,9 @@ def _read_set(f, params_map):
 def _read_distribution(f, params_map):
     # cell_ids = []
     cell_data = {}
+    first_axis = 'x'
+    second_axis = 'y'
+    # c = [0, 0, 0]
     count = 0
     while True:
         line = f.readline()
@@ -660,15 +708,33 @@ def _read_distribution(f, params_map):
             continue
 
         count += 1
-        if count == 1: continue  # First line, ref frame (global)
 
         line = line.strip().strip(",").split(",")
-        # cell_ids.append(int(line[0]))
-        # cell_data.append(list(map(float, line[1:])))
-        cell_data[int(line[0])] = list(map(float, line[1:]+[0, 0, 0]))
-        # cell_data[int(line[0])] = list(map(float, line[1:]))
+        a = list(map(float, line[1:4]))
+        b = list(map(float, line[4:7]))
 
-    return cell_data, line
+        if count == 1:
+            # First line, ref frame (global)
+            if a == [1., 0., 0.]:
+                first_axis = 'x'
+            elif a == [0., 1., 0.]:
+                first_axis = 'y'
+            elif a == [0., 0., 1.]:
+                first_axis = 'z'
+
+            if b == [1., 0., 0.]:
+                second_axis = 'x'
+            elif b == [0., 1., 0.]:
+                second_axis = 'y'
+            elif b == [0., 0., 1.]:
+                second_axis = 'z'
+
+            continue
+
+        # cell_data[int(line[0])] = list(map(float, line[1:]+[0, 0, 0]))
+        cell_data[int(line[0])] = a + b
+
+    return cell_data, line, first_axis, second_axis
 
 
 

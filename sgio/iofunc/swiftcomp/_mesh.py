@@ -191,23 +191,32 @@ def _read_property_ref_csys(file, nelem, cells, cell_ids):
 
 # ====================================================================
 
-def write(filename, mesh:SGMesh, sgdim, int_fmt='8d', float_fmt="20.9e"):
+def write(
+    filename, mesh:SGMesh, sgdim, model_space,
+    int_fmt='8d', float_fmt="20.9e"):
     """
     """
     if is_buffer(filename, 'w'):
-        write_buffer(filename, mesh, sgdim, int_fmt, float_fmt)
+        write_buffer(filename, mesh, sgdim, model_space, int_fmt, float_fmt)
     else:
         with open(filename, 'at') as file:
-            write_buffer(file, mesh, sgdim, int_fmt, float_fmt)
+            write_buffer(file, mesh, sgdim, model_space, int_fmt, float_fmt)
 
 
 
-def write_buffer(file, mesh:SGMesh, sgdim, int_fmt='8d', float_fmt="20.9e"):
+def write_buffer(
+    file, mesh:SGMesh, sgdim, model_space,
+    int_fmt='8d', float_fmt="20.9e"):
     """
     """
 
-    _write_nodes(file, mesh.points, sgdim, int_fmt, float_fmt)
+    _write_nodes(
+        file, mesh.points, sgdim, model_space=model_space,
+        int_fmt=int_fmt, float_fmt=float_fmt
+        )
+
     cell_id_to_elem_id = _write_elements(file, mesh.cells, mesh.cell_data['property_id'], int_fmt)
+
     if 'property_ref_csys' in mesh.cell_data.keys():
         _write_property_ref_csys(
             file,
@@ -270,13 +279,14 @@ def _write_property_ref_csys(file, cell_csys, cell_id_to_elem_id, int_fmt:str='8
 
     sfi = '{:' + int_fmt + '}'
     sff = ''.join(['{:' + float_fmt + '}', ]*9)
+    c = [0, 0, 0]
 
     for i, block_data in enumerate(cell_csys):
         for j, csys in enumerate(block_data):
             elem_id = cell_id_to_elem_id[i][j]
 
             file.write(sfi.format(elem_id))
-            file.write(sff.format(*csys))
+            file.write(sff.format(*(list(csys)+c)))
             file.write('\n')
 
     file.write('\n')
