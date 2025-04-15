@@ -188,6 +188,7 @@ def read_output_buffer(
 
 def write_buffer(
     sg:StructureGene, file, analysis='h', sg_fmt:int=1, model=0,
+    model_space='', prop_ref_y='x',
     macro_responses:list[smdl.StateCase]=[],
     sfi:str='8d', sff:str='20.12e', version=None,
     **kwargs
@@ -232,8 +233,9 @@ def write_buffer(
         writeInputBuffer(
             sg, file, analysis,
             timoshenko_flag, vlasov_flag, trapeze_flag, thermal_flag,
-            sg_fmt,
-            sfi, sff, version)
+            model_space=model_space, prop_ref_y=prop_ref_y,
+            sg_fmt=sg_fmt,
+            sfi=sfi, sff=sff, version=version)
 
     elif (analysis == 'd') or (analysis == 'l') or (analysis.startswith('f')):
         if sg is None:
@@ -259,6 +261,7 @@ def write_buffer(
 def writeInputBuffer(
     sg, file, analysis,
     timoshenko_flag, vlasov_flag, trapeze_flag, thermal_flag,
+    model_space='', prop_ref_y='x',
     sg_fmt:int=1,
     sfi:str='8d', sff:str='20.12e', version=None):
     """
@@ -306,7 +309,10 @@ def writeInputBuffer(
         sg.nnodes, sg.nelems, sg.nmates,
         file, sfi, sff)
 
-    _writeMesh(sg.mesh, file, int_fmt=sfi, float_fmt=sff)
+    _writeMesh(
+        sg.mesh, file,
+        model_space=model_space, prop_ref_y=prop_ref_y,
+        int_fmt=sfi, float_fmt=sff)
 
     # if not mesh_only:
     _writeMOCombos(sg, file, sfi, sff)

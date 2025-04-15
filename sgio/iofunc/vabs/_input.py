@@ -213,14 +213,17 @@ def _readElasticProperty(file, isotropy:int):
 
 
 
-def _writeMesh(mesh, file, int_fmt, float_fmt):
+def _writeMesh(
+    mesh, file, model_space='', prop_ref_y='x',
+    int_fmt='8d', float_fmt='20.12e'
+    ):
     """
     """
     logger.debug('writing mesh...')
 
     write_buffer(
         file, mesh,
-        sgdim=2,
+        sgdim=2, model_space=model_space, prop_ref_y=prop_ref_y,
         int_fmt=int_fmt, float_fmt=float_fmt
     )
 

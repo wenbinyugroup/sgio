@@ -217,7 +217,7 @@ def _readElasticProperty(file, isotropy:int):
 
 
 def writeInputBuffer(
-    sg, file, analysis, physics,
+    sg, file, analysis, physics, model_space,
     sfi:str='8d', sff:str='20.12e', version=None):
     """
     """
@@ -235,7 +235,13 @@ def writeInputBuffer(
 
     _writeHeader(sg, file, sfi, sff, version)
 
-    _writeMesh(sg.mesh, file, sgdim=sg.sgdim, int_fmt=sfi, float_fmt=sff)
+    _writeMesh(
+        mesh=sg.mesh,
+        file=file,
+        sgdim=sg.sgdim,
+        model_space=model_space,
+        int_fmt=sfi, float_fmt=sff
+        )
 
     _writeMOCombos(sg, file, sfi, sff)
 
@@ -322,13 +328,13 @@ def writeInputBufferGlobal(
 
 
 
-def _writeMesh(mesh, file, sgdim, int_fmt, float_fmt):
+def _writeMesh(mesh, file, sgdim, model_space, int_fmt, float_fmt):
     """
     """
     logger.debug('writing mesh...')
 
     write_buffer(
-        file, mesh, sgdim=sgdim,
+        file, mesh, sgdim=sgdim, model_space=model_space,
         int_fmt=int_fmt, float_fmt=float_fmt)
 
     return

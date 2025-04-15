@@ -318,28 +318,48 @@ def _meshio_to_sg_order(cell_type:str, idx:ArrayLike):
 # Writers
 
 
-def _write_nodes(f, points, sgdim, int_fmt:str='8d', float_fmt:str='20.9e'):
+def _write_nodes(
+    f, points, sgdim, model_space='',
+    int_fmt:str='8d', float_fmt:str='20.9e'
+    ):
+    """
+    """
     sfi = '{:' + int_fmt + '}'
     sff = ''.join(['{:' + float_fmt + '}', ]*sgdim)
-    # print('sff =', sff)
-    # sff = ''.join([sff]*sgdim)
-    # count = 0
-    # nnode = len(self.nodes)
-    # for nid, ncoord in self.nodes.items():
+
+    # print(sfi)
+    # print(sff)
+
     for i, ncoord in enumerate(points):
-        # count += 1
         nid = i + 1
-        f.write(sfi.format(nid))
+        f.write(sfi.format(nid))  # node id
 
-        # print(ncoord[-sgdim:])
-        f.write(sff.format(*ncoord[-sgdim:]))
-        # if sgdim == 1:
-        #     sui.writeFormatFloats(f, ncoord[2:], fmt=sff, newline=False)
-        # elif self.sgdim == 2:
-        #     sui.writeFormatFloats(f, ncoord[1:], fmt=sff, newline=False)
-        # elif self.sgdim == 3:
-        #     sui.writeFormatFloats(f, ncoord, fmt=sff, newline=False)
+        # print(ncoord)
 
+        if sgdim == 1:
+            if model_space == 'x':
+                f.write(sff.format(ncoord[0]))
+            elif model_space == 'y':
+                f.write(sff.format(ncoord[1]))
+            elif model_space == 'z':
+                f.write(sff.format(ncoord[2]))
+            else:
+                raise ValueError(f"Invalid model space: {model_space}")
+
+        elif sgdim == 2:
+            if model_space == 'xy':
+                f.write(sff.format(ncoord[0], ncoord[1]))
+            elif model_space == 'yz':
+                f.write(sff.format(ncoord[1], ncoord[2]))
+            elif model_space == 'zx':
+                f.write(sff.format(ncoord[2], ncoord[0]))
+            else:
+                raise ValueError(f"Invalid model space: {model_space}")
+
+        elif sgdim == 3:
+            f.write(sff.format(*ncoord))
+
+        # Add comment
         if i == 0:
             f.write('  ! nodal coordinates')
 

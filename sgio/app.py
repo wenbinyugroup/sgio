@@ -9,6 +9,11 @@ from sgio.iofunc import convert
 logger = logging.getLogger(__name__)
 
 
+def case_insensitive_string(value):
+    """Convert string to lowercase for case-insensitive comparison."""
+    return value.lower()
+
+
 def cli(*args):
     # print(f'args = {args}')
 
@@ -46,14 +51,14 @@ def cli(*args):
         'from', type=str,
         help='CS/SG file to be read from')
     parser.add_argument(
+        'to', type=str,
+        help='CS/SG file to be written to')
+    parser.add_argument(
         '-ff', '--from-format', type=str,
         help='CS/SG file format to be read from')
     parser.add_argument(
         '-ffv', '--from-format-version', type=str,
         help='CS/SG file format version to be read from')
-    parser.add_argument(
-        'to', type=str,
-        help='CS/SG file to be written to')
     parser.add_argument(
         '-tf', '--to-format', type=str,
         help='CS/SG file format to be written to')
@@ -62,10 +67,22 @@ def cli(*args):
         help='CS/SG file format version to be written to')
     parser.add_argument(
         '-d', '--sgdim', type=int, default=2,
+        choices=[1, 2, 3],
         help='SG dimension (SwiftComp only)'
     )
     parser.add_argument(
-        '-m', '--model', type=str, default='BM2',
+        '-ms', '--model-space', type=case_insensitive_string, default='xy',
+        choices=['x', 'y', 'z', 'xy', 'yz', 'zx'],
+        help='Model space'
+    )
+    parser.add_argument(
+        '-mry', '--material-ref-y', type=case_insensitive_string, default='x',
+        choices=['x', 'y', 'z'],
+        help='Axis used as the material reference y-axis'
+    )
+    parser.add_argument(
+        '-m', '--model', type=case_insensitive_string, default='bm2',
+        choices=['sd1', 'pl1', 'pl2', 'bm1', 'bm2'],
         help='CS/SG model'
     )
     parser.add_argument(
@@ -104,6 +121,8 @@ def main(func, **kwargs):
             file_version_in=kwargs['from_format_version'],
             file_version_out=kwargs['to_format_version'],
             sgdim=kwargs['sgdim'],
+            model_space=kwargs['model_space'],
+            prop_ref_y=kwargs['material_ref_y'],
             model_type=kwargs['model'],
             mesh_only=kwargs['mesh_only'],
             renum_elem=kwargs['renumber_elements'],

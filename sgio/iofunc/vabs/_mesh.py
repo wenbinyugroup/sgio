@@ -187,35 +187,59 @@ def _read_property_id_ref_csys(file, nelem, cells, elem_id_to_cell_id):
 
 # ====================================================================
 
-def write(filename, mesh, sgdim, int_fmt='8d', float_fmt="20.9e"):
+def write(
+    filename, mesh, sgdim, model_space='', prop_ref_y='x',
+    int_fmt='8d', float_fmt="20.9e"):
     """
     """
     if is_buffer(filename, 'w'):
-        write_buffer(filename, mesh, sgdim, int_fmt, float_fmt)
+        write_buffer(
+            filename, mesh, sgdim, model_space=model_space, prop_ref_y=prop_ref_y,
+            int_fmt=int_fmt, float_fmt=float_fmt)
     else:
         with open(filename, 'at') as file:
-            write_buffer(file, mesh, sgdim, int_fmt, float_fmt)
+            write_buffer(
+                file, mesh, sgdim, model_space=model_space, prop_ref_y=prop_ref_y,
+                int_fmt=int_fmt, float_fmt=float_fmt)
 
 
 
-def write_buffer(file, mesh, sgdim, int_fmt='8d', float_fmt="20.9e"):
-    _write_nodes(file, mesh.points, sgdim, int_fmt, float_fmt)
+def write_buffer(
+    file, mesh, sgdim, model_space='', prop_ref_y='x',
+    int_fmt='8d', float_fmt="20.9e"
+    ):
+
+    _write_nodes(
+        file, mesh.points, sgdim, model_space=model_space,
+        int_fmt=int_fmt, float_fmt=float_fmt
+    )
+
     if not 'element_id' in mesh.cell_data.keys():
         mesh.cell_data['element_id'] = []
     _write_elements(file, mesh.cells, mesh.cell_data['element_id'], int_fmt)
-    # if 'property_ref_csys' in mesh.cell_data.keys():
 
     try:
-        property_ref_csys = mesh.cell_data['property_ref_csys']
+        if prop_ref_y == 'x':
+            property_ref_csys = mesh.cell_data['property_ref_x']
+        elif prop_ref_y == 'y':
+            property_ref_csys = mesh.cell_data['property_ref_y']
+        elif prop_ref_y == 'z':
+            property_ref_csys = mesh.cell_data['property_ref_z']
     except KeyError:
-        property_ref_csys = None
+        try:
+            property_ref_csys = mesh.cell_data['property_ref_csys']
+        except KeyError:
+            property_ref_csys = None
 
     _write_property_id_ref_csys(
         file,
         mesh.cell_data['property_id'],
         property_ref_csys,
         mesh.cell_data['element_id'],
-        int_fmt, float_fmt
+        model_space=model_space,
+        ref_y=prop_ref_y,
+        int_fmt=int_fmt,
+        float_fmt=float_fmt
     )
 
 
@@ -275,9 +299,31 @@ def _write_elements(f, cells, elem_id, int_fmt:str='8d'):
 
 def _write_property_id_ref_csys(
     file, cell_prop_id, cell_csys, elem_ids,
+    model_space='', ref_y='x',
     int_fmt:str='8d', float_fmt:str='20.12e'
     ):
-    """
+    """Write the property id and reference csys (theta_1) to the file.
+
+    Parameters
+    ----------
+    file : file
+        The file to write to.
+    cell_prop_id : list of lists
+        The property id for each cell.
+    cell_csys : list of lists
+        The reference csys for each cell.
+    elem_ids : list of lists
+        The element id for each cell.
+    ref_y : str
+        The reference y-axis for the reference csys.
+    int_fmt : str
+        The format string for the integer.
+    float_fmt : str
+        The format string for the float.
+
+    Returns
+    -------
+    None
     """
 
     # sfi = '{:' + int_fmt + '}'
@@ -289,7 +335,11 @@ def _write_property_id_ref_csys(
     ])
 
     for i, block_data in enumerate(cell_prop_id):
+        # i-th cell/element block
+
         for j, prop_id in enumerate(block_data):
+            # j-th cell/element in the i-th cell/element block
+
             elem_id = elem_ids[i][j]
 
             try:
@@ -297,15 +347,28 @@ def _write_property_id_ref_csys(
                 if not isinstance(theta_1, float):
                     # Calculate theta_1 from the csys
                     _csys = theta_1
-                    _vx2 = np.array([1, 0, 0])
+                    # _vx2 = np.array([1, 0, 0])
+
                     _vy2 = np.array(_csys[:3])
                     # print(f'_vy2 = {_vy2}')
+
+                    # Method 1
                     # _cos_theta_1 = np.dot(_vx2, _vy2) / (np.linalg.norm(_vx2) * np.linalg.norm(_vy2))
                     # print(f'_cos_theta_1 = {_cos_theta_1}')
                     # theta_1 = np.rad2deg(np.arccos(_cos_theta_1))
                     # print(f'theta_1 = {theta_1}')
-                    theta_1 = np.rad2deg(np.arctan2(_vy2[1], _vy2[0]))
+
+                    # Method 2
+                    if model_space == 'xy':
+                        theta_1 = np.rad2deg(np.arctan2(_vy2[1], _vy2[0]))
+                    elif model_space == 'yz':
+                        theta_1 = np.rad2deg(np.arctan2(_vy2[2], _vy2[1]))
+                    elif model_space == 'zx':
+                        theta_1 = np.rad2deg(np.arctan2(_vy2[0], _vy2[2]))
+                    else:
+                        raise ValueError(f'Invalid model space: {model_space}')
                     # print(f'theta_1 = {theta_1}')
+
             except TypeError:
                 theta_1 = 0
 
