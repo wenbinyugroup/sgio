@@ -27,9 +27,14 @@ logger = logging.getLogger(__name__)
 
 def run(cmd, timeout, max_try=3, **kwargs):
 
-    logger.debug(' '.join(cmd))
-    # proc = sbp.Popen(cmd, stdout=sbp.PIPE, stderr=sbp.PIPE)
-    # print('command: ', cmd)
+    # Handle batch scripts on Windows
+    if isinstance(cmd, (list, tuple)) and len(cmd) > 0:
+        cmd_name = cmd[0].lower()
+        if cmd_name.endswith(('.bat', '.cmd')):
+            # Wrap batch script with cmd.exe /c
+            cmd = ['cmd.exe', '/c'] + list(cmd)
+
+    logger.info(' '.join(cmd))
 
     _try = 0
 

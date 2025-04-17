@@ -368,8 +368,11 @@ class CauchyContinuumModel:
                 self.property.g12, self.property.g13, self.property.g23 = list(map(float, consts[3:6]))
                 self.property.nu12, self.property.nu13, self.property.nu23 = list(map(float, consts[6:]))
 
-        elif self.property.isotropy == 2:  # TODO
-            pass  
+        elif self.property.isotropy == 2:
+            if input_type == 'stiffness':
+                self.property.stff = consts
+            elif input_type == 'compliance':
+                self.property.cmpl = consts
 
         return
 
