@@ -3,10 +3,11 @@ import argparse
 import logging
 
 from sgio import __version__
+from sgio._global import logger, configure_logging
 # import sgio._global as GLOBAL
 from sgio.iofunc import convert
 
-logger = logging.getLogger(__name__)
+# logger = logging.getLogger(__name__)
 
 
 def case_insensitive_string(value):
@@ -110,6 +111,8 @@ def cli(*args):
 def main(func, **kwargs):
     """
     """
+
+    configure_logging()
 
     if func == 'convert':
 

@@ -2,6 +2,7 @@
 I/O for SwiftComp format
 """
 from __future__ import annotations
+import logging
 
 import numpy as np
 from meshio._files import is_buffer
@@ -14,6 +15,8 @@ from sgio.iofunc._meshio import (
     _read_nodes,
     _write_nodes,
 )
+
+logger = logging.getLogger(__name__)
 
 # c_int = np.dtype("i")
 # c_double = np.dtype("d")
@@ -33,6 +36,8 @@ from sgio.iofunc._meshio import (
 def read_buffer(f, sgdim:int, nnode:int, nelem:int, read_local_frame):
     """
     """
+    logger.debug(locals())
+
     # Initialize the optional data fields
     points = []
     cells = []
@@ -137,6 +142,9 @@ def _read_elements(f, nelem:int, point_ids):
         prop_ids[cell_type].append(int(prop_id))
 
         counter += 1
+
+    for _i in range(len(cells)):
+        cells[_i] = tuple(cells[_i])
 
     return cells, prop_ids, cell_ids, line
 

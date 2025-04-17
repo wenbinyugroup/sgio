@@ -1,4 +1,13 @@
+from __future__ import annotations
 
+import logging
+
+# import sgio._global as GLOBAL
+import sgio.utils as sutl
+import sgio.model as smdl
+from sgio._exceptions import OutputFileError
+
+logger = logging.getLogger(__name__)
 
 def _readOutputH(file, model_type, **kwargs):
     """Read SwiftComp homogenization results.

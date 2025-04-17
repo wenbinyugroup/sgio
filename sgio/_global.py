@@ -5,6 +5,7 @@ from rich.pretty import Pretty
 
 # from sgio.utils.logging import initLogger
 
+logger = logging.getLogger('sgio')
 console = Console()
 
 def pprint(*args, **kwargs):
@@ -38,7 +39,7 @@ def configure_logging(cout_level='INFO', fout_level='INFO', filename='log.txt'):
     #     GLOBAL.LOGGER_NAME = name
 
     # logger = logging.getLogger(name)
-    # logger.setLevel('DEBUG')
+    logger.setLevel('DEBUG')
 
     # ch = logging.StreamHandler()
     ch = RichHandler()
@@ -50,10 +51,10 @@ def configure_logging(cout_level='INFO', fout_level='INFO', filename='log.txt'):
         datefmt='[%X]'
     )
     ch.setFormatter(cf)
-    # logger.addHandler(ch)
+    logger.addHandler(ch)
 
     # fh = logging.FileHandler(filename)
-    console = Console(file=open(filename, 'w'))
+    console = Console(file=open(filename, 'w'), width=120)
     fh = RichHandler(console=console)
     fh.setLevel(fout_level.upper())
     # ff = logging.Formatter(
@@ -66,15 +67,17 @@ def configure_logging(cout_level='INFO', fout_level='INFO', filename='log.txt'):
         datefmt='[%X]'
     )
     fh.setFormatter(ff)
-    # logger.addHandler(fh)
+    logger.addHandler(fh)
 
 
-    logging.basicConfig(
-        level=logging.INFO,
-        # format="%(name)s: %(message)s",  # Include logger name in format
-        # datefmt="[%X]",
-        handlers=[ch, fh]
-    )
+    # logging.basicConfig(
+    #     level=logging.INFO,
+    #     # format="%(name)s: %(message)s",  # Include logger name in format
+    #     # datefmt="[%X]",
+    #     handlers=[ch, fh]
+    # )
+
+    logger.propagate = False
 
 
     # return logger
