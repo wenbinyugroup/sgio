@@ -67,9 +67,10 @@ def _readMesh(file, sgdim:int, nnode:int, nelem:int, read_local_frame):
     """
 
     logger.debug('reading mesh...')
+    logger.debug(locals())
 
     mesh = read_buffer(
-        file, 'sc',
+        file,
         sgdim=sgdim, nnode=nnode, nelem=nelem, read_local_frame=read_local_frame
     )
 

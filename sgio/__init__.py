@@ -1,5 +1,17 @@
 from ._version import __version__
 
+from ._global import logger, configure_logging
+
+from ._exceptions import (
+    SwiftCompLicenseError,
+    VABSLicenseError,
+    SwiftCompIOError,
+    VABSIOError,
+    SwiftCompError,
+    VABSError,
+    OutputFileError,
+)
+
 from .core.sg import StructureGene
 from .core.builder import buildSG1D
 # from .core.solid import MaterialProperty
@@ -33,6 +45,7 @@ from .execu import run
 # from .meshio import *
 
 __all__ = [
+    "configure_logging",
     "read",
     "readOutput",
     "readOutputModel",
@@ -45,4 +58,11 @@ __all__ = [
     'combineSG'
     "SGMesh",
     'StructureGene',
+    "SwiftCompLicenseError",
+    "VABSLicenseError",
+    "SwiftCompIOError",
+    "VABSIOError",
+    "SwiftCompError",
+    "VABSError",
+    "OutputFileError",
 ]

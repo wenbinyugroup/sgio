@@ -213,7 +213,7 @@ def runVABS(command, input_name, analysis, scrnout=True, timeout=3600):
         elif analysis == 3 or analysis == 'fi':
             cmd.append('3')
 
-        # logger.debug(' '.join(cmd))
+        logger.info(' '.join(cmd))
 
         sue.run(cmd, timeout)
 
@@ -305,7 +305,7 @@ def runSwiftComp(
         if reduced_integration:
             cmd.append('R')
 
-        # logger.debug(' '.join(cmd))
+        logger.info(' '.join(cmd))
 
         sue.run(cmd, timeout)
 
