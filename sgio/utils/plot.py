@@ -191,36 +191,51 @@ def plot_sg_2d(
     if sg is None or model is None or ax is None:
         raise ValueError("Arguments 'sg', 'model', and 'ax' cannot be None")
 
-    origin = (0, 0)
-    tension_center = (model.get('tc2'), model.get('tc3'))
-    shear_center = (model.get('sc2'), model.get('sc3'))
-    mass_center = (model.get('mc2'), model.get('mc3'))
+    handlers = []
+    labels = []
 
+    # Plot the mesh
+    if not hasattr(sg, 'mesh'):
+        raise ValueError("The 'sg' object must have a 'mesh' attribute")
+    plot_2d_mesh(ax, sg.mesh, edge_color=ec_mesh, face_color=fc_mesh, line_width=lw_mesh)
+
+    origin = (0, 0)
+    o, = ax.plot(*origin, marker='o', mec='k', mfc='none', markersize=5)
+    # handlers.append(o)
+    # labels.append('Origin')
+
+    # Plot the principal bending axes
     phi_pba_2 = model.get('phi_pba')
     if phi_pba_2 is None:
         raise ValueError("Model must contain 'phi_pba'")
     phi_pba_3 = phi_pba_2 + 90
-
-    if not hasattr(sg, 'mesh'):
-        raise ValueError("The 'sg' object must have a 'mesh' attribute")
-    
-    # Plot the mesh
-    plot_2d_mesh(ax, sg.mesh, edge_color=ec_mesh, face_color=fc_mesh, line_width=lw_mesh)
-
-    # Plot the principal bending axes
-    plot_line_by_point_angle(ax, origin, phi_pba_2, color='b')
-    plot_line_by_point_angle(ax, origin, phi_pba_3, color='r')
+    pba_2 = plot_line_by_point_angle(ax, origin, phi_pba_2, color='b')
+    pba_3 = plot_line_by_point_angle(ax, origin, phi_pba_3, color='r')
+    handlers.extend([pba_2, pba_3])
+    labels.extend(['Principal bending axis x2', 'Principal bending axis x3'])
 
     # Plot the centers
-    ax.plot(*origin, marker='o', mec='k', mfc='none', markersize=5)
-    ax.plot(*mass_center, ls='none', marker='s', mec='C0', mfc='none', markersize=5)
-    ax.plot(*tension_center, ls='none', marker='p', mec='C4', mfc='none', markersize=5)
-    ax.plot(*shear_center, ls='none', marker='d', mec='C8', mfc='none', markersize=5)
+
+    mass_center = (model.get('mc2'), model.get('mc3'))
+    mc, = ax.plot(*mass_center, ls='none', marker='s', mec='C0', mfc='none', markersize=5)
+    handlers.append(mc)
+    labels.append('Mass center')
+
+    tension_center = (model.get('tc2'), model.get('tc3'))
+    tc, = ax.plot(*tension_center, ls='none', marker='p', mec='C4', mfc='none', markersize=5)
+    handlers.append(tc)
+    labels.append('Tension center')
+
+    if model.label == 'bm2':
+        shear_center = (model.get('sc2'), model.get('sc3'))
+        sc, = ax.plot(*shear_center, ls='none', marker='d', mec='C8', mfc='none', markersize=5)
+        handlers.append(sc)
+        labels.append('Shear center')
+
 
     # Add a legend
     ax.legend(
-        ['Principal bending axis x2', 'Principal bending axis x3',
-         'Mass center', 'Tension center', 'Shear center'],
+        handlers, labels,
         ncols=5,
         bbox_to_anchor=(0.5, 1),
         loc='lower center',

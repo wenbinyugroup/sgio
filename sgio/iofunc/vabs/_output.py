@@ -18,11 +18,6 @@ def _readOutputH(file, model_type='BM1', **kwargs):
     """Read VABS homogenization output.
     """
 
-    # try:
-    #     model_type = kwargs['model_type'].upper()
-    # except KeyError:
-    #     model_type = kwargs['submodel']
-
     model = kwargs.get('model', None)
 
     if model_type.upper() == 'BM1' or model_type == 1:
@@ -136,6 +131,7 @@ def _readEulerBernoulliBeamModel(file, model=None):
             try:
                 tmp_id = line.index('degrees')
             except ValueError:
+                # If not find the value, read the next line
                 line = file.readline().split()
                 tmp_id = line.index('degrees')
             model.phi_pba = float(line[tmp_id - 1])

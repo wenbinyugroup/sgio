@@ -36,33 +36,37 @@ def read_buffer(f, file_format:str, format_version:str, model:int|str):
     sg = StructureGene()
     sg.version = format_version
 
-    if isinstance(model, int):
-        smdim = model
-    elif isinstance(model, str):
-        if model.upper()[:2] == 'SD':
-            smdim = 3
-        elif model.upper()[:2] == 'PL':
-            smdim = 2
-        elif model.upper()[:2] == 'BM':
-            smdim = 1
+    smdim = 1
+
+    # if isinstance(model, int):
+    #     smdim = model
+    # elif isinstance(model, str):
+    #     if model.upper()[:2] == 'SD':
+    #         smdim = 3
+    #     elif model.upper()[:2] == 'PL':
+    #         smdim = 2
+    #     elif model.upper()[:2] == 'BM':
+    #         smdim = 1
 
     sg.smdim = smdim
+    # print(f'smdim: {smdim}')
 
     # Read head
     configs = _readHeader(f, file_format, format_version, smdim)
+    # print(f'configs: {configs}')
     sg.sgdim = configs['sgdim']
     sg.physics = configs['physics']
     sg.do_dampling = configs.get('do_damping', 0)
     _use_elem_local_orient = configs.get('use_elem_local_orient', 0)
     sg.is_temp_nonuniform = configs.get('is_temp_nonuniform', 0)
-    if smdim != 3:
-        sg.model = configs['model']
-        if smdim == 1:
-            init_curvs = configs.get('curvature', [0.0, 0.0, 0.0])
-            sg.initial_twist = init_curvs[0]
-            sg.initial_curvature = init_curvs[1:]
-        elif smdim == 2:
-            sg.initial_curvature = configs.get('curvature', [0.0, 0.0])
+    # if smdim != 3:
+    sg.model = configs['model']
+        # if smdim == 1:
+    init_curvs = configs.get('curvature', [0.0, 0.0, 0.0])
+    sg.initial_twist = init_curvs[0]
+    sg.initial_curvature = init_curvs[1:]
+        # elif smdim == 2:
+        #     sg.initial_curvature = configs.get('curvature', [0.0, 0.0])
 
     nnode = configs['num_nodes']
     nelem = configs['num_elements']
@@ -78,6 +82,8 @@ def read_buffer(f, file_format:str, format_version:str, model:int|str):
     # Read materials
     nmate = configs['num_materials']
     sg.materials = _readMaterials(f, file_format, nmate)
+
+    # print(f'sg.model: {sg.model}')
 
     return sg
 
@@ -127,7 +133,14 @@ def read_output_buffer(
     """
 
     if analysis == 0 or analysis == 'h' or analysis == '':
-        return _readOutputH(file, model_type=model_type, **kwargs)
+        if not sg is None:
+            # print(f'sg.model: {sg.model}')
+            if sg.model == 0:
+                return _readOutputH(file, model_type='bm1', **kwargs)
+            elif sg.model == 1:
+                return _readOutputH(file, model_type='bm2', **kwargs)
+        else:
+            return _readOutputH(file, model_type=model_type, **kwargs)
 
     elif analysis == 1 or analysis == 2 or analysis == 'dl' or analysis == 'd' or analysis == 'l':
         if ext == 'u':
