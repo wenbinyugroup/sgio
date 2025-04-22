@@ -350,9 +350,6 @@ def readOutput(
         If `analysis` is 'd' or 'l', return the state case.
     """
 
-    # print(f'reading {file_format} output file {fn}...')
-    # print(f'file_format: {file_format}, analysis: {analysis}, smdim: {smdim}...')
-
     if analysis == 'h':
         with open(fn, 'r') as file:
             if file_format.lower().startswith('s'):

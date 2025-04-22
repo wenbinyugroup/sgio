@@ -751,7 +751,8 @@ def _readOutputCauchyContinuumModel(file):
     mp = smdl.CauchyContinuumModel()
 
     # Always set the homogenizated material as general anisotropic
-    mp.isotropy = 2
+    # mp.isotropy = 2
+    mp.set('isotropy', 2)
 
     linesRead = []
     keywordsIndex = {}
@@ -809,13 +810,15 @@ def _readOutputCauchyContinuumModel(file):
 
     try:
         ln = keywordsIndex['stff']
-        mp.stff = sutl.textToMatrix(linesRead[ln + 2:ln + 8])
+        _stff = sutl.textToMatrix(linesRead[ln + 2:ln + 8])
+        mp.set('elastic', _stff, input_type='stiffness')
     except KeyError:
         logger.debug('No classical stiffness matrix found.')
 
     try:
         ln = keywordsIndex['cmpl']
-        mp.cmpl = sutl.textToMatrix(linesRead[ln + 2:ln + 8])
+        _cmpl = sutl.textToMatrix(linesRead[ln + 2:ln + 8])
+        mp.set('elastic', _cmpl, input_type='compliance')
     except KeyError:
         logger.debug('No classical flexibility matrix found.')
 

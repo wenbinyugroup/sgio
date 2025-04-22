@@ -10,6 +10,7 @@ class EulerBernoulliBeamModel:
     """
 
     dim = 1
+    label = 'bm1'
     model_name = 'Euler-Bernoulli beam model'
 
     def __init__(self):
@@ -324,6 +325,12 @@ class EulerBernoulliBeamModel:
             if name == 'tcz' or name == 'tc3':
                 return self.xt3
 
+            # Principal axes
+            if name == 'phi_pia':
+                return self.phi_pia
+            if name == 'phi_pba':
+                return self.phi_pba
+
         elif isinstance(name, list) or isinstance(name, tuple):
             props = []
             for n in name:
@@ -379,6 +386,7 @@ class TimoshenkoBeamModel:
     """
 
     dim = 1
+    label = 'bm2'
     model_name = 'Timoshenko beam model'
 
     def __init__(self):
