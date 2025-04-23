@@ -1,0 +1,917 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>inpRW._inpMod &#8212; inpRW 2023.10.6 documentation</title><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/pydoctheme.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles.css" />
+    
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/sphinx_highlight.js"></script>
+    
+    <script src="../../../_static/sidebar.js"></script>
+    
+    <link rel="shortcut icon" href="../../../_static/3DS_SIMULIA_Blue_Icon_32.png"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="inpRW._importedModules" href="../_importedModules/index.html" />
+    <link rel="prev" title="inpRW._inpFindRefs" href="../_inpFindRefs/index.html" /><link rel="shortcut icon" type="image/png" href="../../../_static/icon-116-3dx-apps.svg" />
+            <script type="text/javascript" src="../../../_static/copybutton.js"></script>
+            <script type="text/javascript" src="../../../_static/menu.js"></script> 
+  </head>
+<body>
+<div class="mobile-nav">
+    <input type="checkbox" id="menuToggler" class="toggler__input" aria-controls="navigation"
+           aria-pressed="false" aria-expanded="false" role="button" aria-label="Menu" />
+    <label for="menuToggler" class="toggler__label">
+        <span></span>
+    </label>
+    <nav class="nav-content" role="navigation">
+         <a href="inpRW_toc.html" class="nav-logo">
+             <img src="../../../_static/icon-116-3dx-apps.svg" alt="Logo"/>
+         </a>
+        <div class="version_switcher_placeholder"></div>
+        <form role="search" class="search" action="../../../search.html" method="get">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" class="search-icon">
+                <path fill-rule="nonzero"
+                        d="M15.5 14h-.79l-.28-.27a6.5 6.5 0 001.48-5.34c-.47-2.78-2.79-5-5.59-5.34a6.505 6.505 0 00-7.27 7.27c.34 2.8 2.56 5.12 5.34 5.59a6.5 6.5 0 005.34-1.48l.27.28v.79l4.25 4.25c.41.41 1.08.41 1.49 0 .41-.41.41-1.08 0-1.49L15.5 14zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" fill="#444"></path>
+            </svg>
+            <input type="text" name="q" aria-label="Quick search"/>
+            <input type="submit" value="Go"/>
+        </form>
+    </nav>
+    <div class="menu-wrapper">
+        <nav class="menu" role="navigation" aria-label="main navigation">
+            <div class="language_switcher_placeholder"></div>
+            <p class="logo">
+                <a href="../../../index.html">
+                <img class="logo" src="../../../_static/3DS_SIMULIA_Logotype_RGB_BlueSteel.png" alt="Logo" style="border-radius:5px"/>
+                </a>
+            </p>
+  <div>
+    <h3><a href="../../../inpRW_toc.html">Local Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW._inpMod</span></code></a><ul>
+<li><a class="reference internal" href="#module-inpRW._inpMod">Module Contents</a><ul>
+<li><a class="reference internal" href="#inpRW._inpMod.Mod"><code class="docutils literal notranslate"><span class="pre">Mod</span></code></a><ul>
+<li><a class="reference internal" href="#inpRW._inpMod.Mod.calculateCentroid"><code class="docutils literal notranslate"><span class="pre">Mod.calculateCentroid()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpMod.Mod.convertOPnewToOPmod"><code class="docutils literal notranslate"><span class="pre">Mod.convertOPnewToOPmod()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpMod.Mod.createManifest"><code class="docutils literal notranslate"><span class="pre">Mod.createManifest()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpMod.Mod.deleteItemReferences"><code class="docutils literal notranslate"><span class="pre">Mod.deleteItemReferences()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpMod.Mod.deleteKeyword"><code class="docutils literal notranslate"><span class="pre">Mod.deleteKeyword()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpMod.Mod.getLabelsFromSet"><code class="docutils literal notranslate"><span class="pre">Mod.getLabelsFromSet()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpMod.Mod.insertKeyword"><code class="docutils literal notranslate"><span class="pre">Mod.insertKeyword()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpMod.Mod.mergeNodes"><code class="docutils literal notranslate"><span class="pre">Mod.mergeNodes()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpMod.Mod.reduceStepSubKWs"><code class="docutils literal notranslate"><span class="pre">Mod.reduceStepSubKWs()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpMod.Mod.removeGenerate"><code class="docutils literal notranslate"><span class="pre">Mod.removeGenerate()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpMod.Mod.replaceKeyword"><code class="docutils literal notranslate"><span class="pre">Mod.replaceKeyword()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpMod.Mod.updateKTRIDD"><code class="docutils literal notranslate"><span class="pre">Mod.updateKTRIDD()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpMod.Mod.updatePKTRICD"><code class="docutils literal notranslate"><span class="pre">Mod.updatePKTRICD()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpMod.Mod._consolidateDofXtoYDatalines"><code class="docutils literal notranslate"><span class="pre">Mod._consolidateDofXtoYDatalines()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpMod.Mod._convertSystem"><code class="docutils literal notranslate"><span class="pre">Mod._convertSystem()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpMod.Mod._isolateNodesToKeep"><code class="docutils literal notranslate"><span class="pre">Mod._isolateNodesToKeep()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpMod.Mod._removeSystem"><code class="docutils literal notranslate"><span class="pre">Mod._removeSystem()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpMod.Mod._replaceStarParameter"><code class="docutils literal notranslate"><span class="pre">Mod._replaceStarParameter()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  </div>
+<h3><a href="../../../inpRW_toc.html">Global Table of Contents</a></h3>
+<p class="caption" role="heading"><span class="caption-text">User Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/Introduction.html">inpRW Utility Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/Project-Background.html">Project Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/Installation-and-Usage.html">Installation and Usage Instructions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/Tests.html">inpRW Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/Tests.html#running-inprw-tests">Running inpRW Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/inpKeyword-Basics.html">inpKeyword Basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/Strings_Integers_and_Decimals.html">Strings, Integers, and Decimals</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/Important-inpRW-Attributes.html">Important <code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW</span></code> Attributes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/Miscellaneous-Usage-hints.html">Miscellaneous Usage Hints</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/Example-Scenarios.html">Example Scenarios</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/glossary.html">Glossary</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW</span></code></a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../_inpR/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW._inpR</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_inpW/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW._inpW</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_inpFind/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW._inpFind</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_inpFindRefs/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW._inpFindRefs</span></code></a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW._inpMod</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_importedModules/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW._importedModules</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_inpCustom/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW._inpCustom</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../centroid/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">centroid</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../config/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">config</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../config_re/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">config_re</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../csid/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">csid</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../eval2/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">eval2</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../elType/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">elType</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../inpDecimal/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpDecimal</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../inpInt/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpInt</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../inpKeyword/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpKeyword</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../inpKeywordHelper/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpKeywordHelper</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../inpKeywordSequence/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpKeywordSequence</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../inpRWErrors/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRWErrors</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../inpString/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpString</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../mesh/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">mesh</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../misc_functions/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">misc_functions</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../NoneSort/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">NoneSort</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../printer/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">printer</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../repr2/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">repr2</span></code></a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Update Notes</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../Update-Notes/index.html">Update Notes</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Legal Notices and Usage Disclaimer</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../legal_notices/Legal_Notices_and_Usage_Disclaimer.html">Legal Notices and Usage Disclaimer</a></li>
+</ul>
+
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="../_inpFindRefs/index.html"
+                          title="previous chapter"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW._inpFindRefs</span></code></a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="../_importedModules/index.html"
+                          title="next chapter"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW._importedModules</span></code></a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../../_sources/autoapi/inpRW/_inpMod/index.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </nav>
+    </div>
+</div>
+  
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../_importedModules/index.html" title="inpRW._importedModules"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../_inpFindRefs/index.html" title="inpRW._inpFindRefs"
+             accesskey="P">previous</a> |</li>
+          <li><img src="../../../_static/icon-116-3dx-apps.svg" alt="python logo" style="vertical-align: middle; margin-top: -1px"/></li>
+          <li><a href="inpRW_toc.html"></a> &#187;</li>
+          <li class="switchers">
+            <div class="language_switcher_placeholder"></div>
+            <div class="version_switcher_placeholder"></div>
+          </li>
+          <li>
+              
+              <a href="../../../inpRW_toc.html">inpRW 2023.10.6 documentation</a> &#187;
+              
+          </li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW</span></code></a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href=""><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW._inpMod</span></code></a></li>
+                <li class="right">
+                    
+
+    <div class="inline-search" role="search">
+        <form class="inline-search" action="../../../search.html" method="get">
+          <input placeholder="Quick search" aria-label="Quick search" type="text" name="q" />
+          <input type="submit" value="Go" />
+          <input type="hidden" name="check_keywords" value="yes" />
+          <input type="hidden" name="area" value="default" />
+        </form>
+    </div>
+                     |
+                </li>
+            
+      </ul>
+    </div>    
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="inprw-inpmod">
+<h1><a class="reference internal" href="#module-inpRW._inpMod" title="inpRW._inpMod"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW._inpMod</span></code></a><a class="headerlink" href="#inprw-inpmod" title="Permalink to this heading">¶</a></h1>
+<section id="module-inpRW._inpMod">
+<span id="module-contents"></span><h2>Module Contents<a class="headerlink" href="#module-inpRW._inpMod" title="Permalink to this heading">¶</a></h2>
+<p>This module contains functions for modifying the data in <a class="reference internal" href="../index.html#inpRW.inpRW.keywords" title="inpRW.inpRW.keywords"><code class="xref py py-attr docutils literal notranslate"><span class="pre">keywords</span></code></a>.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="inpRW._inpMod.Mod">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">inpRW._inpMod.</span></span><span class="sig-name descname"><span class="pre">Mod</span></span><a class="headerlink" href="#inpRW._inpMod.Mod" title="Permalink to this definition">¶</a></dt>
+<dd><p>The <a class="reference internal" href="#inpRW._inpMod.Mod" title="inpRW._inpMod.Mod"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mod</span></code></a> class contains functions modify data in the parsed input file structure.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="inpRW._inpMod.Mod.calculateCentroid">
+<span class="sig-name descname"><span class="pre">calculateCentroid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">elementID</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#inpRW._inpMod.Mod.calculateCentroid" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function gets the nodal coordinates of an element and calls <a class="reference internal" href="../../centroid/index.html#centroid.averageVertices" title="centroid.averageVertices"><code class="xref py py-func docutils literal notranslate"><span class="pre">centroid.averageVertices()</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>elementID</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a><em> or </em><a class="reference internal" href="../../inpInt/index.html#inpInt.inpInt" title="inpInt.inpInt"><em>inpInt</em></a>) – The label of an element.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A numpy array containing the coordinates of the element centroid.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.26)">numpy.ndarray</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="inpRW._inpMod.Mod.convertOPnewToOPmod">
+<span class="sig-name descname"><span class="pre">convertOPnewToOPmod</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">startStep</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">finishStep</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bStep</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#inpRW._inpMod.Mod.convertOPnewToOPmod" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts keyword parameter OP=NEW to OP=MOD or OP=REPLACE and removes unnecessary keywords from steps.</p>
+<p>This function will first identify a baseStep from which to compare all steps between and including <em>startStep</em>
+and <em>finishStep</em>. baseStep can be specified via the <em>bStep</em> parameter, or it will be the 0th step. The function
+will first identify the keyword blocks in baseStep which use the “OP” parameter (the list of potential keywords
+is stored in <a class="reference internal" href="../../config/index.html#config._opKeywords" title="config._opKeywords"><code class="xref py py-attr docutils literal notranslate"><span class="pre">_opKeywords</span></code></a>). This will include implied “OP” parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>startStep</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – The beginning step for which to convert “OP” parameters. Defaults to 0.</p></li>
+<li><p><strong>finishStep</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – The last step for which to convert “OP” parameters. If None, all steps after
+and including <em>startStep</em> will be converted. Defaults to None.</p></li>
+<li><p><strong>bStep</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – The index or name of the step in <a class="reference internal" href="../index.html#inpRW.inpRW.kwg" title="inpRW.inpRW.kwg"><code class="xref py py-attr docutils literal notranslate"><span class="pre">kwg['Step']</span></code></a> from which
+the other steps will be compared. If bStep = None, the 0th step will be baseStep. Defaults to None.</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This function should not be used. It needs to be reworked, as it does not properly deactivate step features
+that are inactive in subsequent steps.</p>
+</div>
+<div class="admonition-todo admonition" id="id1">
+<p class="admonition-title">Todo</p>
+<p>Read Boundary Conditions in model data as the initial baseStep.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="inpRW._inpMod.Mod.createManifest">
+<span class="sig-name descname"><span class="pre">createManifest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lastBaseStep</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stepGroupingIn</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameterString</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#inpRW._inpMod.Mod.createManifest" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a *MANIFEST <a class="reference internal" href="../index.html#inpRW.inpRW" title="inpRW.inpRW"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpRW</span></code></a> instance and places the steps in the original file into sub-input files.</p>
+<p>This function will reorganize the steps in the input file per the user’s specification. The new *MANIFEST
+input file will look like the following:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span><span class="n">MANIFEST</span><span class="p">,</span><span class="n">BASE</span> <span class="n">STATE</span><span class="o">=</span><span class="n">YES</span><span class="p">,</span> <span class="n">EVOLUTION</span> <span class="n">TYPE</span><span class="o">=</span><span class="n">HISTORY</span>
+<span class="n">model_and_basesteps</span><span class="o">.</span><span class="n">inp</span>
+<span class="n">stepGrouping1</span><span class="o">.</span><span class="n">inp</span>
+<span class="n">stepGrouping2</span><span class="o">.</span><span class="n">inp</span>
+<span class="n">stepGrouping3</span><span class="o">.</span><span class="n">inp</span>
+</pre></div>
+</div>
+<p>The first input file will contain the model data and any common base steps for the subsequent simulations.
+All subsequent input files contain independent simulation histories. See that Abaqus documentation for
+more information on <a class="reference external" href="https://help.3ds.com/2023/English/DSSIMULIA_Established/SIMACAEKEYRefMap/simakey-r-manifest.htm?contextscope=all&amp;id=548c10151d164474bff2a41c0e9821f4">*MANIFEST</a>.</p>
+<p><em>lastBaseStep</em> is the last step in the input file that will be considered a base step for the analysis. It can be
+a 0-based integer corresponding to the step number, or it can be a case-insensitive string corresponding to a
+step name. If <em>lastBaseStep</em> is not specified, all steps in the simulation will be used in nonlinear
+load cases.</p>
+<p><em>stepGroupingIn</em> is a sequence of sequences, the first item is the input file name, and the second is a
+sequence of the steps to associate with that input file. The sequence can use step names or integers.</p>
+<p>For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">stepGroupingIn</span> <span class="o">=</span> <span class="p">[</span> <span class="p">[</span><span class="s1">&#39;LoadA.inp&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;Step-1&#39;</span><span class="p">,</span> <span class="s1">&#39;Step-2&#39;</span><span class="p">]],</span> <span class="p">[</span><span class="s1">&#39;LoadB.inp&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]]</span> <span class="p">]</span>
+</pre></div>
+</div>
+<p>If <em>stepGroupingIn</em> is not specified, all steps after <em>lastBaseStep</em> will be independent nonlinear load cases.
+There is no limit on how steps can be ordered, reused, etc. However, it is the analyst’s responsibility to
+build a working step order, as this function does not check the validity of the simulation.</p>
+<p><em>parameterString</em> is a string that allows the user to specify the parameters for *MANIFEST. Specify them as
+you would on the Abaqus keyword line. The “BASE STATE” parameter will be set based on the <em>lastBaseStep</em> input.
+“EVOLUTION TYPE=HISTORY” is automatically included and should not be specified, as this is currently (as of
+Abaqus 2022 GA) the only valid option.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">parameterString</span> <span class="o">=</span> <span class="s1">&#39;MODEL CHANGE, RESULTS=new&#39;</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>lastBaseStep</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – Indicates which step should be considered the last base step for the
+*MANIFEST steps. Use 0-based indices.</p></li>
+<li><p><strong>stepGroupingIn</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a>) – A Sequence of sequences, the first item is the input file name, and the second
+is a sequence of the steps to associate with that input file. The sequence can use step names or integers.</p></li>
+<li><p><strong>parameterString</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – Specifies additional parameters for the keyword line. The “BASE STATE” and
+“EVOLUTION TYPE” parameters will automatically be included.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A new <a class="reference internal" href="../index.html#inpRW.inpRW" title="inpRW.inpRW"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpRW</span></code></a> instance reorganized as a *MANIFEST input file.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../index.html#inpRW.inpRW" title="inpRW.inpRW">inpRW</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="inpRW._inpMod.Mod.deleteItemReferences">
+<span class="sig-name descname"><span class="pre">deleteItemReferences</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">labelD</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inputType</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'other'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deleteModCouplings</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delNodesFromElsLevel1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#inpRW._inpMod.Mod.deleteItemReferences" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function will delete the item references in <em>labelD</em> throughout the input file. If an item that is
+deleted also deletes a <a class="reference internal" href="../index.html#inpRW.inpRW.namedRefs" title="inpRW.inpRW.namedRefs"><code class="xref py py-attr docutils literal notranslate"><span class="pre">named</span> <span class="pre">reference</span></code></a>, this function will also find the
+references to those new items and delete them.</p>
+<p>A thorough explanation of the <em>delNodesFromElsLevel1</em> option is needed.</p>
+<blockquote>
+<div><p>The user has a set of nodes to delete. The user generates <em>labelD</em> with “labelD = findNodeRefs(nlabels)”.
+He then deletes the nodes and all references to the nodes (contained in <em>labelD</em>) with
+<code class="docutils literal notranslate"><span class="pre">deleteItemReferences(labelD,</span> <span class="pre">'node')</span></code>. <a class="reference internal" href="#inpRW._inpMod.Mod.deleteItemReferences" title="inpRW._inpMod.Mod.deleteItemReferences"><code class="xref py py-func docutils literal notranslate"><span class="pre">deleteItemReferences()</span></code></a> will call itself to handle chained
+item references, and it will specify the <em>_level</em> parameter to track how many levels deep it is. When deleting
+nodes, <a class="reference internal" href="#inpRW._inpMod.Mod.deleteItemReferences" title="inpRW._inpMod.Mod.deleteItemReferences"><code class="xref py py-func docutils literal notranslate"><span class="pre">deleteItemReferences()</span></code></a> will by default delete the nodes and their references, which will
+include elements. It deletes the elements by calling <code class="docutils literal notranslate"><span class="pre">deleteItemReferences(elementD,</span> <span class="pre">'element',</span> <span class="pre">_level=1)</span></code>,
+which also handles deleting all references to the elements.</p>
+<p><code class="docutils literal notranslate"><span class="pre">deleteItemReferences(elementD,</span> <span class="pre">'element',</span> <span class="pre">_level=0)</span></code> behaves a bit differently. When elements are
+deleted, any nodes that were formally parts of elements but are no longer referenced by any elements will
+be deleted. This does not happen with <code class="docutils literal notranslate"><span class="pre">deleteItemReferences(elementD,</span> <span class="pre">'element',</span> <span class="pre">_level=1)</span></code> unless
+<em>delNodesFromElsLevel1=True</em> is also specified.</p>
+<p>This option has some niche use cases (for example, deleting fastener constructs of the form
+mesh - coupling - solid elements representing weld - coupling - mesh). In most cases, leaving
+<em>delNodesFromElsLevel1=False</em> (default) is the desired choice.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>labelD</strong> (<a class="reference internal" href="../../csid/index.html#csid.csid" title="csid.csid"><em>csid</em></a>) – Contains the mapping between the item references (the keys), and the location of the reference
+along with the region that should be deleted if the item is deleted (the value). <em>labelD</em> should
+be the return <a class="reference internal" href="../../csid/index.html#module-csid" title="csid"><code class="xref py py-class docutils literal notranslate"><span class="pre">csid</span></code></a> from a function in <a class="reference internal" href="../_inpFindRefs/index.html#inpRW._inpFindRefs.FindRefs" title="inpRW._inpFindRefs.FindRefs"><code class="xref py py-class docutils literal notranslate"><span class="pre">FindRefs</span></code></a>.</p></li>
+<li><p><strong>inputType</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – Indicates to what <em>labelD</em> refers. Valid options are ‘node’, ‘element’, and ‘other’.
+‘node’ will handle node label and node set references, ‘element’ will handle element label
+and element set references, and ‘other’ handles all other cases. Defaults to ‘other’.</p></li>
+<li><p><strong>deleteModCouplings</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><em>bool</em></a>) – If True, all *COUPLING, *KINEMATIC COUPLING, and *DISTRIBUTING COUPLING
+keywords with modified application regions (*SURFACE, *NSET, *ELSET) will be deleted.
+Defaults to False.</p></li>
+<li><p><strong>delNodesFromElsLevel1</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><em>bool</em></a>) – If True, nodes can be deleted when element references are deleted in _level=1.
+See detailed explanation above. Defaults to False.</p></li>
+<li><p><strong>_level</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a>) – Tracks when <a class="reference internal" href="#inpRW._inpMod.Mod.deleteItemReferences" title="inpRW._inpMod.Mod.deleteItemReferences"><code class="xref py py-func docutils literal notranslate"><span class="pre">deleteItemReferences()</span></code></a> calls itself to handle certain reference chains.
+The user should not need to specify this. Defaults to 0.</p></li>
+<li><p><strong>_limit</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a>) – A limit on how many iterations this function will perform when trying to identify and delete
+chains of references. This check is performed in a while loop, which could create an infinite loop
+if something unexpected happens, hence the limit. The iterations referred to is something like the
+following: delete a node -&gt; delete an element -&gt; delete an element set -&gt; delete a surface -&gt;
+delete a contact pair. This example had 5 iterations from deleting nodes to deleting a contact pair
+using an element based surface. The default value of 100 should be much higher than necessary.
+Defaults to 100.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="inpRW._inpMod.Mod.deleteKeyword">
+<span class="sig-name descname"><span class="pre">deleteKeyword</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">positionl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">updateInpStructure</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">printstatus</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#inpRW._inpMod.Mod.deleteKeyword" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deletes the keyword block at the indicated location and updates the data structure.</p>
+<p>Either <em>path</em> or <em>positionl</em> is required. Set <em>updateInpStructure</em> to False if you need to delete many keyword
+blocks from a large input file, as those update operations can be slow. If <em>updateInpStructure</em> == True,
+this function will call <a class="reference internal" href="../index.html#inpRW.inpRW.updateInp" title="inpRW.inpRW.updateInp"><code class="xref py py-func docutils literal notranslate"><span class="pre">updateInp()</span></code></a>, but only update <a class="reference internal" href="../../inpKeyword/index.html#inpKeyword.inpKeyword" title="inpKeyword.inpKeyword"><code class="xref py py-class docutils literal notranslate"><span class="pre">keyword</span> <span class="pre">block</span></code></a>
+paths after (and including) the position of the deleted block, and it will not call
+<a class="reference internal" href="../_inpR/index.html#inpRW._inpR.Read._groupKeywordBlocks" title="inpRW._inpR.Read._groupKeywordBlocks"><code class="xref py py-func docutils literal notranslate"><span class="pre">_groupKeywordBlocks()</span></code></a>, as this function will automatically delete the entry from
+<a class="reference internal" href="../index.html#inpRW.inpRW.kwg" title="inpRW.inpRW.kwg"><code class="xref py py-attr docutils literal notranslate"><span class="pre">kwg</span></code></a>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>When deleting a list of keywords, deleting one keyword will change the indices of all subsequent keywords.
+However, the list of <a class="reference internal" href="../../inpKeyword/index.html#inpKeyword.inpKeyword.path" title="inpKeyword.inpKeyword.path"><code class="xref py py-attr docutils literal notranslate"><span class="pre">inpKeyword.paths</span></code></a> or position indices of keywords
+to delete will not update automatically. For this reason, the user should always sort the list of keywords
+to delete so that they are deleted from the end of the .inp towards the front. Deleting a keyword object
+at the end of the list will not affect the indices of keywords prior to it. The sorting is more easily
+handled when using <em>positionl</em> (which is a list of integers) than with <em>path</em>, which is a list of strings.
+If the input file was parsed with organize=True, the user will need to perform a multi-level sort to account
+for the keyword and suboption indices. Use <a class="reference internal" href="../../misc_functions/index.html#misc_functions.nestedSort" title="misc_functions.nestedSort"><code class="xref py py-func docutils literal notranslate"><span class="pre">nestedSort()</span></code></a> for this task. Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">oldBlockPaths</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">flatten</span><span class="p">(</span><span class="n">oldBlockPaths</span><span class="p">))</span>
+<span class="c1">#gets a flattened list of keyword paths to delete</span>
+
+<span class="n">oldBlockPositionls</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">parsePath</span><span class="p">(</span><span class="n">i</span><span class="p">)[</span><span class="mi">1</span><span class="p">:]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">oldBlockPaths</span><span class="p">]</span>
+<span class="c1">#gets the positionL from each path i.e. [1,[0]] will be keyword block 1, suboption 0</span>
+
+<span class="n">oldBlockPositionls1</span> <span class="o">=</span> <span class="n">nestedSort</span><span class="p">(</span><span class="n">iterable</span><span class="o">=</span><span class="n">oldBlockPositionls</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="c1">#sorts oldBlockPositionls in reverse order. This will account for nested suboptions.</span>
+</pre></div>
+</div>
+<p>Alternately, the user can account for the change of indices when deleting keywords. However, sorting
+and reversing the list of keywords to delete should be simpler in most cases.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – A string indicating the path to the <a class="reference internal" href="../../inpKeyword/index.html#inpKeyword.inpKeyword" title="inpKeyword.inpKeyword"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpKeyword</span></code></a> to delete. Defaults to ‘’.</p></li>
+<li><p><strong>positionl</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a>) – A sequence of sequences with the indices to the <a class="reference internal" href="../../inpKeyword/index.html#inpKeyword.inpKeyword" title="inpKeyword.inpKeyword"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpKeyword</span></code></a> block
+to delete. A path string will be generated from this via <a class="reference internal" href="../_inpR/index.html#inpRW._inpR.Read.createPathFromSequence" title="inpRW._inpR.Read.createPathFromSequence"><code class="xref py py-func docutils literal notranslate"><span class="pre">createPathFromSequence()</span></code></a>.
+Defaults to None.</p></li>
+<li><p><strong>updateInpStructure</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><em>bool</em></a>) – If True, will call <a class="reference internal" href="../index.html#inpRW.inpRW.updateInp" title="inpRW.inpRW.updateInp"><code class="xref py py-func docutils literal notranslate"><span class="pre">updateInp()</span></code></a> after deleting
+the keyword block. Defaults to True.</p></li>
+<li><p><strong>printstatus</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><em>bool</em></a>) – If True, print which keyword block is deleted. Defaults to True.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="inpRW._inpMod.Mod.getLabelsFromSet">
+<span class="sig-name descname"><span class="pre">getLabelsFromSet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">blocks</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#inpRW._inpMod.Mod.getLabelsFromSet" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a flat list of all the labels from the set defined in <em>block</em>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>blocks</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a>) – A list of *NSET or *ELSET keyword blocks.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A flat list containing the labels in the sets. If more than one set is passed to this function,
+the output list will be sorted and contain only unique entries. If only one set is used, the output
+will not be sorted, and any duplicate entries will not be removed.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)">list</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="inpRW._inpMod.Mod.insertKeyword">
+<span class="sig-name descname"><span class="pre">insertKeyword</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">positionl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">updateInpStructure</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#inpRW._inpMod.Mod.insertKeyword" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inserts a new keyword object in the <a class="reference internal" href="../../inpKeywordSequence/index.html#module-inpKeywordSequence" title="inpKeywordSequence"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpKeywordSequence</span></code></a> at the location specified by <em>path</em> or <em>positionl</em>.</p>
+<p><em>obj</em> is required, and either <em>path</em> or <em>positionl</em> is required. Set <em>updateInpStructure</em> to False if you need to
+insert many keyword blocks into a large input file, as those update operations can be slow. If <em>updateInpStructure</em> == True,
+this function will call <a class="reference internal" href="../index.html#inpRW.inpRW.updateInp" title="inpRW.inpRW.updateInp"><code class="xref py py-func docutils literal notranslate"><span class="pre">updateInp()</span></code></a>, but only update <a class="reference internal" href="../../inpKeyword/index.html#inpKeyword.inpKeyword" title="inpKeyword.inpKeyword"><code class="xref py py-class docutils literal notranslate"><span class="pre">keyword</span> <span class="pre">block</span></code></a>
+paths after (and including) the position of the inserted block. <a class="reference internal" href="../index.html#inpRW.inpRW.kwg" title="inpRW.inpRW.kwg"><code class="xref py py-attr docutils literal notranslate"><span class="pre">kwg</span></code></a> will only have the
+new block added.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Inserting multiple keywords should be done in reverse order. See the note in <a class="reference internal" href="#inpRW._inpMod.Mod.deleteKeyword" title="inpRW._inpMod.Mod.deleteKeyword"><code class="xref py py-func docutils literal notranslate"><span class="pre">deleteKeyword()</span></code></a> for
+a detailed explanation.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>obj</strong> (<a class="reference internal" href="../../inpKeyword/index.html#inpKeyword.inpKeyword" title="inpKeyword.inpKeyword"><em>inpKeyword</em></a>) – The new keyword block to insert.</p></li>
+<li><p><strong>path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – A string indicating the path to the <a class="reference internal" href="../../inpKeyword/index.html#inpKeyword.inpKeyword" title="inpKeyword.inpKeyword"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpKeyword</span></code></a> to delete. Defaults to ‘’.</p></li>
+<li><p><strong>positionl</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a>) – A sequence of sequences with the indices to the <a class="reference internal" href="../../inpKeyword/index.html#inpKeyword.inpKeyword" title="inpKeyword.inpKeyword"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpKeyword</span></code></a> block
+to delete. A path string will be generated from this via <a class="reference internal" href="../_inpR/index.html#inpRW._inpR.Read.createPathFromSequence" title="inpRW._inpR.Read.createPathFromSequence"><code class="xref py py-func docutils literal notranslate"><span class="pre">createPathFromSequence()</span></code></a>.
+Defaults to None.</p></li>
+<li><p><strong>updateInpStructure</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><em>bool</em></a>) – If True, will call <a class="reference internal" href="../index.html#inpRW.inpRW.updateInp" title="inpRW.inpRW.updateInp"><code class="xref py py-func docutils literal notranslate"><span class="pre">updateInp()</span></code></a> after deleting
+the keyword block. Defaults to True.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="inpRW._inpMod.Mod.mergeNodes">
+<span class="sig-name descname"><span class="pre">mergeNodes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dupNodeDict</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#inpRW._inpMod.Mod.mergeNodes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Merges pairs of nodes into one node. The node labels referred to by the keys in <em>dupNodeDict</em> will be replaced
+with the node labels in values.</p>
+<p><em>dupNodeDict</em> should be a one-to-one mapping of node labels. The key will be replaced by the value. In most
+cases, this dictionary should be created by using <a class="reference internal" href="../_inpFind/index.html#inpRW._inpFind.Find.findCloseNodes" title="inpRW._inpFind.Find.findCloseNodes"><code class="xref py py-func docutils literal notranslate"><span class="pre">findCloseNodes()</span></code></a>.</p>
+<p>For every pair of nodes in <em>dupNodeDict</em>, this function will first find every element connected to the old
+node (the key). Each of these elements will have their references to the node label in key replaced with the
+node label in value. Then, the old node will have its <a class="reference internal" href="../../mesh/index.html#mesh.Node.elements" title="mesh.Node.elements"><code class="xref py py-attr docutils literal notranslate"><span class="pre">mesh.Node.elements</span></code></a> attribute cleared. Finally,
+<a class="reference internal" href="#inpRW._inpMod.Mod.deleteItemReferences" title="inpRW._inpMod.Mod.deleteItemReferences"><code class="xref py py-func docutils literal notranslate"><span class="pre">deleteItemReferences()</span></code></a> will be called to delete the old nodes and remove all remaining references to
+them. Thus, the only locations in the input file where the old node labels will be replaced with the new
+node labels is in *ELEMENT keyword blocks; all other references will simply be deleted.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dupNodeDict</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><em>dict</em></a>) – A dictionary which maps the node label to be removed with the node label with which
+it should be replaced.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="inpRW._inpMod.Mod.reduceStepSubKWs">
+<span class="sig-name descname"><span class="pre">reduceStepSubKWs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">removeComments</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#inpRW._inpMod.Mod.reduceStepSubKWs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Consolidates keywords in a particular step that can have the “OP” parameter.</p>
+<p>This function can also group some sub-keywords if the parent keywords are identical. This function is
+limited to keyword blocks in 3 different groupings: <a class="reference internal" href="../../config/index.html#config._mergeDatalineKeywordsOP" title="config._mergeDatalineKeywordsOP"><code class="xref py py-attr docutils literal notranslate"><span class="pre">_mergeDatalineKeywordsOP</span></code></a>,
+<a class="reference internal" href="../../config/index.html#config._appendDatalineKeywordsOP" title="config._appendDatalineKeywordsOP"><code class="xref py py-attr docutils literal notranslate"><span class="pre">_appendDatalineKeywordsOP</span></code></a>, and <a class="reference internal" href="../../config/index.html#config._dofXtoYDatalineKeywordsOP" title="config._dofXtoYDatalineKeywordsOP"><code class="xref py py-attr docutils literal notranslate"><span class="pre">_dofXtoYDatalineKeywordsOP</span></code></a>.</p>
+<p>If a keyword block to be removed has comments in its data, those comments will be included with the consolidated
+keyword block if removeComments=False. They will be immediately after the associated dataline if the
+keyword is in <a class="reference internal" href="../../config/index.html#config._appendDatalineKeywordsOP" title="config._appendDatalineKeywordsOP"><code class="xref py py-attr docutils literal notranslate"><span class="pre">_appendDatalineKeywordsOP</span></code></a>, or they will all be appended to the end of the
+data if the keyword is in <a class="reference internal" href="../../config/index.html#config._dofXtoYDatalineKeywordsOP" title="config._dofXtoYDatalineKeywordsOP"><code class="xref py py-attr docutils literal notranslate"><span class="pre">_dofXtoYDatalineKeywordsOP</span></code></a>.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span><span class="n">BOUNDARY</span><span class="p">,</span> <span class="n">OP</span><span class="o">=</span><span class="n">NEW</span><span class="p">,</span> <span class="n">ORIENTATION</span><span class="o">=</span><span class="s2">&quot;Orientation48&quot;</span>
+<span class="s2">&quot;Fixed Displacement24&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mf">0.</span>
+<span class="o">*</span><span class="n">BOUNDARY</span><span class="p">,</span> <span class="n">OP</span><span class="o">=</span><span class="n">NEW</span><span class="p">,</span> <span class="n">ORIENTATION</span><span class="o">=</span><span class="s2">&quot;Orientation48&quot;</span>
+<span class="s2">&quot;Fixed Displacement24&quot;</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mf">0.</span>
+<span class="o">*</span><span class="n">BOUNDARY</span><span class="p">,</span> <span class="n">OP</span><span class="o">=</span><span class="n">NEW</span><span class="p">,</span> <span class="n">ORIENTATION</span><span class="o">=</span><span class="s2">&quot;Orientation48&quot;</span>
+<span class="s2">&quot;Fixed Displacement24&quot;</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mf">0.</span>
+<span class="o">*</span><span class="n">OUTPUT</span><span class="p">,</span> <span class="n">FIELD</span><span class="p">,</span> <span class="n">FREQUENCY</span><span class="o">=</span><span class="mi">1</span>
+<span class="o">*</span><span class="n">ELEMENT</span> <span class="n">OUTPUT</span>
+<span class="n">S</span>
+<span class="o">*</span><span class="n">OUTPUT</span><span class="p">,</span> <span class="n">FIELD</span><span class="p">,</span> <span class="n">FREQUENCY</span><span class="o">=</span><span class="mi">1</span>
+<span class="o">*</span><span class="n">ELEMENT</span> <span class="n">OUTPUT</span>
+<span class="n">E</span>
+<span class="o">*</span><span class="n">OUTPUT</span><span class="p">,</span> <span class="n">FIELD</span><span class="p">,</span> <span class="n">FREQUENCY</span><span class="o">=</span><span class="mi">1</span>
+<span class="o">*</span><span class="n">ELEMENT</span> <span class="n">OUTPUT</span>
+<span class="n">PE</span>
+<span class="o">*</span><span class="n">OUTPUT</span><span class="p">,</span> <span class="n">FIELD</span><span class="p">,</span> <span class="n">FREQUENCY</span><span class="o">=</span><span class="mi">1</span>
+<span class="o">*</span><span class="n">ELEMENT</span> <span class="n">OUTPUT</span>
+<span class="n">PEEQ</span>
+</pre></div>
+</div>
+<p>will become:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span><span class="n">BOUNDARY</span><span class="p">,</span> <span class="n">OP</span><span class="o">=</span><span class="n">NEW</span><span class="p">,</span> <span class="n">ORIENTATION</span><span class="o">=</span><span class="s2">&quot;Orientation48&quot;</span>
+<span class="s2">&quot;Fixed Displacement24&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mf">0.</span>
+<span class="o">*</span><span class="n">OUTPUT</span><span class="p">,</span> <span class="n">FIELD</span><span class="p">,</span> <span class="n">FREQUENCY</span><span class="o">=</span><span class="mi">1</span>
+<span class="o">*</span><span class="n">ELEMENT</span> <span class="n">OUTPUT</span>
+<span class="n">S</span><span class="p">,</span> <span class="n">E</span><span class="p">,</span> <span class="n">PE</span><span class="p">,</span> <span class="n">PEEQ</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>removeComments</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><em>bool</em></a>) – If True, any comments associated with keyword blocks that are now consolidated will
+be deleted. Defaults to False.</p>
+</dd>
+</dl>
+<div class="admonition-todo admonition" id="id2">
+<p class="admonition-title">Todo</p>
+<p>Add support for keywords in <a class="reference internal" href="../../config/index.html#config._mergeDatalineKeywordsOP" title="config._mergeDatalineKeywordsOP"><code class="xref py py-attr docutils literal notranslate"><span class="pre">_mergeDatalineKeywordsOP</span></code></a>.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="inpRW._inpMod.Mod.removeGenerate">
+<span class="sig-name descname"><span class="pre">removeGenerate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">generateBlocks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#inpRW._inpMod.Mod.removeGenerate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes the GENERATE parameter from keyword blocks and expands the datalines.</p>
+<p>This function will loop through the keyword blocks as specified in <em>generateBlocks</em> or it will search the entire
+<a class="reference internal" href="../../inpKeywordSequence/index.html#inpKeywordSequence.inpKeywordSequence" title="inpKeywordSequence.inpKeywordSequence"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpKeywordSequence</span></code></a> for the appropriate blocks. It will remove the “GENERATE” parameter from blocks
+such as *NSET, and fully expand the datalines. It will ignore *TIME POINTS, *NODAL THICKNESS, and
+*NODAL ENERGY RATE keywords if <em>generateBlocks</em> == None.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>generateBlocks</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a>) – A list containing <a class="reference internal" href="../../inpKeyword/index.html#inpKeyword.inpKeyword" title="inpKeyword.inpKeyword"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpKeyword</span></code></a> blocks. Defaults to None.</p>
+</dd>
+</dl>
+<div class="admonition-todo admonition" id="id3">
+<p class="admonition-title">Todo</p>
+<p>Test on latest version of inpRW.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="inpRW._inpMod.Mod.replaceKeyword">
+<span class="sig-name descname"><span class="pre">replaceKeyword</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">positionl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">updateInpStructure</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#inpRW._inpMod.Mod.replaceKeyword" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deletes the keyword at the position designated by <em>path</em> or <em>positionl</em>, and then inserts the
+new keyword object at the same location.</p>
+<p><em>obj</em> is required, and either <em>path</em> or <em>positionl</em> is required. Set <em>updateInpStructure</em> to False if you need to
+insert many keyword blocks into a large input file, as those update operations can be slow. If <em>updateInpStructure</em> == True,
+this function will call <a class="reference internal" href="../index.html#inpRW.inpRW.updateInp" title="inpRW.inpRW.updateInp"><code class="xref py py-func docutils literal notranslate"><span class="pre">updateInp()</span></code></a>, but only update <a class="reference internal" href="../../inpKeyword/index.html#inpKeyword.inpKeyword" title="inpKeyword.inpKeyword"><code class="xref py py-class docutils literal notranslate"><span class="pre">keyword</span> <span class="pre">block</span></code></a>
+paths after (and including) the position of the inserted block. <a class="reference internal" href="../index.html#inpRW.inpRW.kwg" title="inpRW.inpRW.kwg"><code class="xref py py-attr docutils literal notranslate"><span class="pre">kwg</span></code></a> will only have the
+old block deleted and the new block added.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>obj</strong> (<a class="reference internal" href="../../inpKeyword/index.html#inpKeyword.inpKeyword" title="inpKeyword.inpKeyword"><em>inpKeyword</em></a>) – The new keyword block to insert.</p></li>
+<li><p><strong>path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – A string indicating the path to the <a class="reference internal" href="../../inpKeyword/index.html#inpKeyword.inpKeyword" title="inpKeyword.inpKeyword"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpKeyword</span></code></a> to delete. Defaults to ‘’.</p></li>
+<li><p><strong>positionl</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a>) – A sequence of sequences with the indices to the <a class="reference internal" href="../../inpKeyword/index.html#inpKeyword.inpKeyword" title="inpKeyword.inpKeyword"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpKeyword</span></code></a> block
+to delete. A path string will be generated from this via
+<a class="reference internal" href="../_inpR/index.html#inpRW._inpR.Read.createPathFromSequence" title="inpRW._inpR.Read.createPathFromSequence"><code class="xref py py-func docutils literal notranslate"><span class="pre">createPathFromSequence()</span></code></a>. Defaults to None.</p></li>
+<li><p><strong>updateInpStructure</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><em>bool</em></a>) – If True, will call <a class="reference internal" href="../index.html#inpRW.inpRW.updateInp" title="inpRW.inpRW.updateInp"><code class="xref py py-func docutils literal notranslate"><span class="pre">updateInp()</span></code></a> after deleting
+the keyword block. Defaults to True.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="inpRW._inpMod.Mod.updateKTRIDD">
+<span class="sig-name descname"><span class="pre">updateKTRIDD</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">keywordNames</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#inpRW._inpMod.Mod.updateKTRIDD" title="Permalink to this definition">¶</a></dt>
+<dd><p>Short for “update Keywords To Remove If Data Deleted”, this function will update <a class="reference internal" href="../index.html#inpRW.inpRW.ktridd" title="inpRW.inpRW.ktridd"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ktridd</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>keywordNames</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a>) – A sequence of keyword names.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="inpRW._inpMod.Mod.updatePKTRICD">
+<span class="sig-name descname"><span class="pre">updatePKTRICD</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mapping</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#inpRW._inpMod.Mod.updatePKTRICD" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates <a class="reference internal" href="../index.html#inpRW.inpRW.pktricd" title="inpRW.inpRW.pktricd"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pktricd</span></code></a> with the items in mapping.</p>
+<p>Each key in <a class="reference internal" href="../index.html#inpRW.inpRW.pktricd" title="inpRW.inpRW.pktricd"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pktricd</span></code></a> will be an <a class="reference internal" href="../../inpKeyword/index.html#module-inpKeyword" title="inpKeyword"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpKeyword</span></code></a> block. The value will be parent
+keyword name which should be deleted if the <a class="reference internal" href="../../inpKeyword/index.html#module-inpKeyword" title="inpKeyword"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpKeyword</span></code></a> contained in the key is deleted.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>mapping</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a>) – A sequence of sequences of the form [[[<a class="reference internal" href="../../inpKeyword/index.html#module-inpKeyword" title="inpKeyword"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpKeyword</span></code></a>, <a class="reference internal" href="../../inpKeyword/index.html#module-inpKeyword" title="inpKeyword"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpKeyword</span></code></a>, …], parentKWName (str)]].</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="inpRW._inpMod.Mod._consolidateDofXtoYDatalines">
+<span class="sig-name descname"><span class="pre">_consolidateDofXtoYDatalines</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">datalist</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">removeComments</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#inpRW._inpMod.Mod._consolidateDofXtoYDatalines" title="Permalink to this definition">¶</a></dt>
+<dd><p>Examines <em>datalist</em> to determine the DOF ranges that are constrained. Returns a consolidated list.</p>
+<p>This should be specific to the *ADAPTIVE MESH CONSTRAINT and *BOUNDARY (with certain dataline lengths) keywords.
+The function will group the datalines by application region and by applied load, and will consolidate the applicable
+DOFs. This will return new dataline(s) as applicable.</p>
+<p>The first grouping is via the application region, which is the 0th field in the dataline. This should be a
+node label or node set name. This function just uses the item in the field as the key; so if one *BOUNDARY
+applies to node 1, and another applies to nset1, which contains only node 1, the BCs will not be consolidated
+together.</p>
+<p>The items in datalist should all correspond to identical keyword lines, as it would be inappropriate to group
+items that are use different parameters. That must be handled before calling this function. Thus, the preferred
+method for calling this function is through <a class="reference internal" href="#inpRW._inpMod.Mod.reduceStepSubKWs" title="inpRW._inpMod.Mod.reduceStepSubKWs"><code class="xref py py-func docutils literal notranslate"><span class="pre">reduceStepSubKWs()</span></code></a>, as this will perform the necessary
+operations prior to calling this function.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">In</span><span class="p">:</span> <span class="n">datalist</span> <span class="o">=</span> <span class="p">[[</span><span class="s2">&quot;Fixed Displacement24&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mf">0.</span><span class="p">],</span> <span class="p">[</span><span class="s2">&quot;Fixed Displacement24&quot;</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mf">0.</span><span class="p">],</span> <span class="p">[</span><span class="s2">&quot;Fixed Displacement24&quot;</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mf">0.</span><span class="p">]]</span>
+<span class="n">In</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_consolidateDofXtoYDatalines</span><span class="p">(</span><span class="n">datalist</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Fixed Displacement24&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mf">0.</span><span class="p">]</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>datalist</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a>) – This should be a sequence of parsed datalines, not a list of strings.</p></li>
+<li><p><strong>removeComments</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><em>bool</em></a>) – If True, comments included in datalist will be discarded. If False, they will be
+appended to the output.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A list of the consolidated datalines.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)">list</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="inpRW._inpMod.Mod._convertSystem">
+<span class="sig-name descname"><span class="pre">_convertSystem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#inpRW._inpMod.Mod._convertSystem" title="Permalink to this definition">¶</a></dt>
+<dd><p>convertSystem(node)
+module: _inpMod.py</p>
+<blockquote>
+<div><div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>THIS FUNCTION HAS NOT BEEN TESTED WITH THE inpRW MODULE.
+IT NEEDS TO BE REWORKED BEFORE IT SHOULD BE USED.</p>
+</div>
+<p>Pass in node data as (X, Y, Z, cos1, cos2, cos3, ActiveSystem tuple):</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">20.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="p">((</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),))</span>
+</pre></div>
+</div>
+<p>Returns the X,Y,Z coordinates of the node in the global CSYS.</p>
+<div class="admonition-todo admonition" id="id4">
+<p class="admonition-title">Todo</p>
+<p>Convert to inpRW.</p>
+</div>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="inpRW._inpMod.Mod._isolateNodesToKeep">
+<span class="sig-name descname"><span class="pre">_isolateNodesToKeep</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dup_node_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nodesToKeep</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#inpRW._inpMod.Mod._isolateNodesToKeep" title="Permalink to this definition">¶</a></dt>
+<dd><div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>THIS FUNCTION HAS NOT BEEN TESTED WITH THE inpRW MODULE.
+IT NEEDS TO BE REWORKED BEFORE IT SHOULD BE USED.</p>
+</div>
+<p>dup_node_dict is the duplicate nodes dictionary produced by _findCloseNodes, and nodesToKeep is a sequence of
+nodes. This function will remove all nodes in nodesToKeep from dup_node_dict.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="inpRW._inpMod.Mod._removeSystem">
+<span class="sig-name descname"><span class="pre">_removeSystem</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#inpRW._inpMod.Mod._removeSystem" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finds the active system at all points of the input file, converts all node definitions to global coordinates,
+then deletes the *SYSTEM keywords.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>THIS FUNCTION HAS NOT BEEN TESTED WITH THE inpRW MODULE.
+IT NEEDS TO BE REWORKED BEFORE IT SHOULD BE USED.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="inpRW._inpMod.Mod._replaceStarParameter">
+<span class="sig-name descname"><span class="pre">_replaceStarParameter</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#inpRW._inpMod.Mod._replaceStarParameter" title="Permalink to this definition">¶</a></dt>
+<dd><p>module: _inpMod.py</p>
+<p>This function will delete *PARAMETER keyword lines, and substitute the appropriate values into the input file.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>THIS FUNCTION HAS NOT BEEN TESTED WITH THE inpRW MODULE.
+IT NEEDS TO BE REWORKED BEFORE IT SHOULD BE USED.</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../inpRW_toc.html">
+              <img class="logo" src="../../../_static/3DS_SIMULIA_Logotype_RGB_BlueSteel.png" alt="Logo", style="border-radius:5px"/>
+            </a></p>
+  <div>
+    <h3><a href="../../../inpRW_toc.html">Local Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW._inpMod</span></code></a><ul>
+<li><a class="reference internal" href="#module-inpRW._inpMod">Module Contents</a><ul>
+<li><a class="reference internal" href="#inpRW._inpMod.Mod"><code class="docutils literal notranslate"><span class="pre">Mod</span></code></a><ul>
+<li><a class="reference internal" href="#inpRW._inpMod.Mod.calculateCentroid"><code class="docutils literal notranslate"><span class="pre">Mod.calculateCentroid()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpMod.Mod.convertOPnewToOPmod"><code class="docutils literal notranslate"><span class="pre">Mod.convertOPnewToOPmod()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpMod.Mod.createManifest"><code class="docutils literal notranslate"><span class="pre">Mod.createManifest()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpMod.Mod.deleteItemReferences"><code class="docutils literal notranslate"><span class="pre">Mod.deleteItemReferences()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpMod.Mod.deleteKeyword"><code class="docutils literal notranslate"><span class="pre">Mod.deleteKeyword()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpMod.Mod.getLabelsFromSet"><code class="docutils literal notranslate"><span class="pre">Mod.getLabelsFromSet()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpMod.Mod.insertKeyword"><code class="docutils literal notranslate"><span class="pre">Mod.insertKeyword()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpMod.Mod.mergeNodes"><code class="docutils literal notranslate"><span class="pre">Mod.mergeNodes()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpMod.Mod.reduceStepSubKWs"><code class="docutils literal notranslate"><span class="pre">Mod.reduceStepSubKWs()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpMod.Mod.removeGenerate"><code class="docutils literal notranslate"><span class="pre">Mod.removeGenerate()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpMod.Mod.replaceKeyword"><code class="docutils literal notranslate"><span class="pre">Mod.replaceKeyword()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpMod.Mod.updateKTRIDD"><code class="docutils literal notranslate"><span class="pre">Mod.updateKTRIDD()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpMod.Mod.updatePKTRICD"><code class="docutils literal notranslate"><span class="pre">Mod.updatePKTRICD()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpMod.Mod._consolidateDofXtoYDatalines"><code class="docutils literal notranslate"><span class="pre">Mod._consolidateDofXtoYDatalines()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpMod.Mod._convertSystem"><code class="docutils literal notranslate"><span class="pre">Mod._convertSystem()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpMod.Mod._isolateNodesToKeep"><code class="docutils literal notranslate"><span class="pre">Mod._isolateNodesToKeep()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpMod.Mod._removeSystem"><code class="docutils literal notranslate"><span class="pre">Mod._removeSystem()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpMod.Mod._replaceStarParameter"><code class="docutils literal notranslate"><span class="pre">Mod._replaceStarParameter()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  </div>
+<h3><a href="../../../inpRW_toc.html">Global Table of Contents</a></h3>
+<p class="caption" role="heading"><span class="caption-text">User Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/Introduction.html">inpRW Utility Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/Project-Background.html">Project Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/Installation-and-Usage.html">Installation and Usage Instructions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/Tests.html">inpRW Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/Tests.html#running-inprw-tests">Running inpRW Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/inpKeyword-Basics.html">inpKeyword Basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/Strings_Integers_and_Decimals.html">Strings, Integers, and Decimals</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/Important-inpRW-Attributes.html">Important <code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW</span></code> Attributes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/Miscellaneous-Usage-hints.html">Miscellaneous Usage Hints</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/Example-Scenarios.html">Example Scenarios</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/glossary.html">Glossary</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW</span></code></a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../_inpR/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW._inpR</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_inpW/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW._inpW</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_inpFind/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW._inpFind</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_inpFindRefs/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW._inpFindRefs</span></code></a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW._inpMod</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_importedModules/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW._importedModules</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_inpCustom/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW._inpCustom</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../centroid/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">centroid</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../config/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">config</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../config_re/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">config_re</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../csid/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">csid</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../eval2/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">eval2</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../elType/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">elType</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../inpDecimal/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpDecimal</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../inpInt/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpInt</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../inpKeyword/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpKeyword</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../inpKeywordHelper/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpKeywordHelper</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../inpKeywordSequence/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpKeywordSequence</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../inpRWErrors/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRWErrors</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../inpString/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpString</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../mesh/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">mesh</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../misc_functions/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">misc_functions</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../NoneSort/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">NoneSort</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../printer/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">printer</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../repr2/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">repr2</span></code></a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Update Notes</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../Update-Notes/index.html">Update Notes</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Legal Notices and Usage Disclaimer</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../legal_notices/Legal_Notices_and_Usage_Disclaimer.html">Legal Notices and Usage Disclaimer</a></li>
+</ul>
+
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="../_inpFindRefs/index.html"
+                          title="previous chapter"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW._inpFindRefs</span></code></a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="../_importedModules/index.html"
+                          title="next chapter"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW._importedModules</span></code></a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../../_sources/autoapi/inpRW/_inpMod/index.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>  
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../_importedModules/index.html" title="inpRW._importedModules"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../_inpFindRefs/index.html" title="inpRW._inpFindRefs"
+             >previous</a> |</li>
+          <li><img src="../../../_static/icon-116-3dx-apps.svg" alt="python logo" style="vertical-align: middle; margin-top: -1px"/></li>
+          <li><a href="inpRW_toc.html"></a> &#187;</li>
+          <li class="switchers">
+            <div class="language_switcher_placeholder"></div>
+            <div class="version_switcher_placeholder"></div>
+          </li>
+          <li>
+              
+              <a href="../../../inpRW_toc.html">inpRW 2023.10.6 documentation</a> &#187;
+              
+          </li>
+          <li class="nav-item nav-item-1"><a href="../index.html" ><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW</span></code></a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href=""><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW._inpMod</span></code></a></li>
+                <li class="right">
+                    
+
+    <div class="inline-search" role="search">
+        <form class="inline-search" action="../../../search.html" method="get">
+          <input placeholder="Quick search" aria-label="Quick search" type="text" name="q" />
+          <input type="submit" value="Go" />
+          <input type="hidden" name="check_keywords" value="yes" />
+          <input type="hidden" name="area" value="default" />
+        </form>
+    </div>
+                     |
+                </li>
+            
+      </ul>
+    </div>  
+    <div class="footer">
+    &copy; Copyright 2023, Dassault Systèmes Simulia Corp.
+     <a href="../../../_static/legal_notices.pdf" >inpRW Legal Notices</a>.<br />
+     <a href="../../../_static/Read_Disclaimer_First.txt" >inpRW Usage Disclaimer</a>.<br />
+    Last updated on Nov 21, 2023.
+    <a href="https://r1132100503382-eu1-3dswym.3dexperience.3ds.com/#community:39/post:nE1VLzylQoKgfG2wekOpFg">Found a bug</a>?
+    </div>
+
+  </body>
+</html>

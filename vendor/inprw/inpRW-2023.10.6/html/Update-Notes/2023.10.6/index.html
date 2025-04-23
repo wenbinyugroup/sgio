@@ -1,0 +1,776 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>2023.10.6 &#8212; inpRW 2023.10.6 documentation</title><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/pydoctheme.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles.css" />
+    
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
+    
+    <script src="../../_static/sidebar.js"></script>
+    
+    <link rel="shortcut icon" href="../../_static/3DS_SIMULIA_Blue_Icon_32.png"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Legal Notices and Usage Disclaimer" href="../../legal_notices/Legal_Notices_and_Usage_Disclaimer.html" />
+    <link rel="prev" title="Update Notes" href="../index.html" /><link rel="shortcut icon" type="image/png" href="../../_static/icon-116-3dx-apps.svg" />
+            <script type="text/javascript" src="../../_static/copybutton.js"></script>
+            <script type="text/javascript" src="../../_static/menu.js"></script> 
+  </head>
+<body>
+<div class="mobile-nav">
+    <input type="checkbox" id="menuToggler" class="toggler__input" aria-controls="navigation"
+           aria-pressed="false" aria-expanded="false" role="button" aria-label="Menu" />
+    <label for="menuToggler" class="toggler__label">
+        <span></span>
+    </label>
+    <nav class="nav-content" role="navigation">
+         <a href="inpRW_toc.html" class="nav-logo">
+             <img src="../../_static/icon-116-3dx-apps.svg" alt="Logo"/>
+         </a>
+        <div class="version_switcher_placeholder"></div>
+        <form role="search" class="search" action="../../search.html" method="get">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" class="search-icon">
+                <path fill-rule="nonzero"
+                        d="M15.5 14h-.79l-.28-.27a6.5 6.5 0 001.48-5.34c-.47-2.78-2.79-5-5.59-5.34a6.505 6.505 0 00-7.27 7.27c.34 2.8 2.56 5.12 5.34 5.59a6.5 6.5 0 005.34-1.48l.27.28v.79l4.25 4.25c.41.41 1.08.41 1.49 0 .41-.41.41-1.08 0-1.49L15.5 14zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" fill="#444"></path>
+            </svg>
+            <input type="text" name="q" aria-label="Quick search"/>
+            <input type="submit" value="Go"/>
+        </form>
+    </nav>
+    <div class="menu-wrapper">
+        <nav class="menu" role="navigation" aria-label="main navigation">
+            <div class="language_switcher_placeholder"></div>
+            <p class="logo">
+                <a href="../../index.html">
+                <img class="logo" src="../../_static/3DS_SIMULIA_Logotype_RGB_BlueSteel.png" alt="Logo" style="border-radius:5px"/>
+                </a>
+            </p>
+  <div>
+    <h3><a href="../../inpRW_toc.html">Local Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">2023.10.6</a><ul>
+<li><a class="reference internal" href="#performance-improvements">Performance Improvements:</a></li>
+<li><a class="reference internal" href="#modified-signatures">Modified signatures:</a></li>
+<li><a class="reference internal" href="#modified-modules">Modified Modules:</a></li>
+<li><a class="reference internal" href="#modified-classes">Modified Classes:</a></li>
+<li><a class="reference internal" href="#modified-functions">Modified Functions:</a></li>
+<li><a class="reference internal" href="#modified-attributes">Modified Attributes:</a></li>
+<li><a class="reference internal" href="#new-functions">New Functions:</a></li>
+<li><a class="reference internal" href="#new-attributes">New Attributes:</a></li>
+<li><a class="reference internal" href="#new-modules">New Modules:</a></li>
+<li><a class="reference internal" href="#new-classes">New Classes:</a></li>
+<li><a class="reference internal" href="#removed">Removed:</a></li>
+<li><a class="reference internal" href="#automated-tests">Automated Tests:</a></li>
+<li><a class="reference internal" href="#misc">Misc:</a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+<h3><a href="../../inpRW_toc.html">Global Table of Contents</a></h3>
+<p class="caption" role="heading"><span class="caption-text">User Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Introduction.html">inpRW Utility Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Project-Background.html">Project Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Installation-and-Usage.html">Installation and Usage Instructions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Tests.html">inpRW Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Tests.html#running-inprw-tests">Running inpRW Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/inpKeyword-Basics.html">inpKeyword Basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Strings_Integers_and_Decimals.html">Strings, Integers, and Decimals</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Important-inpRW-Attributes.html">Important <code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW</span></code> Attributes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Miscellaneous-Usage-hints.html">Miscellaneous Usage Hints</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Example-Scenarios.html">Example Scenarios</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/glossary.html">Glossary</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../autoapi/inpRW/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../autoapi/centroid/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">centroid</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../autoapi/config/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">config</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../autoapi/config_re/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">config_re</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../autoapi/csid/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">csid</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../autoapi/eval2/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">eval2</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../autoapi/elType/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">elType</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../autoapi/inpDecimal/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpDecimal</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../autoapi/inpInt/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpInt</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../autoapi/inpKeyword/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpKeyword</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../autoapi/inpKeywordHelper/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpKeywordHelper</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../autoapi/inpKeywordSequence/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpKeywordSequence</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../autoapi/inpRWErrors/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRWErrors</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../autoapi/inpString/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpString</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../autoapi/mesh/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">mesh</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../autoapi/misc_functions/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">misc_functions</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../autoapi/NoneSort/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">NoneSort</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../autoapi/printer/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">printer</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../autoapi/repr2/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">repr2</span></code></a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Update Notes</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Update Notes</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">2023.10.6</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Legal Notices and Usage Disclaimer</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../legal_notices/Legal_Notices_and_Usage_Disclaimer.html">Legal Notices and Usage Disclaimer</a></li>
+</ul>
+
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="../index.html"
+                          title="previous chapter">Update Notes</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="../../legal_notices/Legal_Notices_and_Usage_Disclaimer.html"
+                          title="next chapter">Legal Notices and Usage Disclaimer</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/Update-Notes/2023.10.6/index.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </nav>
+    </div>
+</div>
+  
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../legal_notices/Legal_Notices_and_Usage_Disclaimer.html" title="Legal Notices and Usage Disclaimer"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../index.html" title="Update Notes"
+             accesskey="P">previous</a> |</li>
+          <li><img src="../../_static/icon-116-3dx-apps.svg" alt="python logo" style="vertical-align: middle; margin-top: -1px"/></li>
+          <li><a href="inpRW_toc.html"></a> &#187;</li>
+          <li class="switchers">
+            <div class="language_switcher_placeholder"></div>
+            <div class="version_switcher_placeholder"></div>
+          </li>
+          <li>
+              
+              <a href="../../inpRW_toc.html">inpRW 2023.10.6 documentation</a> &#187;
+              
+          </li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Update Notes</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">2023.10.6</a></li>
+                <li class="right">
+                    
+
+    <div class="inline-search" role="search">
+        <form class="inline-search" action="../../search.html" method="get">
+          <input placeholder="Quick search" aria-label="Quick search" type="text" name="q" />
+          <input type="submit" value="Go" />
+          <input type="hidden" name="check_keywords" value="yes" />
+          <input type="hidden" name="area" value="default" />
+        </form>
+    </div>
+                     |
+                </li>
+            
+      </ul>
+    </div>    
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="id1">
+<h1>2023.10.6<a class="headerlink" href="#id1" title="Permalink to this heading">¶</a></h1>
+<p>This update corrects problems with sub-input files, variable node elements, leading comments, and it adds more tests.</p>
+<p>A summary of the major changes follows. Please note that there will be some breaking changes to the API. I have done my best to document all such changes in these notes, so it is imperative that you read these before updating and trying to run an existing script. I will try to minimize API changes in the future, but the performance and robustness of inpRW will trump API stability concerns for the near future.</p>
+<p>The major features of this update are the following:</p>
+<blockquote>
+<div><ul class="simple">
+<li><dl class="simple">
+<dt>Improved handling of all multi-input file jobs (for example, *INCLUDE, *MANIFEST, INPUT parameter of multiple keywords).</dt><dd><ul>
+<li><p>Added <a class="reference internal" href="../../autoapi/inpKeyword/index.html#inpKeyword.inpKeyword._subinps" title="inpKeyword.inpKeyword._subinps"><code class="xref py py-attr docutils literal notranslate"><span class="pre">_subinps</span></code></a> attribute to <a class="reference internal" href="../../autoapi/inpKeyword/index.html#inpKeyword.inpKeyword" title="inpKeyword.inpKeyword"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpKeyword</span></code></a> class; this is used only for *INCLUDE and *MANIFEST blocks
+and should contain only <a class="reference internal" href="../../autoapi/inpRW/index.html#inpRW.inpRW" title="inpRW.inpRW"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpRW</span></code></a> instances.</p></li>
+<li><p><a class="reference internal" href="../../autoapi/inpRW/index.html#inpRW.inpRW" title="inpRW.inpRW"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpRW</span></code></a> formerly created sub-instances of the <a class="reference internal" href="../../autoapi/inpRW/index.html#inpRW.inpRW" title="inpRW.inpRW"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpRW</span></code></a> class, but used the <a class="reference internal" href="../../autoapi/inpRW/index.html#inpRW.inpRW.keywords" title="inpRW.inpRW.keywords"><code class="xref py py-attr docutils literal notranslate"><span class="pre">keywords</span></code></a> attribute of the
+parent instance for the child.</p></li>
+<li><p>When parsing sub-input files (*MANIFEST, *INCLUDE), a new <a class="reference internal" href="../../autoapi/inpRW/index.html#inpRW.inpRW" title="inpRW.inpRW"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpRW</span></code></a> instance is created for the sub-file, and that instance is placed in
+the parent block’s <a class="reference internal" href="../../autoapi/inpKeyword/index.html#inpKeyword.inpKeyword._subinps" title="inpKeyword.inpKeyword._subinps"><code class="xref py py-attr docutils literal notranslate"><span class="pre">_subinps</span></code></a>, and the sub-inpRW instance’s <a class="reference internal" href="../../autoapi/inpRW/index.html#inpRW.inpRW.keywords" title="inpRW.inpRW.keywords"><code class="xref py py-attr docutils literal notranslate"><span class="pre">keywords</span></code></a> attribute is added to the parent
+block’s suboptions attribute.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p>The <a class="reference internal" href="../../autoapi/config/index.html#config._elementTypeDictionary" title="config._elementTypeDictionary"><code class="xref py py-attr docutils literal notranslate"><span class="pre">_elementTypeDictionary</span></code></a> is more useful and more accurate. Each entry is now a new <a class="reference internal" href="../../autoapi/elType/index.html#elType.elType" title="elType.elType"><code class="xref py py-class docutils literal notranslate"><span class="pre">elType</span></code></a> class instead of a dictionary.
+* inpRW should now accurately understand all element types except for submodel or user elements. Variable node elements were a particular problem before.</p></li>
+<li><p>Removed function inpKeyword.inpKeyword._getElementNodeNum() and replaced it with <a class="reference internal" href="../../autoapi/inpKeyword/index.html#inpKeyword.findElementNodeNum" title="inpKeyword.findElementNodeNum"><code class="xref py py-meth docutils literal notranslate"><span class="pre">inpKeyword.findElementNodeNum()</span></code></a>.</p></li>
+<li><p>Better handling of leading comments (i.e. comment lines before the first keyword block). Previous releases would have difficulties in some cases.</p></li>
+<li><p>Corrected a bug related to parsing *REBAR LAYER keywords.</p></li>
+<li><p>Additional tests added for inpRW functionality.</p></li>
+<li><p>Addressed an error when the string ‘INF’ would be converted to a <a class="reference external" href="https://docs.python.org/3/library/decimal.html#decimal.Decimal" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Decimal</span></code></a> instance instead of treated as a string.</p></li>
+<li><p>Added <a class="reference internal" href="../../autoapi/inpRW/index.html#inpRW.inpRW.__repr__" title="inpRW.inpRW.__repr__"><code class="xref py py-func docutils literal notranslate"><span class="pre">__repr__()</span></code></a> and <a class="reference internal" href="../../autoapi/inpRW/index.html#inpRW.inpRW.__str__" title="inpRW.inpRW.__str__"><code class="xref py py-func docutils literal notranslate"><span class="pre">__str__()</span></code></a> functions to the <a class="reference internal" href="../../autoapi/inpRW/index.html#inpRW.inpRW" title="inpRW.inpRW"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpRW</span></code></a> class so they produce useful information.</p></li>
+<li><p>Renamed install.bat to install_to_3DEXPERIENCE.bat to clarify its purpose.</p></li>
+<li><p>Corrected several bugs related to string productions, which affected the accuracy of input file writing.</p></li>
+<li><p>Corrected a bug where elements from multiple *ELEMENT keyword blocks would override the elements attribute of shared node instances.</p></li>
+<li><p>Removed python3_inpRW.bat and python3_inpRW.sh from the test suite. test_all.bat and test_all.sh instead set the INPRW_TEST environment variable
+which point to the desired Python interpreter, and the tests have been rewritten to use INPRW_TEST.</p></li>
+<li><p>Expanded the documentation on <a class="reference internal" href="../../user/Installation-and-Usage.html"><span class="doc">Installation and Usage Instructions</span></a>. The different options for installing
+inpRW should be more clear.
+There is also a new section called <a class="reference internal" href="../../user/Installation-and-Usage.html#using-inprw-with-keyword-edit-in-3dexperience"><span class="std std-ref">Using inpRW with Keyword Edit in 3DEXPERIENCE</span></a>, which
+includes a video showing how to install <a class="reference internal" href="../../autoapi/inpRW/index.html#module-inpRW" title="inpRW"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW</span></code></a> to <strong>3D</strong>EXPERIENCE and call <a class="reference internal" href="../../autoapi/inpRW/index.html#module-inpRW" title="inpRW"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW</span></code></a> from a Keyword Edit script.</p></li>
+</ul>
+</div></blockquote>
+<p>Unless otherwise noted, if a term can refer to a module name or a class name, I am using it to refer to the class name. Thus, inpKeyword is short-hand for
+inpKeyword.inpKeyword in these update notes.</p>
+<section id="performance-improvements">
+<h2>Performance Improvements:<a class="headerlink" href="#performance-improvements" title="Permalink to this heading">¶</a></h2>
+<blockquote>
+<div><p>N/A</p>
+</div></blockquote>
+</section>
+<section id="modified-signatures">
+<h2>Modified signatures:<a class="headerlink" href="#modified-signatures" title="Permalink to this heading">¶</a></h2>
+<blockquote>
+<div><ul class="simple">
+<li><dl class="simple">
+<dt><a class="reference internal" href="../../autoapi/inpKeyword/index.html#inpKeyword.inpKeyword.__str__" title="inpKeyword.inpKeyword.__str__"><code class="xref py py-func docutils literal notranslate"><span class="pre">inpKeyword.inpKeyword.__str__()</span></code></a></dt><dd><p>Added <em>includeSubData=True</em> parameter</p>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+</section>
+<section id="modified-modules">
+<h2>Modified Modules:<a class="headerlink" href="#modified-modules" title="Permalink to this heading">¶</a></h2>
+<blockquote>
+<div><p>This is a summary of all the modules which have seen some code change. The details are in later sections of this document.</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="../../autoapi/inpRW/_inpR/index.html#module-inpRW._inpR" title="inpRW._inpR"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW._inpR</span></code></a></p></li>
+<li><p><a class="reference internal" href="../../autoapi/inpRW/_inpW/index.html#module-inpRW._inpW" title="inpRW._inpW"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW._inpW</span></code></a></p></li>
+<li><p><a class="reference internal" href="../../autoapi/inpRW/index.html#module-inpRW" title="inpRW"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW</span></code></a></p></li>
+<li><p><a class="reference internal" href="../../autoapi/csid/index.html#module-csid" title="csid"><code class="xref py py-mod docutils literal notranslate"><span class="pre">csid</span></code></a></p></li>
+<li><p><a class="reference internal" href="../../autoapi/eval2/index.html#module-eval2" title="eval2"><code class="xref py py-mod docutils literal notranslate"><span class="pre">eval2</span></code></a></p></li>
+<li><p><a class="reference internal" href="../../autoapi/inpDecimal/index.html#module-inpDecimal" title="inpDecimal"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpDecimal</span></code></a></p></li>
+<li><p><a class="reference internal" href="../../autoapi/inpKeyword/index.html#module-inpKeyword" title="inpKeyword"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpKeyword</span></code></a></p></li>
+<li><p><a class="reference internal" href="../../autoapi/inpRWErrors/index.html#module-inpRWErrors" title="inpRWErrors"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRWErrors</span></code></a></p></li>
+<li><p><a class="reference internal" href="../../autoapi/mesh/index.html#module-mesh" title="mesh"><code class="xref py py-mod docutils literal notranslate"><span class="pre">mesh</span></code></a></p></li>
+<li><p><a class="reference internal" href="../../autoapi/config/index.html#module-config" title="config"><code class="xref py py-mod docutils literal notranslate"><span class="pre">config</span></code></a></p></li>
+<li><p><a class="reference internal" href="../../autoapi/config_re/index.html#module-config_re" title="config_re"><code class="xref py py-mod docutils literal notranslate"><span class="pre">config_re</span></code></a></p></li>
+<li><p><a class="reference internal" href="../../autoapi/elType/index.html#module-elType" title="elType"><code class="xref py py-mod docutils literal notranslate"><span class="pre">elType</span></code></a></p></li>
+</ul>
+</div></blockquote>
+</section>
+<section id="modified-classes">
+<h2>Modified Classes:<a class="headerlink" href="#modified-classes" title="Permalink to this heading">¶</a></h2>
+<blockquote>
+<div><p>This is a summary of all the classes which have seen some code change. The details are in later sections of this document.</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="../../autoapi/inpRW/_inpR/index.html#inpRW._inpR.Read" title="inpRW._inpR.Read"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpRW._inpR.Read</span></code></a></p></li>
+<li><p><a class="reference internal" href="../../autoapi/inpRW/_inpW/index.html#inpRW._inpW.Write" title="inpRW._inpW.Write"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpRW._inpW.Write</span></code></a></p></li>
+<li><p><a class="reference internal" href="../../autoapi/inpRW/index.html#inpRW.inpRW" title="inpRW.inpRW"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpRW.inpRW</span></code></a></p></li>
+<li><p><a class="reference internal" href="../../autoapi/csid/index.html#csid.csid" title="csid.csid"><code class="xref py py-class docutils literal notranslate"><span class="pre">csid.csid</span></code></a></p></li>
+<li><p><a class="reference internal" href="../../autoapi/csid/index.html#csid.csiKeyString" title="csid.csiKeyString"><code class="xref py py-class docutils literal notranslate"><span class="pre">csid.csiKeyString</span></code></a></p></li>
+<li><p><a class="reference internal" href="../../autoapi/eval2/index.html#eval2.eval2" title="eval2.eval2"><code class="xref py py-class docutils literal notranslate"><span class="pre">eval2.eval2</span></code></a></p></li>
+<li><p><a class="reference internal" href="../../autoapi/inpDecimal/index.html#inpDecimal.inpDecimal" title="inpDecimal.inpDecimal"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpDecimal.inpDecimal</span></code></a></p></li>
+<li><p><a class="reference internal" href="../../autoapi/inpKeyword/index.html#module-inpKeyword" title="inpKeyword"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpKeyword</span></code></a></p></li>
+<li><p><a class="reference internal" href="../../autoapi/inpRWErrors/index.html#inpRWErrors.ElementIncorrectNodeNumError" title="inpRWErrors.ElementIncorrectNodeNumError"><code class="xref py py-exc docutils literal notranslate"><span class="pre">inpRWErrors.ElementIncorrectNodeNumError</span></code></a></p></li>
+<li><p><a class="reference internal" href="../../autoapi/mesh/index.html#mesh.Element" title="mesh.Element"><code class="xref py py-class docutils literal notranslate"><span class="pre">mesh.Element</span></code></a></p></li>
+<li><p><a class="reference internal" href="../../autoapi/mesh/index.html#mesh.TotalNodeMesh" title="mesh.TotalNodeMesh"><code class="xref py py-class docutils literal notranslate"><span class="pre">mesh.TotalNodeMesh</span></code></a></p></li>
+</ul>
+</div></blockquote>
+</section>
+<section id="modified-functions">
+<h2>Modified Functions:<a class="headerlink" href="#modified-functions" title="Permalink to this heading">¶</a></h2>
+<blockquote>
+<div><ul class="simple">
+<li><dl class="simple">
+<dt><a class="reference internal" href="../../autoapi/inpRW/_inpR/index.html#inpRW._inpR.Read._readInclude" title="inpRW._inpR.Read._readInclude"><code class="xref py py-func docutils literal notranslate"><span class="pre">inpRW._inpR.Read._readInclude()</span></code></a></dt><dd><p>Improves handling of reading sub-files of *INCLUDE.
+Removes leading and trailing whitespace from sub-file name when opening.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><a class="reference internal" href="../../autoapi/inpRW/_inpR/index.html#inpRW._inpR.Read._readManifest" title="inpRW._inpR.Read._readManifest"><code class="xref py py-func docutils literal notranslate"><span class="pre">inpRW._inpR.Read._readManifest()</span></code></a></dt><dd><p>Improves handling of reading sub-files of *MANIFEST.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><a class="reference internal" href="../../autoapi/inpRW/_inpR/index.html#inpRW._inpR.Read._splitKeywords" title="inpRW._inpR.Read._splitKeywords"><code class="xref py py-func docutils literal notranslate"><span class="pre">inpRW._inpR.Read._splitKeywords()</span></code></a></dt><dd><p>More accurately identifies comments prior to the first keyword block by using the pattern from
+<a class="reference internal" href="../../autoapi/inpRW/_inpR/index.html#inpRW._inpR.Read._getLeadingCommentsPattern" title="inpRW._inpR.Read._getLeadingCommentsPattern"><code class="xref py py-func docutils literal notranslate"><span class="pre">_getLeadingCommentsPattern()</span></code></a>.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><a class="reference internal" href="../../autoapi/inpRW/_inpW/index.html#inpRW._inpW.Write.writeBlocks" title="inpRW._inpW.Write.writeBlocks"><code class="xref py py-func docutils literal notranslate"><span class="pre">inpRW._inpW.Write.writeBlocks()</span></code></a></dt><dd><p>Accounts for changes to sub-input file data storage.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><a class="reference internal" href="../../autoapi/inpRW/_inpW/index.html#inpRW._inpW.Write.writeInp" title="inpRW._inpW.Write.writeInp"><code class="xref py py-func docutils literal notranslate"><span class="pre">inpRW._inpW.Write.writeInp()</span></code></a></dt><dd><p>No longer sets <a class="reference internal" href="../../autoapi/inpRW/index.html#inpRW.inpRW._firstItem" title="inpRW.inpRW._firstItem"><code class="xref py py-attr docutils literal notranslate"><span class="pre">_firstItem</span></code></a> to <code class="docutils literal notranslate"><span class="pre">False</span></code> after writing leading comments.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><a class="reference internal" href="../../autoapi/inpRW/index.html#inpRW.inpRW.__init__" title="inpRW.inpRW.__init__"><code class="xref py py-func docutils literal notranslate"><span class="pre">inpRW.inpRW.__init__()</span></code></a></dt><dd><p>The outputFolder of a sub-instance of <a class="reference internal" href="../../autoapi/inpRW/index.html#inpRW.inpRW" title="inpRW.inpRW"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpRW</span></code></a> will first try to be read from the <em>inpName</em> passed to the sub-instance,
+otherwise it will use <a class="reference internal" href="../../autoapi/inpRW/index.html#inpRW.inpRW.outputFolder" title="inpRW.inpRW.outputFolder"><code class="xref py py-attr docutils literal notranslate"><span class="pre">_parentINP.outputFolder</span></code></a>.
+Sub-instances of <a class="reference internal" href="../../autoapi/inpRW/index.html#inpRW.inpRW" title="inpRW.inpRW"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpRW</span></code></a> now use their own <a class="reference internal" href="../../autoapi/inpKeywordSequence/index.html#inpKeywordSequence.inpKeywordSequence" title="inpKeywordSequence.inpKeywordSequence"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpKeywordSequence</span></code></a> for <a class="reference internal" href="../../autoapi/inpRW/index.html#inpRW.inpRW.keywords" title="inpRW.inpRW.keywords"><code class="xref py py-attr docutils literal notranslate"><span class="pre">keywords</span></code></a>
+instead of directly sharing the <a class="reference internal" href="../../autoapi/inpRW/index.html#inpRW.inpRW._parentINP" title="inpRW.inpRW._parentINP"><code class="xref py py-attr docutils literal notranslate"><span class="pre">_parentINP's</span></code></a> keywords attribute. The
+<a class="reference internal" href="../../autoapi/inpKeywordSequence/index.html#inpKeywordSequence.inpKeywordSequence" title="inpKeywordSequence.inpKeywordSequence"><code class="xref py py-attr docutils literal notranslate"><span class="pre">sub-inpKeywordSequence's</span></code></a> contents will still be propagated to the parent <a class="reference internal" href="../../autoapi/inpRW/index.html#inpRW.inpRW" title="inpRW.inpRW"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpRW</span></code></a>
+instance internally.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><a class="reference internal" href="../../autoapi/inpRW/index.html#inpRW.inpRW.parse" title="inpRW.inpRW.parse"><code class="xref py py-func docutils literal notranslate"><span class="pre">inpRW.inpRW.parse()</span></code></a></dt><dd><p>Changes to account for new code to identify leading comments.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><a class="reference internal" href="../../autoapi/csid/index.html#csid.csid.__str__" title="csid.csid.__str__"><code class="xref py py-func docutils literal notranslate"><span class="pre">csid.csid.__str__()</span></code></a></dt><dd><p>String keys and/or values will now include quote symbols around them.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><a class="reference internal" href="../../autoapi/csid/index.html#csid.csiKeyString.__eq__" title="csid.csiKeyString.__eq__"><code class="xref py py-func docutils literal notranslate"><span class="pre">csid.csiKeyString.__eq__()</span></code></a></dt><dd><p>Will now automatically convert the <em>other</em> key to a <a class="reference internal" href="../../autoapi/csid/index.html#csid.csiKeyString" title="csid.csiKeyString"><code class="xref py py-class docutils literal notranslate"><span class="pre">csiKeyString</span></code></a> if it is not already.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><a class="reference internal" href="../../autoapi/eval2/index.html#eval2.eval2" title="eval2.eval2"><code class="xref py py-func docutils literal notranslate"><span class="pre">eval2.eval2()</span></code></a></dt><dd><p>Catch <a class="reference internal" href="../../autoapi/inpRWErrors/index.html#inpRWErrors.DecimalInfError" title="inpRWErrors.DecimalInfError"><code class="xref py py-exc docutils literal notranslate"><span class="pre">DecimalInfError</span></code></a> and convert the text ‘INF’ to an <a class="reference internal" href="../../autoapi/inpString/index.html#inpString.inpString" title="inpString.inpString"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpString</span></code></a> instead of an
+<a class="reference internal" href="../../autoapi/inpDecimal/index.html#inpDecimal.inpDecimal" title="inpDecimal.inpDecimal"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpDecimal.inpDecimal</span></code></a>.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><a class="reference internal" href="../../autoapi/inpDecimal/index.html#inpDecimal.inpDecimal.__new__" title="inpDecimal.inpDecimal.__new__"><code class="xref py py-func docutils literal notranslate"><span class="pre">inpDecimal.inpDecimal.__new__()</span></code></a></dt><dd><p>Raises a <a class="reference internal" href="../../autoapi/inpRWErrors/index.html#inpRWErrors.DecimalInfError" title="inpRWErrors.DecimalInfError"><code class="xref py py-exc docutils literal notranslate"><span class="pre">DecimalInfError</span></code></a> if ‘INF’ (not case-sensitive) is in <em>inputStr</em>.
+This addresses a niche bug and should not affect most users.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><a class="reference internal" href="../../autoapi/inpKeyword/index.html#inpKeyword.inpKeyword.parseKWData" title="inpKeyword.inpKeyword.parseKWData"><code class="xref py py-func docutils literal notranslate"><span class="pre">inpKeyword.inpKeyword.parseKWData()</span></code></a></dt><dd><p>Improved handling of keywords with subdata (i.e. those with the INPUT parameter).</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><a class="reference internal" href="../../autoapi/inpKeyword/index.html#inpKeyword.inpKeyword._formatDataLabelDict" title="inpKeyword.inpKeyword._formatDataLabelDict"><code class="xref py py-func docutils literal notranslate"><span class="pre">inpKeyword.inpKeyword._formatDataLabelDict()</span></code></a></dt><dd><p>Improved handling of comments for *ELEMENT keyword blocks, specifically those with element definitions spanning more than 1 dataline.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><a class="reference internal" href="../../autoapi/inpKeyword/index.html#inpKeyword.inpKeyword._parseData" title="inpKeyword.inpKeyword._parseData"><code class="xref py py-func docutils literal notranslate"><span class="pre">inpKeyword.inpKeyword._parseData()</span></code></a></dt><dd><p>Corrected incorrect function call to <code class="docutils literal notranslate"><span class="pre">_parseRebarLayer()</span></code> with the correct call to <a class="reference internal" href="../../autoapi/inpKeyword/index.html#inpKeyword.inpKeyword._parseDataRebarLayer" title="inpKeyword.inpKeyword._parseDataRebarLayer"><code class="xref py py-func docutils literal notranslate"><span class="pre">_parseDataRebarLayer()</span></code></a>.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><a class="reference internal" href="../../autoapi/inpKeyword/index.html#inpKeyword.inpKeyword._parseDataElement" title="inpKeyword.inpKeyword._parseDataElement"><code class="xref py py-func docutils literal notranslate"><span class="pre">inpKeyword.inpKeyword._parseDataElement()</span></code></a></dt><dd><p>Modifications to correct inaccurate handling of multi-line and/or variable node element definitions.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><a class="reference internal" href="../../autoapi/inpKeyword/index.html#inpKeyword.inpKeyword._parseDataRebarLayer" title="inpKeyword.inpKeyword._parseDataRebarLayer"><code class="xref py py-func docutils literal notranslate"><span class="pre">inpKeyword.inpKeyword._parseDataRebarLayer()</span></code></a></dt><dd><p>Removed some old code which was causing an error.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><a class="reference internal" href="../../autoapi/inpKeyword/index.html#inpKeyword.inpKeyword._parseInputString" title="inpKeyword.inpKeyword._parseInputString"><code class="xref py py-func docutils literal notranslate"><span class="pre">inpKeyword.inpKeyword._parseInputString()</span></code></a></dt><dd><p>Moved call of <a class="reference internal" href="../../autoapi/inpKeyword/index.html#inpKeyword.inpKeyword._setMiscInpKeywordAttrs" title="inpKeyword.inpKeyword._setMiscInpKeywordAttrs"><code class="xref py py-func docutils literal notranslate"><span class="pre">_setMiscInpKeywordAttrs()</span></code></a> from <a class="reference internal" href="../../autoapi/inpKeyword/index.html#inpKeyword.inpKeyword._parseKWLine" title="inpKeyword.inpKeyword._parseKWLine"><code class="xref py py-func docutils literal notranslate"><span class="pre">_parseKWLine()</span></code></a> to this function.
+Corrects rare problem with important parameters for a keyword block not being on the first keyword line. For example, an error would
+be raised if the NSET parameter of an *NSET keyword block was not on the first keyword line.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><a class="reference internal" href="../../autoapi/inpKeyword/index.html#inpKeyword.inpKeyword._parseKWLine" title="inpKeyword.inpKeyword._parseKWLine"><code class="xref py py-func docutils literal notranslate"><span class="pre">inpKeyword.inpKeyword._parseKWLine()</span></code></a></dt><dd><p>Moved call of <a class="reference internal" href="../../autoapi/inpKeyword/index.html#inpKeyword.inpKeyword._setMiscInpKeywordAttrs" title="inpKeyword.inpKeyword._setMiscInpKeywordAttrs"><code class="xref py py-func docutils literal notranslate"><span class="pre">_setMiscInpKeywordAttrs()</span></code></a> to <a class="reference internal" href="../../autoapi/inpKeyword/index.html#inpKeyword.inpKeyword._parseInputString" title="inpKeyword.inpKeyword._parseInputString"><code class="xref py py-func docutils literal notranslate"><span class="pre">_parseInputString()</span></code></a> from this function.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><a class="reference internal" href="../../autoapi/inpKeyword/index.html#inpKeyword.inpKeyword.__str__" title="inpKeyword.inpKeyword.__str__"><code class="xref py py-func docutils literal notranslate"><span class="pre">inpKeyword.inpKeyword.__str__()</span></code></a></dt><dd><p>Added <em>includeSubData</em> parameter (default to <code class="docutils literal notranslate"><span class="pre">True</span></code>). This will not be used by end-users in most cases. Setting this parameter to <code class="docutils literal notranslate"><span class="pre">False</span></code>
+allows <a class="reference internal" href="../../autoapi/inpRW/index.html#module-inpRW" title="inpRW"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW</span></code></a> to omit writing sub data to the main input file. The default behavior is identical to the previous release.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><a class="reference internal" href="../../autoapi/inpRWErrors/index.html#inpRWErrors.ElementIncorrectNodeNumError.__str__" title="inpRWErrors.ElementIncorrectNodeNumError.__str__"><code class="xref py py-func docutils literal notranslate"><span class="pre">inpRWErrors.ElementIncorrectNodeNumError.__str__()</span></code></a></dt><dd><p>New options to account for new <em>nodeNum</em> data types (i.e. <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#set" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">set</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>).</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><a class="reference internal" href="../../autoapi/mesh/index.html#mesh.Element.__init__" title="mesh.Element.__init__"><code class="xref py py-func docutils literal notranslate"><span class="pre">mesh.Element.__init__()</span></code></a></dt><dd><p>Updated to account for changes to <a class="reference internal" href="../../autoapi/config/index.html#config._elementTypeDictionary" title="config._elementTypeDictionary"><code class="xref py py-attr docutils literal notranslate"><span class="pre">_elementTypeDictionary</span></code></a>.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><a class="reference internal" href="../../autoapi/mesh/index.html#mesh.Element.checkNumberNodes" title="mesh.Element.checkNumberNodes"><code class="xref py py-func docutils literal notranslate"><span class="pre">mesh.Element.checkNumberNodes()</span></code></a></dt><dd><p>Updated to account for changes to <a class="reference internal" href="../../autoapi/config/index.html#config._elementTypeDictionary" title="config._elementTypeDictionary"><code class="xref py py-attr docutils literal notranslate"><span class="pre">_elementTypeDictionary</span></code></a>.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><a class="reference internal" href="../../autoapi/mesh/index.html#mesh.Element.__str__" title="mesh.Element.__str__"><code class="xref py py-func docutils literal notranslate"><span class="pre">mesh.Element.__str__()</span></code></a></dt><dd><p>Corrected a problem with string production for multi-line elements.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><a class="reference internal" href="../../autoapi/mesh/index.html#mesh.TotalNodeMesh.setNodesConnectedElements" title="mesh.TotalNodeMesh.setNodesConnectedElements"><code class="xref py py-func docutils literal notranslate"><span class="pre">mesh.TotalNodeMesh.setNodesConnectedElements()</span></code></a></dt><dd><p>Corrected a bug which overrode the elements connected to a node if the node was connected to different elements defined in multiple
+*ELEMENT keyword blocks.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+</section>
+<section id="modified-attributes">
+<h2>Modified Attributes:<a class="headerlink" href="#modified-attributes" title="Permalink to this heading">¶</a></h2>
+<blockquote>
+<div><ul class="simple">
+<li><dl class="simple">
+<dt><a class="reference internal" href="../../autoapi/config/index.html#config._elementTypeDictionary" title="config._elementTypeDictionary"><code class="xref py py-attr docutils literal notranslate"><span class="pre">config._elementTypeDictionary</span></code></a></dt><dd><p>The value for each element is now the new <a class="reference internal" href="../../autoapi/elType/index.html#elType.elType" title="elType.elType"><code class="xref py py-class docutils literal notranslate"><span class="pre">elType</span></code></a> class instead of a <a class="reference internal" href="../../autoapi/csid/index.html#csid.csid" title="csid.csid"><code class="xref py py-class docutils literal notranslate"><span class="pre">csid</span></code></a>. <a class="reference internal" href="../../autoapi/inpRW/index.html#module-inpRW" title="inpRW"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW</span></code></a> has been updated
+to account for this change, but any user scripts which directly accessed this dictionary will need to be updated to account for the new structure.
+This dictionary should include more information about each element type, (description, valid solver, and number of nodes),
+and it identifies variable node elements (they use <a class="reference internal" href="../../autoapi/elType/index.html#elType.elType.numNodesSet" title="elType.elType.numNodesSet"><code class="xref py py-attr docutils literal notranslate"><span class="pre">numNodesSet</span></code></a> instead of <a class="reference internal" href="../../autoapi/elType/index.html#elType.elType.numNodesSet" title="elType.elType.numNodesSet"><code class="xref py py-attr docutils literal notranslate"><span class="pre">numNodesSet</span></code></a>).</p>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+</section>
+<section id="new-functions">
+<h2>New Functions:<a class="headerlink" href="#new-functions" title="Permalink to this heading">¶</a></h2>
+<blockquote>
+<div><ul class="simple">
+<li><dl class="simple">
+<dt><a class="reference internal" href="../../autoapi/inpRW/_inpR/index.html#inpRW._inpR.Read._getLeadingCommentsPattern" title="inpRW._inpR.Read._getLeadingCommentsPattern"><code class="xref py py-func docutils literal notranslate"><span class="pre">inpRW._inpR.Read._getLeadingCommentsPattern()</span></code></a></dt><dd><p>Finds the location where the first keyword block begins and returns a regular expression pattern to identify that location.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><a class="reference internal" href="../../autoapi/inpRW/index.html#inpRW.inpRW.__repr__" title="inpRW.inpRW.__repr__"><code class="xref py py-func docutils literal notranslate"><span class="pre">inpRW.inpRW.__repr__()</span></code></a></dt><dd><p>Produces a useful string representation of an <a class="reference internal" href="../../autoapi/inpRW/index.html#inpRW.inpRW" title="inpRW.inpRW"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpRW</span></code></a> instance.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><a class="reference internal" href="../../autoapi/inpRW/index.html#inpRW.inpRW.__str__" title="inpRW.inpRW.__str__"><code class="xref py py-func docutils literal notranslate"><span class="pre">inpRW.inpRW.__str__()</span></code></a></dt><dd><p>Produces a string which helps identify the input file which corresponds to this <a class="reference internal" href="../../autoapi/inpRW/index.html#inpRW.inpRW" title="inpRW.inpRW"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpRW.inpRW</span></code></a> instance.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><a class="reference internal" href="../../autoapi/inpKeyword/index.html#inpKeyword.findElementNodeNum" title="inpKeyword.findElementNodeNum"><code class="xref py py-func docutils literal notranslate"><span class="pre">inpKeyword.findElementNodeNum()</span></code></a></dt><dd><p>Replaces and simplifies <code class="docutils literal notranslate"><span class="pre">inpKeyword.inpKeyword._getElementNodeNum()</span></code>.
+With the exception of user elements, sub-structure elements, and variable number elements, all Abaqus elements have a static
+number of nodes which can define them. Thus, this function simply performs a dictionary lookup in most cases.
+For variable node elements, this function looks up the valid number of nodes to define the element. Then, it keeps
+reading data lines until it finds a line which does not end with a comma. If the number of nodes is in the set of
+valid node numbers for the element type, this function returns an integer. If the number of nodes is not in the set,
+an <a class="reference internal" href="../../autoapi/inpRWErrors/index.html#inpRWErrors.ElementIncorrectNodeNumError" title="inpRWErrors.ElementIncorrectNodeNumError"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ElementIncorrectNodeNumError</span></code></a> is raised.
+For undefined element type labels, this function will read datalines until it finds one which does not end with a comma.
+It will return the number of nodes it thinks the element has. For accurate results with user or sub-structure elements, the
+user should add an entry to <a class="reference internal" href="../../autoapi/config/index.html#config._elementTypeDictionary" title="config._elementTypeDictionary"><code class="xref py py-attr docutils literal notranslate"><span class="pre">inp._elementTypeDictionary</span></code></a> before calling <a class="reference internal" href="../../autoapi/inpRW/index.html#inpRW.inpRW.parse" title="inpRW.inpRW.parse"><code class="xref py py-func docutils literal notranslate"><span class="pre">inp.parse</span></code></a>.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+</section>
+<section id="new-attributes">
+<h2>New Attributes:<a class="headerlink" href="#new-attributes" title="Permalink to this heading">¶</a></h2>
+<blockquote>
+<div><ul class="simple">
+<li><dl class="simple">
+<dt><a class="reference internal" href="../../autoapi/inpKeyword/index.html#inpKeyword.inpKeyword._subinps" title="inpKeyword.inpKeyword._subinps"><code class="xref py py-attr docutils literal notranslate"><span class="pre">inpKeyword.inpKeyword._subinps</span></code></a></dt><dd><p>Contains sub <a class="reference internal" href="../../autoapi/inpRW/index.html#inpRW.inpRW" title="inpRW.inpRW"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpRW</span></code></a> instances for *INCLUDE and *MANIFEST blocks.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><a class="reference internal" href="../../autoapi/config_re/index.html#config_re.re25" title="config_re.re25"><code class="xref py py-attr docutils literal notranslate"><span class="pre">config_re.re25</span></code></a></dt><dd><p>Used to find leading comments prior to first keyword.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><a class="reference internal" href="../../autoapi/config_re/index.html#config_re.re26" title="config_re.re26"><code class="xref py py-attr docutils literal notranslate"><span class="pre">config_re.re26</span></code></a></dt><dd><p>Used to check if an element definition has been completed.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+</section>
+<section id="new-modules">
+<h2>New Modules:<a class="headerlink" href="#new-modules" title="Permalink to this heading">¶</a></h2>
+<blockquote>
+<div><ul class="simple">
+<li><dl class="simple">
+<dt><a class="reference internal" href="../../autoapi/elType/index.html#module-elType" title="elType"><code class="xref py py-mod docutils literal notranslate"><span class="pre">elType</span></code></a></dt><dd><p>Provides the <a class="reference internal" href="../../autoapi/elType/index.html#elType.elType" title="elType.elType"><code class="xref py py-class docutils literal notranslate"><span class="pre">elType</span></code></a> class.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>paramTypes</dt><dd><p>Internal only module, not yet shipped with <a class="reference internal" href="../../autoapi/inpRW/index.html#module-inpRW" title="inpRW"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW</span></code></a>. The handling of *PARAMETER definition and references needs to be improved,
+and this module is the foundation of that future work.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+</section>
+<section id="new-classes">
+<h2>New Classes:<a class="headerlink" href="#new-classes" title="Permalink to this heading">¶</a></h2>
+<blockquote>
+<div><ul class="simple">
+<li><dl class="simple">
+<dt><a class="reference internal" href="../../autoapi/elType/index.html#elType.elType" title="elType.elType"><code class="xref py py-class docutils literal notranslate"><span class="pre">elType.elType</span></code></a></dt><dd><p>Stores information about an Abaqus element type. Used for each entry in <a class="reference internal" href="../../autoapi/config/index.html#config._elementTypeDictionary" title="config._elementTypeDictionary"><code class="xref py py-attr docutils literal notranslate"><span class="pre">_elementTypeDictionary</span></code></a> instead of sub
+<a class="reference internal" href="../../autoapi/csid/index.html#csid.csid" title="csid.csid"><code class="xref py py-class docutils literal notranslate"><span class="pre">csid</span></code></a> instances.
+Includes the element description from the Abaqus documentation, the valid solver(s), and the number of nodes needed to define the element.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><a class="reference internal" href="../../autoapi/inpRWErrors/index.html#inpRWErrors.DecimalInfError" title="inpRWErrors.DecimalInfError"><code class="xref py py-exc docutils literal notranslate"><span class="pre">inpRWErrors.DecimalInfError</span></code></a></dt><dd><p>This exception is raised by <a class="reference internal" href="../../autoapi/inpDecimal/index.html#inpDecimal.inpDecimal.__new__" title="inpDecimal.inpDecimal.__new__"><code class="xref py py-func docutils literal notranslate"><span class="pre">inpDecimal.inpDecimal.__new__()</span></code></a> if the input string is ‘INF’. It is meant to handle a very niche error.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+</section>
+<section id="removed">
+<h2>Removed:<a class="headerlink" href="#removed" title="Permalink to this heading">¶</a></h2>
+<blockquote>
+<div><ul class="simple">
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">inpKeyword.inpKeyword._getElementNodeNum()</span></code></dt><dd><p>Replaced with <a class="reference internal" href="../../autoapi/inpKeyword/index.html#inpKeyword.findElementNodeNum" title="inpKeyword.findElementNodeNum"><code class="xref py py-func docutils literal notranslate"><span class="pre">inpKeyword.findElementNodeNum()</span></code></a>.</p>
+</dd>
+</dl>
+</li>
+<li><p>Removed python3_inpRW.bat and python3_inpRW.sh from the test suite.</p></li>
+</ul>
+</div></blockquote>
+</section>
+<section id="automated-tests">
+<h2>Automated Tests:<a class="headerlink" href="#automated-tests" title="Permalink to this heading">¶</a></h2>
+<blockquote>
+<div><dl class="simple">
+<dt>Added automated tests to the following items:</dt><dd><ul class="simple">
+<li><dl class="simple">
+<dt><a class="reference internal" href="../../autoapi/elType/index.html#module-elType" title="elType"><code class="xref py py-mod docutils literal notranslate"><span class="pre">elType</span></code></a> module:</dt><dd><p>all class functions</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><a class="reference internal" href="../../autoapi/inpKeyword/index.html#module-inpKeyword" title="inpKeyword"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpKeyword</span></code></a> module:</dt><dd><ul>
+<li><p><a class="reference internal" href="../../autoapi/inpKeyword/index.html#inpKeyword.findElementNodeNum" title="inpKeyword.findElementNodeNum"><code class="xref py py-func docutils literal notranslate"><span class="pre">findElementNodeNum()</span></code></a></p></li>
+<li><p><a class="reference internal" href="../../autoapi/inpKeyword/index.html#inpKeyword.inpKeyword.printKWandSuboptions" title="inpKeyword.inpKeyword.printKWandSuboptions"><code class="xref py py-func docutils literal notranslate"><span class="pre">printKWandSuboptions()</span></code></a></p></li>
+<li><p><a class="reference internal" href="../../autoapi/inpKeyword/index.html#inpKeyword.inpKeyword.writeKWandSuboptions" title="inpKeyword.inpKeyword.writeKWandSuboptions"><code class="xref py py-func docutils literal notranslate"><span class="pre">writeKWandSuboptions()</span></code></a></p></li>
+<li><p><a class="reference internal" href="../../autoapi/inpKeyword/index.html#inpKeyword.inpKeyword._formatDataOutput" title="inpKeyword.inpKeyword._formatDataOutput"><code class="xref py py-func docutils literal notranslate"><span class="pre">_formatDataOutput()</span></code></a></p></li>
+<li><p><a class="reference internal" href="../../autoapi/inpKeyword/index.html#inpKeyword.inpKeyword._formatDataLabelDict" title="inpKeyword.inpKeyword._formatDataLabelDict"><code class="xref py py-func docutils literal notranslate"><span class="pre">_formatDataLabelDict()</span></code></a></p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p>test_Example_Scenarios
+This test runs the example script from <a class="reference internal" href="../../user/Example-Scenarios.html"><span class="doc">Example Scenarios</span></a> page of the documentation.</p></li>
+</ul>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+<section id="misc">
+<h2>Misc:<a class="headerlink" href="#misc" title="Permalink to this heading">¶</a></h2>
+<blockquote>
+<div><p>N/A</p>
+</div></blockquote>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../inpRW_toc.html">
+              <img class="logo" src="../../_static/3DS_SIMULIA_Logotype_RGB_BlueSteel.png" alt="Logo", style="border-radius:5px"/>
+            </a></p>
+  <div>
+    <h3><a href="../../inpRW_toc.html">Local Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">2023.10.6</a><ul>
+<li><a class="reference internal" href="#performance-improvements">Performance Improvements:</a></li>
+<li><a class="reference internal" href="#modified-signatures">Modified signatures:</a></li>
+<li><a class="reference internal" href="#modified-modules">Modified Modules:</a></li>
+<li><a class="reference internal" href="#modified-classes">Modified Classes:</a></li>
+<li><a class="reference internal" href="#modified-functions">Modified Functions:</a></li>
+<li><a class="reference internal" href="#modified-attributes">Modified Attributes:</a></li>
+<li><a class="reference internal" href="#new-functions">New Functions:</a></li>
+<li><a class="reference internal" href="#new-attributes">New Attributes:</a></li>
+<li><a class="reference internal" href="#new-modules">New Modules:</a></li>
+<li><a class="reference internal" href="#new-classes">New Classes:</a></li>
+<li><a class="reference internal" href="#removed">Removed:</a></li>
+<li><a class="reference internal" href="#automated-tests">Automated Tests:</a></li>
+<li><a class="reference internal" href="#misc">Misc:</a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+<h3><a href="../../inpRW_toc.html">Global Table of Contents</a></h3>
+<p class="caption" role="heading"><span class="caption-text">User Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Introduction.html">inpRW Utility Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Project-Background.html">Project Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Installation-and-Usage.html">Installation and Usage Instructions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Tests.html">inpRW Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Tests.html#running-inprw-tests">Running inpRW Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/inpKeyword-Basics.html">inpKeyword Basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Strings_Integers_and_Decimals.html">Strings, Integers, and Decimals</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Important-inpRW-Attributes.html">Important <code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW</span></code> Attributes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Miscellaneous-Usage-hints.html">Miscellaneous Usage Hints</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Example-Scenarios.html">Example Scenarios</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/glossary.html">Glossary</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../autoapi/inpRW/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../autoapi/centroid/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">centroid</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../autoapi/config/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">config</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../autoapi/config_re/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">config_re</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../autoapi/csid/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">csid</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../autoapi/eval2/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">eval2</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../autoapi/elType/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">elType</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../autoapi/inpDecimal/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpDecimal</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../autoapi/inpInt/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpInt</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../autoapi/inpKeyword/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpKeyword</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../autoapi/inpKeywordHelper/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpKeywordHelper</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../autoapi/inpKeywordSequence/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpKeywordSequence</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../autoapi/inpRWErrors/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRWErrors</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../autoapi/inpString/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpString</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../autoapi/mesh/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">mesh</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../autoapi/misc_functions/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">misc_functions</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../autoapi/NoneSort/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">NoneSort</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../autoapi/printer/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">printer</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../autoapi/repr2/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">repr2</span></code></a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Update Notes</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Update Notes</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">2023.10.6</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Legal Notices and Usage Disclaimer</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../legal_notices/Legal_Notices_and_Usage_Disclaimer.html">Legal Notices and Usage Disclaimer</a></li>
+</ul>
+
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="../index.html"
+                          title="previous chapter">Update Notes</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="../../legal_notices/Legal_Notices_and_Usage_Disclaimer.html"
+                          title="next chapter">Legal Notices and Usage Disclaimer</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/Update-Notes/2023.10.6/index.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>  
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../legal_notices/Legal_Notices_and_Usage_Disclaimer.html" title="Legal Notices and Usage Disclaimer"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../index.html" title="Update Notes"
+             >previous</a> |</li>
+          <li><img src="../../_static/icon-116-3dx-apps.svg" alt="python logo" style="vertical-align: middle; margin-top: -1px"/></li>
+          <li><a href="inpRW_toc.html"></a> &#187;</li>
+          <li class="switchers">
+            <div class="language_switcher_placeholder"></div>
+            <div class="version_switcher_placeholder"></div>
+          </li>
+          <li>
+              
+              <a href="../../inpRW_toc.html">inpRW 2023.10.6 documentation</a> &#187;
+              
+          </li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Update Notes</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">2023.10.6</a></li>
+                <li class="right">
+                    
+
+    <div class="inline-search" role="search">
+        <form class="inline-search" action="../../search.html" method="get">
+          <input placeholder="Quick search" aria-label="Quick search" type="text" name="q" />
+          <input type="submit" value="Go" />
+          <input type="hidden" name="check_keywords" value="yes" />
+          <input type="hidden" name="area" value="default" />
+        </form>
+    </div>
+                     |
+                </li>
+            
+      </ul>
+    </div>  
+    <div class="footer">
+    &copy; Copyright 2023, Dassault Systèmes Simulia Corp.
+     <a href="../../_static/legal_notices.pdf" >inpRW Legal Notices</a>.<br />
+     <a href="../../_static/Read_Disclaimer_First.txt" >inpRW Usage Disclaimer</a>.<br />
+    Last updated on Nov 21, 2023.
+    <a href="https://r1132100503382-eu1-3dswym.3dexperience.3ds.com/#community:39/post:nE1VLzylQoKgfG2wekOpFg">Found a bug</a>?
+    </div>
+
+  </body>
+</html>

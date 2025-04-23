@@ -1,2 +1,2 @@
-from ._abaqus import read_buffer
+from ._abaqus import read
 

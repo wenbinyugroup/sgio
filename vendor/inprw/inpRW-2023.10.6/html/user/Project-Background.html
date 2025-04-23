@@ -1,0 +1,405 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>Project Background &#8212; inpRW 2023.10.6 documentation</title><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pydoctheme.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles.css" />
+    
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
+    
+    <script src="../_static/sidebar.js"></script>
+    
+    <link rel="shortcut icon" href="../_static/3DS_SIMULIA_Blue_Icon_32.png"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Installation and Usage Instructions" href="Installation-and-Usage.html" />
+    <link rel="prev" title="inpRW Utility Introduction" href="Introduction.html" /><link rel="shortcut icon" type="image/png" href="../_static/icon-116-3dx-apps.svg" />
+            <script type="text/javascript" src="../_static/copybutton.js"></script>
+            <script type="text/javascript" src="../_static/menu.js"></script> 
+  </head>
+<body>
+<div class="mobile-nav">
+    <input type="checkbox" id="menuToggler" class="toggler__input" aria-controls="navigation"
+           aria-pressed="false" aria-expanded="false" role="button" aria-label="Menu" />
+    <label for="menuToggler" class="toggler__label">
+        <span></span>
+    </label>
+    <nav class="nav-content" role="navigation">
+         <a href="inpRW_toc.html" class="nav-logo">
+             <img src="../_static/icon-116-3dx-apps.svg" alt="Logo"/>
+         </a>
+        <div class="version_switcher_placeholder"></div>
+        <form role="search" class="search" action="../search.html" method="get">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" class="search-icon">
+                <path fill-rule="nonzero"
+                        d="M15.5 14h-.79l-.28-.27a6.5 6.5 0 001.48-5.34c-.47-2.78-2.79-5-5.59-5.34a6.505 6.505 0 00-7.27 7.27c.34 2.8 2.56 5.12 5.34 5.59a6.5 6.5 0 005.34-1.48l.27.28v.79l4.25 4.25c.41.41 1.08.41 1.49 0 .41-.41.41-1.08 0-1.49L15.5 14zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" fill="#444"></path>
+            </svg>
+            <input type="text" name="q" aria-label="Quick search"/>
+            <input type="submit" value="Go"/>
+        </form>
+    </nav>
+    <div class="menu-wrapper">
+        <nav class="menu" role="navigation" aria-label="main navigation">
+            <div class="language_switcher_placeholder"></div>
+            <p class="logo">
+                <a href="../index.html">
+                <img class="logo" src="../_static/3DS_SIMULIA_Logotype_RGB_BlueSteel.png" alt="Logo" style="border-radius:5px"/>
+                </a>
+            </p>
+  <div>
+    <h3><a href="../inpRW_toc.html">Local Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">Project Background</a><ul>
+<li><a class="reference internal" href="#difficulties-of-parsing-abaqus-input-files">Difficulties of parsing Abaqus input files</a></li>
+<li><a class="reference internal" href="#inpparser-module">inpParser Module</a></li>
+<li><a class="reference internal" href="#inprw-history">inpRW History</a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+<h3><a href="../inpRW_toc.html">Global Table of Contents</a></h3>
+<p class="caption" role="heading"><span class="caption-text">User Documentation</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="Introduction.html">inpRW Utility Introduction</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Project Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Installation-and-Usage.html">Installation and Usage Instructions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Tests.html">inpRW Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Tests.html#running-inprw-tests">Running inpRW Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="inpKeyword-Basics.html">inpKeyword Basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Strings_Integers_and_Decimals.html">Strings, Integers, and Decimals</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Important-inpRW-Attributes.html">Important <code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW</span></code> Attributes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Miscellaneous-Usage-hints.html">Miscellaneous Usage Hints</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Example-Scenarios.html">Example Scenarios</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossary.html">Glossary</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/inpRW/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/centroid/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">centroid</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/config/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">config</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/config_re/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">config_re</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/csid/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">csid</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/eval2/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">eval2</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/elType/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">elType</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/inpDecimal/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpDecimal</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/inpInt/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpInt</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/inpKeyword/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpKeyword</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/inpKeywordHelper/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpKeywordHelper</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/inpKeywordSequence/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpKeywordSequence</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/inpRWErrors/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRWErrors</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/inpString/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpString</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/mesh/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">mesh</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/misc_functions/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">misc_functions</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/NoneSort/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">NoneSort</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/printer/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">printer</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/repr2/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">repr2</span></code></a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Update Notes</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Update-Notes/index.html">Update Notes</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Legal Notices and Usage Disclaimer</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../legal_notices/Legal_Notices_and_Usage_Disclaimer.html">Legal Notices and Usage Disclaimer</a></li>
+</ul>
+
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="Introduction.html"
+                          title="previous chapter">inpRW Utility Introduction</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="Installation-and-Usage.html"
+                          title="next chapter">Installation and Usage Instructions</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/user/Project-Background.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </nav>
+    </div>
+</div>
+  
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="Installation-and-Usage.html" title="Installation and Usage Instructions"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="Introduction.html" title="inpRW Utility Introduction"
+             accesskey="P">previous</a> |</li>
+          <li><img src="../_static/icon-116-3dx-apps.svg" alt="python logo" style="vertical-align: middle; margin-top: -1px"/></li>
+          <li><a href="inpRW_toc.html"></a> &#187;</li>
+          <li class="switchers">
+            <div class="language_switcher_placeholder"></div>
+            <div class="version_switcher_placeholder"></div>
+          </li>
+          <li>
+              
+              <a href="../inpRW_toc.html">inpRW 2023.10.6 documentation</a> &#187;
+              
+          </li>
+        <li class="nav-item nav-item-this"><a href="">Project Background</a></li>
+                <li class="right">
+                    
+
+    <div class="inline-search" role="search">
+        <form class="inline-search" action="../search.html" method="get">
+          <input placeholder="Quick search" aria-label="Quick search" type="text" name="q" />
+          <input type="submit" value="Go" />
+          <input type="hidden" name="check_keywords" value="yes" />
+          <input type="hidden" name="area" value="default" />
+        </form>
+    </div>
+                     |
+                </li>
+            
+      </ul>
+    </div>    
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="project-background">
+<h1>Project Background<a class="headerlink" href="#project-background" title="Permalink to this heading">¶</a></h1>
+<p>I started writing <a class="reference internal" href="../autoapi/inpRW/index.html#module-inpRW" title="inpRW"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW</span></code></a> because I frequently needed to edit Abaqus input files, but it was tedious to do so using
+text editors. Working on the input file itself is convenient because it is well-defined, open, portable, and supports every
+Abaqus keyword. I wanted a tool that could run on any operating system and that could work on input files generated by
+any pre-processor.</p>
+<section id="difficulties-of-parsing-abaqus-input-files">
+<h2>Difficulties of parsing Abaqus input files<a class="headerlink" href="#difficulties-of-parsing-abaqus-input-files" title="Permalink to this heading">¶</a></h2>
+<p>Writing parsers is a difficult task. While simpler than many languages, the Abaqus input file language still has some quirks
+which make accurate parsing difficult. In particular:</p>
+<ul>
+<li><p>Abaqus is not case-sensitive nor space-sensitive for keywords and parameters, while Python is sensitive to both.</p></li>
+<li><p>Keyword blocks are denoted with one * character and end with the next keyword block.</p></li>
+<li><p>Comments are denoted with two * characters and can start any line in the input file.</p></li>
+<li><p>Keywords and parameters do not need to be fully written out; they only need enough information to uniquely identify them.</p></li>
+<li><p>Data formatting varies per keyword, and different parameters can change the data for a given keyword.</p></li>
+<li><p>Many keywords directly enhance other keywords, and need to directly follow their parent keywords. There are three different methods for terminating these keyword groups:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>*END keyword (*PART, *STEP)</p></li>
+<li><p>Keyword that is not a valid suboption of the parent keyword (*MATERIAL, *OUTPUT)</p></li>
+<li><p>Read until the end of the file (*INCLUDE, *MANIFEST)</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>Abaqus has many default values that do not need to be specified.</p></li>
+</ul>
+</section>
+<section id="inpparser-module">
+<h2>inpParser Module<a class="headerlink" href="#inpparser-module" title="Permalink to this heading">¶</a></h2>
+<p>The <a class="reference internal" href="glossary.html#term-inpParser"><span class="xref std std-term">inpParser</span></a> module is included with Abaqus Python.
+It is essentially a Python API to the input file parser the Abaqus solver uses.
+Its purpose is to interpret an Abaqus input file in a way the solver can understand, with acceptable performance for massive input files, and execute the job in a manner the user intended.
+As part of this design, <a class="reference internal" href="glossary.html#term-inpParser"><span class="xref std std-term">inpParser</span></a> makes changes to the input file data, such as changing the case and spacing of items to provide case- and space-insensitivity, filling in default values of some parameters and data, and ignoring comments that appear after the last keyword and in the data lines of a keyword.
+There is also no method to write an input file from the parsed data in inpParser. Thus, <a class="reference internal" href="glossary.html#term-inpParser"><span class="xref std std-term">inpParser</span></a> is not a great foundation upon which to build a parsing tool meant to modify input files prior to running Abaqus jobs.</p>
+</section>
+<section id="inprw-history">
+<h2>inpRW History<a class="headerlink" href="#inprw-history" title="Permalink to this heading">¶</a></h2>
+<p><a class="reference internal" href="../autoapi/inpRW/index.html#module-inpRW" title="inpRW"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW</span></code></a> was originally just meant to write out an input file from the data from <a class="reference internal" href="glossary.html#term-inpParser"><span class="xref std std-term">inpParser</span></a>.
+However, due to the changes <a class="reference internal" href="glossary.html#term-inpParser"><span class="xref std std-term">inpParser</span></a> makes to the input data when parsing it, the module could not simply write out a new input file with whatever data was in the inp object, as it would not look anything like the original input file.
+A module to write from an <a class="reference internal" href="glossary.html#term-inpParser"><span class="xref std std-term">inpParser</span></a> inp object would likely require a special case for most keywords and parameter combinations, which would take an inordinate amount of work to create.
+Therefore, I decided to write a new module for parsing the input file and writing out a new input file, and this of course needed some functions that could find and change data in the input file.
+<a class="reference internal" href="../autoapi/inpRW/index.html#module-inpRW" title="inpRW"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW</span></code></a> was originally written for Python 2.7, so that it could run in Abaqus Python. However, I converted the script to Python 3 for a few reasons.</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Python 2.7 is end of life.</p></li>
+<li><p><strong>3D</strong>EXPERIENCE Keyword Edit tool in its initial form is hard-coded to use a Python 3 interpreter.</p></li>
+<li><p>Python 3 will have performance improvements over Python 2.7, and some useful features (such as ordered keys in dictionaries).</p></li>
+<li><p>Since the utility merely operates on the text of the input file, it does not need any features provided by the Abaqus Python API for pre-processing Abaqus/CAE models or post-processing Abaqus .odbs.</p></li>
+</ul>
+</div></blockquote>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../inpRW_toc.html">
+              <img class="logo" src="../_static/3DS_SIMULIA_Logotype_RGB_BlueSteel.png" alt="Logo", style="border-radius:5px"/>
+            </a></p>
+  <div>
+    <h3><a href="../inpRW_toc.html">Local Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">Project Background</a><ul>
+<li><a class="reference internal" href="#difficulties-of-parsing-abaqus-input-files">Difficulties of parsing Abaqus input files</a></li>
+<li><a class="reference internal" href="#inpparser-module">inpParser Module</a></li>
+<li><a class="reference internal" href="#inprw-history">inpRW History</a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+<h3><a href="../inpRW_toc.html">Global Table of Contents</a></h3>
+<p class="caption" role="heading"><span class="caption-text">User Documentation</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="Introduction.html">inpRW Utility Introduction</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Project Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Installation-and-Usage.html">Installation and Usage Instructions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Tests.html">inpRW Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Tests.html#running-inprw-tests">Running inpRW Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="inpKeyword-Basics.html">inpKeyword Basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Strings_Integers_and_Decimals.html">Strings, Integers, and Decimals</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Important-inpRW-Attributes.html">Important <code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW</span></code> Attributes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Miscellaneous-Usage-hints.html">Miscellaneous Usage Hints</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Example-Scenarios.html">Example Scenarios</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossary.html">Glossary</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/inpRW/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/centroid/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">centroid</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/config/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">config</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/config_re/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">config_re</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/csid/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">csid</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/eval2/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">eval2</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/elType/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">elType</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/inpDecimal/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpDecimal</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/inpInt/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpInt</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/inpKeyword/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpKeyword</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/inpKeywordHelper/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpKeywordHelper</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/inpKeywordSequence/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpKeywordSequence</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/inpRWErrors/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRWErrors</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/inpString/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpString</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/mesh/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">mesh</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/misc_functions/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">misc_functions</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/NoneSort/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">NoneSort</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/printer/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">printer</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/repr2/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">repr2</span></code></a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Update Notes</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Update-Notes/index.html">Update Notes</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Legal Notices and Usage Disclaimer</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../legal_notices/Legal_Notices_and_Usage_Disclaimer.html">Legal Notices and Usage Disclaimer</a></li>
+</ul>
+
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="Introduction.html"
+                          title="previous chapter">inpRW Utility Introduction</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="Installation-and-Usage.html"
+                          title="next chapter">Installation and Usage Instructions</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/user/Project-Background.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>  
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="Installation-and-Usage.html" title="Installation and Usage Instructions"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="Introduction.html" title="inpRW Utility Introduction"
+             >previous</a> |</li>
+          <li><img src="../_static/icon-116-3dx-apps.svg" alt="python logo" style="vertical-align: middle; margin-top: -1px"/></li>
+          <li><a href="inpRW_toc.html"></a> &#187;</li>
+          <li class="switchers">
+            <div class="language_switcher_placeholder"></div>
+            <div class="version_switcher_placeholder"></div>
+          </li>
+          <li>
+              
+              <a href="../inpRW_toc.html">inpRW 2023.10.6 documentation</a> &#187;
+              
+          </li>
+        <li class="nav-item nav-item-this"><a href="">Project Background</a></li>
+                <li class="right">
+                    
+
+    <div class="inline-search" role="search">
+        <form class="inline-search" action="../search.html" method="get">
+          <input placeholder="Quick search" aria-label="Quick search" type="text" name="q" />
+          <input type="submit" value="Go" />
+          <input type="hidden" name="check_keywords" value="yes" />
+          <input type="hidden" name="area" value="default" />
+        </form>
+    </div>
+                     |
+                </li>
+            
+      </ul>
+    </div>  
+    <div class="footer">
+    &copy; Copyright 2023, Dassault Systèmes Simulia Corp.
+     <a href="../_static/legal_notices.pdf" >inpRW Legal Notices</a>.<br />
+     <a href="../_static/Read_Disclaimer_First.txt" >inpRW Usage Disclaimer</a>.<br />
+    Last updated on Nov 21, 2023.
+    <a href="https://r1132100503382-eu1-3dswym.3dexperience.3ds.com/#community:39/post:nE1VLzylQoKgfG2wekOpFg">Found a bug</a>?
+    </div>
+
+  </body>
+</html>

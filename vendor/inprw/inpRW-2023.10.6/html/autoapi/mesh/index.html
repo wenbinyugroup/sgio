@@ -1,0 +1,1480 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>mesh &#8212; inpRW 2023.10.6 documentation</title><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/pydoctheme.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles.css" />
+    
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
+    
+    <script src="../../_static/sidebar.js"></script>
+    
+    <link rel="shortcut icon" href="../../_static/3DS_SIMULIA_Blue_Icon_32.png"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="misc_functions" href="../misc_functions/index.html" />
+    <link rel="prev" title="inpString" href="../inpString/index.html" /><link rel="shortcut icon" type="image/png" href="../../_static/icon-116-3dx-apps.svg" />
+            <script type="text/javascript" src="../../_static/copybutton.js"></script>
+            <script type="text/javascript" src="../../_static/menu.js"></script> 
+  </head>
+<body>
+<div class="mobile-nav">
+    <input type="checkbox" id="menuToggler" class="toggler__input" aria-controls="navigation"
+           aria-pressed="false" aria-expanded="false" role="button" aria-label="Menu" />
+    <label for="menuToggler" class="toggler__label">
+        <span></span>
+    </label>
+    <nav class="nav-content" role="navigation">
+         <a href="inpRW_toc.html" class="nav-logo">
+             <img src="../../_static/icon-116-3dx-apps.svg" alt="Logo"/>
+         </a>
+        <div class="version_switcher_placeholder"></div>
+        <form role="search" class="search" action="../../search.html" method="get">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" class="search-icon">
+                <path fill-rule="nonzero"
+                        d="M15.5 14h-.79l-.28-.27a6.5 6.5 0 001.48-5.34c-.47-2.78-2.79-5-5.59-5.34a6.505 6.505 0 00-7.27 7.27c.34 2.8 2.56 5.12 5.34 5.59a6.5 6.5 0 005.34-1.48l.27.28v.79l4.25 4.25c.41.41 1.08.41 1.49 0 .41-.41.41-1.08 0-1.49L15.5 14zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" fill="#444"></path>
+            </svg>
+            <input type="text" name="q" aria-label="Quick search"/>
+            <input type="submit" value="Go"/>
+        </form>
+    </nav>
+    <div class="menu-wrapper">
+        <nav class="menu" role="navigation" aria-label="main navigation">
+            <div class="language_switcher_placeholder"></div>
+            <p class="logo">
+                <a href="../../index.html">
+                <img class="logo" src="../../_static/3DS_SIMULIA_Logotype_RGB_BlueSteel.png" alt="Logo" style="border-radius:5px"/>
+                </a>
+            </p>
+  <div>
+    <h3><a href="../../inpRW_toc.html">Local Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">mesh</span></code></a><ul>
+<li><a class="reference internal" href="#module-mesh">Module Contents</a><ul>
+<li><a class="reference internal" href="#mesh.Node"><code class="docutils literal notranslate"><span class="pre">Node</span></code></a><ul>
+<li><a class="reference internal" href="#mesh.Node.__init__"><code class="docutils literal notranslate"><span class="pre">Node.__init__()</span></code></a></li>
+<li><a class="reference internal" href="#mesh.Node._ParamInInp"><code class="docutils literal notranslate"><span class="pre">Node._ParamInInp</span></code></a></li>
+<li><a class="reference internal" href="#mesh.Node.preserveSpacing"><code class="docutils literal notranslate"><span class="pre">Node.preserveSpacing</span></code></a></li>
+<li><a class="reference internal" href="#mesh.Node.useDecimal"><code class="docutils literal notranslate"><span class="pre">Node.useDecimal</span></code></a></li>
+<li><a class="reference internal" href="#mesh.Node._joinS"><code class="docutils literal notranslate"><span class="pre">Node._joinS</span></code></a></li>
+<li><a class="reference internal" href="#mesh.Node.label"><code class="docutils literal notranslate"><span class="pre">Node.label</span></code></a></li>
+<li><a class="reference internal" href="#mesh.Node.data"><code class="docutils literal notranslate"><span class="pre">Node.data</span></code></a></li>
+<li><a class="reference internal" href="#mesh.Node.elements"><code class="docutils literal notranslate"><span class="pre">Node.elements</span></code></a></li>
+<li><a class="reference internal" href="#mesh.Node._parseDataLine"><code class="docutils literal notranslate"><span class="pre">Node._parseDataLine()</span></code></a></li>
+<li><a class="reference internal" href="#mesh.Node._mergeElementData"><code class="docutils literal notranslate"><span class="pre">Node._mergeElementData()</span></code></a></li>
+<li><a class="reference internal" href="#mesh.Node.updateElements"><code class="docutils literal notranslate"><span class="pre">Node.updateElements()</span></code></a></li>
+<li><a class="reference internal" href="#mesh.Node.__repr__"><code class="docutils literal notranslate"><span class="pre">Node.__repr__()</span></code></a></li>
+<li><a class="reference internal" href="#mesh.Node.__str__"><code class="docutils literal notranslate"><span class="pre">Node.__str__()</span></code></a></li>
+<li><a class="reference internal" href="#mesh.Node.__weakref__"><code class="docutils literal notranslate"><span class="pre">Node.__weakref__</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#mesh.Element"><code class="docutils literal notranslate"><span class="pre">Element</span></code></a><ul>
+<li><a class="reference internal" href="#mesh.Element.__init__"><code class="docutils literal notranslate"><span class="pre">Element.__init__()</span></code></a></li>
+<li><a class="reference internal" href="#mesh.Element.eltype"><code class="docutils literal notranslate"><span class="pre">Element.eltype</span></code></a></li>
+<li><a class="reference internal" href="#mesh.Element._checknumNodes"><code class="docutils literal notranslate"><span class="pre">Element._checknumNodes</span></code></a></li>
+<li><a class="reference internal" href="#mesh.Element.numNodes"><code class="docutils literal notranslate"><span class="pre">Element.numNodes</span></code></a></li>
+<li><a class="reference internal" href="#mesh.Element._ParamInInp"><code class="docutils literal notranslate"><span class="pre">Element._ParamInInp</span></code></a></li>
+<li><a class="reference internal" href="#mesh.Element.preserveSpacing"><code class="docutils literal notranslate"><span class="pre">Element.preserveSpacing</span></code></a></li>
+<li><a class="reference internal" href="#mesh.Element._nl"><code class="docutils literal notranslate"><span class="pre">Element._nl</span></code></a></li>
+<li><a class="reference internal" href="#mesh.Element.useDecimal"><code class="docutils literal notranslate"><span class="pre">Element.useDecimal</span></code></a></li>
+<li><a class="reference internal" href="#mesh.Element._joinS"><code class="docutils literal notranslate"><span class="pre">Element._joinS</span></code></a></li>
+<li><a class="reference internal" href="#mesh.Element.label"><code class="docutils literal notranslate"><span class="pre">Element.label</span></code></a></li>
+<li><a class="reference internal" href="#mesh.Element.data"><code class="docutils literal notranslate"><span class="pre">Element.data</span></code></a></li>
+<li><a class="reference internal" href="#mesh.Element._npll"><code class="docutils literal notranslate"><span class="pre">Element._npll</span></code></a></li>
+<li><a class="reference internal" href="#mesh.Element._lineEnd"><code class="docutils literal notranslate"><span class="pre">Element._lineEnd</span></code></a></li>
+<li><a class="reference internal" href="#mesh.Element.checkNumberNodes"><code class="docutils literal notranslate"><span class="pre">Element.checkNumberNodes()</span></code></a></li>
+<li><a class="reference internal" href="#mesh.Element._parseDataLines"><code class="docutils literal notranslate"><span class="pre">Element._parseDataLines()</span></code></a></li>
+<li><a class="reference internal" href="#mesh.Element._parseDataLine"><code class="docutils literal notranslate"><span class="pre">Element._parseDataLine()</span></code></a></li>
+<li><a class="reference internal" href="#mesh.Element._processDataLinesInput"><code class="docutils literal notranslate"><span class="pre">Element._processDataLinesInput()</span></code></a></li>
+<li><a class="reference internal" href="#mesh.Element.setConnectedNodes"><code class="docutils literal notranslate"><span class="pre">Element.setConnectedNodes()</span></code></a></li>
+<li><a class="reference internal" href="#mesh.Element.__repr__"><code class="docutils literal notranslate"><span class="pre">Element.__repr__()</span></code></a></li>
+<li><a class="reference internal" href="#mesh.Element.__str__"><code class="docutils literal notranslate"><span class="pre">Element.__str__()</span></code></a></li>
+<li><a class="reference internal" href="#mesh.Element.__weakref__"><code class="docutils literal notranslate"><span class="pre">Element.__weakref__</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#mesh.Mesh"><code class="docutils literal notranslate"><span class="pre">Mesh</span></code></a><ul>
+<li><a class="reference internal" href="#mesh.Mesh.__init__"><code class="docutils literal notranslate"><span class="pre">Mesh.__init__()</span></code></a></li>
+<li><a class="reference internal" href="#mesh.Mesh.__repr__"><code class="docutils literal notranslate"><span class="pre">Mesh.__repr__()</span></code></a></li>
+<li><a class="reference internal" href="#mesh.Mesh.__str__"><code class="docutils literal notranslate"><span class="pre">Mesh.__str__()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#mesh.MeshElement"><code class="docutils literal notranslate"><span class="pre">MeshElement</span></code></a><ul>
+<li><a class="reference internal" href="#mesh.MeshElement.__init__"><code class="docutils literal notranslate"><span class="pre">MeshElement.__init__()</span></code></a></li>
+<li><a class="reference internal" href="#mesh.MeshElement.eltype"><code class="docutils literal notranslate"><span class="pre">MeshElement.eltype</span></code></a></li>
+<li><a class="reference internal" href="#mesh.MeshElement.__setitem__"><code class="docutils literal notranslate"><span class="pre">MeshElement.__setitem__()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#mesh.TotalMesh"><code class="docutils literal notranslate"><span class="pre">TotalMesh</span></code></a><ul>
+<li><a class="reference internal" href="#mesh.TotalMesh.__init__"><code class="docutils literal notranslate"><span class="pre">TotalMesh.__init__()</span></code></a></li>
+<li><a class="reference internal" href="#mesh.TotalMesh.subMeshes"><code class="docutils literal notranslate"><span class="pre">TotalMesh.subMeshes</span></code></a></li>
+<li><a class="reference internal" href="#mesh.TotalMesh.removeEmptySubMeshes"><code class="docutils literal notranslate"><span class="pre">TotalMesh.removeEmptySubMeshes()</span></code></a></li>
+<li><a class="reference internal" href="#mesh.TotalMesh.renameKeys"><code class="docutils literal notranslate"><span class="pre">TotalMesh.renameKeys()</span></code></a></li>
+<li><a class="reference internal" href="#mesh.TotalMesh.update"><code class="docutils literal notranslate"><span class="pre">TotalMesh.update()</span></code></a></li>
+<li><a class="reference internal" href="#mesh.TotalMesh.__delitem__"><code class="docutils literal notranslate"><span class="pre">TotalMesh.__delitem__()</span></code></a></li>
+<li><a class="reference internal" href="#mesh.TotalMesh.__repr__"><code class="docutils literal notranslate"><span class="pre">TotalMesh.__repr__()</span></code></a></li>
+<li><a class="reference internal" href="#mesh.TotalMesh.__setitem__"><code class="docutils literal notranslate"><span class="pre">TotalMesh.__setitem__()</span></code></a></li>
+<li><a class="reference internal" href="#mesh.TotalMesh.__str__"><code class="docutils literal notranslate"><span class="pre">TotalMesh.__str__()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#mesh.TotalNodeMesh"><code class="docutils literal notranslate"><span class="pre">TotalNodeMesh</span></code></a><ul>
+<li><a class="reference internal" href="#mesh.TotalNodeMesh.setNodesConnectedElements"><code class="docutils literal notranslate"><span class="pre">TotalNodeMesh.setNodesConnectedElements()</span></code></a></li>
+<li><a class="reference internal" href="#mesh.TotalNodeMesh.updateNodesConnectedElements"><code class="docutils literal notranslate"><span class="pre">TotalNodeMesh.updateNodesConnectedElements()</span></code></a></li>
+<li><a class="reference internal" href="#mesh.TotalNodeMesh.__repr__"><code class="docutils literal notranslate"><span class="pre">TotalNodeMesh.__repr__()</span></code></a></li>
+<li><a class="reference internal" href="#mesh.TotalNodeMesh.__str__"><code class="docutils literal notranslate"><span class="pre">TotalNodeMesh.__str__()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#mesh.TotalElementMesh"><code class="docutils literal notranslate"><span class="pre">TotalElementMesh</span></code></a><ul>
+<li><a class="reference internal" href="#mesh.TotalElementMesh.__repr__"><code class="docutils literal notranslate"><span class="pre">TotalElementMesh.__repr__()</span></code></a></li>
+<li><a class="reference internal" href="#mesh.TotalElementMesh.__str__"><code class="docutils literal notranslate"><span class="pre">TotalElementMesh.__str__()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  </div>
+<h3><a href="../../inpRW_toc.html">Global Table of Contents</a></h3>
+<p class="caption" role="heading"><span class="caption-text">User Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Introduction.html">inpRW Utility Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Project-Background.html">Project Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Installation-and-Usage.html">Installation and Usage Instructions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Tests.html">inpRW Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Tests.html#running-inprw-tests">Running inpRW Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/inpKeyword-Basics.html">inpKeyword Basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Strings_Integers_and_Decimals.html">Strings, Integers, and Decimals</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Important-inpRW-Attributes.html">Important <code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW</span></code> Attributes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Miscellaneous-Usage-hints.html">Miscellaneous Usage Hints</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Example-Scenarios.html">Example Scenarios</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/glossary.html">Glossary</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../inpRW/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../centroid/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">centroid</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../config/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">config</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../config_re/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">config_re</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../csid/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">csid</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../eval2/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">eval2</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../elType/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">elType</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inpDecimal/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpDecimal</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inpInt/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpInt</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inpKeyword/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpKeyword</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inpKeywordHelper/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpKeywordHelper</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inpKeywordSequence/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpKeywordSequence</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inpRWErrors/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRWErrors</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inpString/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpString</span></code></a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">mesh</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../misc_functions/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">misc_functions</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../NoneSort/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">NoneSort</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../printer/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">printer</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../repr2/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">repr2</span></code></a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Update Notes</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Update-Notes/index.html">Update Notes</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Legal Notices and Usage Disclaimer</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../legal_notices/Legal_Notices_and_Usage_Disclaimer.html">Legal Notices and Usage Disclaimer</a></li>
+</ul>
+
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="../inpString/index.html"
+                          title="previous chapter"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpString</span></code></a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="../misc_functions/index.html"
+                          title="next chapter"><code class="xref py py-mod docutils literal notranslate"><span class="pre">misc_functions</span></code></a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/autoapi/mesh/index.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </nav>
+    </div>
+</div>
+  
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../misc_functions/index.html" title="misc_functions"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../inpString/index.html" title="inpString"
+             accesskey="P">previous</a> |</li>
+          <li><img src="../../_static/icon-116-3dx-apps.svg" alt="python logo" style="vertical-align: middle; margin-top: -1px"/></li>
+          <li><a href="inpRW_toc.html"></a> &#187;</li>
+          <li class="switchers">
+            <div class="language_switcher_placeholder"></div>
+            <div class="version_switcher_placeholder"></div>
+          </li>
+          <li>
+              
+              <a href="../../inpRW_toc.html">inpRW 2023.10.6 documentation</a> &#187;
+              
+          </li>
+        <li class="nav-item nav-item-this"><a href=""><code class="xref py py-mod docutils literal notranslate"><span class="pre">mesh</span></code></a></li>
+                <li class="right">
+                    
+
+    <div class="inline-search" role="search">
+        <form class="inline-search" action="../../search.html" method="get">
+          <input placeholder="Quick search" aria-label="Quick search" type="text" name="q" />
+          <input type="submit" value="Go" />
+          <input type="hidden" name="check_keywords" value="yes" />
+          <input type="hidden" name="area" value="default" />
+        </form>
+    </div>
+                     |
+                </li>
+            
+      </ul>
+    </div>    
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="mesh">
+<h1><a class="reference internal" href="#module-mesh" title="mesh"><code class="xref py py-mod docutils literal notranslate"><span class="pre">mesh</span></code></a><a class="headerlink" href="#mesh" title="Permalink to this heading">¶</a></h1>
+<section id="module-mesh">
+<span id="module-contents"></span><h2>Module Contents<a class="headerlink" href="#module-mesh" title="Permalink to this heading">¶</a></h2>
+<p>The <a class="reference internal" href="#module-mesh" title="mesh"><code class="xref py py-mod docutils literal notranslate"><span class="pre">mesh</span></code></a> module contains classes that store node and element data.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="mesh.Node">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mesh.</span></span><span class="sig-name descname"><span class="pre">Node</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataline</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">elements</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_joinS</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">',</span> <span class="pre">'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_ParamInInp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preserveSpacing</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">useDecimal</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mesh.Node" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>The Node class stores nodal information from a single node (i.e. one dataline from a *NODE keyword block).</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="mesh.Node.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataline</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">elements</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_ParamInInp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preserveSpacing</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">useDecimal</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mesh.Node.__init__" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">elements</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_joinS</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">',</span> <span class="pre">'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span></span></dt>
+<dd><p>Initializes attributes of the Node.</p>
+<p>In most cases, this will be used by <a class="reference internal" href="../inpKeyword/index.html#inpKeyword.inpKeyword._parseDataNode" title="inpKeyword.inpKeyword._parseDataNode"><code class="xref py py-func docutils literal notranslate"><span class="pre">_parseDataNode()</span></code></a>. That function will handle
+creating the inputs to this class from the string corresponding to the node dataline. See that function
+for an example of instancing this class. If you are instancing this class manually, there are two recommended
+options.</p>
+<p>First, specify the <em>dataline</em> parameter and the other related parameters if you know them prior to
+creating the <a class="reference internal" href="#mesh.Node" title="mesh.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">Node</span></code></a> instance and/or do not wish to use the default values. <em>dataline</em> will be parsed,
+and <a class="reference internal" href="#mesh.Node.label" title="mesh.Node.label"><code class="xref py py-attr docutils literal notranslate"><span class="pre">label</span></code></a> and <a class="reference internal" href="#mesh.Node.data" title="mesh.Node.data"><code class="xref py py-attr docutils literal notranslate"><span class="pre">data</span></code></a> will be populated from the parsed information.</p>
+<p>Here’s an example using the default settings, which will use <a class="reference internal" href="../inpInt/index.html#inpInt.inpInt" title="inpInt.inpInt"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpInt</span></code></a>, <a class="reference internal" href="../inpDecimal/index.html#inpDecimal.inpDecimal" title="inpDecimal.inpDecimal"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpDecimal.inpDecimal</span></code></a>,
+and <a class="reference internal" href="../inpString/index.html#inpString.inpString" title="inpString.inpString"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpString</span></code></a> to store data items and preserve the exact spacing:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">mesh</span> <span class="kn">import</span> <span class="n">Node</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dataline</span> <span class="o">=</span> <span class="s1">&#39;   21, 70.00,   0.00&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">node</span> <span class="o">=</span> <span class="n">Node</span><span class="p">(</span><span class="n">dataline</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">node</span>
+<span class="go">Node(label=inpInt(&#39;   21&#39;), data=[inpInt(&#39;   21&#39;), inpDecimal(&#39; 70.00&#39;), inpDecimal(&#39;   0.00&#39;)], elements=[])</span>
+</pre></div>
+</div>
+<p>The <a class="reference external" href="https://docs.python.org/3/library/functions.html#repr" title="(in Python v3.12)"><code class="xref py py-func docutils literal notranslate"><span class="pre">repr()</span></code></a> of an <a class="reference internal" href="#mesh.Node" title="mesh.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">Node</span></code></a> instance is consistent across the different methods to instantiate
+the class. If you wish to see how the <a class="reference internal" href="#mesh.Node" title="mesh.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">Node</span></code></a> will be written out, you can use a function to call
+its string representation. For example:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+<span class="go">   21, 70.00,   0.00</span>
+</pre></div>
+</div>
+<p>Here’s an example of turning off the mechanisms for preserving the exact spacing (for a performance benefit):</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">node</span> <span class="o">=</span> <span class="n">Node</span><span class="p">(</span><span class="n">dataline</span><span class="p">,</span> <span class="n">preserveSpacing</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">useDecimal</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+<span class="go">21, 70.0, 0.0</span>
+</pre></div>
+</div>
+<p>We can also specify a custom separator to join the parsed strings when we create a string of the node. This will
+only be applied if <em>preserveSpacing</em> and <em>useDecimal</em> are False. Example:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">node</span> <span class="o">=</span> <span class="n">Node</span><span class="p">(</span><span class="n">dataline</span><span class="p">,</span> <span class="n">_joinS</span> <span class="o">=</span> <span class="s1">&#39;,__&#39;</span><span class="p">,</span> <span class="n">preserveSpacing</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">useDecimal</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+<span class="go">21,__70.0,__0.0</span>
+</pre></div>
+</div>
+<p>If an item in <em>dataline</em> could be a *PARAMETER reference, either <em>_ParamInInp</em> or <em>preserveSpacing</em> must be True,
+or else a <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.12)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ValueError</span></code></a> will be raised. Example:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">dataline</span> <span class="o">=</span> <span class="s1">&#39;   21, &lt;coord&gt;,   0.00&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">node</span> <span class="o">=</span> <span class="n">Node</span><span class="p">(</span><span class="n">dataline</span><span class="p">,</span> <span class="n">preserveSpacing</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">useDecimal</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="gt">Traceback (most recent call last):</span>
+<span class="w">    </span><span class="o">...</span>
+<span class="gr">ValueError</span>: <span class="n">could not convert string to float: &#39; &lt;coord&gt;&#39;</span>
+</pre></div>
+</div>
+<p>The second option is to specify <em>label</em> and <em>data</em> instead of <em>dataline</em>. Those items should be formatted properly
+prior to instancing <a class="reference internal" href="#mesh.Node" title="mesh.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">Node</span></code></a>. Example:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">label</span> <span class="o">=</span> <span class="mi">21</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="mi">21</span><span class="p">,</span> <span class="mf">70.0</span><span class="p">,</span> <span class="mf">0.00</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">node</span> <span class="o">=</span> <span class="n">Node</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+<span class="go">21, 70.0, 0.0</span>
+</pre></div>
+</div>
+<p>Using either method, <em>elements</em> can be specified if the user knows the list of elements which connect to the node.
+In most cases, this should not be specified, and the elements connected to the node should instead be added using
+<a class="reference internal" href="#mesh.Element.setConnectedNodes" title="mesh.Element.setConnectedNodes"><code class="xref py py-func docutils literal notranslate"><span class="pre">setConnectedNodes()</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dataline</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – The string which contains the entire dataline for the node. Will be parsed to populate
+the <a class="reference internal" href="#mesh.Node" title="mesh.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">node's</span></code></a> attributes. Defaults to ‘’</p></li>
+<li><p><strong>label</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a>) – The label for the node. Defaults to None.</p></li>
+<li><p><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a>) – The data for the node. This will be a parsed dataline. The format should be
+[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, …]. Defaults to None.</p></li>
+<li><p><strong>elements</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a>) – The elements which are connected to the <a class="reference internal" href="#mesh.Node" title="mesh.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">Node</span></code></a> instance. Defaults to None.</p></li>
+<li><p><strong>_joinS</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – The string used to join the data items together when creating strings of the <a class="reference internal" href="#mesh.Node" title="mesh.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">Node</span></code></a> instance.
+Defaults ‘, ‘.</p></li>
+<li><p><strong>_ParamInInp</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><em>bool</em></a>) – Indicates if *PARAMETER is in the input file, which would mean that the dataline items
+could be strings instead of exclusively integers. Defaults to False.</p></li>
+<li><p><strong>preserveSpacing</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><em>bool</em></a>) – If True, the exact spacing of all items will be preserved by using <a class="reference internal" href="../inpInt/index.html#inpInt.inpInt" title="inpInt.inpInt"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpInt</span></code></a>.
+In most cases when creating new <a class="reference internal" href="#mesh.Element" title="mesh.Element"><code class="xref py py-class docutils literal notranslate"><span class="pre">Element</span></code></a> instances, you will want to use the same value that the rest
+of the input file was parsed with. Defaults to True.</p></li>
+<li><p><strong>useDecimal</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><em>bool</em></a>) – If True, any floating point numbers will be parsed as <a class="reference external" href="https://docs.python.org/3/library/decimal.html#decimal.Decimal" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Decimal</span></code></a> or <a class="reference internal" href="../inpDecimal/index.html#inpDecimal.inpDecimal" title="inpDecimal.inpDecimal"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpDecimal</span></code></a>.
+In most cases when creating new <a class="reference internal" href="#mesh.Element" title="mesh.Element"><code class="xref py py-class docutils literal notranslate"><span class="pre">Element</span></code></a> instances, you will want to use the same value that the rest
+of the input file was parsed with. Defaults to True.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mesh.Node._ParamInInp">
+<span class="sig-name descname"><span class="pre">_ParamInInp</span></span><a class="headerlink" href="#mesh.Node._ParamInInp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Indicates if *PARAMETER is in the input file. If True, data items could be references to *PARAMETER functions, and the datalines might be strings, so the :func:’~eval2.eval2’ function must be used when parsing data items instead of assuming they must be integers. Defaults to False.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mesh.Node.preserveSpacing">
+<span class="sig-name descname"><span class="pre">preserveSpacing</span></span><a class="headerlink" href="#mesh.Node.preserveSpacing" title="Permalink to this definition">¶</a></dt>
+<dd><p>If True, the exact spacing of all items will be preserved by using <a class="reference internal" href="../inpInt/index.html#inpInt.inpInt" title="inpInt.inpInt"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpInt</span></code></a> instead of <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>. <a class="reference internal" href="#mesh.Node._joinS" title="mesh.Node._joinS"><code class="xref py py-attr docutils literal notranslate"><span class="pre">_joinS</span></code></a> will be set to ‘,’ if <em>preserveSpacing</em> is True, as the spacing will be stored in the data objects. Defaults to True.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mesh.Node.useDecimal">
+<span class="sig-name descname"><span class="pre">useDecimal</span></span><a class="headerlink" href="#mesh.Node.useDecimal" title="Permalink to this definition">¶</a></dt>
+<dd><p>If True, any floating point numbers will be parsed as <a class="reference external" href="https://docs.python.org/3/library/decimal.html#decimal.Decimal" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Decimal</span></code></a> or <a class="reference internal" href="../inpDecimal/index.html#inpDecimal.inpDecimal" title="inpDecimal.inpDecimal"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpDecimal</span></code></a>. Defaults to True.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mesh.Node._joinS">
+<span class="sig-name descname"><span class="pre">_joinS</span></span><a class="headerlink" href="#mesh.Node._joinS" title="Permalink to this definition">¶</a></dt>
+<dd><p>The string used to join data items together when creating a string for the entire dataline. Defaults to ‘, ‘, which will be sufficient for most cases.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mesh.Node.label">
+<span class="sig-name descname"><span class="pre">label</span></span><a class="headerlink" href="#mesh.Node.label" title="Permalink to this definition">¶</a></dt>
+<dd><p>The node label.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)">int</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mesh.Node.data">
+<span class="sig-name descname"><span class="pre">data</span></span><a class="headerlink" href="#mesh.Node.data" title="Permalink to this definition">¶</a></dt>
+<dd><p>A list containing the parsed data items.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)">list</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mesh.Node.elements">
+<span class="sig-name descname"><span class="pre">elements</span></span><a class="headerlink" href="#mesh.Node.elements" title="Permalink to this definition">¶</a></dt>
+<dd><p>Will store the elements that reference this <a class="reference internal" href="#mesh.Node" title="mesh.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">Node</span></code></a>. This is populated by <a class="reference internal" href="#mesh.Element.setConnectedNodes" title="mesh.Element.setConnectedNodes"><code class="xref py py-func docutils literal notranslate"><span class="pre">Element.setConnectedNodes()</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)">list</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mesh.Node._parseDataLine">
+<span class="sig-name descname"><span class="pre">_parseDataLine</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataline</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mesh.Node._parseDataLine" title="Permalink to this definition">¶</a></dt>
+<dd><p>Populates the <a class="reference internal" href="#mesh.Node" title="mesh.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">Node</span></code></a> instance by parsing the <em>dataline</em> string.</p>
+<p>This function will be called automatically when <a class="reference internal" href="#mesh.Node" title="mesh.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">Node</span></code></a> is initialized if <em>datalines</em> is specified.</p>
+<p>Example usage:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">mesh</span> <span class="kn">import</span> <span class="n">Node</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">node</span> <span class="o">=</span> <span class="n">Node</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">node</span><span class="o">.</span><span class="n">_parseDataLine</span><span class="p">(</span><span class="s1">&#39;   21, 70.00,   0.00&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">node</span>
+<span class="go">Node(label=inpInt(&#39;   21&#39;), data=[inpInt(&#39;   21&#39;), inpDecimal(&#39; 70.00&#39;), inpDecimal(&#39;   0.00&#39;)], elements=[])</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dataline</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – A string containing the information for the entire dataline.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mesh.Node._mergeElementData">
+<span class="sig-name descname"><span class="pre">_mergeElementData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mesh.Node._mergeElementData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Currently unused</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mesh.Node.updateElements">
+<span class="sig-name descname"><span class="pre">updateElements</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ed</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mesh.Node.updateElements" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if each element in <a class="reference internal" href="#mesh.Node.elements" title="mesh.Node.elements"><code class="xref py py-attr docutils literal notranslate"><span class="pre">elements</span></code></a> exists in <em>ed</em>. Returns 0 if <a class="reference internal" href="#mesh.Node.elements" title="mesh.Node.elements"><code class="xref py py-attr docutils literal notranslate"><span class="pre">elements</span></code></a> is empty, 1 if
+elements have been removed, or 2 if no changes were made.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ed</strong> (<a class="reference internal" href="#mesh.TotalMesh" title="mesh.TotalMesh"><em>TotalMesh</em></a>) – This is the <a class="reference internal" href="#mesh.TotalMesh" title="mesh.TotalMesh"><code class="xref py py-class docutils literal notranslate"><span class="pre">TotalMesh</span></code></a> instance containing elements in which to check for <a class="reference internal" href="#mesh.Node.elements" title="mesh.Node.elements"><code class="xref py py-attr docutils literal notranslate"><span class="pre">elements</span></code></a>.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>0 if <a class="reference internal" href="#mesh.Node.elements" title="mesh.Node.elements"><code class="xref py py-attr docutils literal notranslate"><span class="pre">elements</span></code></a> is now empty, 1 if <a class="reference internal" href="#mesh.Node.elements" title="mesh.Node.elements"><code class="xref py py-attr docutils literal notranslate"><span class="pre">elements</span></code></a> was modified, 2 if <a class="reference internal" href="#mesh.Node.elements" title="mesh.Node.elements"><code class="xref py py-attr docutils literal notranslate"><span class="pre">elements</span></code></a> is unchanged.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)">int</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mesh.Node.__repr__">
+<span class="sig-name descname"><span class="pre">__repr__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mesh.Node.__repr__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Produces a repr of the Node.</p>
+<div class="admonition-example admonition">
+<p class="admonition-title">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">mesh</span> <span class="kn">import</span> <span class="n">Node</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Node</span><span class="p">(</span><span class="s1">&#39;   21, 70.00,   0.00&#39;</span><span class="p">)</span>
+<span class="go">Node(label=inpInt(&#39;   21&#39;), data=[inpInt(&#39;   21&#39;), inpDecimal(&#39; 70.00&#39;), inpDecimal(&#39;   0.00&#39;)], elements=[])</span>
+</pre></div>
+</div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mesh.Node.__str__">
+<span class="sig-name descname"><span class="pre">__str__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mesh.Node.__str__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Produces a str of the dataline for the Node.</p>
+<div class="admonition-example admonition">
+<p class="admonition-title">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">mesh</span> <span class="kn">import</span> <span class="n">Node</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">node</span> <span class="o">=</span> <span class="n">Node</span><span class="p">(</span><span class="s1">&#39;   21, 70.00,   0.00&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+<span class="go">   21, 70.00,   0.00</span>
+</pre></div>
+</div>
+</div>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mesh.Node.__weakref__">
+<span class="sig-name descname"><span class="pre">__weakref__</span></span><a class="headerlink" href="#mesh.Node.__weakref__" title="Permalink to this definition">¶</a></dt>
+<dd><p>list of weak references to the object (if defined)</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="mesh.Element">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mesh.</span></span><span class="sig-name descname"><span class="pre">Element</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">eltype</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numNodes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">datalines</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_lineEnd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_npll</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_joinS</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">',</span> <span class="pre">'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_ParamInInp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preserveSpacing</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">useDecimal</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_checkNumNodes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_nl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'\n'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mesh.Element" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>The Element class stores element information from a single element (i.e. one dataline from a *ELEMENT keyword block).</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="mesh.Element.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">eltype</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numNodes=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">datalines=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_ParamInInp=False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preserveSpacing=True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">useDecimal=True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_checkNumNodes=True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_nl='\n'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mesh.Element.__init__" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">eltype</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numNodes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_lineEnd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_npll</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_joinS</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">',</span> <span class="pre">'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span></span></dt>
+<dd><p>Initializes attributes of the Element.</p>
+<p>In most cases, this will be used by <a class="reference internal" href="../inpKeyword/index.html#inpKeyword.inpKeyword._parseDataElement" title="inpKeyword.inpKeyword._parseDataElement"><code class="xref py py-func docutils literal notranslate"><span class="pre">_parseDataElement()</span></code></a>. That function will handle
+creating the inputs to this class from the string corresponding to the element dataline. See that function
+for more details. If you are instancing this class manually, you can omit specifying the private parameters.
+The default values should be sufficient.</p>
+<p>All parameters are optional except <em>eltype</em>, but there are two recommend methods to create an instance of this class. The
+first method is to specify <em>datalines</em> and allow <a class="reference internal" href="#mesh.Element" title="mesh.Element"><code class="xref py py-class docutils literal notranslate"><span class="pre">Element</span></code></a> to parse these datalines to populate <a class="reference internal" href="#mesh.Element.label" title="mesh.Element.label"><code class="xref py py-attr docutils literal notranslate"><span class="pre">label</span></code></a>
+and <a class="reference internal" href="#mesh.Element.data" title="mesh.Element.data"><code class="xref py py-attr docutils literal notranslate"><span class="pre">data</span></code></a>. Here is an example of this use case with a CPS4R element:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">mesh</span> <span class="kn">import</span> <span class="n">Element</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">datalines</span> <span class="o">=</span> <span class="s1">&#39; 1, 1, 2, 102, 101&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">element</span> <span class="o">=</span> <span class="n">Element</span><span class="p">(</span><span class="n">eltype</span><span class="o">=</span><span class="s1">&#39;CPS4R&#39;</span><span class="p">,</span> <span class="n">datalines</span><span class="o">=</span><span class="n">datalines</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">element</span>
+<span class="go">Element(label=inpInt(&#39; 1&#39;), data=[inpInt(&#39; 1&#39;), inpInt(&#39; 1&#39;), inpInt(&#39; 2&#39;), inpInt(&#39; 102&#39;), inpInt(&#39; 101&#39;)], eltype=&#39;CPS4R&#39;, numNodes=4)</span>
+</pre></div>
+</div>
+<p>The <a class="reference external" href="https://docs.python.org/3/library/functions.html#repr" title="(in Python v3.12)"><code class="xref py py-func docutils literal notranslate"><span class="pre">repr()</span></code></a> of an <a class="reference internal" href="#mesh.Element" title="mesh.Element"><code class="xref py py-class docutils literal notranslate"><span class="pre">Element</span></code></a> instance is consistent across the different methods to instantiate
+the class. If you wish to see how the <a class="reference internal" href="#mesh.Element" title="mesh.Element"><code class="xref py py-class docutils literal notranslate"><span class="pre">Element</span></code></a> will be written out, you can use a function to call
+its string representation. For example:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">element</span><span class="p">)</span>
+<span class="go"> 1, 1, 2, 102, 101</span>
+</pre></div>
+</div>
+<p>Here’s a similar example with an element defined over multiple lines:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">datalines</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39; 1,  16,   4,  24,  57,  13,   1,  32,  66,  92,  91,  90,  89,  93,  94,  95,&#39;</span><span class="p">,</span>
+<span class="gp">... </span><span class="s1">&#39;      96,  98,  97,  99, 100&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Element</span><span class="p">(</span><span class="n">eltype</span><span class="o">=</span><span class="s1">&#39;C3D20&#39;</span><span class="p">,</span> <span class="n">datalines</span><span class="o">=</span><span class="n">datalines</span><span class="p">)</span>
+<span class="go">Element(label=inpInt(&#39; 1&#39;), data=[inpInt(&#39; 1&#39;), inpInt(&#39;  16&#39;), inpInt(&#39;   4&#39;), inpInt(&#39;  24&#39;), inpInt(&#39;  57&#39;), inpInt(&#39;  13&#39;), inpInt(&#39;   1&#39;), inpInt(&#39;  32&#39;), inpInt(&#39;  66&#39;), inpInt(&#39;  92&#39;), inpInt(&#39;  91&#39;), inpInt(&#39;  90&#39;), inpInt(&#39;  89&#39;), inpInt(&#39;  93&#39;), inpInt(&#39;  94&#39;), inpInt(&#39;  95&#39;), inpInt(&#39;      96&#39;), inpInt(&#39;  98&#39;), inpInt(&#39;  97&#39;), inpInt(&#39;  99&#39;), inpInt(&#39; 100&#39;)], eltype=&#39;C3D20&#39;, numNodes=20)</span>
+</pre></div>
+</div>
+<p>We can also specify <em>datalines</em> as a single string with newline characters. Example:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">datalines</span> <span class="o">=</span> <span class="s1">&#39; 1,  16,   4,  24,  57,  13,   1,  32,  66,  92,  91,  90,  89,  93,  94,  95,</span><span class="se">\n</span><span class="s1">     96,  98,  97,  99, 100&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Element</span><span class="p">(</span><span class="n">eltype</span><span class="o">=</span><span class="s1">&#39;C3D20&#39;</span><span class="p">,</span> <span class="n">datalines</span><span class="o">=</span><span class="n">datalines</span><span class="p">)</span>
+<span class="go">Element(label=inpInt(&#39; 1&#39;), data=[inpInt(&#39; 1&#39;), inpInt(&#39;  16&#39;), inpInt(&#39;   4&#39;), inpInt(&#39;  24&#39;), inpInt(&#39;  57&#39;), inpInt(&#39;  13&#39;), inpInt(&#39;   1&#39;), inpInt(&#39;  32&#39;), inpInt(&#39;  66&#39;), inpInt(&#39;  92&#39;), inpInt(&#39;  91&#39;), inpInt(&#39;  90&#39;), inpInt(&#39;  89&#39;), inpInt(&#39;  93&#39;), inpInt(&#39;  94&#39;), inpInt(&#39;  95&#39;), inpInt(&#39;     96&#39;), inpInt(&#39;  98&#39;), inpInt(&#39;  97&#39;), inpInt(&#39;  99&#39;), inpInt(&#39; 100&#39;)], eltype=&#39;C3D20&#39;, numNodes=20)</span>
+</pre></div>
+</div>
+<p>If we set <em>preserveSpacing</em>, <em>useDecimal</em>, and <em>_ParamInInp</em> all to False, we gain some performance at the expense
+of some formatting accuracy. See the difference below:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">datalines</span> <span class="o">=</span> <span class="s1">&#39; 1,  16,   4,  24,  57,  13,   1,  32,  66,  92,  91,  90,  89,  93,  94,  95,</span><span class="se">\n</span><span class="s1">     96,  98,  97,  99, 100&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">Element</span><span class="p">(</span><span class="n">eltype</span><span class="o">=</span><span class="s1">&#39;C3D20&#39;</span><span class="p">,</span> <span class="n">datalines</span><span class="o">=</span><span class="n">datalines</span><span class="p">,</span> <span class="n">preserveSpacing</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">useDecimal</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+<span class="go">1, 16, 4, 24, 57, 13, 1, 32, 66, 92, 91, 90, 89, 93, 94, 95,</span>
+<span class="go">96, 98, 97, 99, 100</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">Element</span><span class="p">(</span><span class="n">eltype</span><span class="o">=</span><span class="s1">&#39;C3D20&#39;</span><span class="p">,</span> <span class="n">datalines</span><span class="o">=</span><span class="n">datalines</span><span class="p">))</span>
+<span class="go"> 1,  16,   4,  24,  57,  13,   1,  32,  66,  92,  91,  90,  89,  93,  94,  95,</span>
+<span class="go">     96,  98,  97,  99, 100</span>
+</pre></div>
+</div>
+<p>The second method is to instead specify <em>label</em> and <em>data</em> directly. We will need to get the data into a suitable
+form prior to inserting it into the <a class="reference internal" href="#mesh.Element" title="mesh.Element"><code class="xref py py-class docutils literal notranslate"><span class="pre">Element</span></code></a> instance. You will use this option most often if you are
+creating new elements and do not start with a string containing the entire element definition. Example usage:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">label</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">24</span><span class="p">,</span> <span class="mi">57</span><span class="p">,</span> <span class="mi">13</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">66</span><span class="p">,</span> <span class="mi">92</span><span class="p">,</span> <span class="mi">91</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="mi">89</span><span class="p">,</span> <span class="mi">93</span><span class="p">,</span> <span class="mi">94</span><span class="p">,</span> <span class="mi">95</span><span class="p">,</span> <span class="mi">96</span><span class="p">,</span> <span class="mi">98</span><span class="p">,</span> <span class="mi">97</span><span class="p">,</span> <span class="mi">99</span><span class="p">,</span> <span class="mi">100</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">element</span> <span class="o">=</span> <span class="n">Element</span><span class="p">(</span><span class="n">eltype</span><span class="o">=</span><span class="s1">&#39;C3D20&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">element</span><span class="p">)</span>
+<span class="go">1, 16, 4, 24, 57, 13, 1, 32, 66, 92, 91, 90, 89, 93, 94, 95,</span>
+<span class="go">96, 98, 97, 99, 100</span>
+</pre></div>
+</div>
+<p>If you don’t specify the number of nodes to include per each line via <em>_npll</em>, there will be 16 items per line.</p>
+<p>We can also specify the strings used to join data items (<em>_joinS</em>), and a string to include at the end of
+each line (<em>_lineEnd</em>). This should normally be whitespace characters, but different characters are used
+here for illustrative purposes:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">element</span> <span class="o">=</span> <span class="n">Element</span><span class="p">(</span><span class="n">eltype</span><span class="o">=</span><span class="s1">&#39;C3D20&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">_lineEnd</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;++&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span> <span class="n">_joinS</span> <span class="o">=</span> <span class="s1">&#39;,_&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">element</span><span class="p">)</span>
+<span class="go">1,_16,_4,_24,_57,_13,_1,_32,_66,_92,_91,_90,_89,_93,_94,_95,++</span>
+<span class="go">96,_98,_97,_99,_100</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>eltype</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – The element type name. Should be a valid Abaqus element type name, or the name of a user-element.</p></li>
+<li><p><strong>numNodes</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a>) – The number of nodes the element needs. If not specified, this will be retrieved from
+<a class="reference internal" href="../config/index.html#config._elementTypeDictionary" title="config._elementTypeDictionary"><code class="xref py py-attr docutils literal notranslate"><span class="pre">_elementTypeDictionary[eltype]</span></code></a>. This should only be specified if
+an element type is not in that dictionary, which will mainly be for user or substructure elements.</p></li>
+<li><p><strong>datalines</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – A list of strings representing the datalines for the <a class="reference internal" href="#mesh.Element" title="mesh.Element"><code class="xref py py-class docutils literal notranslate"><span class="pre">Element</span></code></a>. This can also be a
+string representing the entirety of the data for the element, with new line characters if the definition is
+spread across multiple lines. Defaults to None.</p></li>
+<li><p><strong>label</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a>) – The label for the element. Defaults to None.</p></li>
+<li><p><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a>) – The data for the element. This will be a parsed dataline. The format should be
+[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, …].</p></li>
+<li><p><strong>_lineEnd</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a>) – Holds any additional whitespace characters to include at the end of the dataline. Mainly used
+to exactly reproduce the string representation of the keyword block. Defaults to None. If the data must be
+printed across multiple lines, _lineEnd will be expanded to a list if necessary, with each item in the list
+corresponding to the old value of <a class="reference internal" href="#mesh.Element._lineEnd" title="mesh.Element._lineEnd"><code class="xref py py-attr docutils literal notranslate"><span class="pre">_lineEnd</span></code></a>. If a _lineEnd item is None, nothing will be added to the end
+of that line. If a _lineEnd item is a string, the _lineEnd item will follow a comma on the effected line.</p></li>
+<li><p><strong>_npll</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a>) – Nodes Per Line List, controls how many nodes should be printed on each line when converting
+the Element to a string. The default value of None will cause the maximum number of nodes to be
+printed on each line (up to 15 for line 0, and up to 16 for all subsequent lines).</p></li>
+<li><p><strong>_joinS</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – The string used to join the data items together when creating strings of the <a class="reference internal" href="#mesh.Element" title="mesh.Element"><code class="xref py py-class docutils literal notranslate"><span class="pre">Element</span></code></a> instance.
+Defaults to None, which will use ‘, ‘. If <em>preserveSpacing</em> is True and <em>datalines</em> is not None, ‘,’ will be used.</p></li>
+<li><p><strong>_ParamInInp</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><em>bool</em></a>) – Indicates if *PARAMETER is in the input file, which would mean that the dataline items
+could be strings instead of exclusively integers. Defaults to False.</p></li>
+<li><p><strong>preserveSpacing</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><em>bool</em></a>) – If True, the exact spacing of all items will be preserved by using <a class="reference internal" href="../inpInt/index.html#inpInt.inpInt" title="inpInt.inpInt"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpInt</span></code></a>.
+In most cases when creating new <a class="reference internal" href="#mesh.Element" title="mesh.Element"><code class="xref py py-class docutils literal notranslate"><span class="pre">Element</span></code></a> instances, you will want to use the same value that the rest
+of the input file was parsed with. Defaults to True.</p></li>
+<li><p><strong>useDecimal</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><em>bool</em></a>) – If True, any floating point numbers will be parsed as <a class="reference external" href="https://docs.python.org/3/library/decimal.html#decimal.Decimal" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Decimal</span></code></a> or <a class="reference internal" href="../inpDecimal/index.html#inpDecimal.inpDecimal" title="inpDecimal.inpDecimal"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpDecimal</span></code></a>.
+In most cases when creating new <a class="reference internal" href="#mesh.Element" title="mesh.Element"><code class="xref py py-class docutils literal notranslate"><span class="pre">Element</span></code></a> instances, you will want to use the same value that the rest
+of the input file was parsed with. Defaults to True.</p></li>
+<li><p><strong>_checkNumNodes</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><em>bool</em></a>) – If True, the number of nodes parsed from <em>datalines</em> will be checked against <a class="reference internal" href="#mesh.Element.numNodes" title="mesh.Element.numNodes"><code class="xref py py-attr docutils literal notranslate"><span class="pre">numNodes</span></code></a>.
+If the <a class="reference internal" href="#mesh.Element" title="mesh.Element"><code class="xref py py-class docutils literal notranslate"><span class="pre">Element</span></code></a> has the incorrect number of nodes, an <a class="reference internal" href="../inpRWErrors/index.html#inpRWErrors.ElementIncorrectNodeNumError" title="inpRWErrors.ElementIncorrectNodeNumError"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ElementIncorrectNodeNumError</span></code></a>
+will be raised. Defaults to True.</p></li>
+<li><p><strong>_nl</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – Used to split <em>datalines</em> if it is a string. Defaults to ‘n’.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mesh.Element.eltype">
+<span class="sig-name descname"><span class="pre">eltype</span></span><a class="headerlink" href="#mesh.Element.eltype" title="Permalink to this definition">¶</a></dt>
+<dd><p>Indicates the element type name. Should be a valid Abaqus element type.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mesh.Element._checknumNodes">
+<span class="sig-name descname"><span class="pre">_checknumNodes</span></span><a class="headerlink" href="#mesh.Element._checknumNodes" title="Permalink to this definition">¶</a></dt>
+<dd><p>If True, the number of nodes parsed from datalines will be checked against the number in <a class="reference internal" href="#mesh.Element.numNodes" title="mesh.Element.numNodes"><code class="xref py py-attr docutils literal notranslate"><span class="pre">numNodes</span></code></a>. Defaults to True.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mesh.Element.numNodes">
+<span class="sig-name descname"><span class="pre">numNodes</span></span><a class="headerlink" href="#mesh.Element.numNodes" title="Permalink to this definition">¶</a></dt>
+<dd><p>The number of nodes needed for the Element. Can be specified by the user, or will be retrieved from <a class="reference internal" href="../config/index.html#config._elementTypeDictionary" title="config._elementTypeDictionary"><code class="xref py py-attr docutils literal notranslate"><span class="pre">_elementTypeDictionary[eltype]</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)">int</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mesh.Element._ParamInInp">
+<span class="sig-name descname"><span class="pre">_ParamInInp</span></span><a class="headerlink" href="#mesh.Element._ParamInInp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Indicates if *PARAMETER is in the input file. If True, data items could be references to *PARAMETER functions, and the datalines might be strings, so the :func:’~eval2.eval2’ function must be used when parsing data items instead of assuming they must be integers. Defaults to False.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mesh.Element.preserveSpacing">
+<span class="sig-name descname"><span class="pre">preserveSpacing</span></span><a class="headerlink" href="#mesh.Element.preserveSpacing" title="Permalink to this definition">¶</a></dt>
+<dd><p>If True, the exact spacing of all items will be preserved by using <a class="reference internal" href="../inpInt/index.html#inpInt.inpInt" title="inpInt.inpInt"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpInt</span></code></a> instead of <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>. Defaults to True.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mesh.Element._nl">
+<span class="sig-name descname"><span class="pre">_nl</span></span><a class="headerlink" href="#mesh.Element._nl" title="Permalink to this definition">¶</a></dt>
+<dd><p>Used to split <em>datalines</em> if it is a string. Defaults to ‘n’, which should be correct for most cases.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mesh.Element.useDecimal">
+<span class="sig-name descname"><span class="pre">useDecimal</span></span><a class="headerlink" href="#mesh.Element.useDecimal" title="Permalink to this definition">¶</a></dt>
+<dd><p>If True, any floating point numbers will be parsed as <a class="reference external" href="https://docs.python.org/3/library/decimal.html#decimal.Decimal" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Decimal</span></code></a> or <a class="reference internal" href="../inpDecimal/index.html#inpDecimal.inpDecimal" title="inpDecimal.inpDecimal"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpDecimal</span></code></a>. Defaults to True.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mesh.Element._joinS">
+<span class="sig-name descname"><span class="pre">_joinS</span></span><a class="headerlink" href="#mesh.Element._joinS" title="Permalink to this definition">¶</a></dt>
+<dd><p>The string used to join the data items together when creating strings of the <a class="reference internal" href="#mesh.Element" title="mesh.Element"><code class="xref py py-class docutils literal notranslate"><span class="pre">Element</span></code></a> instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mesh.Element.label">
+<span class="sig-name descname"><span class="pre">label</span></span><a class="headerlink" href="#mesh.Element.label" title="Permalink to this definition">¶</a></dt>
+<dd><p>The element label.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)">int</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mesh.Element.data">
+<span class="sig-name descname"><span class="pre">data</span></span><a class="headerlink" href="#mesh.Element.data" title="Permalink to this definition">¶</a></dt>
+<dd><p>The data for the element. This will be a parsed dataline. The format should be [<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, …].</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)">list</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mesh.Element._npll">
+<span class="sig-name descname"><span class="pre">_npll</span></span><a class="headerlink" href="#mesh.Element._npll" title="Permalink to this definition">¶</a></dt>
+<dd><p>Nodes Per Line List, controls how many nodes will be printed on each line when converting <a class="reference internal" href="#mesh.Element" title="mesh.Element"><code class="xref py py-class docutils literal notranslate"><span class="pre">Element</span></code></a> to a string.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)">list</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mesh.Element._lineEnd">
+<span class="sig-name descname"><span class="pre">_lineEnd</span></span><a class="headerlink" href="#mesh.Element._lineEnd" title="Permalink to this definition">¶</a></dt>
+<dd><p>Holds any additional whitespace characters to include at the end of the dataline.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mesh.Element.checkNumberNodes">
+<span class="sig-name descname"><span class="pre">checkNumberNodes</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mesh.Element.checkNumberNodes" title="Permalink to this definition">¶</a></dt>
+<dd><p>checkNumberNodes()</p>
+<p>This function will check if the number of nodes in <a class="reference internal" href="#mesh.Element.data" title="mesh.Element.data"><code class="xref py py-attr docutils literal notranslate"><span class="pre">data</span></code></a> matches that specified in <a class="reference internal" href="#mesh.Element.numNodes" title="mesh.Element.numNodes"><code class="xref py py-attr docutils literal notranslate"><span class="pre">numNodes</span></code></a>.</p>
+<p>It raises an <a class="reference internal" href="../inpRWErrors/index.html#inpRWErrors.ElementIncorrectNodeNumError" title="inpRWErrors.ElementIncorrectNodeNumError"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ElementIncorrectNodeNumError</span></code></a> if the number of nodes does not match the
+element type requirements. Otherwise, it does nothing. This function will be called by <a class="reference internal" href="#mesh.Element._parseDataLines" title="mesh.Element._parseDataLines"><code class="xref py py-func docutils literal notranslate"><span class="pre">_parseDataLines()</span></code></a>
+if <a class="reference internal" href="#mesh.Element._checknumNodes" title="mesh.Element._checknumNodes"><code class="xref py py-attr docutils literal notranslate"><span class="pre">_checknumNodes</span></code></a> is True (thus, it will be called if <a class="reference internal" href="#mesh.Element" title="mesh.Element"><code class="xref py py-class docutils literal notranslate"><span class="pre">Element</span></code></a> is initialized with <em>datalines</em>
+and the default settings). It should be called manually if the <a class="reference internal" href="#mesh.Element" title="mesh.Element"><code class="xref py py-class docutils literal notranslate"><span class="pre">Element</span></code></a> is populated in another manner.</p>
+<div class="admonition-example admonition">
+<p class="admonition-title">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">mesh</span> <span class="kn">import</span> <span class="n">Element</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">element</span> <span class="o">=</span> <span class="n">Element</span><span class="p">(</span><span class="n">eltype</span><span class="o">=</span><span class="s1">&#39;CPS4R&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">102</span><span class="p">,</span> <span class="mi">101</span><span class="p">,</span> <span class="mi">103</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">element</span><span class="o">.</span><span class="n">checkNumberNodes</span><span class="p">()</span>
+<span class="gt">Traceback (most recent call last):</span>
+<span class="w">    </span><span class="o">...</span>
+<span class="gr">inpRWErrors.ElementIncorrectNodeNumError</span>: <span class="n">ERROR! An element of type CPS4R must have 4 nodes.</span>
+</pre></div>
+</div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../inpRWErrors/index.html#inpRWErrors.ElementIncorrectNodeNumError" title="inpRWErrors.ElementIncorrectNodeNumError"><strong>ElementIncorrectNodeNumError</strong></a> – </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mesh.Element._parseDataLines">
+<span class="sig-name descname"><span class="pre">_parseDataLines</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">datalines</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mesh.Element._parseDataLines" title="Permalink to this definition">¶</a></dt>
+<dd><p>Populates the <a class="reference internal" href="#mesh.Element" title="mesh.Element"><code class="xref py py-class docutils literal notranslate"><span class="pre">Element</span></code></a> instance by parsing the strings in <em>datalines</em>.</p>
+<p>This function will also call <a class="reference internal" href="#mesh.Element.checkNumberNodes" title="mesh.Element.checkNumberNodes"><code class="xref py py-func docutils literal notranslate"><span class="pre">checkNumberNodes()</span></code></a> if <a class="reference internal" href="#mesh.Element._checknumNodes" title="mesh.Element._checknumNodes"><code class="xref py py-attr docutils literal notranslate"><span class="pre">_checknumNodes</span></code></a> = True. It is called automatically
+if <a class="reference internal" href="#mesh.Element" title="mesh.Element"><code class="xref py py-class docutils literal notranslate"><span class="pre">Element</span></code></a> is instantiated with the <em>datalines</em> argument.</p>
+<p>Example usage:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">mesh</span> <span class="kn">import</span> <span class="n">Element</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">element</span> <span class="o">=</span> <span class="n">Element</span><span class="p">(</span><span class="n">eltype</span><span class="o">=</span><span class="s1">&#39;CPS4R&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">element</span><span class="o">.</span><span class="n">_parseDataLines</span><span class="p">(</span><span class="s1">&#39;1, 1, 2, 102, 101&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">element</span><span class="p">)</span>
+<span class="go">1,  1,  2,  102,  101</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>datalines</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a>) – A list of strings containing the information for the entire dataline.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mesh.Element._parseDataLine">
+<span class="sig-name descname"><span class="pre">_parseDataLine</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataline</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">con</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mesh.Element._parseDataLine" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parses an individual *ELEMENT dataline. Meant to be used by <a class="reference internal" href="#mesh.Element._parseDataLines" title="mesh.Element._parseDataLines"><code class="xref py py-func docutils literal notranslate"><span class="pre">_parseDataLines()</span></code></a>.</p>
+<p>Example usage:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">mesh</span> <span class="kn">import</span> <span class="n">Element</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dataline1</span> <span class="o">=</span> <span class="s1">&#39; 1,  16,   4,  24,  57,  13,   1,  32,  66,  92,  91,  90,  89,  93,  94,  95,&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dataline2</span> <span class="o">=</span> <span class="s1">&#39;     96,  98,  97,  99, 100&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">element</span> <span class="o">=</span> <span class="n">Element</span><span class="p">(</span><span class="n">eltype</span><span class="o">=</span><span class="s1">&#39;C3D20&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">element</span><span class="o">.</span><span class="n">_parseDataLine</span><span class="p">(</span><span class="n">dataline1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">element</span>
+<span class="go">Element(label=inpInt(&#39; 1&#39;), data=[inpInt(&#39; 1&#39;), inpInt(&#39;  16&#39;), inpInt(&#39;   4&#39;), inpInt(&#39;  24&#39;), inpInt(&#39;  57&#39;), inpInt(&#39;  13&#39;), inpInt(&#39;   1&#39;), inpInt(&#39;  32&#39;), inpInt(&#39;  66&#39;), inpInt(&#39;  92&#39;), inpInt(&#39;  91&#39;), inpInt(&#39;  90&#39;), inpInt(&#39;  89&#39;), inpInt(&#39;  93&#39;), inpInt(&#39;  94&#39;), inpInt(&#39;  95&#39;)], eltype=&#39;C3D20&#39;, numNodes=20)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">element</span><span class="o">.</span><span class="n">_parseDataLine</span><span class="p">(</span><span class="n">dataline2</span><span class="p">,</span> <span class="n">con</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">element</span>
+<span class="go">Element(label=inpInt(&#39; 1&#39;), data=[inpInt(&#39; 1&#39;), inpInt(&#39;  16&#39;), inpInt(&#39;   4&#39;), inpInt(&#39;  24&#39;), inpInt(&#39;  57&#39;), inpInt(&#39;  13&#39;), inpInt(&#39;   1&#39;), inpInt(&#39;  32&#39;), inpInt(&#39;  66&#39;), inpInt(&#39;  92&#39;), inpInt(&#39;  91&#39;), inpInt(&#39;  90&#39;), inpInt(&#39;  89&#39;), inpInt(&#39;  93&#39;), inpInt(&#39;  94&#39;), inpInt(&#39;  95&#39;), inpInt(&#39;     96&#39;), inpInt(&#39;  98&#39;), inpInt(&#39;  97&#39;), inpInt(&#39;  99&#39;), inpInt(&#39; 100&#39;)], eltype=&#39;C3D20&#39;, numNodes=20)</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dataline</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – The string containing the information for one line of data.</p></li>
+<li><p><strong>con</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><em>bool</em></a>) – If True, this function will treat <em>dataline</em> as a continuation of the previous dataline
+(i.e. all items represent node labels, instead of an element label and then node labels). Defaults
+to False.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mesh.Element._processDataLinesInput">
+<span class="sig-name descname"><span class="pre">_processDataLinesInput</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">datalines</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mesh.Element._processDataLinesInput" title="Permalink to this definition">¶</a></dt>
+<dd><p>If <em>datalines</em> is a string, split <em>datalines</em> on <a class="reference internal" href="#mesh.Element._nl" title="mesh.Element._nl"><code class="xref py py-attr docutils literal notranslate"><span class="pre">_nl</span></code></a>, which will convert <em>datalines</em> to a string.</p>
+<p>This is called automatically by <a class="reference internal" href="#mesh.Element._parseDataLines" title="mesh.Element._parseDataLines"><code class="xref py py-func docutils literal notranslate"><span class="pre">_parseDataLines()</span></code></a>, so the user will likely never need to call it directly.</p>
+<p>Example usage:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">mesh</span> <span class="kn">import</span> <span class="n">Element</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">element</span> <span class="o">=</span> <span class="n">Element</span><span class="p">(</span><span class="n">eltype</span><span class="o">=</span><span class="s1">&#39;CPS4R&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">element</span><span class="o">.</span><span class="n">_processDataLinesInput</span><span class="p">(</span><span class="s1">&#39;  1, 1, 2, 102, 101&#39;</span><span class="p">)</span>
+<span class="go">[&#39;  1, 1, 2, 102, 101&#39;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">element</span><span class="o">.</span><span class="n">_processDataLinesInput</span><span class="p">(</span><span class="s1">&#39; 1,  16,   4,  24,  57,  13,   1,  32,  66,  92,  91,  90,  89,  93,  94,  95,</span><span class="se">\n</span><span class="s1">     96,  98,  97,  99, 100&#39;</span><span class="p">)</span>
+<span class="go">[&#39; 1,  16,   4,  24,  57,  13,   1,  32,  66,  92,  91,  90,  89,  93,  94,  95,&#39;, &#39;     96,  98,  97,  99, 100&#39;]</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>datalines</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a>) – A string or list of strings. If a string, will be converted to a list by
+splitting on <a class="reference internal" href="#mesh.Element._nl" title="mesh.Element._nl"><code class="xref py py-attr docutils literal notranslate"><span class="pre">_nl</span></code></a>.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mesh.Element.setConnectedNodes">
+<span class="sig-name descname"><span class="pre">setConnectedNodes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nd</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mesh.Element.setConnectedNodes" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function will find each node in <em>nd</em> corresponding to the node labels in <a class="reference internal" href="#mesh.Element.data" title="mesh.Element.data"><code class="xref py py-attr docutils literal notranslate"><span class="pre">data</span></code></a> and
+append <a class="reference internal" href="#mesh.Element.label" title="mesh.Element.label"><code class="xref py py-attr docutils literal notranslate"><span class="pre">label</span></code></a> to the <a class="reference internal" href="#mesh.Node.elements" title="mesh.Node.elements"><code class="xref py py-attr docutils literal notranslate"><span class="pre">elements</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>nd</strong> (<a class="reference internal" href="#mesh.TotalMesh" title="mesh.TotalMesh"><em>TotalMesh</em></a>) – The TotalMesh instance containing the nodes for the input file.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mesh.Element.__repr__">
+<span class="sig-name descname"><span class="pre">__repr__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mesh.Element.__repr__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Produces a repr of the dataline for the Element.</p>
+<p>Example usage:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">mesh</span> <span class="kn">import</span> <span class="n">Element</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Element</span><span class="p">(</span><span class="n">eltype</span><span class="o">=</span><span class="s1">&#39;CPS4R&#39;</span><span class="p">,</span> <span class="n">datalines</span><span class="o">=</span><span class="s1">&#39; 1, 1, 2, 102, 101&#39;</span><span class="p">)</span>
+<span class="go">Element(label=inpInt(&#39; 1&#39;), data=[inpInt(&#39; 1&#39;), inpInt(&#39; 1&#39;), inpInt(&#39; 2&#39;), inpInt(&#39; 102&#39;), inpInt(&#39; 101&#39;)], eltype=&#39;CPS4R&#39;, numNodes=4)</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>string</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mesh.Element.__str__">
+<span class="sig-name descname"><span class="pre">__str__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mesh.Element.__str__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Produces a str of the dataline for the Element.</p>
+<p>Example usage:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">mesh</span> <span class="kn">import</span> <span class="n">Element</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">Element</span><span class="p">(</span><span class="n">eltype</span><span class="o">=</span><span class="s1">&#39;CPS4R&#39;</span><span class="p">,</span> <span class="n">datalines</span><span class="o">=</span><span class="s1">&#39;1, 1, 2, 102, 101&#39;</span><span class="p">))</span>
+<span class="go">1, 1, 2, 102, 101</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>string</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mesh.Element.__weakref__">
+<span class="sig-name descname"><span class="pre">__weakref__</span></span><a class="headerlink" href="#mesh.Element.__weakref__" title="Permalink to this definition">¶</a></dt>
+<dd><p>list of weak references to the object (if defined)</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="mesh.Mesh">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mesh.</span></span><span class="sig-name descname"><span class="pre">Mesh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mesh.Mesh" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="../csid/index.html#csid.csid" title="csid.csid"><code class="xref py py-class docutils literal notranslate"><span class="pre">csid</span></code></a></p>
+<p>This class is a <a class="reference internal" href="../csid/index.html#module-csid" title="csid"><code class="xref py py-class docutils literal notranslate"><span class="pre">csid</span></code></a> used to store the data from a node <a class="reference internal" href="../../user/glossary.html#term-keyword-block"><span class="xref std std-term">keyword block</span></a>.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="mesh.Mesh.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mesh.Mesh.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initializes the class. In most cases, users should not directly instantiate this class. Rather, they should
+create a *NODE <a class="reference internal" href="../inpKeyword/index.html#inpKeyword.inpKeyword" title="inpKeyword.inpKeyword"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpKeyword</span></code></a> instance and allow that keyword block to handle the logistics.</p>
+<p>Example usage:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">mesh</span> <span class="kn">import</span> <span class="n">Node</span><span class="p">,</span> <span class="n">Mesh</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">node1</span> <span class="o">=</span> <span class="n">Node</span><span class="p">(</span><span class="s1">&#39;   1 ,  0.00,   0.00&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">node2</span> <span class="o">=</span> <span class="n">Node</span><span class="p">(</span><span class="s1">&#39;   21, 70.00,   0.00&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Mesh</span><span class="p">([[</span><span class="n">i</span><span class="o">.</span><span class="n">label</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">[</span><span class="n">node1</span><span class="p">,</span> <span class="n">node2</span><span class="p">]])</span>
+<span class="go">csid(inpInt(&#39;   1 &#39;): Node(label=inpInt(&#39;   1 &#39;), data=[inpInt(&#39;   1 &#39;), inpDecimal(&#39;  0.00&#39;), inpDecimal(&#39;   0.00&#39;)], elements=[]), inpInt(&#39;   21&#39;): Node(label=inpInt(&#39;   21&#39;), data=[inpInt(&#39;   21&#39;), inpDecimal(&#39; 70.00&#39;), inpDecimal(&#39;   0.00&#39;)], elements=[]))</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> – <em>data</em> should be a format that can generate a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dictionary</span></code></a>. Defaults to None, which
+will produce a blank object.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mesh.Mesh.__repr__">
+<span class="sig-name descname"><span class="pre">__repr__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mesh.Mesh.__repr__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Uses the default __repr__ method from <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>.</p>
+<p>Example usage:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">mesh</span> <span class="kn">import</span> <span class="n">Node</span><span class="p">,</span> <span class="n">Mesh</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">node1</span> <span class="o">=</span> <span class="n">Node</span><span class="p">(</span><span class="s1">&#39;   1 ,  0.00,   0.00&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">node2</span> <span class="o">=</span> <span class="n">Node</span><span class="p">(</span><span class="s1">&#39;   21, 70.00,   0.00&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Mesh</span><span class="p">([[</span><span class="n">i</span><span class="o">.</span><span class="n">label</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">[</span><span class="n">node1</span><span class="p">,</span> <span class="n">node2</span><span class="p">]])</span>
+<span class="go">csid(inpInt(&#39;   1 &#39;): Node(label=inpInt(&#39;   1 &#39;), data=[inpInt(&#39;   1 &#39;), inpDecimal(&#39;  0.00&#39;), inpDecimal(&#39;   0.00&#39;)], elements=[]), inpInt(&#39;   21&#39;): Node(label=inpInt(&#39;   21&#39;), data=[inpInt(&#39;   21&#39;), inpDecimal(&#39; 70.00&#39;), inpDecimal(&#39;   0.00&#39;)], elements=[]))</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mesh.Mesh.__str__">
+<span class="sig-name descname"><span class="pre">__str__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mesh.Mesh.__str__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Uses the default __str__ method from <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>.</p>
+<p>Example usage:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">mesh</span> <span class="kn">import</span> <span class="n">Node</span><span class="p">,</span> <span class="n">Mesh</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">node1</span> <span class="o">=</span> <span class="n">Node</span><span class="p">(</span><span class="s1">&#39;   1 ,  0.00,   0.00&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">node2</span> <span class="o">=</span> <span class="n">Node</span><span class="p">(</span><span class="s1">&#39;   21, 70.00,   0.00&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">Mesh</span><span class="p">([[</span><span class="n">i</span><span class="o">.</span><span class="n">label</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">[</span><span class="n">node1</span><span class="p">,</span> <span class="n">node2</span><span class="p">]]))</span>
+<span class="go">{</span>
+<span class="go">   1 :    1 ,  0.00,   0.00</span>
+<span class="go">   21:    21, 70.00,   0.00</span>
+<span class="go">}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="mesh.MeshElement">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mesh.</span></span><span class="sig-name descname"><span class="pre">MeshElement</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">eltype</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mesh.MeshElement" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mesh.Mesh" title="mesh.Mesh"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mesh</span></code></a></p>
+<p><a class="reference internal" href="#mesh.MeshElement" title="mesh.MeshElement"><code class="xref py py-class docutils literal notranslate"><span class="pre">MeshElement</span></code></a> is identical to <a class="reference internal" href="#mesh.Mesh" title="mesh.Mesh"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mesh</span></code></a>, except that it checks to make sure that every item added to
+it has the same element type.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="mesh.MeshElement.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">eltype</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mesh.MeshElement.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>__init__(eltype, data=None)</p>
+<p>Initializes the class. In most cases, users should not directly instantiate this class. Rather, they should
+create a *ELEMENT <a class="reference internal" href="../inpKeyword/index.html#inpKeyword.inpKeyword" title="inpKeyword.inpKeyword"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpKeyword</span></code></a> instance and allow that keyword block to handle the logistics.</p>
+<p>Example usage:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">mesh</span> <span class="kn">import</span> <span class="n">Element</span><span class="p">,</span> <span class="n">MeshElement</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">element1</span> <span class="o">=</span> <span class="n">Element</span><span class="p">(</span><span class="n">eltype</span><span class="o">=</span><span class="s1">&#39;C3D20&#39;</span><span class="p">,</span> <span class="n">datalines</span><span class="o">=</span><span class="s1">&#39; 1,  16,   4,  24,  57,  13,   1,  32,  66,  92,  91,  90,  89,  93,  94,  95,</span><span class="se">\n</span><span class="s1">     96,  98,  97,  99, 100&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">element2</span> <span class="o">=</span> <span class="n">Element</span><span class="p">(</span><span class="n">eltype</span><span class="o">=</span><span class="s1">&#39;C3D20&#39;</span><span class="p">,</span> <span class="n">datalines</span><span class="o">=</span><span class="s1">&#39; 2,  15,  16,  57,  58,  14,  13,  66,  65, 103,  89, 102, 101, 104,  96, 105,</span><span class="se">\n</span><span class="s1">    106, 107,  98, 100, 108&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mesh</span> <span class="o">=</span> <span class="n">MeshElement</span><span class="p">(</span><span class="n">eltype</span><span class="o">=</span><span class="s1">&#39;C3D20&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="p">[[</span><span class="n">i</span><span class="o">.</span><span class="n">label</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">[</span><span class="n">element1</span><span class="p">,</span> <span class="n">element2</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mesh</span>
+<span class="go">csid(inpInt(&#39; 1&#39;): Element(label=inpInt(&#39; 1&#39;), data=[inpInt(&#39; 1&#39;), inpInt(&#39;  16&#39;), inpInt(&#39;   4&#39;), inpInt(&#39;  24&#39;), inpInt(&#39;  57&#39;), inpInt(&#39;  13&#39;), inpInt(&#39;   1&#39;), inpInt(&#39;  32&#39;), inpInt(&#39;  66&#39;), inpInt(&#39;  92&#39;), inpInt(&#39;  91&#39;), inpInt(&#39;  90&#39;), inpInt(&#39;  89&#39;), inpInt(&#39;  93&#39;), inpInt(&#39;  94&#39;), inpInt(&#39;  95&#39;), inpInt(&#39;     96&#39;), inpInt(&#39;  98&#39;), inpInt(&#39;  97&#39;), inpInt(&#39;  99&#39;), inpInt(&#39; 100&#39;)], eltype=&#39;C3D20&#39;, numNodes=20), inpInt(&#39; 2&#39;): Element(label=inpInt(&#39; 2&#39;), data=[inpInt(&#39; 2&#39;), inpInt(&#39;  15&#39;), inpInt(&#39;  16&#39;), inpInt(&#39;  57&#39;), inpInt(&#39;  58&#39;), inpInt(&#39;  14&#39;), inpInt(&#39;  13&#39;), inpInt(&#39;  66&#39;), inpInt(&#39;  65&#39;), inpInt(&#39; 103&#39;), inpInt(&#39;  89&#39;), inpInt(&#39; 102&#39;), inpInt(&#39; 101&#39;), inpInt(&#39; 104&#39;), inpInt(&#39;  96&#39;), inpInt(&#39; 105&#39;), inpInt(&#39;    106&#39;), inpInt(&#39; 107&#39;), inpInt(&#39;  98&#39;), inpInt(&#39; 100&#39;), inpInt(&#39; 108&#39;)], eltype=&#39;C3D20&#39;, numNodes=20))</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>eltype</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – The string representing the Abaqus element type name.</p></li>
+<li><p><strong>data</strong> – <em>data</em> should be a format that can generate a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dictionary</span></code></a>. Defaults to None, which
+will produce a blank object.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mesh.MeshElement.eltype">
+<span class="sig-name descname"><span class="pre">eltype</span></span><a class="headerlink" href="#mesh.MeshElement.eltype" title="Permalink to this definition">¶</a></dt>
+<dd><p>A string representing the element type name</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mesh.MeshElement.__setitem__">
+<span class="sig-name descname"><span class="pre">__setitem__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">label</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">element</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mesh.MeshElement.__setitem__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if <em>element</em>.eltype matches <a class="reference internal" href="#mesh.MeshElement.eltype" title="mesh.MeshElement.eltype"><code class="xref py py-attr docutils literal notranslate"><span class="pre">eltype</span></code></a>. If it does, set MeshElement[label] = element, else raise
+<a class="reference internal" href="../inpRWErrors/index.html#inpRWErrors.ElementTypeMismatchError" title="inpRWErrors.ElementTypeMismatchError"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ElementTypeMismatchError</span></code></a>.</p>
+<p>Correct usage, the <a class="reference internal" href="#mesh.MeshElement.eltype" title="mesh.MeshElement.eltype"><code class="xref py py-attr docutils literal notranslate"><span class="pre">eltype</span></code></a> of the <a class="reference internal" href="#mesh.Element" title="mesh.Element"><code class="xref py py-class docutils literal notranslate"><span class="pre">Element</span></code></a> matches that of the <a class="reference internal" href="#mesh.MeshElement" title="mesh.MeshElement"><code class="xref py py-class docutils literal notranslate"><span class="pre">MeshElement</span></code></a>:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">mesh</span> <span class="kn">import</span> <span class="n">Element</span><span class="p">,</span> <span class="n">MeshElement</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">element1</span> <span class="o">=</span> <span class="n">Element</span><span class="p">(</span><span class="n">eltype</span><span class="o">=</span><span class="s1">&#39;C3D20&#39;</span><span class="p">,</span> <span class="n">datalines</span><span class="o">=</span><span class="s1">&#39; 1,  16,   4,  24,  57,  13,   1,  32,  66,  92,  91,  90,  89,  93,  94,  95,</span><span class="se">\n</span><span class="s1">     96,  98,  97,  99, 100&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mesh</span> <span class="o">=</span> <span class="n">MeshElement</span><span class="p">(</span><span class="n">eltype</span><span class="o">=</span><span class="s1">&#39;C3D20&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="p">[[</span><span class="n">element1</span><span class="o">.</span><span class="n">label</span><span class="p">,</span> <span class="n">element1</span><span class="p">]])</span>
+</pre></div>
+</div>
+<p>The class raises a <a class="reference internal" href="../inpRWErrors/index.html#inpRWErrors.ElementTypeMismatchError" title="inpRWErrors.ElementTypeMismatchError"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ElementTypeMismatchError</span></code></a> if we try to add an element with a different
+eltype:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">element2</span> <span class="o">=</span> <span class="n">Element</span><span class="p">(</span><span class="n">eltype</span><span class="o">=</span><span class="s1">&#39;CPS4R&#39;</span><span class="p">,</span> <span class="n">datalines</span><span class="o">=</span><span class="s1">&#39;1, 1, 2, 102, 101&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mesh</span><span class="p">[</span><span class="n">element2</span><span class="o">.</span><span class="n">label</span><span class="p">]</span> <span class="o">=</span> <span class="n">element2</span>
+<span class="gt">Traceback (most recent call last):</span>
+<span class="w">    </span><span class="o">...</span>
+<span class="gr">inpRWErrors.ElementTypeMismatchError</span>: <span class="n">ERROR! An element of type CPS4R cannot be added to a MeshElement with eltype C3D20</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>label</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a>) – The element label.</p></li>
+<li><p><strong>element</strong> (<a class="reference internal" href="#mesh.Element" title="mesh.Element"><em>Element</em></a>) – The <a class="reference internal" href="#mesh.Element" title="mesh.Element"><code class="xref py py-class docutils literal notranslate"><span class="pre">Element</span></code></a> to add to the <a class="reference internal" href="#mesh.MeshElement" title="mesh.MeshElement"><code class="xref py py-class docutils literal notranslate"><span class="pre">MeshElement</span></code></a>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="../inpRWErrors/index.html#inpRWErrors.ElementTypeMismatchError" title="inpRWErrors.ElementTypeMismatchError"><strong>ElementTypeMismatchError</strong></a> – </p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="mesh.TotalMesh">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mesh.</span></span><span class="sig-name descname"><span class="pre">TotalMesh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mesh.TotalMesh" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="../csid/index.html#csid.csid" title="csid.csid"><code class="xref py py-class docutils literal notranslate"><span class="pre">csid</span></code></a></p>
+<p><a class="reference internal" href="#mesh.TotalMesh" title="mesh.TotalMesh"><code class="xref py py-class docutils literal notranslate"><span class="pre">TotalMesh</span></code></a> is a parent class, and not meant to be instantiated directly. Users should instead work with
+one of the sub-classes, which are <a class="reference internal" href="#mesh.TotalNodeMesh" title="mesh.TotalNodeMesh"><code class="xref py py-class docutils literal notranslate"><span class="pre">TotalNodeMesh</span></code></a> and <a class="reference internal" href="#mesh.TotalElementMesh" title="mesh.TotalElementMesh"><code class="xref py py-class docutils literal notranslate"><span class="pre">TotalElementMesh</span></code></a>.</p>
+<p>Users should not need to created instances of this class or the child classes directly. In most cases, they can rely
+on <a class="reference internal" href="../inpKeywordSequence/index.html#inpKeywordSequence.inpKeywordSequence" title="inpKeywordSequence.inpKeywordSequence"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpKeywordSequence</span></code></a> to create and manage these instances.</p>
+<p>Every <a class="reference internal" href="../inpKeywordSequence/index.html#module-inpKeywordSequence" title="inpKeywordSequence"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpKeywordSequence</span></code></a> contains attributes <a class="reference internal" href="../inpKeywordSequence/index.html#inpKeywordSequence.inpKeywordSequence._nd" title="inpKeywordSequence.inpKeywordSequence._nd"><code class="xref py py-attr docutils literal notranslate"><span class="pre">_nd</span></code></a>
+and <a class="reference internal" href="../inpKeywordSequence/index.html#inpKeywordSequence.inpKeywordSequence._ed" title="inpKeywordSequence.inpKeywordSequence._ed"><code class="xref py py-attr docutils literal notranslate"><span class="pre">_ed</span></code></a>, which are <a class="reference internal" href="#mesh.TotalNodeMesh" title="mesh.TotalNodeMesh"><code class="xref py py-class docutils literal notranslate"><span class="pre">TotalNodeMesh</span></code></a> and <a class="reference internal" href="#mesh.TotalElementMesh" title="mesh.TotalElementMesh"><code class="xref py py-class docutils literal notranslate"><span class="pre">TotalElementMesh</span></code></a>
+instances, respectively. They provide a convenient method to access all the mesh and element data in an input file,
+without needing to navigate through multiple keyword blocks. These instances of the top-level
+<a class="reference internal" href="../inpKeywordSequence/index.html#inpKeywordSequence.inpKeywordSequence" title="inpKeywordSequence.inpKeywordSequence"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpKeywordSequence</span></code></a> (<a class="reference internal" href="../inpRW/index.html#inpRW.inpRW.keywords" title="inpRW.inpRW.keywords"><code class="xref py py-attr docutils literal notranslate"><span class="pre">keywords</span></code></a>) will be mapped to
+<a class="reference internal" href="../inpRW/index.html#inpRW.inpRW.nd" title="inpRW.inpRW.nd"><code class="xref py py-attr docutils literal notranslate"><span class="pre">nd</span></code></a> and <a class="reference internal" href="../inpRW/index.html#inpRW.inpRW.ed" title="inpRW.inpRW.ed"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ed</span></code></a>.</p>
+<p>Any operations on items in this class will be propagated back to the data of the appropriate node and element
+<a class="reference internal" href="../inpKeyword/index.html#inpKeyword.inpKeyword" title="inpKeyword.inpKeyword"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpKeyword</span></code></a> blocks.</p>
+<p>Items should not be directly deleted from a <a class="reference internal" href="#mesh.TotalMesh" title="mesh.TotalMesh"><code class="xref py py-class docutils literal notranslate"><span class="pre">TotalMesh</span></code></a>, in most cases. The user should instead use a
+combination of <a class="reference internal" href="../inpRW/_inpFind/index.html#inpRW._inpFind.Find.findItemReferences" title="inpRW._inpFind.Find.findItemReferences"><code class="xref py py-func docutils literal notranslate"><span class="pre">findItemReferences()</span></code></a> along with <a class="reference internal" href="../inpRW/_inpMod/index.html#inpRW._inpMod.Mod.deleteItemReferences" title="inpRW._inpMod.Mod.deleteItemReferences"><code class="xref py py-func docutils literal notranslate"><span class="pre">deleteItemReferences()</span></code></a>
+to delete these entities, as it will also find and delete all references to those entities throughout the input file.</p>
+<p>A function for replacing item references still needs to be written.</p>
+<p>Items should not be added to this class directly. Rather, they should be added to <a class="reference internal" href="../inpKeyword/index.html#inpKeyword.inpKeyword.data" title="inpKeyword.inpKeyword.data"><code class="xref py py-attr docutils literal notranslate"><span class="pre">data</span></code></a> of
+a *NODE or *ELEMENT keyword block and added to this class via <a class="reference internal" href="../inpRW/index.html#inpRW.inpRW.updateInp" title="inpRW.inpRW.updateInp"><code class="xref py py-func docutils literal notranslate"><span class="pre">updateInp()</span></code></a>.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="mesh.TotalMesh.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mesh.TotalMesh.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>A <a class="reference internal" href="#mesh.TotalMesh" title="mesh.TotalMesh"><code class="xref py py-class docutils literal notranslate"><span class="pre">TotalMesh</span></code></a> instance holds all the nodes or elements for the children of an <a class="reference internal" href="../inpKeywordSequence/index.html#inpKeywordSequence.inpKeywordSequence" title="inpKeywordSequence.inpKeywordSequence"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpKeywordSequence</span></code></a>.
+This class is meant to be initialized with <em>_data</em> = None. Data should be added to it via <a class="reference internal" href="#mesh.TotalMesh.update" title="mesh.TotalMesh.update"><code class="xref py py-func docutils literal notranslate"><span class="pre">update()</span></code></a>
+using a <a class="reference internal" href="#mesh.Mesh" title="mesh.Mesh"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mesh</span></code></a> instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>_data</strong> – Can be any construct used to populate a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>. Should not be used in most cases,
+as the data should instead be populated through a <a class="reference internal" href="#mesh.Mesh" title="mesh.Mesh"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mesh</span></code></a>, and then calling <a class="reference internal" href="#mesh.TotalMesh.update" title="mesh.TotalMesh.update"><code class="xref py py-func docutils literal notranslate"><span class="pre">update()</span></code></a>
+on that <a class="reference internal" href="#mesh.Mesh" title="mesh.Mesh"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mesh</span></code></a> instance.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mesh.TotalMesh.subMeshes">
+<span class="sig-name descname"><span class="pre">subMeshes</span></span><a class="headerlink" href="#mesh.TotalMesh.subMeshes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Will hold a shared memory reference to every <a class="reference internal" href="#mesh.Mesh" title="mesh.Mesh"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mesh</span></code></a> or <a class="reference internal" href="#mesh.TotalMesh" title="mesh.TotalMesh"><code class="xref py py-class docutils literal notranslate"><span class="pre">TotalMesh</span></code></a> instance which is a child of this object. This is thus a link to the <a class="reference internal" href="../inpKeyword/index.html#inpKeyword.inpKeyword.data" title="inpKeyword.inpKeyword.data"><code class="xref py py-attr docutils literal notranslate"><span class="pre">data</span></code></a> attributes of the appropriate keyword blocks.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)">list</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mesh.TotalMesh.removeEmptySubMeshes">
+<span class="sig-name descname"><span class="pre">removeEmptySubMeshes</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mesh.TotalMesh.removeEmptySubMeshes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deletes any <a class="reference internal" href="#mesh.TotalMesh.subMeshes" title="mesh.TotalMesh.subMeshes"><code class="xref py py-attr docutils literal notranslate"><span class="pre">subMeshes</span></code></a> which are now empty. This will also delete the <a class="reference internal" href="#mesh.Mesh" title="mesh.Mesh"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mesh</span></code></a> instance.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mesh.TotalMesh.renameKeys">
+<span class="sig-name descname"><span class="pre">renameKeys</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mapping</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mesh.TotalMesh.renameKeys" title="Permalink to this definition">¶</a></dt>
+<dd><p>Renames all keys in the <a class="reference internal" href="#mesh.TotalMesh" title="mesh.TotalMesh"><code class="xref py py-class docutils literal notranslate"><span class="pre">TotalMesh</span></code></a> instance (d) as specified by mapping.</p>
+<p>d and each <a class="reference internal" href="#mesh.TotalMesh.subMeshes" title="mesh.TotalMesh.subMeshes"><code class="xref py py-attr docutils literal notranslate"><span class="pre">subMesh</span></code></a> will be cleared and repopulated with the renamed keys to preserve
+the original order. Thus, this can be an expensive operation, so try to provide the entirety of the information
+to rename and call this function only once.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mesh.TotalMesh.update">
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mesh.TotalMesh.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds the data from <em>other</em> to the <a class="reference internal" href="#mesh.TotalMesh" title="mesh.TotalMesh"><code class="xref py py-class docutils literal notranslate"><span class="pre">TotalMesh</span></code></a> instance (d), and tracks <em>other</em> in <a class="reference internal" href="#mesh.TotalMesh.subMeshes" title="mesh.TotalMesh.subMeshes"><code class="xref py py-attr docutils literal notranslate"><span class="pre">subMeshes</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>other</strong> (<a class="reference internal" href="#mesh.Mesh" title="mesh.Mesh"><em>Mesh</em></a><em>, </em><a class="reference internal" href="#mesh.TotalMesh" title="mesh.TotalMesh"><em>TotalMesh</em></a>) – A <a class="reference internal" href="#mesh.Mesh" title="mesh.Mesh"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mesh</span></code></a> or <a class="reference internal" href="#mesh.TotalMesh" title="mesh.TotalMesh"><code class="xref py py-class docutils literal notranslate"><span class="pre">TotalMesh</span></code></a> instance whose items will be included
+in</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mesh.TotalMesh.__delitem__">
+<span class="sig-name descname"><span class="pre">__delitem__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mesh.TotalMesh.__delitem__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deletes key and value in self and in the subMesh.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>key</strong> – A valid hashable key. Should be an integer in most cases, as the node and element labels will be integers.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mesh.TotalMesh.__repr__">
+<span class="sig-name descname"><span class="pre">__repr__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mesh.TotalMesh.__repr__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Uses the default __repr__ method from <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mesh.TotalMesh.__setitem__">
+<span class="sig-name descname"><span class="pre">__setitem__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mesh.TotalMesh.__setitem__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Items should not be added to the <a class="reference internal" href="#mesh.TotalMesh" title="mesh.TotalMesh"><code class="xref py py-class docutils literal notranslate"><span class="pre">TotalMesh</span></code></a> instance. Add them instead to the appropriate
+<a class="reference internal" href="#mesh.Mesh" title="mesh.Mesh"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mesh</span></code></a> instance and then <a class="reference internal" href="#mesh.TotalMesh.update" title="mesh.TotalMesh.update"><code class="xref py py-func docutils literal notranslate"><span class="pre">update()</span></code></a> <a class="reference internal" href="#mesh.TotalMesh" title="mesh.TotalMesh"><code class="xref py py-class docutils literal notranslate"><span class="pre">TotalMesh</span></code></a> with <a class="reference internal" href="#mesh.Mesh" title="mesh.Mesh"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mesh</span></code></a>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mesh.TotalMesh.__str__">
+<span class="sig-name descname"><span class="pre">__str__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mesh.TotalMesh.__str__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Uses the default __str__ method from <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="mesh.TotalNodeMesh">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mesh.</span></span><span class="sig-name descname"><span class="pre">TotalNodeMesh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mesh.TotalNodeMesh" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mesh.TotalMesh" title="mesh.TotalMesh"><code class="xref py py-class docutils literal notranslate"><span class="pre">TotalMesh</span></code></a></p>
+<p>A <a class="reference internal" href="#mesh.TotalNodeMesh" title="mesh.TotalNodeMesh"><code class="xref py py-class docutils literal notranslate"><span class="pre">TotalNodeMesh</span></code></a> enhances <a class="reference internal" href="#mesh.TotalMesh" title="mesh.TotalMesh"><code class="xref py py-class docutils literal notranslate"><span class="pre">TotalMesh</span></code></a> with some additional functions specific to working with
+Abaqus nodes.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="mesh.TotalNodeMesh.setNodesConnectedElements">
+<span class="sig-name descname"><span class="pre">setNodesConnectedElements</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nd</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mesh.TotalNodeMesh.setNodesConnectedElements" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function will set the <a class="reference internal" href="#mesh.Node.elements" title="mesh.Node.elements"><code class="xref py py-attr docutils literal notranslate"><span class="pre">elements</span></code></a> attribute of each node in the <a class="reference internal" href="#mesh.TotalMesh" title="mesh.TotalMesh"><code class="xref py py-class docutils literal notranslate"><span class="pre">TotalMesh</span></code></a>
+instance for each node found in <em>nd</em>.</p>
+<p>It should be passed a <a class="reference internal" href="#mesh.Mesh" title="mesh.Mesh"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mesh</span></code></a> instance which maps the node labels to the elements connected to those nodes.
+In most cases, this special <a class="reference internal" href="#mesh.Mesh" title="mesh.Mesh"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mesh</span></code></a> instance should be created by <a class="reference internal" href="../inpKeyword/index.html#inpKeyword.inpKeyword._parseDataElement" title="inpKeyword.inpKeyword._parseDataElement"><code class="xref py py-func docutils literal notranslate"><span class="pre">_parseDataElement()</span></code></a>
+and it will be available as the <a class="reference internal" href="../inpKeyword/index.html#inpKeyword.inpKeyword._nd" title="inpKeyword.inpKeyword._nd"><code class="xref py py-attr docutils literal notranslate"><span class="pre">_nd</span></code></a> attribute of a *ELEMENT keyword block and
+as the ‘nd_ed’ entry of <a class="reference internal" href="../inpKeyword/index.html#inpKeyword.inpKeyword._inpItemsToUpdate" title="inpKeyword.inpKeyword._inpItemsToUpdate"><code class="xref py py-attr docutils literal notranslate"><span class="pre">_inpItemsToUpdate</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>nd</strong> (<a class="reference internal" href="#mesh.Mesh" title="mesh.Mesh"><em>Mesh</em></a>) – The <a class="reference internal" href="#mesh.Mesh" title="mesh.Mesh"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mesh</span></code></a> instance which contains the node and element label mapping.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mesh.TotalNodeMesh.updateNodesConnectedElements">
+<span class="sig-name descname"><span class="pre">updateNodesConnectedElements</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ed</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mesh.TotalNodeMesh.updateNodesConnectedElements" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calls <a class="reference internal" href="#mesh.Node.updateElements" title="mesh.Node.updateElements"><code class="xref py py-func docutils literal notranslate"><span class="pre">updateElements()</span></code></a> on all <a class="reference internal" href="#mesh.Node" title="mesh.Node"><code class="xref py py-class docutils literal notranslate"><span class="pre">Node</span></code></a> instances.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ed</strong> (<a class="reference internal" href="#mesh.TotalMesh" title="mesh.TotalMesh"><em>TotalMesh</em></a>) – This should be the <a class="reference internal" href="#mesh.TotalMesh" title="mesh.TotalMesh"><code class="xref py py-class docutils literal notranslate"><span class="pre">TotalMesh</span></code></a> instance holding the elements.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A dictionary with the node labels as the key, and the return value of <a class="reference internal" href="#mesh.Node.updateElements" title="mesh.Node.updateElements"><code class="xref py py-func docutils literal notranslate"><span class="pre">updateElements()</span></code></a>
+as the value.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)">dict</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mesh.TotalNodeMesh.__repr__">
+<span class="sig-name descname"><span class="pre">__repr__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mesh.TotalNodeMesh.__repr__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Uses the default __repr__ method from <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mesh.TotalNodeMesh.__str__">
+<span class="sig-name descname"><span class="pre">__str__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mesh.TotalNodeMesh.__str__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Uses the default __str__ method from <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="mesh.TotalElementMesh">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mesh.</span></span><span class="sig-name descname"><span class="pre">TotalElementMesh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mesh.TotalElementMesh" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mesh.TotalMesh" title="mesh.TotalMesh"><code class="xref py py-class docutils literal notranslate"><span class="pre">TotalMesh</span></code></a></p>
+<p>A <a class="reference internal" href="#mesh.TotalElementMesh" title="mesh.TotalElementMesh"><code class="xref py py-class docutils literal notranslate"><span class="pre">TotalElementMesh</span></code></a> is merely a subclass of <a class="reference internal" href="#mesh.TotalMesh" title="mesh.TotalMesh"><code class="xref py py-class docutils literal notranslate"><span class="pre">TotalMesh</span></code></a> with no additional behavior.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="mesh.TotalElementMesh.__repr__">
+<span class="sig-name descname"><span class="pre">__repr__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mesh.TotalElementMesh.__repr__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Uses the default __repr__ method from <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mesh.TotalElementMesh.__str__">
+<span class="sig-name descname"><span class="pre">__str__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mesh.TotalElementMesh.__str__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Uses the default __str__ method from <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../inpRW_toc.html">
+              <img class="logo" src="../../_static/3DS_SIMULIA_Logotype_RGB_BlueSteel.png" alt="Logo", style="border-radius:5px"/>
+            </a></p>
+  <div>
+    <h3><a href="../../inpRW_toc.html">Local Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">mesh</span></code></a><ul>
+<li><a class="reference internal" href="#module-mesh">Module Contents</a><ul>
+<li><a class="reference internal" href="#mesh.Node"><code class="docutils literal notranslate"><span class="pre">Node</span></code></a><ul>
+<li><a class="reference internal" href="#mesh.Node.__init__"><code class="docutils literal notranslate"><span class="pre">Node.__init__()</span></code></a></li>
+<li><a class="reference internal" href="#mesh.Node._ParamInInp"><code class="docutils literal notranslate"><span class="pre">Node._ParamInInp</span></code></a></li>
+<li><a class="reference internal" href="#mesh.Node.preserveSpacing"><code class="docutils literal notranslate"><span class="pre">Node.preserveSpacing</span></code></a></li>
+<li><a class="reference internal" href="#mesh.Node.useDecimal"><code class="docutils literal notranslate"><span class="pre">Node.useDecimal</span></code></a></li>
+<li><a class="reference internal" href="#mesh.Node._joinS"><code class="docutils literal notranslate"><span class="pre">Node._joinS</span></code></a></li>
+<li><a class="reference internal" href="#mesh.Node.label"><code class="docutils literal notranslate"><span class="pre">Node.label</span></code></a></li>
+<li><a class="reference internal" href="#mesh.Node.data"><code class="docutils literal notranslate"><span class="pre">Node.data</span></code></a></li>
+<li><a class="reference internal" href="#mesh.Node.elements"><code class="docutils literal notranslate"><span class="pre">Node.elements</span></code></a></li>
+<li><a class="reference internal" href="#mesh.Node._parseDataLine"><code class="docutils literal notranslate"><span class="pre">Node._parseDataLine()</span></code></a></li>
+<li><a class="reference internal" href="#mesh.Node._mergeElementData"><code class="docutils literal notranslate"><span class="pre">Node._mergeElementData()</span></code></a></li>
+<li><a class="reference internal" href="#mesh.Node.updateElements"><code class="docutils literal notranslate"><span class="pre">Node.updateElements()</span></code></a></li>
+<li><a class="reference internal" href="#mesh.Node.__repr__"><code class="docutils literal notranslate"><span class="pre">Node.__repr__()</span></code></a></li>
+<li><a class="reference internal" href="#mesh.Node.__str__"><code class="docutils literal notranslate"><span class="pre">Node.__str__()</span></code></a></li>
+<li><a class="reference internal" href="#mesh.Node.__weakref__"><code class="docutils literal notranslate"><span class="pre">Node.__weakref__</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#mesh.Element"><code class="docutils literal notranslate"><span class="pre">Element</span></code></a><ul>
+<li><a class="reference internal" href="#mesh.Element.__init__"><code class="docutils literal notranslate"><span class="pre">Element.__init__()</span></code></a></li>
+<li><a class="reference internal" href="#mesh.Element.eltype"><code class="docutils literal notranslate"><span class="pre">Element.eltype</span></code></a></li>
+<li><a class="reference internal" href="#mesh.Element._checknumNodes"><code class="docutils literal notranslate"><span class="pre">Element._checknumNodes</span></code></a></li>
+<li><a class="reference internal" href="#mesh.Element.numNodes"><code class="docutils literal notranslate"><span class="pre">Element.numNodes</span></code></a></li>
+<li><a class="reference internal" href="#mesh.Element._ParamInInp"><code class="docutils literal notranslate"><span class="pre">Element._ParamInInp</span></code></a></li>
+<li><a class="reference internal" href="#mesh.Element.preserveSpacing"><code class="docutils literal notranslate"><span class="pre">Element.preserveSpacing</span></code></a></li>
+<li><a class="reference internal" href="#mesh.Element._nl"><code class="docutils literal notranslate"><span class="pre">Element._nl</span></code></a></li>
+<li><a class="reference internal" href="#mesh.Element.useDecimal"><code class="docutils literal notranslate"><span class="pre">Element.useDecimal</span></code></a></li>
+<li><a class="reference internal" href="#mesh.Element._joinS"><code class="docutils literal notranslate"><span class="pre">Element._joinS</span></code></a></li>
+<li><a class="reference internal" href="#mesh.Element.label"><code class="docutils literal notranslate"><span class="pre">Element.label</span></code></a></li>
+<li><a class="reference internal" href="#mesh.Element.data"><code class="docutils literal notranslate"><span class="pre">Element.data</span></code></a></li>
+<li><a class="reference internal" href="#mesh.Element._npll"><code class="docutils literal notranslate"><span class="pre">Element._npll</span></code></a></li>
+<li><a class="reference internal" href="#mesh.Element._lineEnd"><code class="docutils literal notranslate"><span class="pre">Element._lineEnd</span></code></a></li>
+<li><a class="reference internal" href="#mesh.Element.checkNumberNodes"><code class="docutils literal notranslate"><span class="pre">Element.checkNumberNodes()</span></code></a></li>
+<li><a class="reference internal" href="#mesh.Element._parseDataLines"><code class="docutils literal notranslate"><span class="pre">Element._parseDataLines()</span></code></a></li>
+<li><a class="reference internal" href="#mesh.Element._parseDataLine"><code class="docutils literal notranslate"><span class="pre">Element._parseDataLine()</span></code></a></li>
+<li><a class="reference internal" href="#mesh.Element._processDataLinesInput"><code class="docutils literal notranslate"><span class="pre">Element._processDataLinesInput()</span></code></a></li>
+<li><a class="reference internal" href="#mesh.Element.setConnectedNodes"><code class="docutils literal notranslate"><span class="pre">Element.setConnectedNodes()</span></code></a></li>
+<li><a class="reference internal" href="#mesh.Element.__repr__"><code class="docutils literal notranslate"><span class="pre">Element.__repr__()</span></code></a></li>
+<li><a class="reference internal" href="#mesh.Element.__str__"><code class="docutils literal notranslate"><span class="pre">Element.__str__()</span></code></a></li>
+<li><a class="reference internal" href="#mesh.Element.__weakref__"><code class="docutils literal notranslate"><span class="pre">Element.__weakref__</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#mesh.Mesh"><code class="docutils literal notranslate"><span class="pre">Mesh</span></code></a><ul>
+<li><a class="reference internal" href="#mesh.Mesh.__init__"><code class="docutils literal notranslate"><span class="pre">Mesh.__init__()</span></code></a></li>
+<li><a class="reference internal" href="#mesh.Mesh.__repr__"><code class="docutils literal notranslate"><span class="pre">Mesh.__repr__()</span></code></a></li>
+<li><a class="reference internal" href="#mesh.Mesh.__str__"><code class="docutils literal notranslate"><span class="pre">Mesh.__str__()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#mesh.MeshElement"><code class="docutils literal notranslate"><span class="pre">MeshElement</span></code></a><ul>
+<li><a class="reference internal" href="#mesh.MeshElement.__init__"><code class="docutils literal notranslate"><span class="pre">MeshElement.__init__()</span></code></a></li>
+<li><a class="reference internal" href="#mesh.MeshElement.eltype"><code class="docutils literal notranslate"><span class="pre">MeshElement.eltype</span></code></a></li>
+<li><a class="reference internal" href="#mesh.MeshElement.__setitem__"><code class="docutils literal notranslate"><span class="pre">MeshElement.__setitem__()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#mesh.TotalMesh"><code class="docutils literal notranslate"><span class="pre">TotalMesh</span></code></a><ul>
+<li><a class="reference internal" href="#mesh.TotalMesh.__init__"><code class="docutils literal notranslate"><span class="pre">TotalMesh.__init__()</span></code></a></li>
+<li><a class="reference internal" href="#mesh.TotalMesh.subMeshes"><code class="docutils literal notranslate"><span class="pre">TotalMesh.subMeshes</span></code></a></li>
+<li><a class="reference internal" href="#mesh.TotalMesh.removeEmptySubMeshes"><code class="docutils literal notranslate"><span class="pre">TotalMesh.removeEmptySubMeshes()</span></code></a></li>
+<li><a class="reference internal" href="#mesh.TotalMesh.renameKeys"><code class="docutils literal notranslate"><span class="pre">TotalMesh.renameKeys()</span></code></a></li>
+<li><a class="reference internal" href="#mesh.TotalMesh.update"><code class="docutils literal notranslate"><span class="pre">TotalMesh.update()</span></code></a></li>
+<li><a class="reference internal" href="#mesh.TotalMesh.__delitem__"><code class="docutils literal notranslate"><span class="pre">TotalMesh.__delitem__()</span></code></a></li>
+<li><a class="reference internal" href="#mesh.TotalMesh.__repr__"><code class="docutils literal notranslate"><span class="pre">TotalMesh.__repr__()</span></code></a></li>
+<li><a class="reference internal" href="#mesh.TotalMesh.__setitem__"><code class="docutils literal notranslate"><span class="pre">TotalMesh.__setitem__()</span></code></a></li>
+<li><a class="reference internal" href="#mesh.TotalMesh.__str__"><code class="docutils literal notranslate"><span class="pre">TotalMesh.__str__()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#mesh.TotalNodeMesh"><code class="docutils literal notranslate"><span class="pre">TotalNodeMesh</span></code></a><ul>
+<li><a class="reference internal" href="#mesh.TotalNodeMesh.setNodesConnectedElements"><code class="docutils literal notranslate"><span class="pre">TotalNodeMesh.setNodesConnectedElements()</span></code></a></li>
+<li><a class="reference internal" href="#mesh.TotalNodeMesh.updateNodesConnectedElements"><code class="docutils literal notranslate"><span class="pre">TotalNodeMesh.updateNodesConnectedElements()</span></code></a></li>
+<li><a class="reference internal" href="#mesh.TotalNodeMesh.__repr__"><code class="docutils literal notranslate"><span class="pre">TotalNodeMesh.__repr__()</span></code></a></li>
+<li><a class="reference internal" href="#mesh.TotalNodeMesh.__str__"><code class="docutils literal notranslate"><span class="pre">TotalNodeMesh.__str__()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#mesh.TotalElementMesh"><code class="docutils literal notranslate"><span class="pre">TotalElementMesh</span></code></a><ul>
+<li><a class="reference internal" href="#mesh.TotalElementMesh.__repr__"><code class="docutils literal notranslate"><span class="pre">TotalElementMesh.__repr__()</span></code></a></li>
+<li><a class="reference internal" href="#mesh.TotalElementMesh.__str__"><code class="docutils literal notranslate"><span class="pre">TotalElementMesh.__str__()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  </div>
+<h3><a href="../../inpRW_toc.html">Global Table of Contents</a></h3>
+<p class="caption" role="heading"><span class="caption-text">User Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Introduction.html">inpRW Utility Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Project-Background.html">Project Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Installation-and-Usage.html">Installation and Usage Instructions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Tests.html">inpRW Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Tests.html#running-inprw-tests">Running inpRW Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/inpKeyword-Basics.html">inpKeyword Basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Strings_Integers_and_Decimals.html">Strings, Integers, and Decimals</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Important-inpRW-Attributes.html">Important <code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW</span></code> Attributes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Miscellaneous-Usage-hints.html">Miscellaneous Usage Hints</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Example-Scenarios.html">Example Scenarios</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/glossary.html">Glossary</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../inpRW/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../centroid/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">centroid</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../config/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">config</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../config_re/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">config_re</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../csid/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">csid</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../eval2/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">eval2</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../elType/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">elType</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inpDecimal/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpDecimal</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inpInt/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpInt</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inpKeyword/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpKeyword</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inpKeywordHelper/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpKeywordHelper</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inpKeywordSequence/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpKeywordSequence</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inpRWErrors/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRWErrors</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inpString/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpString</span></code></a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">mesh</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../misc_functions/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">misc_functions</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../NoneSort/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">NoneSort</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../printer/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">printer</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../repr2/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">repr2</span></code></a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Update Notes</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Update-Notes/index.html">Update Notes</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Legal Notices and Usage Disclaimer</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../legal_notices/Legal_Notices_and_Usage_Disclaimer.html">Legal Notices and Usage Disclaimer</a></li>
+</ul>
+
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="../inpString/index.html"
+                          title="previous chapter"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpString</span></code></a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="../misc_functions/index.html"
+                          title="next chapter"><code class="xref py py-mod docutils literal notranslate"><span class="pre">misc_functions</span></code></a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/autoapi/mesh/index.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>  
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../misc_functions/index.html" title="misc_functions"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../inpString/index.html" title="inpString"
+             >previous</a> |</li>
+          <li><img src="../../_static/icon-116-3dx-apps.svg" alt="python logo" style="vertical-align: middle; margin-top: -1px"/></li>
+          <li><a href="inpRW_toc.html"></a> &#187;</li>
+          <li class="switchers">
+            <div class="language_switcher_placeholder"></div>
+            <div class="version_switcher_placeholder"></div>
+          </li>
+          <li>
+              
+              <a href="../../inpRW_toc.html">inpRW 2023.10.6 documentation</a> &#187;
+              
+          </li>
+        <li class="nav-item nav-item-this"><a href=""><code class="xref py py-mod docutils literal notranslate"><span class="pre">mesh</span></code></a></li>
+                <li class="right">
+                    
+
+    <div class="inline-search" role="search">
+        <form class="inline-search" action="../../search.html" method="get">
+          <input placeholder="Quick search" aria-label="Quick search" type="text" name="q" />
+          <input type="submit" value="Go" />
+          <input type="hidden" name="check_keywords" value="yes" />
+          <input type="hidden" name="area" value="default" />
+        </form>
+    </div>
+                     |
+                </li>
+            
+      </ul>
+    </div>  
+    <div class="footer">
+    &copy; Copyright 2023, Dassault Systèmes Simulia Corp.
+     <a href="../../_static/legal_notices.pdf" >inpRW Legal Notices</a>.<br />
+     <a href="../../_static/Read_Disclaimer_First.txt" >inpRW Usage Disclaimer</a>.<br />
+    Last updated on Nov 21, 2023.
+    <a href="https://r1132100503382-eu1-3dswym.3dexperience.3ds.com/#community:39/post:nE1VLzylQoKgfG2wekOpFg">Found a bug</a>?
+    </div>
+
+  </body>
+</html>

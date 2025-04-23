@@ -29,14 +29,27 @@ def cli(*args):
         help='Show version number and exit'
     )
 
+    # Add logging arguments to each subparser
+    logging_args = argparse.ArgumentParser(add_help=False)
+    logging_args.add_argument(
+        '--loglevelcmd', help='Command line logging level',
+        default='info', choices=['debug', 'info', 'warning', 'error', 'critical'])
+    logging_args.add_argument(
+        '--loglevelfile', help='File logging level',
+        default='info', choices=['debug', 'info', 'warning', 'error', 'critical'])
+    logging_args.add_argument(
+        '--logfile', help='Logging file name',
+        default='log.txt')
+
     sub_parser = root_parser.add_subparsers(
         help='sub-command help'
     )
 
     # Build
     parser = sub_parser.add_parser(
-        'build', aliases=['b',],
-        help='Build 1D SG')
+        'build', aliases=['b',], help='Build 1D SG',
+        parents=[logging_args]
+        )
     parser.set_defaults(func='build')
     parser.add_argument(
         'inputfile', type=str,
@@ -45,8 +58,9 @@ def cli(*args):
 
     # Convert
     parser = sub_parser.add_parser(
-        'convert', aliases=['c',],
-        help='Convert CS/SG data file')
+        'convert', aliases=['c',], help='Convert CS/SG data file',
+        parents=[logging_args]
+        )
     parser.set_defaults(func='convert')
     parser.add_argument(
         'from', type=str,
@@ -108,11 +122,17 @@ def cli(*args):
 
 
 
-def main(func, **kwargs):
+def main(
+    func, **kwargs):
     """
     """
+    print(locals())
 
-    configure_logging()
+    configure_logging(
+        cout_level=kwargs['loglevelcmd'],
+        fout_level=kwargs['loglevelfile'],
+        filename=kwargs['logfile'],
+    )
 
     if func == 'convert':
 

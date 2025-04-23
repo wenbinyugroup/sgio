@@ -1,0 +1,161 @@
+inpRW Utility Introduction
+==========================
+
+inpRW is a collection of Python modules for parsing, modifying, and writing :term:`Abaqus` input files.
+Requires: Python 3.7+, :mod:`numpy`, :mod:`scipy`
+
+
+Project Overview
+----------------
+
+* The module will parse the data in an Abaqus input file to Python objects, which allows a script to recognize values in an input file.
+ 
+    * For example, keyword blocks, comments, and data lines are treated separately rather than as a large block of text.
+    
+* There are several functions built in to modify the input file data. Here are some examples of functions built-in to inpRW:
+
+    * Reorganize step data so multiple nonlinear steps can be reconfigured to a \*MANIFEST simulation.
+    * Generate dictionaries containing all the nodes and elements in a model, allowing a script to quickly look up their properties.
+    * Insert, delete, and replace keyword blocks.
+    * Find a keyword block using the keyword name and specific parameters.
+    * Find all references to nodes and elements
+    
+* Envisioned uses:
+
+    * Powerful keywords editor for **3D**\ EXPERIENCE input files, or any input file that needs changes not supported by a GUI.
+
+* Intended Users:
+
+    * Field engineers or customers with Python scripting experience.
+
+* Availability:
+    
+    * inpRW is distributed through the SIMULIA Community, specifically the `inpRW Main Page <https://r1132100503382-eu1-3dswym.3dexperience.3ds.com/#community:39/post:1ENJaJLZSkSO7vChzJwFLA>`_. 
+    
+Project Goals
+-------------
+
+* Parse an input file to make the data contained therein usable to Python, while storing the original formatting.
+* Be able to parse every Abaqus keyword type
+* Write out an input file from the inp object that is identical to the original input file, except for any changes the user makes 
+   * Optional, can be disabled for better performance.
+* Add functions to help the user find data in the input file.
+* Add functions to help the user modify data in the input file.
+* Provide the user the same flexibility Abaqus provides (case-insensitivity, space-insensitivity) without modifying the data.
+* Give users the ability to easily extend the :class:`inpRW` class with their own functions.
+
+Important Limitations
+---------------------
+
+inpRW is meant to parse every Abaqus keyword type. However, it does not yet meet this lofty goal. It has focused on parsing input
+files **3D**\ EXPERIENCE can write. If inpRW cannot fully parse a keyword, it will still read and write those keywords 
+accurately, it just does not take the appropriate actions when it encounters some keywords. The following is a partial list 
+of the most notable keyword blocks which are not fully supported:
+
+* \*ASSEMBLY and the associated keywords (\*PART, \*INSTANCE)
+   * The structure will be recognized, but :attr:`~inpRW.inpRW.nd` and :attr:`~inpRW.inpRW.ed`, set names, etc. won't be 
+     accessible via the instance name.
+* \*SYSTEM
+   * Nodal coordinates won't be reported transformed into the active system.
+* \*NGEN, \*ELGEN, \*NFILL, etc.
+   * The entities created by these keywords won't be accessible.
+
+These limitations will most likely be addressed in the future. For now, you can work around them by utilizing flattened input
+files, which will remove the preceding keywords and generate an equivalent input file. To create and save a flattened input file,
+you can add the following code to an abaqus_v6.env file prior to running a datacheck or full analysis on the input file::
+
+    print_flattened_file=ON
+    def onJobCompletion():
+        from os import path, system, lstat, listdir
+        import osutils
+        if path.exists('%s_f.inp' % id):
+            src='%s_f.inp'%(id)
+            dest=savedir
+            osutils.copy(src,dest)
+
+The preceding code will create a input file named "JOBNAME_f.inp". This will be the flattened input file, which removes the above
+problematic keywords for inpRW.
+
+For more information on modifying the Abaqus environment files, see section `Using the Abaqus environment files <https://help.3ds.com/2023/english/dssimulia_established/simacaeilgrefmap/simailg-m-envusing-sb.htm?contextscope=all&highlight=abaqus_v6.env&id=b05e6543a86c4f5f8d6f3e464a93b3b2&analyticsContext=search-result&analyticsSearch=abaqus_v6.env&myapp=false>`_ of the Abaqus Installation, Licensing & Configuration guide.
+
+Projects Which Used inpRW
+-------------------------
+
+* Convert step data to \*MANIFEST input files
+* Convert \*RELEASE to connector element equivalent
+* Generate hydro-dynamic load fields
+* Integrate with new Keyword Edit feature of **3D**\ EXPERIENCE
+* Cut an input file by keeping only the nodes corresponding to a particular nodeset, deleting all features that reference deleted nodes.
+
+Data Structure
+--------------
+
+When an input file is parsed, it creates an :class:`~inpRW.inpRW` instance. An :class:`~inpRW.inpRW` instance contains many attributes
+and functions, all of which are fully documented in the :ref:`API Reference` section. Here's an outline of how :class:`~inpRW.inpRW` 
+organizes the parsed keyword blocks. This only shows select attributes of the class.
+
+| ``inp`` (:class:`.inpRW`)
+| ``├── keywords`` (:class:`.inpKeywordSequence`)
+| ``│   ├── keyword`` (:class:`.inpKeyword`)
+| ``│   │   ├── name`` (:class:`str`)
+| ``│   │   ├── parameter`` (:class:`.csid`)
+| ``│   │   ├── data`` (:class:`list` or :class:`.Mesh`)
+| ``│   │   ├── comments`` (:class:`list`)
+| ``│   │   ├── path`` (:class:`str`)
+| ``│   │   └── suboptions`` (:class:`.inpKeywordSequence`)
+| ``│   │       └── keyword`` (:class:`.inpKeyword`)
+| ``│   │           └──  ...``
+| ``│   └── keyword`` (:class:`.inpKeyword`)
+| ``│       └── ...``
+| ``├── nd`` (:class:`.TotalNodeMesh`)
+| ``├── ed`` (:class:`.TotalElementMesh`)
+| ``├── kwg`` (:class:`csid`)
+| ``├── steps`` (:class:`csid`)
+| ``├── jobSuffix`` (:class:`str`)
+| ``├── inputFolder`` (:class:`str`)
+| ``├── inpKeywordArgs`` (:class:`dict`)
+| ``└── outputFolder`` (:class:`str`)
+
+
+Project Structure
+-----------------
+
+* :mod:`inpRW` is composed of the following sub-modules:
+
+    * :mod:`~inpRW._inpR`
+    * :mod:`~inpRW._inpW`
+    * :mod:`~inpRW._inpMod`
+    * :mod:`~inpRW._inpFind` 
+    * :mod:`~inpRW._inpFindRefs`
+    * :mod:`~inpRW._inpCustom` 
+    * :mod:`~inpRW._importedModules`
+   
+* There are several other modules used by this class, but are not directly part of the class:
+   
+    * :mod:`centroid`
+    * :mod:`config`
+    * :mod:`csid` 
+    * :mod:`eval2` 
+    * :mod:`inpDecimal`
+    * :mod:`inpInt`
+    * :mod:`inpKeyword`
+    * :mod:`inpKeywordHelper` 
+    * :mod:`inpKeywordSequence`
+    * :mod:`inpString`
+    * :mod:`inpRWErrors`
+    * :mod:`mesh`
+    * :mod:`misc_functions`
+    * :mod:`NoneSort`
+    * :mod:`printer`
+    * :mod:`repr2` 
+
+Documentation Conventions
+-------------------------
+* Functions and attributes which start with "_" are hidden and are mainly used as internal functions of :class:`inpRW`.
+  They are not meant to be called by the end-user. They are documented here for completion and in case they might prove 
+  useful for some workflow.
+* *Italics* will refer to a :term:`parameter[1] <parameter>` of a Python function.
+* For a term that can have multiple definitions, '[#]' refers to the entry to which the term is referring.
+* Abaqus keyword names will be displayed as such: \*STEP. Similarly, Abaqus keyword :term:`parameters[2] <parameter>` 
+  will be in all caps (i.e. NLGEOM).
+* The term "inp" will almost always be shorthand to refer to an instance of :class:`inpRW`.

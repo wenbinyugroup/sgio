@@ -1,0 +1,574 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>elType &#8212; inpRW 2023.10.6 documentation</title><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/pydoctheme.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles.css" />
+    
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
+    
+    <script src="../../_static/sidebar.js"></script>
+    
+    <link rel="shortcut icon" href="../../_static/3DS_SIMULIA_Blue_Icon_32.png"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="inpDecimal" href="../inpDecimal/index.html" />
+    <link rel="prev" title="eval2" href="../eval2/index.html" /><link rel="shortcut icon" type="image/png" href="../../_static/icon-116-3dx-apps.svg" />
+            <script type="text/javascript" src="../../_static/copybutton.js"></script>
+            <script type="text/javascript" src="../../_static/menu.js"></script> 
+  </head>
+<body>
+<div class="mobile-nav">
+    <input type="checkbox" id="menuToggler" class="toggler__input" aria-controls="navigation"
+           aria-pressed="false" aria-expanded="false" role="button" aria-label="Menu" />
+    <label for="menuToggler" class="toggler__label">
+        <span></span>
+    </label>
+    <nav class="nav-content" role="navigation">
+         <a href="inpRW_toc.html" class="nav-logo">
+             <img src="../../_static/icon-116-3dx-apps.svg" alt="Logo"/>
+         </a>
+        <div class="version_switcher_placeholder"></div>
+        <form role="search" class="search" action="../../search.html" method="get">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" class="search-icon">
+                <path fill-rule="nonzero"
+                        d="M15.5 14h-.79l-.28-.27a6.5 6.5 0 001.48-5.34c-.47-2.78-2.79-5-5.59-5.34a6.505 6.505 0 00-7.27 7.27c.34 2.8 2.56 5.12 5.34 5.59a6.5 6.5 0 005.34-1.48l.27.28v.79l4.25 4.25c.41.41 1.08.41 1.49 0 .41-.41.41-1.08 0-1.49L15.5 14zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" fill="#444"></path>
+            </svg>
+            <input type="text" name="q" aria-label="Quick search"/>
+            <input type="submit" value="Go"/>
+        </form>
+    </nav>
+    <div class="menu-wrapper">
+        <nav class="menu" role="navigation" aria-label="main navigation">
+            <div class="language_switcher_placeholder"></div>
+            <p class="logo">
+                <a href="../../index.html">
+                <img class="logo" src="../../_static/3DS_SIMULIA_Logotype_RGB_BlueSteel.png" alt="Logo" style="border-radius:5px"/>
+                </a>
+            </p>
+  <div>
+    <h3><a href="../../inpRW_toc.html">Local Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">elType</span></code></a><ul>
+<li><a class="reference internal" href="#module-elType">Module Contents</a><ul>
+<li><a class="reference internal" href="#elType.elType"><code class="docutils literal notranslate"><span class="pre">elType</span></code></a><ul>
+<li><a class="reference internal" href="#elType.elType.__init__"><code class="docutils literal notranslate"><span class="pre">elType.__init__()</span></code></a></li>
+<li><a class="reference internal" href="#elType.elType.name"><code class="docutils literal notranslate"><span class="pre">elType.name</span></code></a></li>
+<li><a class="reference internal" href="#elType.elType.numNodesSet"><code class="docutils literal notranslate"><span class="pre">elType.numNodesSet</span></code></a></li>
+<li><a class="reference internal" href="#elType.elType.numNodes"><code class="docutils literal notranslate"><span class="pre">elType.numNodes</span></code></a></li>
+<li><a class="reference internal" href="#elType.elType.description"><code class="docutils literal notranslate"><span class="pre">elType.description</span></code></a></li>
+<li><a class="reference internal" href="#elType.elType.solvers"><code class="docutils literal notranslate"><span class="pre">elType.solvers</span></code></a></li>
+<li><a class="reference internal" href="#elType.elType.__getattr__"><code class="docutils literal notranslate"><span class="pre">elType.__getattr__()</span></code></a></li>
+<li><a class="reference internal" href="#elType.elType.__repr__"><code class="docutils literal notranslate"><span class="pre">elType.__repr__()</span></code></a></li>
+<li><a class="reference internal" href="#elType.elType.__str__"><code class="docutils literal notranslate"><span class="pre">elType.__str__()</span></code></a></li>
+<li><a class="reference internal" href="#elType.elType.__weakref__"><code class="docutils literal notranslate"><span class="pre">elType.__weakref__</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  </div>
+<h3><a href="../../inpRW_toc.html">Global Table of Contents</a></h3>
+<p class="caption" role="heading"><span class="caption-text">User Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Introduction.html">inpRW Utility Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Project-Background.html">Project Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Installation-and-Usage.html">Installation and Usage Instructions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Tests.html">inpRW Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Tests.html#running-inprw-tests">Running inpRW Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/inpKeyword-Basics.html">inpKeyword Basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Strings_Integers_and_Decimals.html">Strings, Integers, and Decimals</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Important-inpRW-Attributes.html">Important <code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW</span></code> Attributes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Miscellaneous-Usage-hints.html">Miscellaneous Usage Hints</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Example-Scenarios.html">Example Scenarios</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/glossary.html">Glossary</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../inpRW/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../centroid/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">centroid</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../config/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">config</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../config_re/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">config_re</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../csid/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">csid</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../eval2/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">eval2</span></code></a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">elType</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inpDecimal/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpDecimal</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inpInt/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpInt</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inpKeyword/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpKeyword</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inpKeywordHelper/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpKeywordHelper</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inpKeywordSequence/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpKeywordSequence</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inpRWErrors/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRWErrors</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inpString/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpString</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../mesh/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">mesh</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../misc_functions/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">misc_functions</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../NoneSort/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">NoneSort</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../printer/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">printer</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../repr2/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">repr2</span></code></a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Update Notes</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Update-Notes/index.html">Update Notes</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Legal Notices and Usage Disclaimer</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../legal_notices/Legal_Notices_and_Usage_Disclaimer.html">Legal Notices and Usage Disclaimer</a></li>
+</ul>
+
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="../eval2/index.html"
+                          title="previous chapter"><code class="xref py py-mod docutils literal notranslate"><span class="pre">eval2</span></code></a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="../inpDecimal/index.html"
+                          title="next chapter"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpDecimal</span></code></a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/autoapi/elType/index.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </nav>
+    </div>
+</div>
+  
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../inpDecimal/index.html" title="inpDecimal"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../eval2/index.html" title="eval2"
+             accesskey="P">previous</a> |</li>
+          <li><img src="../../_static/icon-116-3dx-apps.svg" alt="python logo" style="vertical-align: middle; margin-top: -1px"/></li>
+          <li><a href="inpRW_toc.html"></a> &#187;</li>
+          <li class="switchers">
+            <div class="language_switcher_placeholder"></div>
+            <div class="version_switcher_placeholder"></div>
+          </li>
+          <li>
+              
+              <a href="../../inpRW_toc.html">inpRW 2023.10.6 documentation</a> &#187;
+              
+          </li>
+        <li class="nav-item nav-item-this"><a href=""><code class="xref py py-mod docutils literal notranslate"><span class="pre">elType</span></code></a></li>
+                <li class="right">
+                    
+
+    <div class="inline-search" role="search">
+        <form class="inline-search" action="../../search.html" method="get">
+          <input placeholder="Quick search" aria-label="Quick search" type="text" name="q" />
+          <input type="submit" value="Go" />
+          <input type="hidden" name="check_keywords" value="yes" />
+          <input type="hidden" name="area" value="default" />
+        </form>
+    </div>
+                     |
+                </li>
+            
+      </ul>
+    </div>    
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="eltype">
+<h1><a class="reference internal" href="#module-elType" title="elType"><code class="xref py py-mod docutils literal notranslate"><span class="pre">elType</span></code></a><a class="headerlink" href="#eltype" title="Permalink to this heading">¶</a></h1>
+<section id="module-elType">
+<span id="module-contents"></span><h2>Module Contents<a class="headerlink" href="#module-elType" title="Permalink to this heading">¶</a></h2>
+<p>The <a class="reference internal" href="#module-elType" title="elType"><code class="xref py py-mod docutils literal notranslate"><span class="pre">elType</span></code></a> module provides the <a class="reference internal" href="#elType.elType" title="elType.elType"><code class="xref py py-class docutils literal notranslate"><span class="pre">elType</span></code></a> class, which stores information about an Abaqus element type.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="elType.elType">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">elType.</span></span><span class="sig-name descname"><span class="pre">elType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numNodes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">solvers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#elType.elType" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>The <a class="reference internal" href="#elType.elType" title="elType.elType"><code class="xref py py-class docutils literal notranslate"><span class="pre">elType</span></code></a> class stores information about a particular Abaqus element type.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="elType.elType.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numNodes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">solvers</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#elType.elType.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initializes attributes of the <a class="reference internal" href="#elType.elType" title="elType.elType"><code class="xref py py-class docutils literal notranslate"><span class="pre">elType</span></code></a> class.</p>
+<p>At the moment, <a class="reference internal" href="#elType.elType.numNodes" title="elType.elType.numNodes"><code class="xref py py-attr docutils literal notranslate"><span class="pre">numNodes</span></code></a> is the only attribute used by <a class="reference internal" href="../inpRW/index.html#module-inpRW" title="inpRW"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW</span></code></a>. The other attributes are
+provided for the user’s convenience.</p>
+<p>If <em>numNodes</em> is an integer, it will be stored to <a class="reference internal" href="#elType.elType.numNodes" title="elType.elType.numNodes"><code class="xref py py-attr docutils literal notranslate"><span class="pre">numNodes</span></code></a>. If <em>numNodes</em> is a set, it will be
+stored to <a class="reference internal" href="#elType.elType.numNodesSet" title="elType.elType.numNodesSet"><code class="xref py py-attr docutils literal notranslate"><span class="pre">numNodesSet</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – The name of the element type.</p></li>
+<li><p><strong>numNodes</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#set" title="(in Python v3.12)"><em>set</em></a>) – The number of nodes needed to define the element. This is either an integer or
+a set of integers if the element type can have a varying number of nodes.</p></li>
+<li><p><strong>solvers</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – A string indicating which Abaqus solvers support the element type. ‘S’ for Standard,
+‘E’ for Explicit, and ‘SE’ for both.</p></li>
+<li><p><strong>description</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – The description string for the element type, taken from the Abaqus documentation.</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition-examples admonition">
+<p class="admonition-title">Examples</p>
+<p>Here’s the basic usage of the class:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">elType</span> <span class="kn">import</span> <span class="n">elType</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">elType</span><span class="p">(</span><span class="s1">&#39;AC1D2&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;S&#39;</span><span class="p">,</span> <span class="s1">&#39;    2-node acoustic link&#39;</span><span class="p">)</span>
+<span class="go">elType(name=&#39;AC1D2&#39;, numNodes=2, solvers=&#39;S&#39;, description=&#39;    2-node acoustic link&#39;)</span>
+</pre></div>
+</div>
+<p>If <em>numNodes</em> is a set, you need to use the <a class="reference internal" href="#elType.elType.numNodesSet" title="elType.elType.numNodesSet"><code class="xref py py-attr docutils literal notranslate"><span class="pre">numNodesSet</span></code></a> attribute instead of <a class="reference internal" href="#elType.elType.numNodes" title="elType.elType.numNodes"><code class="xref py py-attr docutils literal notranslate"><span class="pre">numNodes</span></code></a>:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">elType1</span> <span class="o">=</span> <span class="n">elType</span><span class="p">(</span><span class="s1">&#39;C3D15V&#39;</span><span class="p">,</span> <span class="p">{</span><span class="mi">16</span><span class="p">,</span> <span class="mi">17</span><span class="p">,</span> <span class="mi">18</span><span class="p">,</span> <span class="mi">15</span><span class="p">},</span> <span class="s1">&#39;S&#39;</span><span class="p">,</span> <span class="s1">&#39;    15 to 18-node triangular prism&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">l</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">elType1</span><span class="o">.</span><span class="n">numNodesSet</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">l</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">l</span>
+<span class="go">[15, 16, 17, 18]</span>
+</pre></div>
+</div>
+</div>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="elType.elType.name">
+<span class="sig-name descname"><span class="pre">name</span></span><a class="headerlink" href="#elType.elType.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>The element type name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="elType.elType.numNodesSet">
+<span class="sig-name descname"><span class="pre">numNodesSet</span></span><a class="headerlink" href="#elType.elType.numNodesSet" title="Permalink to this definition">¶</a></dt>
+<dd><p>A set of all the numbers of nodes which can define the element.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#set" title="(in Python v3.12)">set</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="elType.elType.numNodes">
+<span class="sig-name descname"><span class="pre">numNodes</span></span><a class="headerlink" href="#elType.elType.numNodes" title="Permalink to this definition">¶</a></dt>
+<dd><p>The number of nodes needed to define the element.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)">int</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="elType.elType.description">
+<span class="sig-name descname"><span class="pre">description</span></span><a class="headerlink" href="#elType.elType.description" title="Permalink to this definition">¶</a></dt>
+<dd><p>The description string for the element type, taken from the Abaqus documentation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="elType.elType.solvers">
+<span class="sig-name descname"><span class="pre">solvers</span></span><a class="headerlink" href="#elType.elType.solvers" title="Permalink to this definition">¶</a></dt>
+<dd><p>A string indicating which Abaqus solvers support the element type. ‘S’ for Standard, ‘E’ for Explicit, and ‘SE’ for both.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="elType.elType.__getattr__">
+<span class="sig-name descname"><span class="pre">__getattr__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#elType.elType.__getattr__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overrides the default attribute retrieval behavior for cases where <a class="reference internal" href="#elType.elType.numNodes" title="elType.elType.numNodes"><code class="xref py py-attr docutils literal notranslate"><span class="pre">numNodes</span></code></a> is not defined.</p>
+<p>This function raises an <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#AttributeError" title="(in Python v3.12)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">AttributeError</span></code></a> guiding users towards the <a class="reference internal" href="#elType.elType.numNodesSet" title="elType.elType.numNodesSet"><code class="xref py py-attr docutils literal notranslate"><span class="pre">numNodesSet</span></code></a> attribute
+if <a class="reference internal" href="#elType.elType.numNodes" title="elType.elType.numNodes"><code class="xref py py-attr docutils literal notranslate"><span class="pre">numNodes</span></code></a> does not exist.</p>
+<p>See <a class="reference external" href="https://docs.python.org/3/reference/datamodel.html#object.__getattr__" title="(in Python v3.12)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">__getattr__()</span></code></a> for more information.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – The attribute name.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#AttributeError" title="(in Python v3.12)"><strong>AttributeError</strong></a> – </p>
+</dd>
+</dl>
+<div class="admonition-examples admonition">
+<p class="admonition-title">Examples</p>
+<p>Here’s an example of trying to retrieve <a class="reference internal" href="#elType.elType.numNodes" title="elType.elType.numNodes"><code class="xref py py-attr docutils literal notranslate"><span class="pre">numNodes</span></code></a> if it doesn’t exist:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">elType</span> <span class="kn">import</span> <span class="n">elType</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">elType1</span> <span class="o">=</span> <span class="n">elType</span><span class="p">(</span><span class="s1">&#39;C3D15V&#39;</span><span class="p">,</span> <span class="p">{</span><span class="mi">16</span><span class="p">,</span> <span class="mi">17</span><span class="p">,</span> <span class="mi">18</span><span class="p">,</span> <span class="mi">15</span><span class="p">},</span> <span class="s1">&#39;S&#39;</span><span class="p">,</span> <span class="s1">&#39;    15 to 18-node triangular prism&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">elType1</span><span class="o">.</span><span class="n">numNodes</span> 
+<span class="gt">Traceback (most recent call last):</span>
+<span class="w">    </span><span class="o">...</span>
+<span class="gr">AttributeError</span>: <span class="n">elType object has no attribute &#39;numNodes&#39;. Use &#39;numNodesSet&#39; instead...</span>
+</pre></div>
+</div>
+<p>The error is slightly different for any other attribute:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">elType1</span><span class="o">.</span><span class="n">test</span>
+<span class="gt">Traceback (most recent call last):</span>
+<span class="w">    </span><span class="o">...</span>
+<span class="gr">AttributeError</span>: <span class="n">elType object has no attribute &#39;test&#39;.</span>
+</pre></div>
+</div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="elType.elType.__repr__">
+<span class="sig-name descname"><span class="pre">__repr__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#elType.elType.__repr__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Produces a repr of the <a class="reference internal" href="#elType.elType" title="elType.elType"><code class="xref py py-class docutils literal notranslate"><span class="pre">elType</span></code></a> instance.</p>
+<p>If the instance includes <a class="reference internal" href="#elType.elType.numNodesSet" title="elType.elType.numNodesSet"><code class="xref py py-attr docutils literal notranslate"><span class="pre">numNodesSet</span></code></a>, this will be reported as numNodes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+<div class="admonition-examples admonition">
+<p class="admonition-title">Examples</p>
+<p>Here’s a basic example:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">elType</span> <span class="kn">import</span> <span class="n">elType</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">elType</span><span class="p">(</span><span class="s1">&#39;AC1D2&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;S&#39;</span><span class="p">,</span> <span class="s1">&#39;    2-node acoustic link&#39;</span><span class="p">)</span>
+<span class="go">elType(name=&#39;AC1D2&#39;, numNodes=2, solvers=&#39;S&#39;, description=&#39;    2-node acoustic link&#39;)</span>
+</pre></div>
+</div>
+<p>If the instance has <a class="reference internal" href="#elType.elType.numNodesSet" title="elType.elType.numNodesSet"><code class="xref py py-attr docutils literal notranslate"><span class="pre">numNodesSet</span></code></a>, this will be listed as ‘numNodes’:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">elType</span><span class="p">(</span><span class="s1">&#39;C3D15V&#39;</span><span class="p">,</span> <span class="p">{</span><span class="mi">16</span><span class="p">,</span> <span class="mi">17</span><span class="p">,</span> <span class="mi">18</span><span class="p">,</span> <span class="mi">15</span><span class="p">},</span> <span class="s1">&#39;S&#39;</span><span class="p">,</span> <span class="s1">&#39;    15 to 18-node triangular prism&#39;</span><span class="p">)</span>
+<span class="go">elType(name=&#39;C3D15V&#39;, numNodes={16, 17, 18, 15}, solvers=&#39;S&#39;, description=&#39;    15 to 18-node triangular prism&#39;)</span>
+</pre></div>
+</div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="elType.elType.__str__">
+<span class="sig-name descname"><span class="pre">__str__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#elType.elType.__str__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Produces a string of the <a class="reference internal" href="#module-elType" title="elType"><code class="xref py py-class docutils literal notranslate"><span class="pre">elType</span></code></a> instance.</p>
+<p>Produces an identical string as <a class="reference internal" href="#elType.elType.__repr__" title="elType.elType.__repr__"><code class="xref py py-func docutils literal notranslate"><span class="pre">__repr__()</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+<div class="admonition-examples admonition">
+<p class="admonition-title">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">elType</span> <span class="kn">import</span> <span class="n">elType</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">str</span><span class="p">(</span><span class="n">elType</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;C3D8R&#39;</span><span class="p">,</span> <span class="n">numNodes</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">solvers</span><span class="o">=</span><span class="s1">&#39;SE&#39;</span><span class="p">))</span>
+<span class="go">&quot;elType(name=&#39;C3D8R&#39;, numNodes=8, solvers=&#39;SE&#39;, description=&#39;&#39;)&quot;</span>
+</pre></div>
+</div>
+</div>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="elType.elType.__weakref__">
+<span class="sig-name descname"><span class="pre">__weakref__</span></span><a class="headerlink" href="#elType.elType.__weakref__" title="Permalink to this definition">¶</a></dt>
+<dd><p>list of weak references to the object (if defined)</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../inpRW_toc.html">
+              <img class="logo" src="../../_static/3DS_SIMULIA_Logotype_RGB_BlueSteel.png" alt="Logo", style="border-radius:5px"/>
+            </a></p>
+  <div>
+    <h3><a href="../../inpRW_toc.html">Local Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">elType</span></code></a><ul>
+<li><a class="reference internal" href="#module-elType">Module Contents</a><ul>
+<li><a class="reference internal" href="#elType.elType"><code class="docutils literal notranslate"><span class="pre">elType</span></code></a><ul>
+<li><a class="reference internal" href="#elType.elType.__init__"><code class="docutils literal notranslate"><span class="pre">elType.__init__()</span></code></a></li>
+<li><a class="reference internal" href="#elType.elType.name"><code class="docutils literal notranslate"><span class="pre">elType.name</span></code></a></li>
+<li><a class="reference internal" href="#elType.elType.numNodesSet"><code class="docutils literal notranslate"><span class="pre">elType.numNodesSet</span></code></a></li>
+<li><a class="reference internal" href="#elType.elType.numNodes"><code class="docutils literal notranslate"><span class="pre">elType.numNodes</span></code></a></li>
+<li><a class="reference internal" href="#elType.elType.description"><code class="docutils literal notranslate"><span class="pre">elType.description</span></code></a></li>
+<li><a class="reference internal" href="#elType.elType.solvers"><code class="docutils literal notranslate"><span class="pre">elType.solvers</span></code></a></li>
+<li><a class="reference internal" href="#elType.elType.__getattr__"><code class="docutils literal notranslate"><span class="pre">elType.__getattr__()</span></code></a></li>
+<li><a class="reference internal" href="#elType.elType.__repr__"><code class="docutils literal notranslate"><span class="pre">elType.__repr__()</span></code></a></li>
+<li><a class="reference internal" href="#elType.elType.__str__"><code class="docutils literal notranslate"><span class="pre">elType.__str__()</span></code></a></li>
+<li><a class="reference internal" href="#elType.elType.__weakref__"><code class="docutils literal notranslate"><span class="pre">elType.__weakref__</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  </div>
+<h3><a href="../../inpRW_toc.html">Global Table of Contents</a></h3>
+<p class="caption" role="heading"><span class="caption-text">User Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Introduction.html">inpRW Utility Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Project-Background.html">Project Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Installation-and-Usage.html">Installation and Usage Instructions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Tests.html">inpRW Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Tests.html#running-inprw-tests">Running inpRW Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/inpKeyword-Basics.html">inpKeyword Basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Strings_Integers_and_Decimals.html">Strings, Integers, and Decimals</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Important-inpRW-Attributes.html">Important <code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW</span></code> Attributes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Miscellaneous-Usage-hints.html">Miscellaneous Usage Hints</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Example-Scenarios.html">Example Scenarios</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/glossary.html">Glossary</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../inpRW/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../centroid/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">centroid</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../config/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">config</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../config_re/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">config_re</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../csid/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">csid</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../eval2/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">eval2</span></code></a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">elType</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inpDecimal/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpDecimal</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inpInt/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpInt</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inpKeyword/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpKeyword</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inpKeywordHelper/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpKeywordHelper</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inpKeywordSequence/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpKeywordSequence</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inpRWErrors/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRWErrors</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inpString/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpString</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../mesh/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">mesh</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../misc_functions/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">misc_functions</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../NoneSort/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">NoneSort</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../printer/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">printer</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../repr2/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">repr2</span></code></a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Update Notes</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Update-Notes/index.html">Update Notes</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Legal Notices and Usage Disclaimer</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../legal_notices/Legal_Notices_and_Usage_Disclaimer.html">Legal Notices and Usage Disclaimer</a></li>
+</ul>
+
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="../eval2/index.html"
+                          title="previous chapter"><code class="xref py py-mod docutils literal notranslate"><span class="pre">eval2</span></code></a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="../inpDecimal/index.html"
+                          title="next chapter"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpDecimal</span></code></a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/autoapi/elType/index.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>  
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../inpDecimal/index.html" title="inpDecimal"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../eval2/index.html" title="eval2"
+             >previous</a> |</li>
+          <li><img src="../../_static/icon-116-3dx-apps.svg" alt="python logo" style="vertical-align: middle; margin-top: -1px"/></li>
+          <li><a href="inpRW_toc.html"></a> &#187;</li>
+          <li class="switchers">
+            <div class="language_switcher_placeholder"></div>
+            <div class="version_switcher_placeholder"></div>
+          </li>
+          <li>
+              
+              <a href="../../inpRW_toc.html">inpRW 2023.10.6 documentation</a> &#187;
+              
+          </li>
+        <li class="nav-item nav-item-this"><a href=""><code class="xref py py-mod docutils literal notranslate"><span class="pre">elType</span></code></a></li>
+                <li class="right">
+                    
+
+    <div class="inline-search" role="search">
+        <form class="inline-search" action="../../search.html" method="get">
+          <input placeholder="Quick search" aria-label="Quick search" type="text" name="q" />
+          <input type="submit" value="Go" />
+          <input type="hidden" name="check_keywords" value="yes" />
+          <input type="hidden" name="area" value="default" />
+        </form>
+    </div>
+                     |
+                </li>
+            
+      </ul>
+    </div>  
+    <div class="footer">
+    &copy; Copyright 2023, Dassault Systèmes Simulia Corp.
+     <a href="../../_static/legal_notices.pdf" >inpRW Legal Notices</a>.<br />
+     <a href="../../_static/Read_Disclaimer_First.txt" >inpRW Usage Disclaimer</a>.<br />
+    Last updated on Nov 21, 2023.
+    <a href="https://r1132100503382-eu1-3dswym.3dexperience.3ds.com/#community:39/post:nE1VLzylQoKgfG2wekOpFg">Found a bug</a>?
+    </div>
+
+  </body>
+</html>

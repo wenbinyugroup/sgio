@@ -1,0 +1,1083 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>csid &#8212; inpRW 2023.10.6 documentation</title><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/pydoctheme.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles.css" />
+    
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
+    
+    <script src="../../_static/sidebar.js"></script>
+    
+    <link rel="shortcut icon" href="../../_static/3DS_SIMULIA_Blue_Icon_32.png"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="eval2" href="../eval2/index.html" />
+    <link rel="prev" title="config_re" href="../config_re/index.html" /><link rel="shortcut icon" type="image/png" href="../../_static/icon-116-3dx-apps.svg" />
+            <script type="text/javascript" src="../../_static/copybutton.js"></script>
+            <script type="text/javascript" src="../../_static/menu.js"></script> 
+  </head>
+<body>
+<div class="mobile-nav">
+    <input type="checkbox" id="menuToggler" class="toggler__input" aria-controls="navigation"
+           aria-pressed="false" aria-expanded="false" role="button" aria-label="Menu" />
+    <label for="menuToggler" class="toggler__label">
+        <span></span>
+    </label>
+    <nav class="nav-content" role="navigation">
+         <a href="inpRW_toc.html" class="nav-logo">
+             <img src="../../_static/icon-116-3dx-apps.svg" alt="Logo"/>
+         </a>
+        <div class="version_switcher_placeholder"></div>
+        <form role="search" class="search" action="../../search.html" method="get">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" class="search-icon">
+                <path fill-rule="nonzero"
+                        d="M15.5 14h-.79l-.28-.27a6.5 6.5 0 001.48-5.34c-.47-2.78-2.79-5-5.59-5.34a6.505 6.505 0 00-7.27 7.27c.34 2.8 2.56 5.12 5.34 5.59a6.5 6.5 0 005.34-1.48l.27.28v.79l4.25 4.25c.41.41 1.08.41 1.49 0 .41-.41.41-1.08 0-1.49L15.5 14zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" fill="#444"></path>
+            </svg>
+            <input type="text" name="q" aria-label="Quick search"/>
+            <input type="submit" value="Go"/>
+        </form>
+    </nav>
+    <div class="menu-wrapper">
+        <nav class="menu" role="navigation" aria-label="main navigation">
+            <div class="language_switcher_placeholder"></div>
+            <p class="logo">
+                <a href="../../index.html">
+                <img class="logo" src="../../_static/3DS_SIMULIA_Logotype_RGB_BlueSteel.png" alt="Logo" style="border-radius:5px"/>
+                </a>
+            </p>
+  <div>
+    <h3><a href="../../inpRW_toc.html">Local Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">csid</span></code></a><ul>
+<li><a class="reference internal" href="#module-csid">Module Contents</a><ul>
+<li><a class="reference internal" href="#csid.csid"><code class="docutils literal notranslate"><span class="pre">csid</span></code></a><ul>
+<li><a class="reference internal" href="#csid.csid.__init__"><code class="docutils literal notranslate"><span class="pre">csid.__init__()</span></code></a></li>
+<li><a class="reference internal" href="#csid.csid.get"><code class="docutils literal notranslate"><span class="pre">csid.get()</span></code></a></li>
+<li><a class="reference internal" href="#csid.csid.mergeSubItems"><code class="docutils literal notranslate"><span class="pre">csid.mergeSubItems()</span></code></a></li>
+<li><a class="reference internal" href="#csid.csid.pop"><code class="docutils literal notranslate"><span class="pre">csid.pop()</span></code></a></li>
+<li><a class="reference internal" href="#csid.csid.setdefault"><code class="docutils literal notranslate"><span class="pre">csid.setdefault()</span></code></a></li>
+<li><a class="reference internal" href="#csid.csid.update"><code class="docutils literal notranslate"><span class="pre">csid.update()</span></code></a></li>
+<li><a class="reference internal" href="#csid.csid.__contains__"><code class="docutils literal notranslate"><span class="pre">csid.__contains__()</span></code></a></li>
+<li><a class="reference internal" href="#csid.csid.__delitem__"><code class="docutils literal notranslate"><span class="pre">csid.__delitem__()</span></code></a></li>
+<li><a class="reference internal" href="#csid.csid.__getitem__"><code class="docutils literal notranslate"><span class="pre">csid.__getitem__()</span></code></a></li>
+<li><a class="reference internal" href="#csid.csid.__setitem__"><code class="docutils literal notranslate"><span class="pre">csid.__setitem__()</span></code></a></li>
+<li><a class="reference internal" href="#csid.csid.__repr__"><code class="docutils literal notranslate"><span class="pre">csid.__repr__()</span></code></a></li>
+<li><a class="reference internal" href="#csid.csid.__str__"><code class="docutils literal notranslate"><span class="pre">csid.__str__()</span></code></a></li>
+<li><a class="reference internal" href="#csid.csid.__weakref__"><code class="docutils literal notranslate"><span class="pre">csid.__weakref__</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#csid.csiKeyString"><code class="docutils literal notranslate"><span class="pre">csiKeyString</span></code></a><ul>
+<li><a class="reference internal" href="#csid.csiKeyString.__init__"><code class="docutils literal notranslate"><span class="pre">csiKeyString.__init__()</span></code></a></li>
+<li><a class="reference internal" href="#csid.csiKeyString.key"><code class="docutils literal notranslate"><span class="pre">csiKeyString.key</span></code></a></li>
+<li><a class="reference internal" href="#csid.csiKeyString.__hash__"><code class="docutils literal notranslate"><span class="pre">csiKeyString.__hash__()</span></code></a></li>
+<li><a class="reference internal" href="#csid.csiKeyString.__eq__"><code class="docutils literal notranslate"><span class="pre">csiKeyString.__eq__()</span></code></a></li>
+<li><a class="reference internal" href="#csid.csiKeyString.__str__"><code class="docutils literal notranslate"><span class="pre">csiKeyString.__str__()</span></code></a></li>
+<li><a class="reference internal" href="#csid.csiKeyString.__repr__"><code class="docutils literal notranslate"><span class="pre">csiKeyString.__repr__()</span></code></a></li>
+<li><a class="reference internal" href="#csid.csiKeyString.__weakref__"><code class="docutils literal notranslate"><span class="pre">csiKeyString.__weakref__</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#csid.csiKeyDecimal"><code class="docutils literal notranslate"><span class="pre">csiKeyDecimal</span></code></a><ul>
+<li><a class="reference internal" href="#csid.csiKeyDecimal.__new__"><code class="docutils literal notranslate"><span class="pre">csiKeyDecimal.__new__()</span></code></a></li>
+<li><a class="reference internal" href="#csid.csiKeyDecimal.__init__"><code class="docutils literal notranslate"><span class="pre">csiKeyDecimal.__init__()</span></code></a></li>
+<li><a class="reference internal" href="#csid.csiKeyDecimal.__hash__"><code class="docutils literal notranslate"><span class="pre">csiKeyDecimal.__hash__()</span></code></a></li>
+<li><a class="reference internal" href="#csid.csiKeyDecimal.__eq__"><code class="docutils literal notranslate"><span class="pre">csiKeyDecimal.__eq__()</span></code></a></li>
+<li><a class="reference internal" href="#csid.csiKeyDecimal.__str__"><code class="docutils literal notranslate"><span class="pre">csiKeyDecimal.__str__()</span></code></a></li>
+<li><a class="reference internal" href="#csid.csiKeyDecimal.__repr__"><code class="docutils literal notranslate"><span class="pre">csiKeyDecimal.__repr__()</span></code></a></li>
+<li><a class="reference internal" href="#csid.csiKeyDecimal.__weakref__"><code class="docutils literal notranslate"><span class="pre">csiKeyDecimal.__weakref__</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  </div>
+<h3><a href="../../inpRW_toc.html">Global Table of Contents</a></h3>
+<p class="caption" role="heading"><span class="caption-text">User Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Introduction.html">inpRW Utility Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Project-Background.html">Project Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Installation-and-Usage.html">Installation and Usage Instructions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Tests.html">inpRW Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Tests.html#running-inprw-tests">Running inpRW Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/inpKeyword-Basics.html">inpKeyword Basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Strings_Integers_and_Decimals.html">Strings, Integers, and Decimals</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Important-inpRW-Attributes.html">Important <code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW</span></code> Attributes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Miscellaneous-Usage-hints.html">Miscellaneous Usage Hints</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Example-Scenarios.html">Example Scenarios</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/glossary.html">Glossary</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../inpRW/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../centroid/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">centroid</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../config/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">config</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../config_re/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">config_re</span></code></a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">csid</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../eval2/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">eval2</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../elType/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">elType</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inpDecimal/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpDecimal</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inpInt/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpInt</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inpKeyword/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpKeyword</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inpKeywordHelper/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpKeywordHelper</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inpKeywordSequence/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpKeywordSequence</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inpRWErrors/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRWErrors</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inpString/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpString</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../mesh/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">mesh</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../misc_functions/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">misc_functions</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../NoneSort/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">NoneSort</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../printer/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">printer</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../repr2/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">repr2</span></code></a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Update Notes</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Update-Notes/index.html">Update Notes</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Legal Notices and Usage Disclaimer</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../legal_notices/Legal_Notices_and_Usage_Disclaimer.html">Legal Notices and Usage Disclaimer</a></li>
+</ul>
+
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="../config_re/index.html"
+                          title="previous chapter"><code class="xref py py-mod docutils literal notranslate"><span class="pre">config_re</span></code></a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="../eval2/index.html"
+                          title="next chapter"><code class="xref py py-mod docutils literal notranslate"><span class="pre">eval2</span></code></a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/autoapi/csid/index.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </nav>
+    </div>
+</div>
+  
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../eval2/index.html" title="eval2"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../config_re/index.html" title="config_re"
+             accesskey="P">previous</a> |</li>
+          <li><img src="../../_static/icon-116-3dx-apps.svg" alt="python logo" style="vertical-align: middle; margin-top: -1px"/></li>
+          <li><a href="inpRW_toc.html"></a> &#187;</li>
+          <li class="switchers">
+            <div class="language_switcher_placeholder"></div>
+            <div class="version_switcher_placeholder"></div>
+          </li>
+          <li>
+              
+              <a href="../../inpRW_toc.html">inpRW 2023.10.6 documentation</a> &#187;
+              
+          </li>
+        <li class="nav-item nav-item-this"><a href=""><code class="xref py py-mod docutils literal notranslate"><span class="pre">csid</span></code></a></li>
+                <li class="right">
+                    
+
+    <div class="inline-search" role="search">
+        <form class="inline-search" action="../../search.html" method="get">
+          <input placeholder="Quick search" aria-label="Quick search" type="text" name="q" />
+          <input type="submit" value="Go" />
+          <input type="hidden" name="check_keywords" value="yes" />
+          <input type="hidden" name="area" value="default" />
+        </form>
+    </div>
+                     |
+                </li>
+            
+      </ul>
+    </div>    
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="csid">
+<h1><a class="reference internal" href="#module-csid" title="csid"><code class="xref py py-mod docutils literal notranslate"><span class="pre">csid</span></code></a><a class="headerlink" href="#csid" title="Permalink to this heading">¶</a></h1>
+<section id="module-csid">
+<span id="module-contents"></span><h2>Module Contents<a class="headerlink" href="#module-csid" title="Permalink to this heading">¶</a></h2>
+<p>This module implements a few classes that together enable a custom case- and space-insensitive dictionary class.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="csid.csid">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">csid.</span></span><span class="sig-name descname"><span class="pre">csid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#csid.csid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a></p>
+<p>This is a custom class that overrides lookup functions of dictionary classes. It makes their keys
+case-insensitive and space-insensitive.</p>
+<p>Since this class inherits from the dictionary type, it behaves almost exactly like a dictionary. The main
+difference is the keys to the dictionary. Any operation with a <a class="reference internal" href="#module-csid" title="csid"><code class="xref py py-class docutils literal notranslate"><span class="pre">csid</span></code></a> instance will automatically
+generate and use a <a class="reference internal" href="#csid.csiKeyString" title="csid.csiKeyString"><code class="xref py py-class docutils literal notranslate"><span class="pre">csiKeyString</span></code></a> for the key if the key is a string type, or a <a class="reference internal" href="#csid.csiKeyDecimal" title="csid.csiKeyDecimal"><code class="xref py py-class docutils literal notranslate"><span class="pre">csiKeyDecimal</span></code></a>
+if the key is a <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a> (the hash of a float is not consistent with the hash of a <a class="reference external" href="https://docs.python.org/3/library/decimal.html#decimal.Decimal" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Decimal</span></code></a>). Otherwise,
+the object itself will be used as the key, as other object types should not support spaces nor capitalization.</p>
+<p>Constructing a <a class="reference internal" href="#module-csid" title="csid"><code class="xref py py-class docutils literal notranslate"><span class="pre">csid</span></code></a> instance uses the same syntax as constructing a dictionary, or you
+can convert an existing dictionary to a <a class="reference internal" href="#module-csid" title="csid"><code class="xref py py-class docutils literal notranslate"><span class="pre">csid</span></code></a> via <code class="docutils literal notranslate"><span class="pre">csid(dict)</span></code>.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="csid.csid.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#csid.csid.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates the dictionary. Uses the same construction methods as <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>.</p>
+<p>If <em>data</em> is specified, each key in <em>data</em> will be converted to a <a class="reference internal" href="#csid.csiKeyDecimal" title="csid.csiKeyDecimal"><code class="xref py py-class docutils literal notranslate"><span class="pre">csiKeyDecimal</span></code></a> or <a class="reference internal" href="#csid.csiKeyString" title="csid.csiKeyString"><code class="xref py py-class docutils literal notranslate"><span class="pre">csiKeyString</span></code></a>
+prior to creating the entry in the <a class="reference internal" href="#module-csid" title="csid"><code class="xref py py-class docutils literal notranslate"><span class="pre">csid</span></code></a>.</p>
+<p>Example usage:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">csid</span> <span class="kn">import</span> <span class="n">csid</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">csid</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="p">[</span><span class="s1">&#39; Nodeset-1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;test&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="p">[</span><span class="s1">&#39; Nodeset-2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;test2&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+<span class="go">{</span>
+<span class="go">&#39; Nodeset-1&#39;: &#39;test&#39;,</span>
+<span class="go">&#39; Nodeset-2&#39;: &#39;test2&#39;</span>
+<span class="go">}</span>
+</pre></div>
+</div>
+<p>We can also populate the <a class="reference internal" href="#module-csid" title="csid"><code class="xref py py-class docutils literal notranslate"><span class="pre">csid</span></code></a> using existing data, providing it’s in a format which can be used
+to create a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">l</span> <span class="o">=</span> <span class="p">[[</span><span class="s1">&#39;Nodeset-1&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">],[</span><span class="s1">&#39;Nodeset-2&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">],[</span><span class="s1">&#39;Nodeset-3&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">csid</span><span class="p">(</span><span class="n">l</span><span class="p">)</span>
+<span class="go">csid(csiKeyString(&#39;Nodeset-1&#39;): 1, csiKeyString(&#39;Nodeset-2&#39;): 2, csiKeyString(&#39;Nodeset-3&#39;): 3)</span>
+</pre></div>
+</div>
+<p>If <em>data</em> is not formatted properly, a <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#TypeError" title="(in Python v3.12)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">TypeError</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.12)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ValueError</span></code></a> will be raised:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">csid</span><span class="p">([[</span><span class="s1">&#39;Nodeset-1&#39;</span><span class="p">,</span> <span class="s1">&#39;Nodeset-2&#39;</span><span class="p">,</span> <span class="s1">&#39;NodeSet-3&#39;</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]])</span>
+<span class="gt">Traceback (most recent call last):</span>
+<span class="w">    </span><span class="o">...</span>
+<span class="gr">ValueError</span>: <span class="n">too many values to unpack (expected 2)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">csid</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">])</span>
+<span class="gt">Traceback (most recent call last):</span>
+<span class="w">    </span><span class="o">...</span>
+<span class="gr">TypeError</span>: <span class="n">cannot unpack non-iterable int object</span>
+</pre></div>
+</div>
+<p>Please note that if two keys in <em>data</em> are identical once they have been made lowercase and had spaces
+removed, the second entry will overwrite the first one. Example:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">csid</span><span class="p">([[</span><span class="s1">&#39;Nodeset-1&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">],[</span><span class="s1">&#39;NODESET-1&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">],[</span><span class="s1">&#39;Nodeset-3&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">]])</span>
+<span class="go">csid(csiKeyString(&#39;Nodeset-1&#39;): 2, csiKeyString(&#39;Nodeset-3&#39;): 3)</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/glossary.html#term-iterable" title="(in Python v3.12)"><span class="xref std std-term">iterable</span></a>) – Defaults to None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="csid.csid.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#csid.csid.get" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts <em>key</em> to a <a class="reference internal" href="#csid.csiKeyString" title="csid.csiKeyString"><code class="xref py py-class docutils literal notranslate"><span class="pre">csiKeyString</span></code></a> or <a class="reference internal" href="#csid.csiKeyDecimal" title="csid.csiKeyDecimal"><code class="xref py py-class docutils literal notranslate"><span class="pre">csiKeyDecimal</span></code></a> if necessary, and then retrieves the entry
+in the <a class="reference internal" href="#module-csid" title="csid"><code class="xref py py-class docutils literal notranslate"><span class="pre">csid</span></code></a> instance using <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict.get" title="(in Python v3.12)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get()</span></code></a>.</p>
+<p>If <em>key</em> is not in the <a class="reference internal" href="#module-csid" title="csid"><code class="xref py py-class docutils literal notranslate"><span class="pre">csid</span></code></a>, <em>default</em> will be returned.</p>
+<p>Example usage:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">csid</span> <span class="kn">import</span> <span class="n">csid</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">csid</span><span class="p">([[</span><span class="mi">100</span><span class="p">,</span> <span class="mi">1</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+<span class="go">1</span>
+</pre></div>
+</div>
+<p>If <em>key</em> is not in the <a class="reference internal" href="#module-csid" title="csid"><code class="xref py py-class docutils literal notranslate"><span class="pre">csid</span></code></a>, <em>default</em> is returned:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="mi">200</span><span class="p">))</span>
+<span class="go">None</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/decimal.html#decimal.Decimal" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Decimal</span></code></a>) – The key to the item to retrieve from the dictionary. <em>key</em> will be converted
+to a <a class="reference internal" href="#csid.csiKeyString" title="csid.csiKeyString"><code class="xref py py-class docutils literal notranslate"><span class="pre">csiKeyString</span></code></a> or <a class="reference internal" href="#csid.csiKeyDecimal" title="csid.csiKeyDecimal"><code class="xref py py-class docutils literal notranslate"><span class="pre">csiKeyDecimal</span></code></a> if needed.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The value or None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="csid.csid.mergeSubItems">
+<span class="sig-name descname"><span class="pre">mergeSubItems</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#csid.csid.mergeSubItems" title="Permalink to this definition">¶</a></dt>
+<dd><p>Merges the sub-items of <em>other</em> into the appropriate item in d (the <a class="reference internal" href="#module-csid" title="csid"><code class="xref py py-class docutils literal notranslate"><span class="pre">csid</span></code></a> instance).</p>
+<p>For k and v in other.items(), if d[k] is not defined, set d[k] to v. If d[k] is a list, perform d[k].extend(v).
+If d[k] is a dictionary, perform d[k].update(v).</p>
+<p>This function is meant for cases where <a class="reference internal" href="#csid.csid.update" title="csid.csid.update"><code class="xref py py-func docutils literal notranslate"><span class="pre">update()</span></code></a> won’t be sufficient. For example, if d and <em>other</em> both
+have a key k, the content of each is a list, and you wish the value associated with k to be a list containing
+the contents of both entries.</p>
+<p>Example usage:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">csid</span> <span class="kn">import</span> <span class="n">csid</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">csid</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d2</span> <span class="o">=</span> <span class="n">csid</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">]]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">mergeSubItems</span><span class="p">(</span><span class="n">d2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span>
+<span class="go">csid(1: [1, 2, 3, 4, 5, 6])</span>
+</pre></div>
+</div>
+<p>If we just try to update the <a class="reference internal" href="#module-csid" title="csid"><code class="xref py py-class docutils literal notranslate"><span class="pre">csid</span></code></a> with the other dictionary, we would instead get this behavior:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">csid</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d2</span> <span class="o">=</span> <span class="n">csid</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">]]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">d2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span>
+<span class="go">csid(1: [4, 5, 6])</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>other</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><em>dict</em></a>) – Other should be a dictionary structure where the values of each item in other are lists
+or dictionaries. Example: <code class="docutils literal notranslate"><span class="pre">other</span> <span class="pre">=</span> <span class="pre">{key:</span> <span class="pre">{sub-key1:</span> <span class="pre">value1,</span> <span class="pre">sub-key2:</span> <span class="pre">value2}}</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="csid.csid.pop">
+<span class="sig-name descname"><span class="pre">pop</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#csid.csid.pop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts <em>key</em> to a <a class="reference internal" href="#csid.csiKeyString" title="csid.csiKeyString"><code class="xref py py-class docutils literal notranslate"><span class="pre">csiKeyString</span></code></a> or <a class="reference internal" href="#csid.csiKeyDecimal" title="csid.csiKeyDecimal"><code class="xref py py-class docutils literal notranslate"><span class="pre">csiKeyDecimal</span></code></a> if necessary, and then retrieves the entry
+in the <a class="reference internal" href="#module-csid" title="csid"><code class="xref py py-class docutils literal notranslate"><span class="pre">csid</span></code></a> instance and removes it using <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict.pop" title="(in Python v3.12)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">dict.pop()</span></code></a>.</p>
+<div class="admonition-example admonition">
+<p class="admonition-title">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">csid</span> <span class="kn">import</span> <span class="n">csid</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">csid</span><span class="p">([[</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">)</span>
+<span class="go">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span>
+<span class="go">csid(csiKeyString(&#39;b&#39;): 2, csiKeyString(&#39;c&#39;): 3)</span>
+</pre></div>
+</div>
+</div>
+<p>This will raise a <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#KeyError" title="(in Python v3.12)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">KeyError</span></code></a> if key is not in the <a class="reference internal" href="#module-csid" title="csid"><code class="xref py py-class docutils literal notranslate"><span class="pre">csid</span></code></a>:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">)</span>
+<span class="gt">Traceback (most recent call last):</span>
+<span class="w">    </span><span class="o">...</span>
+<span class="gr">KeyError</span>: <span class="n">csiKeyString(&#39;a&#39;)</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The value at <em>key</em>. The key, value pair is removed from the <a class="reference internal" href="#module-csid" title="csid"><code class="xref py py-class docutils literal notranslate"><span class="pre">csid</span></code></a>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="csid.csid.setdefault">
+<span class="sig-name descname"><span class="pre">setdefault</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#csid.csid.setdefault" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts <em>key</em> to a <a class="reference internal" href="#csid.csiKeyString" title="csid.csiKeyString"><code class="xref py py-class docutils literal notranslate"><span class="pre">csiKeyString</span></code></a> or <a class="reference internal" href="#csid.csiKeyDecimal" title="csid.csiKeyDecimal"><code class="xref py py-class docutils literal notranslate"><span class="pre">csiKeyDecimal</span></code></a> if necessary, and then retrieves the entry
+in the <a class="reference internal" href="#module-csid" title="csid"><code class="xref py py-class docutils literal notranslate"><span class="pre">csid</span></code></a> instance. If <em>key</em> is not in the <a class="reference internal" href="#module-csid" title="csid"><code class="xref py py-class docutils literal notranslate"><span class="pre">csid</span></code></a>, insert <em>key</em> with a value of <em>default</em>
+and return <em>default</em>.</p>
+<p>If <em>key</em> is in the <a class="reference internal" href="#module-csid" title="csid"><code class="xref py py-class docutils literal notranslate"><span class="pre">csid</span></code></a>, this simply retrieves its value:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">csid</span> <span class="kn">import</span> <span class="n">csid</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">csid</span><span class="p">([[</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">)</span>
+<span class="go">1</span>
+</pre></div>
+</div>
+<p>If <em>key</em> is not in the <a class="reference internal" href="#module-csid" title="csid"><code class="xref py py-class docutils literal notranslate"><span class="pre">csid</span></code></a>, this will insert <em>key</em> and set the value to <em>default</em>:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="go">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span>
+<span class="go">csid(csiKeyString(&#39;a&#39;): 1, csiKeyString(&#39;b&#39;): 2)</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/decimal.html#decimal.Decimal" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Decimal</span></code></a>) – The key for which to retrieve or set a value. <em>key</em> will be converted to a
+<a class="reference internal" href="#csid.csiKeyString" title="csid.csiKeyString"><code class="xref py py-class docutils literal notranslate"><span class="pre">csiKeyString</span></code></a> or <a class="reference internal" href="#csid.csiKeyDecimal" title="csid.csiKeyDecimal"><code class="xref py py-class docutils literal notranslate"><span class="pre">csiKeyDecimal</span></code></a> if necessary.</p></li>
+<li><p><strong>default</strong> – The value which will be inserted into the <a class="reference internal" href="#module-csid" title="csid"><code class="xref py py-class docutils literal notranslate"><span class="pre">csid</span></code></a> for <em>key</em> if <em>key</em> is not already
+in the <a class="reference internal" href="#module-csid" title="csid"><code class="xref py py-class docutils literal notranslate"><span class="pre">csid</span></code></a>. Defaults to None.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The value mapped to <em>key</em>, or <em>default</em> if <em>key</em> was not in the <a class="reference internal" href="#module-csid" title="csid"><code class="xref py py-class docutils literal notranslate"><span class="pre">csid</span></code></a>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="csid.csid.update">
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#csid.csid.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>If <em>other</em> is not a <a class="reference internal" href="#module-csid" title="csid"><code class="xref py py-class docutils literal notranslate"><span class="pre">csid</span></code></a>, converts it to one, and then calls <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict.update" title="(in Python v3.12)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">update()</span></code></a> using the <a class="reference internal" href="#module-csid" title="csid"><code class="xref py py-class docutils literal notranslate"><span class="pre">csid</span></code></a>
+of <em>other</em>.</p>
+<p>Example usage:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">csid</span> <span class="kn">import</span> <span class="n">csid</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">csid</span><span class="p">([[</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">update</span><span class="p">([[</span><span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span>
+<span class="go">csid(csiKeyString(&#39;a&#39;): 1, csiKeyString(&#39;b&#39;): 2)</span>
+</pre></div>
+</div>
+<p>This function operates more quickly if <em>other</em> is already a <a class="reference internal" href="#module-csid" title="csid"><code class="xref py py-class docutils literal notranslate"><span class="pre">csid</span></code></a>, although the end result will be the same:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">csid</span><span class="p">([[</span><span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">]]))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span>
+<span class="go">csid(csiKeyString(&#39;a&#39;): 1, csiKeyString(&#39;b&#39;): 2, csiKeyString(&#39;c&#39;): 3)</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>other</strong> (<a class="reference external" href="https://docs.python.org/3/glossary.html#term-iterable" title="(in Python v3.12)"><span class="xref std std-term">iterable</span></a>) – An iterable which is a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a> type or can be used to construct a <a class="reference internal" href="#module-csid" title="csid"><code class="xref py py-class docutils literal notranslate"><span class="pre">csid</span></code></a>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="csid.csid.__contains__">
+<span class="sig-name descname"><span class="pre">__contains__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#csid.csid.__contains__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts <em>key</em> to a <a class="reference internal" href="#csid.csiKeyString" title="csid.csiKeyString"><code class="xref py py-class docutils literal notranslate"><span class="pre">csiKeyString</span></code></a> or <a class="reference internal" href="#csid.csiKeyDecimal" title="csid.csiKeyDecimal"><code class="xref py py-class docutils literal notranslate"><span class="pre">csiKeyDecimal</span></code></a> if necessary, and then checks if <em>key</em> is
+in the <a class="reference internal" href="#module-csid" title="csid"><code class="xref py py-class docutils literal notranslate"><span class="pre">csid</span></code></a> instance.</p>
+<p>Here’s an example where we create a <a class="reference internal" href="#module-csid" title="csid"><code class="xref py py-class docutils literal notranslate"><span class="pre">csid</span></code></a> from a dictionary which uses an <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> as the key, and
+then we test if an <a class="reference internal" href="../inpInt/index.html#inpInt.inpInt" title="inpInt.inpInt"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpInt</span></code></a> with a value of the <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> is a key in the <a class="reference internal" href="#module-csid" title="csid"><code class="xref py py-class docutils literal notranslate"><span class="pre">csid</span></code></a>:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">csid</span> <span class="kn">import</span> <span class="n">csid</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">inpInt</span> <span class="kn">import</span> <span class="n">inpInt</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">decimal</span> <span class="kn">import</span> <span class="n">Decimal</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">csid</span><span class="p">({</span><span class="mi">25</span><span class="p">:</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span> <span class="s1">&#39;A1&#39;</span><span class="p">:</span> <span class="s1">&#39;str&#39;</span><span class="p">,</span> <span class="mf">1.234</span><span class="p">:</span> <span class="s1">&#39;float&#39;</span><span class="p">})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">inpInt</span><span class="p">(</span><span class="s1">&#39;  25&#39;</span><span class="p">)</span> <span class="ow">in</span> <span class="n">d</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="s1">&#39;A1&#39;</span> <span class="ow">in</span> <span class="n">d</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Decimal</span><span class="p">(</span><span class="s1">&#39;1.234&#39;</span><span class="p">)</span> <span class="ow">in</span> <span class="n">d</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<p>If <em>key</em> is not in the <a class="reference internal" href="#module-csid" title="csid"><code class="xref py py-class docutils literal notranslate"><span class="pre">csid</span></code></a>, this will of course return False. The following example illustrates this,
+along with the fact that creating a <a class="reference external" href="https://docs.python.org/3/library/decimal.html#decimal.Decimal" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Decimal</span></code></a> directly from a <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a> inherits the <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>
+inaccuracy:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Decimal</span><span class="p">(</span><span class="mf">1.234</span><span class="p">)</span> <span class="ow">in</span> <span class="n">d</span>
+<span class="go">False</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if key in d else False.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="csid.csid.__delitem__">
+<span class="sig-name descname"><span class="pre">__delitem__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#csid.csid.__delitem__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts <em>key</em> to a <a class="reference internal" href="#csid.csiKeyString" title="csid.csiKeyString"><code class="xref py py-class docutils literal notranslate"><span class="pre">csiKeyString</span></code></a> or <a class="reference internal" href="#csid.csiKeyDecimal" title="csid.csiKeyDecimal"><code class="xref py py-class docutils literal notranslate"><span class="pre">csiKeyDecimal</span></code></a> if necessary, and then deletes the entry
+in the <a class="reference internal" href="#module-csid" title="csid"><code class="xref py py-class docutils literal notranslate"><span class="pre">csid</span></code></a> instance.</p>
+<div class="admonition-example admonition">
+<p class="admonition-title">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">csid</span> <span class="kn">import</span> <span class="n">csid</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">csid</span><span class="p">([[</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">del</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;C&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span>
+<span class="go">csid(csiKeyString(&#39;a&#39;): 1, csiKeyString(&#39;b&#39;): 2)</span>
+</pre></div>
+</div>
+</div>
+<p>If <em>key</em> is not defined in the <a class="reference internal" href="#module-csid" title="csid"><code class="xref py py-class docutils literal notranslate"><span class="pre">csid</span></code></a>, this will raise a <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#KeyError" title="(in Python v3.12)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">KeyError</span></code></a> as expected:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">del</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;D&#39;</span><span class="p">]</span>
+<span class="gt">Traceback (most recent call last):</span>
+<span class="w">    </span><span class="o">...</span>
+<span class="gr">KeyError</span>: <span class="n">csiKeyString(&#39;D&#39;)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="csid.csid.__getitem__">
+<span class="sig-name descname"><span class="pre">__getitem__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#csid.csid.__getitem__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts <em>key</em> to a <a class="reference internal" href="#csid.csiKeyString" title="csid.csiKeyString"><code class="xref py py-class docutils literal notranslate"><span class="pre">csiKeyString</span></code></a> or <a class="reference internal" href="#csid.csiKeyDecimal" title="csid.csiKeyDecimal"><code class="xref py py-class docutils literal notranslate"><span class="pre">csiKeyDecimal</span></code></a> if necessary, and then retrieves the entry
+in the <a class="reference internal" href="#module-csid" title="csid"><code class="xref py py-class docutils literal notranslate"><span class="pre">csid</span></code></a> instance. Reference: <a class="reference internal" href="#csid.csid.__getitem__" title="csid.csid.__getitem__"><code class="xref py py-meth docutils literal notranslate"><span class="pre">__getitem__()</span></code></a>.</p>
+<div class="admonition-example admonition">
+<p class="admonition-title">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">csid</span> <span class="kn">import</span> <span class="n">csid</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">csid</span><span class="p">([[</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;C&#39;</span><span class="p">]</span>
+<span class="go">3</span>
+</pre></div>
+</div>
+</div>
+<p>If <em>key</em> is not defined in the <a class="reference internal" href="#module-csid" title="csid"><code class="xref py py-class docutils literal notranslate"><span class="pre">csid</span></code></a>, this will raise a <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#KeyError" title="(in Python v3.12)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">KeyError</span></code></a> as expected:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;D&#39;</span><span class="p">]</span>
+<span class="gt">Traceback (most recent call last):</span>
+<span class="w">    </span><span class="o">...</span>
+<span class="gr">KeyError</span>: <span class="n">csiKeyString(&#39;D&#39;)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="csid.csid.__setitem__">
+<span class="sig-name descname"><span class="pre">__setitem__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#csid.csid.__setitem__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts <em>key</em> to a <a class="reference internal" href="#csid.csiKeyString" title="csid.csiKeyString"><code class="xref py py-class docutils literal notranslate"><span class="pre">csiKeyString</span></code></a> or <a class="reference internal" href="#csid.csiKeyDecimal" title="csid.csiKeyDecimal"><code class="xref py py-class docutils literal notranslate"><span class="pre">csiKeyDecimal</span></code></a> if necessary, and then creates
+<code class="docutils literal notranslate"><span class="pre">d[key]</span> <span class="pre">=</span> <span class="pre">value</span></code>.</p>
+<div class="admonition-example admonition">
+<p class="admonition-title">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">csid</span> <span class="kn">import</span> <span class="n">csid</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">csid</span><span class="p">([[</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;d&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">4</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span>
+<span class="go">csid(csiKeyString(&#39;a&#39;): 1, csiKeyString(&#39;b&#39;): 2, csiKeyString(&#39;c&#39;): 3, csiKeyString(&#39;d&#39;): 4)</span>
+</pre></div>
+</div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="csid.csid.__repr__">
+<span class="sig-name descname"><span class="pre">__repr__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#csid.csid.__repr__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Produces a string which can reproduce the <a class="reference internal" href="#module-csid" title="csid"><code class="xref py py-class docutils literal notranslate"><span class="pre">csid</span></code></a>.</p>
+<div class="admonition-example admonition">
+<p class="admonition-title">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">csid</span> <span class="kn">import</span> <span class="n">csid</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">csid</span><span class="p">([[</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">]])</span>
+<span class="go">csid(csiKeyString(&#39;a&#39;): 1, csiKeyString(&#39;b&#39;): 2, csiKeyString(&#39;c&#39;): 3)</span>
+</pre></div>
+</div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="csid.csid.__str__">
+<span class="sig-name descname"><span class="pre">__str__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#csid.csid.__str__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a string for the <a class="reference internal" href="#module-csid" title="csid"><code class="xref py py-class docutils literal notranslate"><span class="pre">csid</span></code></a> where each (key, value) pair is on its own line.</p>
+<div class="admonition-example admonition">
+<p class="admonition-title">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">csid</span> <span class="kn">import</span> <span class="n">csid</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">csid</span><span class="p">([[</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="s1">&#39;d&#39;</span><span class="p">]]))</span>
+<span class="go">{</span>
+<span class="go">&#39;a&#39;: 1,</span>
+<span class="go">&#39;b&#39;: 2,</span>
+<span class="go">&#39;c&#39;: 3,</span>
+<span class="go">4: &#39;d&#39;</span>
+<span class="go">}</span>
+</pre></div>
+</div>
+</div>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="csid.csid.__weakref__">
+<span class="sig-name descname"><span class="pre">__weakref__</span></span><a class="headerlink" href="#csid.csid.__weakref__" title="Permalink to this definition">¶</a></dt>
+<dd><p>list of weak references to the object (if defined)</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="csid.csiKeyString">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">csid.</span></span><span class="sig-name descname"><span class="pre">csiKeyString</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#csid.csiKeyString" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></p>
+<p>Creates a key derived from a string instance for <a class="reference internal" href="#module-csid" title="csid"><code class="xref py py-class docutils literal notranslate"><span class="pre">csid</span></code></a>.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="csid.csiKeyString.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#csid.csiKeyString.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the <a class="reference internal" href="#csid.csiKeyString.key" title="csid.csiKeyString.key"><code class="xref py py-attr docutils literal notranslate"><span class="pre">key</span></code></a> attr.</p>
+<div class="admonition-example admonition">
+<p class="admonition-title">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">csid</span> <span class="kn">import</span> <span class="n">csiKeyString</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">csiKeyString</span><span class="p">(</span><span class="s1">&#39;  Nodeset-1&#39;</span><span class="p">)</span>
+<span class="go">csiKeyString(&#39;  Nodeset-1&#39;)</span>
+</pre></div>
+</div>
+</div>
+<p><em>key</em> should be a string. Other types will raise an <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#AttributeError" title="(in Python v3.12)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">AttributeError</span></code></a> when the other functions of
+this class are called. Example:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">csiKeyString</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">hash</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+<span class="gt">Traceback (most recent call last):</span>
+<span class="w">    </span><span class="o">...</span>
+<span class="gr">AttributeError</span>: <span class="n">&#39;int&#39; object has no attribute &#39;lower&#39;</span>
+</pre></div>
+</div>
+<p><em>key</em> is not automatically converted to a string for performance reasons. Therefore, if the user needs
+to use this class directly, they must first ensure that <em>key</em> is a string before instancing it.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – An instance of a string object to serve as the case- and space-insensitive key.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="csid.csiKeyString.key">
+<span class="sig-name descname"><span class="pre">key</span></span><a class="headerlink" href="#csid.csiKeyString.key" title="Permalink to this definition">¶</a></dt>
+<dd><p>A string type object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="csid.csiKeyString.__hash__">
+<span class="sig-name descname"><span class="pre">__hash__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#csid.csiKeyString.__hash__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Hashes <a class="reference internal" href="../misc_functions/index.html#misc_functions.rsl" title="misc_functions.rsl"><code class="xref py py-func docutils literal notranslate"><span class="pre">rsl(key)</span></code></a>.</p>
+<p>Strings which differ only in capitalization and spacing will hash to the same value. For example:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">csid</span> <span class="kn">import</span> <span class="n">csiKeyString</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">hash</span><span class="p">(</span><span class="n">csiKeyString</span><span class="p">(</span><span class="s1">&#39;  Nodeset-1&#39;</span><span class="p">))</span> <span class="o">==</span> <span class="nb">hash</span><span class="p">(</span><span class="n">csiKeyString</span><span class="p">(</span><span class="s1">&#39;NODESET-1&#39;</span><span class="p">))</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<p>Strings which have larger differences will not hash to the same value:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">hash</span><span class="p">(</span><span class="n">csiKeyString</span><span class="p">(</span><span class="s1">&#39;  Nodeset-1&#39;</span><span class="p">))</span> <span class="o">==</span> <span class="nb">hash</span><span class="p">(</span><span class="n">csiKeyString</span><span class="p">(</span><span class="s1">&#39;&quot;NODESET-1&quot;&#39;</span><span class="p">))</span>
+<span class="go">False</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The hashed value of <a class="reference internal" href="../misc_functions/index.html#misc_functions.rsl" title="misc_functions.rsl"><code class="xref py py-func docutils literal notranslate"><span class="pre">rsl(key)</span></code></a>.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)">int</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="csid.csiKeyString.__eq__">
+<span class="sig-name descname"><span class="pre">__eq__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#csid.csiKeyString.__eq__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if <a class="reference internal" href="#csid.csiKeyString.key" title="csid.csiKeyString.key"><code class="xref py py-attr docutils literal notranslate"><span class="pre">key</span></code></a> is equal to <em>other</em>.</p>
+<p><em>other</em> should be a <a class="reference internal" href="#csid.csiKeyString" title="csid.csiKeyString"><code class="xref py py-class docutils literal notranslate"><span class="pre">csiKeyString</span></code></a>. This function will not convert <em>other</em> to a <a class="reference internal" href="#csid.csiKeyString" title="csid.csiKeyString"><code class="xref py py-class docutils literal notranslate"><span class="pre">csiKeyString</span></code></a>,
+because in most cases this class should only be used through a <a class="reference internal" href="#module-csid" title="csid"><code class="xref py py-class docutils literal notranslate"><span class="pre">csid</span></code></a>, which will handle the conversion.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>other</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – An instance of a string object to which <a class="reference internal" href="#csid.csiKeyString.key" title="csid.csiKeyString.key"><code class="xref py py-attr docutils literal notranslate"><span class="pre">key</span></code></a> will be compared.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if <a class="reference internal" href="../misc_functions/index.html#misc_functions.rsl" title="misc_functions.rsl"><code class="xref py py-func docutils literal notranslate"><span class="pre">rsl(key)</span></code></a> == <a class="reference internal" href="../misc_functions/index.html#misc_functions.rsl" title="misc_functions.rsl"><code class="xref py py-func docutils literal notranslate"><span class="pre">rsl(other)</span></code></a>, else False.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)">bool</a></p>
+</dd>
+</dl>
+<div class="admonition-examples admonition">
+<p class="admonition-title">Examples</p>
+<p>Here’s the typical usage:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">csid</span> <span class="kn">import</span> <span class="n">csiKeyString</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">csiKeyString</span><span class="p">(</span><span class="s1">&#39;  Nodeset-1&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="n">csiKeyString</span><span class="p">(</span><span class="s1">&#39;Nodeset-1&#39;</span><span class="p">)</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</div>
+<p>If <em>other</em> is not a <a class="reference internal" href="#csid.csiKeyString" title="csid.csiKeyString"><code class="xref py py-class docutils literal notranslate"><span class="pre">csiKeyString</span></code></a>, this will convert <em>other</em> to a <a class="reference internal" href="#csid.csiKeyString" title="csid.csiKeyString"><code class="xref py py-class docutils literal notranslate"><span class="pre">csiKeyString</span></code></a> before proceeding:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">csiKeyString</span><span class="p">(</span><span class="s1">&#39;  Nodeset-1&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;Nodeset-1&#39;</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="csid.csiKeyString.__str__">
+<span class="sig-name descname"><span class="pre">__str__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#csid.csiKeyString.__str__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns str(<a class="reference internal" href="#csid.csiKeyString.key" title="csid.csiKeyString.key"><code class="xref py py-attr docutils literal notranslate"><span class="pre">key</span></code></a>).</p>
+<div class="admonition-example admonition">
+<p class="admonition-title">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">csid</span> <span class="kn">import</span> <span class="n">csiKeyString</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">str</span><span class="p">(</span><span class="n">csiKeyString</span><span class="p">(</span><span class="s1">&#39;  Nodeset-1&#39;</span><span class="p">))</span>
+<span class="go">&#39;  Nodeset-1&#39;</span>
+</pre></div>
+</div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="csid.csiKeyString.__repr__">
+<span class="sig-name descname"><span class="pre">__repr__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#csid.csiKeyString.__repr__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the string needed to recreate the object.</p>
+<div class="admonition-example admonition">
+<p class="admonition-title">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">csid</span> <span class="kn">import</span> <span class="n">csiKeyString</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">csiKeyString</span><span class="p">(</span><span class="s1">&#39;  Nodeset-1&#39;</span><span class="p">)</span>
+<span class="go">csiKeyString(&#39;  Nodeset-1&#39;)</span>
+</pre></div>
+</div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="csid.csiKeyString.__weakref__">
+<span class="sig-name descname"><span class="pre">__weakref__</span></span><a class="headerlink" href="#csid.csiKeyString.__weakref__" title="Permalink to this definition">¶</a></dt>
+<dd><p>list of weak references to the object (if defined)</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="csid.csiKeyDecimal">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">csid.</span></span><span class="sig-name descname"><span class="pre">csiKeyDecimal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#csid.csiKeyDecimal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/decimal.html#decimal.Decimal" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Decimal</span></code></a></p>
+<p>Creates a key derived from a float instance for <a class="reference internal" href="#module-csid" title="csid"><code class="xref py py-class docutils literal notranslate"><span class="pre">csid</span></code></a>. The key will be a precise <a class="reference external" href="https://docs.python.org/3/library/decimal.html#decimal.Decimal" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Decimal</span></code></a>
+implementation of <code class="docutils literal notranslate"><span class="pre">str(float)</span></code> as the float is written, as opposed to a <a class="reference external" href="https://docs.python.org/3/library/decimal.html#decimal.Decimal" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Decimal</span></code></a> of the evaluated
+float.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="csid.csiKeyDecimal.__new__">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">__new__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#csid.csiKeyDecimal.__new__" title="Permalink to this definition">¶</a></dt>
+<dd><p>If <em>key</em> is a float, convert it to a string before creating the base <a class="reference external" href="https://docs.python.org/3/library/decimal.html#decimal.Decimal" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Decimal</span></code></a> instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/decimal.html#decimal.Decimal" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Decimal</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – An object which will be converted to a Decimal-type.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#csid.csiKeyDecimal" title="csid.csiKeyDecimal">csiKeyDecimal</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="csid.csiKeyDecimal.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#csid.csiKeyDecimal.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Does nothing by itself. <a class="reference internal" href="#csid.csiKeyDecimal.__new__" title="csid.csiKeyDecimal.__new__"><code class="xref py py-func docutils literal notranslate"><span class="pre">__new__()</span></code></a> does the necessary processing to the input.</p>
+<p>If <em>key</em> is a float, it will be converted to a <a class="reference external" href="https://docs.python.org/3/library/decimal.html#decimal.Decimal" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Decimal</span></code></a>:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">csid</span> <span class="kn">import</span> <span class="n">csiKeyDecimal</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">csiKeyDecimal</span><span class="p">(</span><span class="mf">1.234</span><span class="p">)</span>
+<span class="go">csiKeyDecimal(&#39;1.234&#39;)</span>
+</pre></div>
+</div>
+<p>This also accepts Decimal-types as <em>key</em>:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">inpDecimal</span> <span class="kn">import</span> <span class="n">inpDecimal</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">csiKeyDecimal</span><span class="p">(</span><span class="n">inpDecimal</span><span class="p">(</span><span class="s1">&#39; 1.234&#39;</span><span class="p">))</span>
+<span class="go">csiKeyDecimal(&#39;1.234&#39;)</span>
+</pre></div>
+</div>
+<p>Strings are also acceptable keys:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">csiKeyDecimal</span><span class="p">(</span><span class="s1">&#39;  1.234&#39;</span><span class="p">)</span>
+<span class="go">csiKeyDecimal(&#39;1.234&#39;)</span>
+</pre></div>
+</div>
+<p>However, if the string does not evaluate to a <a class="reference external" href="https://docs.python.org/3/library/decimal.html#decimal.Decimal" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Decimal</span></code></a>, a <a class="reference external" href="https://docs.python.org/3/library/decimal.html#decimal.InvalidOperation" title="(in Python v3.12)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">decimal.InvalidOperation</span></code></a>
+will be raised:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">csiKeyDecimal</span><span class="p">(</span><span class="s1">&#39;  1.234a&#39;</span><span class="p">)</span>
+<span class="gt">Traceback (most recent call last):</span>
+<span class="w">    </span><span class="o">...</span>
+<span class="gr">decimal.InvalidOperation</span>: <span class="n">[&lt;class &#39;decimal.ConversionSyntax&#39;&gt;]</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/decimal.html#decimal.Decimal" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Decimal</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – Captures the input from <a class="reference internal" href="#csid.csiKeyDecimal.__new__" title="csid.csiKeyDecimal.__new__"><code class="xref py py-class docutils literal notranslate"><span class="pre">__new__</span></code></a>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="csid.csiKeyDecimal.__hash__">
+<span class="sig-name descname"><span class="pre">__hash__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#csid.csiKeyDecimal.__hash__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Hashes the <a class="reference internal" href="#csid.csiKeyDecimal" title="csid.csiKeyDecimal"><code class="xref py py-class docutils literal notranslate"><span class="pre">csiKeyDecimal</span></code></a> object.</p>
+<div class="admonition-example admonition">
+<p class="admonition-title">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">csid</span> <span class="kn">import</span> <span class="n">csiKeyDecimal</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">hash</span><span class="p">(</span><span class="n">csiKeyDecimal</span><span class="p">(</span><span class="mf">1.234</span><span class="p">))</span>
+<span class="go">152185638608103802</span>
+</pre></div>
+</div>
+</div>
+<p>The hash value will be identical using different input methods to <a class="reference internal" href="#csid.csiKeyDecimal" title="csid.csiKeyDecimal"><code class="xref py py-class docutils literal notranslate"><span class="pre">csiKeyDecimal</span></code></a>, provided the different
+input values will evaluate to the same <a class="reference external" href="https://docs.python.org/3/library/decimal.html#decimal.Decimal" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Decimal</span></code></a> value:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">inpDecimal</span> <span class="kn">import</span> <span class="n">inpDecimal</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">hash</span><span class="p">(</span><span class="n">csiKeyDecimal</span><span class="p">(</span><span class="n">inpDecimal</span><span class="p">(</span><span class="s1">&#39;  1.234e0&#39;</span><span class="p">)))</span> <span class="o">==</span> <span class="nb">hash</span><span class="p">(</span><span class="n">csiKeyDecimal</span><span class="p">(</span><span class="s1">&#39;  12.34e-1&#39;</span><span class="p">))</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The hashed value of the <a class="reference internal" href="#csid.csiKeyDecimal" title="csid.csiKeyDecimal"><code class="xref py py-class docutils literal notranslate"><span class="pre">csiKeyDecimal</span></code></a> object.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)">int</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="csid.csiKeyDecimal.__eq__">
+<span class="sig-name descname"><span class="pre">__eq__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#csid.csiKeyDecimal.__eq__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts <em>other</em> to a <a class="reference internal" href="#csid.csiKeyDecimal" title="csid.csiKeyDecimal"><code class="xref py py-class docutils literal notranslate"><span class="pre">csiKeyDecimal</span></code></a> (if necessary) and then returns <code class="docutils literal notranslate"><span class="pre">self.as_tuple()</span> <span class="pre">==</span> <span class="pre">other.as_tuple()</span></code>.</p>
+<div class="admonition-examples admonition">
+<p class="admonition-title">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">csid</span> <span class="kn">import</span> <span class="n">csiKeyDecimal</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">csiKeyDecimal</span><span class="p">(</span><span class="s1">&#39;  12.34e-1&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="mf">1.234</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">csiKeyDecimal</span><span class="p">(</span><span class="s1">&#39;  12.34e-1&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="mf">1.237</span>
+<span class="go">False</span>
+</pre></div>
+</div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>other</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/decimal.html#decimal.Decimal" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Decimal</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – An instance of a <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/decimal.html#decimal.Decimal" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Decimal</span></code></a>,
+or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> object to which the <a class="reference internal" href="#csid.csiKeyDecimal" title="csid.csiKeyDecimal"><code class="xref py py-class docutils literal notranslate"><span class="pre">csiKeyDecimal</span></code></a> will be compared.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if <code class="docutils literal notranslate"><span class="pre">self.as_tuple()</span> <span class="pre">==</span> <span class="pre">other.as_tuple()</span></code>, else False.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="csid.csiKeyDecimal.__str__">
+<span class="sig-name descname"><span class="pre">__str__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#csid.csiKeyDecimal.__str__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a string representation of the <a class="reference internal" href="#csid.csiKeyDecimal" title="csid.csiKeyDecimal"><code class="xref py py-class docutils literal notranslate"><span class="pre">csiKeyDecimal</span></code></a>.</p>
+<div class="admonition-example admonition">
+<p class="admonition-title">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">csid</span> <span class="kn">import</span> <span class="n">csiKeyDecimal</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">str</span><span class="p">(</span><span class="n">csiKeyDecimal</span><span class="p">(</span><span class="s1">&#39;  12.34e-1&#39;</span><span class="p">))</span>
+<span class="go">&#39;1.234&#39;</span>
+</pre></div>
+</div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="csid.csiKeyDecimal.__repr__">
+<span class="sig-name descname"><span class="pre">__repr__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#csid.csiKeyDecimal.__repr__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the string needed to recreate the object.</p>
+<div class="admonition-example admonition">
+<p class="admonition-title">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">csid</span> <span class="kn">import</span> <span class="n">csiKeyDecimal</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">csiKeyDecimal</span><span class="p">(</span><span class="s1">&#39;  1.234&#39;</span><span class="p">)</span>
+<span class="go">csiKeyDecimal(&#39;1.234&#39;)</span>
+</pre></div>
+</div>
+</div>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="csid.csiKeyDecimal.__weakref__">
+<span class="sig-name descname"><span class="pre">__weakref__</span></span><a class="headerlink" href="#csid.csiKeyDecimal.__weakref__" title="Permalink to this definition">¶</a></dt>
+<dd><p>list of weak references to the object (if defined)</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../inpRW_toc.html">
+              <img class="logo" src="../../_static/3DS_SIMULIA_Logotype_RGB_BlueSteel.png" alt="Logo", style="border-radius:5px"/>
+            </a></p>
+  <div>
+    <h3><a href="../../inpRW_toc.html">Local Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">csid</span></code></a><ul>
+<li><a class="reference internal" href="#module-csid">Module Contents</a><ul>
+<li><a class="reference internal" href="#csid.csid"><code class="docutils literal notranslate"><span class="pre">csid</span></code></a><ul>
+<li><a class="reference internal" href="#csid.csid.__init__"><code class="docutils literal notranslate"><span class="pre">csid.__init__()</span></code></a></li>
+<li><a class="reference internal" href="#csid.csid.get"><code class="docutils literal notranslate"><span class="pre">csid.get()</span></code></a></li>
+<li><a class="reference internal" href="#csid.csid.mergeSubItems"><code class="docutils literal notranslate"><span class="pre">csid.mergeSubItems()</span></code></a></li>
+<li><a class="reference internal" href="#csid.csid.pop"><code class="docutils literal notranslate"><span class="pre">csid.pop()</span></code></a></li>
+<li><a class="reference internal" href="#csid.csid.setdefault"><code class="docutils literal notranslate"><span class="pre">csid.setdefault()</span></code></a></li>
+<li><a class="reference internal" href="#csid.csid.update"><code class="docutils literal notranslate"><span class="pre">csid.update()</span></code></a></li>
+<li><a class="reference internal" href="#csid.csid.__contains__"><code class="docutils literal notranslate"><span class="pre">csid.__contains__()</span></code></a></li>
+<li><a class="reference internal" href="#csid.csid.__delitem__"><code class="docutils literal notranslate"><span class="pre">csid.__delitem__()</span></code></a></li>
+<li><a class="reference internal" href="#csid.csid.__getitem__"><code class="docutils literal notranslate"><span class="pre">csid.__getitem__()</span></code></a></li>
+<li><a class="reference internal" href="#csid.csid.__setitem__"><code class="docutils literal notranslate"><span class="pre">csid.__setitem__()</span></code></a></li>
+<li><a class="reference internal" href="#csid.csid.__repr__"><code class="docutils literal notranslate"><span class="pre">csid.__repr__()</span></code></a></li>
+<li><a class="reference internal" href="#csid.csid.__str__"><code class="docutils literal notranslate"><span class="pre">csid.__str__()</span></code></a></li>
+<li><a class="reference internal" href="#csid.csid.__weakref__"><code class="docutils literal notranslate"><span class="pre">csid.__weakref__</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#csid.csiKeyString"><code class="docutils literal notranslate"><span class="pre">csiKeyString</span></code></a><ul>
+<li><a class="reference internal" href="#csid.csiKeyString.__init__"><code class="docutils literal notranslate"><span class="pre">csiKeyString.__init__()</span></code></a></li>
+<li><a class="reference internal" href="#csid.csiKeyString.key"><code class="docutils literal notranslate"><span class="pre">csiKeyString.key</span></code></a></li>
+<li><a class="reference internal" href="#csid.csiKeyString.__hash__"><code class="docutils literal notranslate"><span class="pre">csiKeyString.__hash__()</span></code></a></li>
+<li><a class="reference internal" href="#csid.csiKeyString.__eq__"><code class="docutils literal notranslate"><span class="pre">csiKeyString.__eq__()</span></code></a></li>
+<li><a class="reference internal" href="#csid.csiKeyString.__str__"><code class="docutils literal notranslate"><span class="pre">csiKeyString.__str__()</span></code></a></li>
+<li><a class="reference internal" href="#csid.csiKeyString.__repr__"><code class="docutils literal notranslate"><span class="pre">csiKeyString.__repr__()</span></code></a></li>
+<li><a class="reference internal" href="#csid.csiKeyString.__weakref__"><code class="docutils literal notranslate"><span class="pre">csiKeyString.__weakref__</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#csid.csiKeyDecimal"><code class="docutils literal notranslate"><span class="pre">csiKeyDecimal</span></code></a><ul>
+<li><a class="reference internal" href="#csid.csiKeyDecimal.__new__"><code class="docutils literal notranslate"><span class="pre">csiKeyDecimal.__new__()</span></code></a></li>
+<li><a class="reference internal" href="#csid.csiKeyDecimal.__init__"><code class="docutils literal notranslate"><span class="pre">csiKeyDecimal.__init__()</span></code></a></li>
+<li><a class="reference internal" href="#csid.csiKeyDecimal.__hash__"><code class="docutils literal notranslate"><span class="pre">csiKeyDecimal.__hash__()</span></code></a></li>
+<li><a class="reference internal" href="#csid.csiKeyDecimal.__eq__"><code class="docutils literal notranslate"><span class="pre">csiKeyDecimal.__eq__()</span></code></a></li>
+<li><a class="reference internal" href="#csid.csiKeyDecimal.__str__"><code class="docutils literal notranslate"><span class="pre">csiKeyDecimal.__str__()</span></code></a></li>
+<li><a class="reference internal" href="#csid.csiKeyDecimal.__repr__"><code class="docutils literal notranslate"><span class="pre">csiKeyDecimal.__repr__()</span></code></a></li>
+<li><a class="reference internal" href="#csid.csiKeyDecimal.__weakref__"><code class="docutils literal notranslate"><span class="pre">csiKeyDecimal.__weakref__</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  </div>
+<h3><a href="../../inpRW_toc.html">Global Table of Contents</a></h3>
+<p class="caption" role="heading"><span class="caption-text">User Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Introduction.html">inpRW Utility Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Project-Background.html">Project Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Installation-and-Usage.html">Installation and Usage Instructions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Tests.html">inpRW Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Tests.html#running-inprw-tests">Running inpRW Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/inpKeyword-Basics.html">inpKeyword Basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Strings_Integers_and_Decimals.html">Strings, Integers, and Decimals</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Important-inpRW-Attributes.html">Important <code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW</span></code> Attributes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Miscellaneous-Usage-hints.html">Miscellaneous Usage Hints</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Example-Scenarios.html">Example Scenarios</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/glossary.html">Glossary</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../inpRW/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../centroid/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">centroid</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../config/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">config</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../config_re/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">config_re</span></code></a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">csid</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../eval2/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">eval2</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../elType/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">elType</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inpDecimal/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpDecimal</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inpInt/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpInt</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inpKeyword/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpKeyword</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inpKeywordHelper/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpKeywordHelper</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inpKeywordSequence/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpKeywordSequence</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inpRWErrors/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRWErrors</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inpString/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpString</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../mesh/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">mesh</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../misc_functions/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">misc_functions</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../NoneSort/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">NoneSort</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../printer/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">printer</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../repr2/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">repr2</span></code></a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Update Notes</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Update-Notes/index.html">Update Notes</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Legal Notices and Usage Disclaimer</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../legal_notices/Legal_Notices_and_Usage_Disclaimer.html">Legal Notices and Usage Disclaimer</a></li>
+</ul>
+
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="../config_re/index.html"
+                          title="previous chapter"><code class="xref py py-mod docutils literal notranslate"><span class="pre">config_re</span></code></a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="../eval2/index.html"
+                          title="next chapter"><code class="xref py py-mod docutils literal notranslate"><span class="pre">eval2</span></code></a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/autoapi/csid/index.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>  
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../eval2/index.html" title="eval2"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../config_re/index.html" title="config_re"
+             >previous</a> |</li>
+          <li><img src="../../_static/icon-116-3dx-apps.svg" alt="python logo" style="vertical-align: middle; margin-top: -1px"/></li>
+          <li><a href="inpRW_toc.html"></a> &#187;</li>
+          <li class="switchers">
+            <div class="language_switcher_placeholder"></div>
+            <div class="version_switcher_placeholder"></div>
+          </li>
+          <li>
+              
+              <a href="../../inpRW_toc.html">inpRW 2023.10.6 documentation</a> &#187;
+              
+          </li>
+        <li class="nav-item nav-item-this"><a href=""><code class="xref py py-mod docutils literal notranslate"><span class="pre">csid</span></code></a></li>
+                <li class="right">
+                    
+
+    <div class="inline-search" role="search">
+        <form class="inline-search" action="../../search.html" method="get">
+          <input placeholder="Quick search" aria-label="Quick search" type="text" name="q" />
+          <input type="submit" value="Go" />
+          <input type="hidden" name="check_keywords" value="yes" />
+          <input type="hidden" name="area" value="default" />
+        </form>
+    </div>
+                     |
+                </li>
+            
+      </ul>
+    </div>  
+    <div class="footer">
+    &copy; Copyright 2023, Dassault Systèmes Simulia Corp.
+     <a href="../../_static/legal_notices.pdf" >inpRW Legal Notices</a>.<br />
+     <a href="../../_static/Read_Disclaimer_First.txt" >inpRW Usage Disclaimer</a>.<br />
+    Last updated on Nov 21, 2023.
+    <a href="https://r1132100503382-eu1-3dswym.3dexperience.3ds.com/#community:39/post:nE1VLzylQoKgfG2wekOpFg">Found a bug</a>?
+    </div>
+
+  </body>
+</html>

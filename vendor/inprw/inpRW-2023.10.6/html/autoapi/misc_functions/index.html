@@ -1,0 +1,711 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>misc_functions &#8212; inpRW 2023.10.6 documentation</title><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/pydoctheme.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles.css" />
+    
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
+    
+    <script src="../../_static/sidebar.js"></script>
+    
+    <link rel="shortcut icon" href="../../_static/3DS_SIMULIA_Blue_Icon_32.png"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="NoneSort" href="../NoneSort/index.html" />
+    <link rel="prev" title="mesh" href="../mesh/index.html" /><link rel="shortcut icon" type="image/png" href="../../_static/icon-116-3dx-apps.svg" />
+            <script type="text/javascript" src="../../_static/copybutton.js"></script>
+            <script type="text/javascript" src="../../_static/menu.js"></script> 
+  </head>
+<body>
+<div class="mobile-nav">
+    <input type="checkbox" id="menuToggler" class="toggler__input" aria-controls="navigation"
+           aria-pressed="false" aria-expanded="false" role="button" aria-label="Menu" />
+    <label for="menuToggler" class="toggler__label">
+        <span></span>
+    </label>
+    <nav class="nav-content" role="navigation">
+         <a href="inpRW_toc.html" class="nav-logo">
+             <img src="../../_static/icon-116-3dx-apps.svg" alt="Logo"/>
+         </a>
+        <div class="version_switcher_placeholder"></div>
+        <form role="search" class="search" action="../../search.html" method="get">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" class="search-icon">
+                <path fill-rule="nonzero"
+                        d="M15.5 14h-.79l-.28-.27a6.5 6.5 0 001.48-5.34c-.47-2.78-2.79-5-5.59-5.34a6.505 6.505 0 00-7.27 7.27c.34 2.8 2.56 5.12 5.34 5.59a6.5 6.5 0 005.34-1.48l.27.28v.79l4.25 4.25c.41.41 1.08.41 1.49 0 .41-.41.41-1.08 0-1.49L15.5 14zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" fill="#444"></path>
+            </svg>
+            <input type="text" name="q" aria-label="Quick search"/>
+            <input type="submit" value="Go"/>
+        </form>
+    </nav>
+    <div class="menu-wrapper">
+        <nav class="menu" role="navigation" aria-label="main navigation">
+            <div class="language_switcher_placeholder"></div>
+            <p class="logo">
+                <a href="../../index.html">
+                <img class="logo" src="../../_static/3DS_SIMULIA_Logotype_RGB_BlueSteel.png" alt="Logo" style="border-radius:5px"/>
+                </a>
+            </p>
+  <div>
+    <h3><a href="../../inpRW_toc.html">Local Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">misc_functions</span></code></a><ul>
+<li><a class="reference internal" href="#module-misc_functions">Module Contents</a><ul>
+<li><a class="reference internal" href="#misc_functions.cfc"><code class="docutils literal notranslate"><span class="pre">cfc()</span></code></a></li>
+<li><a class="reference internal" href="#misc_functions.chunks"><code class="docutils literal notranslate"><span class="pre">chunks()</span></code></a></li>
+<li><a class="reference internal" href="#misc_functions.flatten"><code class="docutils literal notranslate"><span class="pre">flatten()</span></code></a></li>
+<li><a class="reference internal" href="#misc_functions.makeDataList"><code class="docutils literal notranslate"><span class="pre">makeDataList()</span></code></a></li>
+<li><a class="reference internal" href="#misc_functions.nestedSort"><code class="docutils literal notranslate"><span class="pre">nestedSort()</span></code></a></li>
+<li><a class="reference internal" href="#misc_functions.normalize"><code class="docutils literal notranslate"><span class="pre">normalize()</span></code></a></li>
+<li><a class="reference internal" href="#misc_functions.ranges"><code class="docutils literal notranslate"><span class="pre">ranges()</span></code></a></li>
+<li><a class="reference internal" href="#misc_functions.rsl"><code class="docutils literal notranslate"><span class="pre">rsl()</span></code></a></li>
+<li><a class="reference internal" href="#misc_functions.rstl"><code class="docutils literal notranslate"><span class="pre">rstl()</span></code></a></li>
+<li><a class="reference internal" href="#misc_functions.ssl"><code class="docutils literal notranslate"><span class="pre">ssl()</span></code></a></li>
+<li><a class="reference internal" href="#misc_functions.stripSpace"><code class="docutils literal notranslate"><span class="pre">stripSpace()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  </div>
+<h3><a href="../../inpRW_toc.html">Global Table of Contents</a></h3>
+<p class="caption" role="heading"><span class="caption-text">User Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Introduction.html">inpRW Utility Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Project-Background.html">Project Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Installation-and-Usage.html">Installation and Usage Instructions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Tests.html">inpRW Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Tests.html#running-inprw-tests">Running inpRW Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/inpKeyword-Basics.html">inpKeyword Basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Strings_Integers_and_Decimals.html">Strings, Integers, and Decimals</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Important-inpRW-Attributes.html">Important <code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW</span></code> Attributes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Miscellaneous-Usage-hints.html">Miscellaneous Usage Hints</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Example-Scenarios.html">Example Scenarios</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/glossary.html">Glossary</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../inpRW/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../centroid/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">centroid</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../config/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">config</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../config_re/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">config_re</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../csid/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">csid</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../eval2/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">eval2</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../elType/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">elType</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inpDecimal/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpDecimal</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inpInt/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpInt</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inpKeyword/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpKeyword</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inpKeywordHelper/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpKeywordHelper</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inpKeywordSequence/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpKeywordSequence</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inpRWErrors/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRWErrors</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inpString/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpString</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../mesh/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">mesh</span></code></a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">misc_functions</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../NoneSort/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">NoneSort</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../printer/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">printer</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../repr2/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">repr2</span></code></a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Update Notes</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Update-Notes/index.html">Update Notes</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Legal Notices and Usage Disclaimer</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../legal_notices/Legal_Notices_and_Usage_Disclaimer.html">Legal Notices and Usage Disclaimer</a></li>
+</ul>
+
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="../mesh/index.html"
+                          title="previous chapter"><code class="xref py py-mod docutils literal notranslate"><span class="pre">mesh</span></code></a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="../NoneSort/index.html"
+                          title="next chapter"><code class="xref py py-mod docutils literal notranslate"><span class="pre">NoneSort</span></code></a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/autoapi/misc_functions/index.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </nav>
+    </div>
+</div>
+  
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../NoneSort/index.html" title="NoneSort"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../mesh/index.html" title="mesh"
+             accesskey="P">previous</a> |</li>
+          <li><img src="../../_static/icon-116-3dx-apps.svg" alt="python logo" style="vertical-align: middle; margin-top: -1px"/></li>
+          <li><a href="inpRW_toc.html"></a> &#187;</li>
+          <li class="switchers">
+            <div class="language_switcher_placeholder"></div>
+            <div class="version_switcher_placeholder"></div>
+          </li>
+          <li>
+              
+              <a href="../../inpRW_toc.html">inpRW 2023.10.6 documentation</a> &#187;
+              
+          </li>
+        <li class="nav-item nav-item-this"><a href=""><code class="xref py py-mod docutils literal notranslate"><span class="pre">misc_functions</span></code></a></li>
+                <li class="right">
+                    
+
+    <div class="inline-search" role="search">
+        <form class="inline-search" action="../../search.html" method="get">
+          <input placeholder="Quick search" aria-label="Quick search" type="text" name="q" />
+          <input type="submit" value="Go" />
+          <input type="hidden" name="check_keywords" value="yes" />
+          <input type="hidden" name="area" value="default" />
+        </form>
+    </div>
+                     |
+                </li>
+            
+      </ul>
+    </div>    
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="misc-functions">
+<h1><a class="reference internal" href="#module-misc_functions" title="misc_functions"><code class="xref py py-mod docutils literal notranslate"><span class="pre">misc_functions</span></code></a><a class="headerlink" href="#misc-functions" title="Permalink to this heading">¶</a></h1>
+<section id="module-misc_functions">
+<span id="module-contents"></span><h2>Module Contents<a class="headerlink" href="#module-misc_functions" title="Permalink to this heading">¶</a></h2>
+<p>This module contains miscellaneous functions that can be used outside of <a class="reference internal" href="../inpRW/index.html#module-inpRW" title="inpRW"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW</span></code></a>.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="misc_functions.cfc">
+<span class="sig-prename descclassname"><span class="pre">misc_functions.</span></span><span class="sig-name descname"><span class="pre">cfc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#misc_functions.cfc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Short for Check For Comment.
+Checks if <em>obj</em> is an Abaqus comment (i.e. begins with ‘**’). This function will
+remove spaces and tabs before performing the check.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>obj</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – The string to check.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if <code class="docutils literal notranslate"><span class="pre">obj.strip('</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">')[:2]</span> <span class="pre">==</span> <span class="pre">'**'</span></code>, else False.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)">bool</a></p>
+</dd>
+</dl>
+<p>For example, as long as ‘**’ is at the start of the string, cfc will return True:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">misc_functions</span> <span class="kn">import</span> <span class="n">cfc</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cfc</span><span class="p">(</span><span class="s1">&#39;***Node&#39;</span><span class="p">)</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<p>cfc also returns True if there are leading spaces and/or tabs:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cfc</span><span class="p">(</span><span class="s1">&#39;  ***Node&#39;</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cfc</span><span class="p">(</span><span class="s1">&#39;   ***Node&#39;</span><span class="p">)</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<p>And of course, it returns False if the item does not lead with ‘**’:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cfc</span><span class="p">(</span><span class="s1">&#39;*Node&#39;</span><span class="p">)</span>
+<span class="go">False</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="misc_functions.chunks">
+<span class="sig-prename descclassname"><span class="pre">misc_functions.</span></span><span class="sig-name descname"><span class="pre">chunks</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#misc_functions.chunks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Splits <em>obj</em> into slices of <em>n</em> size.</p>
+<p>This could be used to split up a large <a class="reference external" href="https://docs.python.org/3/glossary.html#term-iterable" title="(in Python v3.12)"><span class="xref std std-term">iterable</span></a> for parallel processing.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>obj</strong> – The object to be sliced into smaller pieces. This must be an <a class="reference external" href="https://docs.python.org/3/glossary.html#term-iterable" title="(in Python v3.12)"><span class="xref std std-term">iterable</span></a>.
+n (int): The number of objects per slice.</p>
+</dd>
+<dt class="field-even">Yields<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/glossary.html#term-generator-iterator" title="(in Python v3.12)"><span class="xref std std-term">generator iterator</span></a> – The type of the output will be the type of <em>obj</em>.</p>
+</dd>
+</dl>
+<p>Note that in the following example, converting output and obj to lists is for illustrative and testing
+purposes only.</p>
+<p>Example usage:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">misc_functions</span> <span class="kn">import</span> <span class="n">chunks</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">16</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span>
+<span class="go">[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">chunks</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">4</span><span class="p">))</span>
+<span class="go">[[0, 1, 2, 3], [4, 5, 6, 7], [8, 9, 10, 11], [12, 13, 14, 15]]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="misc_functions.flatten">
+<span class="sig-prename descclassname"><span class="pre">misc_functions.</span></span><span class="sig-name descname"><span class="pre">flatten</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iterable</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#misc_functions.flatten" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a completely flattened <a class="reference external" href="https://docs.python.org/3/glossary.html#term-generator" title="(in Python v3.12)"><span class="xref std std-term">generator</span></a> from a nested sequence.</p>
+<p>This function does not care the size of each item in the iterable, that they are consistently sized, or how deep
+the nesting goes, it will create a one-level deep <a class="reference external" href="https://docs.python.org/3/glossary.html#term-generator" title="(in Python v3.12)"><span class="xref std std-term">generator</span></a> from whatever is passed in.</p>
+<p>Please note that passing a mapping type to this function will yield only the keys, and that unordered types
+like sets will be flattened, but the items of the set will not be in any particular order with respect to
+each other.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>iterable</strong> – Any <a class="reference external" href="https://docs.python.org/3/glossary.html#term-iterable" title="(in Python v3.12)"><span class="xref std std-term">iterable</span></a> object. <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Strings</span></code></a> will not be processed, as they are naturally flattened.</p>
+</dd>
+<dt class="field-even">Yields<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/glossary.html#term-generator-iterator" title="(in Python v3.12)"><span class="xref std std-term">generator iterator</span></a></p>
+</dd>
+</dl>
+<p>Note that in the following example, converting the output to a list is for illustrative and testing purposes only.
+Example usage:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">misc_functions</span> <span class="kn">import</span> <span class="n">flatten</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">l</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;abc&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">)]]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">flatten</span><span class="p">(</span><span class="n">l</span><span class="p">))</span>
+<span class="go">[1, &#39;abc&#39;, 2, 3, 4, 5, 6, 7, 8]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="misc_functions.makeDataList">
+<span class="sig-prename descclassname"><span class="pre">misc_functions.</span></span><span class="sig-name descname"><span class="pre">makeDataList</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iterable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numPerLine</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">16</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#misc_functions.makeDataList" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a list of lists, with <em>numPerLine</em> items per line and then the remainder.</p>
+<p>Example usage:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">misc_functions</span> <span class="kn">import</span> <span class="n">makeDataList</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">12</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span>
+<span class="go">[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">makeDataList</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">numPerLine</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="go">[[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]]</span>
+</pre></div>
+</div>
+<p>If the number of items in <em>data</em> is not evenly divisible by <em>numPerLine</em>, this will return as many lists of
+len <em>numPerLine</em> as possible, and then the remaining items in a shorter list. Example:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">makeDataList</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">numPerLine</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+<span class="go">[[0, 1, 2, 3, 4, 5, 6, 7], [8, 9, 10, 11]]</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>iterable</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a>) – A flat iterable.</p></li>
+<li><p><strong>numPerLine</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a>) – The number of items desired per dataline. Defaults to 16.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A list of lists with numPerLine items on all indices except the last, which will have the remainder.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)">list</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="misc_functions.nestedSort">
+<span class="sig-prename descclassname"><span class="pre">misc_functions.</span></span><span class="sig-name descname"><span class="pre">nestedSort</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iterable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reverse</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#misc_functions.nestedSort" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sorts a sequence of sequences on multiple levels.</p>
+<p>It starts with the least important field (furthest to the right) and ends with the most important. This
+function uses <a class="reference external" href="https://docs.python.org/3/library/functions.html#sorted" title="(in Python v3.12)"><code class="xref py py-func docutils literal notranslate"><span class="pre">sorted()</span></code></a> with a custom key function to perform the sorting operation. This will
+return a new iterable.</p>
+<p>This was written to sort <a class="reference internal" href="../../user/glossary.html#term-positionl"><span class="xref std std-term">positionls</span></a> representing the keyword, suboptions, and data position indices.
+For example, the item at the path <code class="docutils literal notranslate"><span class="pre">'self.keywords[1].suboptions[0].suboptions[0].data[0][1]'</span></code> would have
+the <a class="reference internal" href="../../user/glossary.html#term-positionl"><span class="xref std std-term">positionl</span></a> <code class="docutils literal notranslate"><span class="pre">[1,</span> <span class="pre">[0,0],</span> <span class="pre">[0,1]]</span></code>.</p>
+<p>Thus, when sorting keyword <a class="reference internal" href="../../user/glossary.html#term-positionl"><span class="xref std std-term">positionls</span></a>, <em>reverse</em> = False will sort the items in top-down order,
+while <em>reverse</em> = True will sort them in bottom-up order.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>iterable</strong> – Any iterable type item with a nested data structure that needs to be sorted.</p></li>
+<li><p><strong>reverse</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><em>bool</em></a>) – If True, iterable will be sorted in reverse (bottom-up) order. Defaults to False.</p></li>
+<li><p><strong>_level</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a>) – Allows the user to specify the level to which to sort. Overrides the default value for level,
+which is <code class="docutils literal notranslate"><span class="pre">len(iterable[0])</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A new list with all the items of iterable in the specified order.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)">list</a></p>
+</dd>
+</dl>
+<div class="admonition-examples admonition">
+<p class="admonition-title">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">misc_functions</span> <span class="kn">import</span> <span class="n">nestedSort</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">iterable</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">0</span><span class="p">,[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,[</span><span class="mi">1</span><span class="p">],</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span><span class="mi">0</span><span class="p">]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nestedSort</span><span class="p">(</span><span class="n">iterable</span><span class="p">)</span>
+<span class="go">[[0, [0, 0], 0], [0, [1, 0], 0], [0, [1, 0], 1], [1, [0, 0], 0], [1, [1], 0]]</span>
+</pre></div>
+</div>
+<p>And then sorting the original list in reverse order:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">nestedSort</span><span class="p">(</span><span class="n">iterable</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">[[1, [1], 0], [1, [0, 0], 0], [0, [1, 0], 1], [0, [1, 0], 0], [0, [0, 0], 0]]</span>
+</pre></div>
+</div>
+<p>Thus, all the right-most items will be sorted first. That order will be maintained while the level one to
+the left is sorted, until the finish.</p>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="misc_functions.normalize">
+<span class="sig-prename descclassname"><span class="pre">misc_functions.</span></span><span class="sig-name descname"><span class="pre">normalize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">v</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#misc_functions.normalize" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function will return a unit vector in the same direction. v should be a vector.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">misc_functions</span> <span class="kn">import</span> <span class="n">normalize</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">normalize</span><span class="p">([</span><span class="mi">10</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="go">(1.0, 0.0, 0.0)</span>
+</pre></div>
+</div>
+<p>This also works with <a class="reference external" href="https://docs.python.org/3/library/decimal.html#decimal.Decimal" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Decimal</span></code></a> numbers:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">decimal</span> <span class="kn">import</span> <span class="n">Decimal</span> <span class="k">as</span> <span class="n">D</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">normalize</span><span class="p">([</span><span class="n">D</span><span class="p">(</span><span class="s1">&#39;15&#39;</span><span class="p">),</span> <span class="n">D</span><span class="p">(</span><span class="s1">&#39;2&#39;</span><span class="p">),</span> <span class="n">D</span><span class="p">(</span><span class="s1">&#39;1&#39;</span><span class="p">)])</span>
+<span class="go">array([Decimal(&#39;0.9890707100936805070769772310&#39;),</span>
+<span class="go">       Decimal(&#39;0.1318760946791574009435969641&#39;),</span>
+<span class="go">       Decimal(&#39;0.06593804733957870047179848207&#39;)], dtype=object)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="misc_functions.ranges">
+<span class="sig-prename descclassname"><span class="pre">misc_functions.</span></span><span class="sig-name descname"><span class="pre">ranges</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iterable</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#misc_functions.ranges" title="Permalink to this definition">¶</a></dt>
+<dd><p>Yields a list of ranges of <em>iterable</em>.</p>
+<p>This function will determine the ranges needed to represent a sequence of integers.</p>
+<p>For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">misc_functions</span> <span class="kn">import</span> <span class="n">ranges</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">iterable</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">10</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">ranges</span><span class="p">(</span><span class="n">iterable</span><span class="p">))</span>
+<span class="go">[(1, 2), (4, 6), (10, 10)]</span>
+</pre></div>
+</div>
+<p><em>iterable</em> will first be sorted before the functions searches for groups of integers. A gap between integers
+greater than 1 will start a new group. Duplicate integers are ignored.</p>
+<p>This function is used by <a class="reference internal" href="../inpRW/_inpMod/index.html#inpRW._inpMod.Mod._consolidateDofXtoYDatalines" title="inpRW._inpMod.Mod._consolidateDofXtoYDatalines"><code class="xref py py-func docutils literal notranslate"><span class="pre">_consolidateDofXtoYDatalines()</span></code></a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>iterable</strong> – A <a class="reference external" href="https://docs.python.org/3/glossary.html#term-iterable" title="(in Python v3.12)"><span class="xref std std-term">sequence</span></a> of integers.</p>
+</dd>
+<dt class="field-even">Yields<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/glossary.html#term-generator-iterator" title="(in Python v3.12)"><span class="xref std std-term">generator iterator</span></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="misc_functions.rsl">
+<span class="sig-prename descclassname"><span class="pre">misc_functions.</span></span><span class="sig-name descname"><span class="pre">rsl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#misc_functions.rsl" title="Permalink to this definition">¶</a></dt>
+<dd><p>Lowers the case of <em>obj</em>, and then removes all spaces. Name is short for “remove spaces and lowercase”.</p>
+<p><a class="reference internal" href="#misc_functions.rsl" title="misc_functions.rsl"><code class="xref py py-func docutils literal notranslate"><span class="pre">rsl()</span></code></a> is used throughout <a class="reference internal" href="../inpRW/index.html#module-inpRW" title="inpRW"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW</span></code></a> to provide case- and space-insensitivity on string comparisons.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>obj</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – If obj is not a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, this function will return None.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>obj</em>.lower().replace(’ ‘, ‘’).
+None: If <em>obj</em> is not a string, this function will return None.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)">str</a></p>
+</dd>
+</dl>
+<p>Example usage:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">misc_functions</span> <span class="kn">import</span> <span class="n">rsl</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rsl</span><span class="p">(</span><span class="s1">&#39; This is a test STRING&#39;</span><span class="p">)</span>
+<span class="go">&#39;thisisateststring&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="misc_functions.rstl">
+<span class="sig-prename descclassname"><span class="pre">misc_functions.</span></span><span class="sig-name descname"><span class="pre">rstl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#misc_functions.rstl" title="Permalink to this definition">¶</a></dt>
+<dd><p>Lowers the case of <em>obj</em>, and then removes all spaces and tabs. Name is short for “remove spaces, tabs and lowercase”.</p>
+<p><a class="reference internal" href="#misc_functions.rstl" title="misc_functions.rstl"><code class="xref py py-func docutils literal notranslate"><span class="pre">rstl()</span></code></a> can be used throughout <a class="reference internal" href="../inpRW/index.html#module-inpRW" title="inpRW"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW</span></code></a> to provide case- and white-space-insensitivity on string comparisons.
+It is slower than <a class="reference internal" href="#misc_functions.rsl" title="misc_functions.rsl"><code class="xref py py-func docutils literal notranslate"><span class="pre">rsl()</span></code></a>, so it will only be used if there are tabs in the input file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>obj</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – If obj is not a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, this function will return None.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>obj</em>.lower().replace(’ ‘, ‘’).replace(’       ‘, ‘’).
+None: If <em>obj</em> is not a string, this function will return None.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)">str</a></p>
+</dd>
+</dl>
+<p>Example usage:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">misc_functions</span> <span class="kn">import</span> <span class="n">rsl</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rstl</span><span class="p">(</span><span class="s1">&#39;  This is a test STRING&#39;</span><span class="p">)</span>
+<span class="go">&#39;thisisateststring&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="misc_functions.ssl">
+<span class="sig-prename descclassname"><span class="pre">misc_functions.</span></span><span class="sig-name descname"><span class="pre">ssl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ss</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#misc_functions.ssl" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calls <a class="reference internal" href="#misc_functions.stripSpace" title="misc_functions.stripSpace"><code class="xref py py-func docutils literal notranslate"><span class="pre">stripSpace()</span></code></a> on <em>obj</em>.lower(). Name is short for “strip spaces and lowercase”.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>obj</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – </p></li>
+<li><p><strong>ss</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><em>bool</em></a>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>obj</em>.lower() without leading and trailing spaces if <em>ss</em> == True, else <em>obj</em>.lower().</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)">str</a></p>
+</dd>
+</dl>
+<p>Example usage:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">misc_functions</span> <span class="kn">import</span> <span class="n">ssl</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ssl</span><span class="p">(</span><span class="s1">&#39;   Test string&#39;</span><span class="p">)</span>
+<span class="go">&#39;test string&#39;</span>
+</pre></div>
+</div>
+<p>And if <em>ss</em> = False, <em>obj</em> is made lowercase and then returned:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ssl</span><span class="p">(</span><span class="s1">&#39;   Test string&#39;</span><span class="p">,</span> <span class="n">ss</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="go">&#39;   test string&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="misc_functions.stripSpace">
+<span class="sig-prename descclassname"><span class="pre">misc_functions.</span></span><span class="sig-name descname"><span class="pre">stripSpace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ss</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#misc_functions.stripSpace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Strips spaces from the beginning and end of <em>obj</em> if <em>ss</em> == True.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>obj</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – </p></li>
+<li><p><strong>ss</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><em>bool</em></a>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>obt</em> without leading and trailing spaces if <em>ss</em> == True, else <em>obj</em>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)">str</a></p>
+</dd>
+</dl>
+<p>Example usage:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">misc_functions</span> <span class="kn">import</span> <span class="n">stripSpace</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">stripSpace</span><span class="p">(</span><span class="s1">&#39;   Test string&#39;</span><span class="p">)</span>
+<span class="go">&#39;Test string&#39;</span>
+</pre></div>
+</div>
+<p>The function does returns <em>obj</em> unmodified if <em>ss</em> = False:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">stripSpace</span><span class="p">(</span><span class="s1">&#39;   Test string&#39;</span><span class="p">,</span> <span class="n">ss</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="go">&#39;   Test string&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../inpRW_toc.html">
+              <img class="logo" src="../../_static/3DS_SIMULIA_Logotype_RGB_BlueSteel.png" alt="Logo", style="border-radius:5px"/>
+            </a></p>
+  <div>
+    <h3><a href="../../inpRW_toc.html">Local Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">misc_functions</span></code></a><ul>
+<li><a class="reference internal" href="#module-misc_functions">Module Contents</a><ul>
+<li><a class="reference internal" href="#misc_functions.cfc"><code class="docutils literal notranslate"><span class="pre">cfc()</span></code></a></li>
+<li><a class="reference internal" href="#misc_functions.chunks"><code class="docutils literal notranslate"><span class="pre">chunks()</span></code></a></li>
+<li><a class="reference internal" href="#misc_functions.flatten"><code class="docutils literal notranslate"><span class="pre">flatten()</span></code></a></li>
+<li><a class="reference internal" href="#misc_functions.makeDataList"><code class="docutils literal notranslate"><span class="pre">makeDataList()</span></code></a></li>
+<li><a class="reference internal" href="#misc_functions.nestedSort"><code class="docutils literal notranslate"><span class="pre">nestedSort()</span></code></a></li>
+<li><a class="reference internal" href="#misc_functions.normalize"><code class="docutils literal notranslate"><span class="pre">normalize()</span></code></a></li>
+<li><a class="reference internal" href="#misc_functions.ranges"><code class="docutils literal notranslate"><span class="pre">ranges()</span></code></a></li>
+<li><a class="reference internal" href="#misc_functions.rsl"><code class="docutils literal notranslate"><span class="pre">rsl()</span></code></a></li>
+<li><a class="reference internal" href="#misc_functions.rstl"><code class="docutils literal notranslate"><span class="pre">rstl()</span></code></a></li>
+<li><a class="reference internal" href="#misc_functions.ssl"><code class="docutils literal notranslate"><span class="pre">ssl()</span></code></a></li>
+<li><a class="reference internal" href="#misc_functions.stripSpace"><code class="docutils literal notranslate"><span class="pre">stripSpace()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  </div>
+<h3><a href="../../inpRW_toc.html">Global Table of Contents</a></h3>
+<p class="caption" role="heading"><span class="caption-text">User Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Introduction.html">inpRW Utility Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Project-Background.html">Project Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Installation-and-Usage.html">Installation and Usage Instructions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Tests.html">inpRW Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Tests.html#running-inprw-tests">Running inpRW Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/inpKeyword-Basics.html">inpKeyword Basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Strings_Integers_and_Decimals.html">Strings, Integers, and Decimals</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Important-inpRW-Attributes.html">Important <code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW</span></code> Attributes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Miscellaneous-Usage-hints.html">Miscellaneous Usage Hints</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Example-Scenarios.html">Example Scenarios</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/glossary.html">Glossary</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../inpRW/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../centroid/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">centroid</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../config/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">config</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../config_re/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">config_re</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../csid/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">csid</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../eval2/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">eval2</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../elType/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">elType</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inpDecimal/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpDecimal</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inpInt/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpInt</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inpKeyword/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpKeyword</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inpKeywordHelper/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpKeywordHelper</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inpKeywordSequence/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpKeywordSequence</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inpRWErrors/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRWErrors</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inpString/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpString</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../mesh/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">mesh</span></code></a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">misc_functions</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../NoneSort/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">NoneSort</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../printer/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">printer</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../repr2/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">repr2</span></code></a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Update Notes</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Update-Notes/index.html">Update Notes</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Legal Notices and Usage Disclaimer</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../legal_notices/Legal_Notices_and_Usage_Disclaimer.html">Legal Notices and Usage Disclaimer</a></li>
+</ul>
+
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="../mesh/index.html"
+                          title="previous chapter"><code class="xref py py-mod docutils literal notranslate"><span class="pre">mesh</span></code></a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="../NoneSort/index.html"
+                          title="next chapter"><code class="xref py py-mod docutils literal notranslate"><span class="pre">NoneSort</span></code></a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/autoapi/misc_functions/index.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>  
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../NoneSort/index.html" title="NoneSort"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../mesh/index.html" title="mesh"
+             >previous</a> |</li>
+          <li><img src="../../_static/icon-116-3dx-apps.svg" alt="python logo" style="vertical-align: middle; margin-top: -1px"/></li>
+          <li><a href="inpRW_toc.html"></a> &#187;</li>
+          <li class="switchers">
+            <div class="language_switcher_placeholder"></div>
+            <div class="version_switcher_placeholder"></div>
+          </li>
+          <li>
+              
+              <a href="../../inpRW_toc.html">inpRW 2023.10.6 documentation</a> &#187;
+              
+          </li>
+        <li class="nav-item nav-item-this"><a href=""><code class="xref py py-mod docutils literal notranslate"><span class="pre">misc_functions</span></code></a></li>
+                <li class="right">
+                    
+
+    <div class="inline-search" role="search">
+        <form class="inline-search" action="../../search.html" method="get">
+          <input placeholder="Quick search" aria-label="Quick search" type="text" name="q" />
+          <input type="submit" value="Go" />
+          <input type="hidden" name="check_keywords" value="yes" />
+          <input type="hidden" name="area" value="default" />
+        </form>
+    </div>
+                     |
+                </li>
+            
+      </ul>
+    </div>  
+    <div class="footer">
+    &copy; Copyright 2023, Dassault Systèmes Simulia Corp.
+     <a href="../../_static/legal_notices.pdf" >inpRW Legal Notices</a>.<br />
+     <a href="../../_static/Read_Disclaimer_First.txt" >inpRW Usage Disclaimer</a>.<br />
+    Last updated on Nov 21, 2023.
+    <a href="https://r1132100503382-eu1-3dswym.3dexperience.3ds.com/#community:39/post:nE1VLzylQoKgfG2wekOpFg">Found a bug</a>?
+    </div>
+
+  </body>
+</html>

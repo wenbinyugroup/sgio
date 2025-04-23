@@ -1,0 +1,24 @@
+@font-face {
+    font-family: "3DS Bold";
+    src: url("./3ds_Bold.otf");
+}
+
+@font-face {
+    font-family: "3DS Regular";
+    src: url("./3ds_Regular.otf");
+}
+
+@font-face {
+    font-family: "3DS Italic";
+    src: url("./3ds_Italic.otf");
+}
+
+@font-face {
+    font-family: "3DS Condensed";
+    src: url("./3ds_Condensed_Regular.otf");
+}
+
+@font-face {
+    font-family: "3DS Condensed Bold";
+    src: url("./3ds_Condensed_Bold.otf");
+}

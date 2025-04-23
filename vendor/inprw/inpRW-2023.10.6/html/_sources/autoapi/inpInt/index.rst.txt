@@ -1,0 +1,15 @@
+:py:mod:`inpInt`
+================
+
+.. py:module:: inpInt
+
+
+Module Contents
+---------------
+
+.. autoclass:: inpInt
+   :members:
+   :private-members:
+   :special-members:
+   :show-inheritance:
+   

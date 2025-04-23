@@ -1,0 +1,170 @@
+inpKeyword Basics
+=================
+
+The :class:`inpKeyword` object is the foundation of :mod:`inpRW`. It defines the structure of information parsed 
+from the input file, so understanding how the data is stored inside an :class:`inpKeyword` object is necessary to 
+working with :mod:`inpRW`.
+
+Abaqus Keyword Block Terminology
+--------------------------------
+
+First, let's define the different parts of an :term:`Abaqus` :term:`keyword block`.
+
+.. image:: /user/Keyword_block_terminology.png
+
+A :term:`keyword block` has a :term:`keyword line(s) <keyword line>`, which is composed of a :term:`keyword` and 0 or more
+:term:`parameters[2] <parameter>`. Immediately following the :term:`keyword line` are 0 or more :term:`datalines <dataline>`. 
+The individual :term:`data items <data item>` in a :term:`dataline` are separated by commas. Finally, any line in the :term:`input file` can
+be commented out with '**'.
+
+For more information on :term:`Abaqus` :term:`input files <input file>`, please see 
+`Input Syntax Rules <https://help.3ds.com/2022/English/DSSIMULIA_Established/SIMACAEMODRefMap/simamod-c-inputsyntax.htm?contextscope=all&id=8d27533fcac24e75a6f60ecb77036140>`_
+for information pertaining to all :term:`keyword blocks[1] <keyword block>`, and see the
+`Abaqus Keywords Guide <https://help.3ds.com/2022/English/DSSIMULIA_Established/SIMACAEKEYRefMap/simakey-c-ov.htm?contextscope=all&id=38209adfa4364bc6ab0bb6e8eb323815>`_
+for information on specific :term:`Abaqus` :term:`keywords <keyword>`.
+
+Here is an example of an :term:`Abaqus` :term:`keyword block[1] <keyword block>`:: 
+
+    *ORIENTATION, NAME="Connector1-2Pt1Orientation-1", SYSTEM=RECTANGULAR, DEFINITION=COORDINATES
+    1., 0., 0., 0., 1., 0.
+    1, 0.
+
+And here is the :class:`inpKeyword` object :mod:`inpRW` creates from it (this output has been specially formatted for readability)::
+
+    inpKeyword(name='ORIENTATION', 
+           parameter=csid(csiKeyString(' NAME'): '"Connector1-2Pt1Orientation-1"', 
+                          csiKeyString(' SYSTEM'): 'RECTANGULAR', 
+                          csiKeyString(' DEFINITION'): 'COORDINATES'), 
+           data=[[1.0, 0.0, 0.0, 0.0, 1.0, 0.0], [1, 0.0]], 
+           path='self.keywords[10]', 
+           comments=[], 
+           suboptions=inpKeywordSequence(num child keywords: 0, num descendant keywords: 0, path: .suboptions))
+
+This :class:`inpKeyword` object is accessible via :func:`eval(path) <eval>` of the :class:`inpKeyword` object. Note that "self"
+is only available from commands run from inside :mod:`inpRW` itself. If you need to access the item from outside of 
+:mod:`inpRW`, you should replace "self" with the instance name. For example, if you call inpRW like the following,
+you would replace "self" with "inp"::
+
+    import inpRW
+    
+    inp = inpRW.inpRW('INPUTFILE.inp')
+
+Important :class:`inpKeyword` Attributes
+----------------------------------------
+
+Name
+++++
+
+:attr:`~inpKeyword.inpKeyword.name` corresponds to the :term:`keyword` name. 
+
+Parameter
++++++++++
+
+:attr:`.parameter` is a case- and space-insensitive dictionary (:class:`csid`) that contains key-value pairs 
+corresponding to the :term:`parameter[2] <parameter>` names and their values. If a :term:`parameter[2] <parameter>`
+does not have a value assigned to it, the value will be set to ''. Since :mod:`inpRW` needs to be run in Python 3, 
+the :attr:`.parameter` dictionary is automatically ordered. Thus, we can easily access the items in the order they 
+were entered. This allows the :term:`parameters[2] <parameter>` to be written out to a new input file in the original order.
+
+Data
+++++
+
+:attr:`~inpKeyword.inpKeyword.data` is a list of lists that contains the :term:`datalines <dataline>` for the keyword block.
+For some keyword blocks, :attr:`~inpKeyword.inpKeyword.data` will use a dictionary-like construct. There will be a 
+list which corresponds to each line of :term:`data`. :mod:`inpRW` will try to convert each data item to what it deems 
+the appropriate type. If the item appears to be a string, it will leave it as a :class:`string <str>`. If it appears to be a floating point 
+number, it will be converted to a :class:`float` or :class:`~decimal.Decimal`. If it appears to be an integer, it will be converted to an 
+:class:`integer <int>`.
+
+Suboptions
+++++++++++
+
+If :mod:`inpRW` was parsed with *organize=True*, the :attr:`.suboptions` field will be populated with the appropriate 
+child keywords, if the keyword block has any valid child keywords. Those subkeywords can in turn have their own subkeywords. This 
+enables :mod:`~inpRW` to group related keywords together (for example, \*MATERIAL and all the keywords related to that material).
+
+Comments
+++++++++
+
+All comment lines associated with this keyword block (i.e. after the keyword line but before the next keyword line) will be stored
+in this attribute. Each item in :attr:`~inpKeyword.inpKeyword.comments` will be of the form [ind, line] where ind is the index of the line in
+:attr:`~inpKeyword.inpKeyword.data` and line is the string of the comment line.
+
+Creating a new inpKeyword object: Recommended option
+----------------------------------------------------
+
+The most convenient method to create a new keyword object is to first create a string representing the entirety of the keyword
+block and pass that to the *inputString* parameter of the :class:`~inpKeyword.inpKeyword` constructor. Also, there will be
+certain attributes in :class:`~inpRW.inpRW` that control the parsing formatting; you will want to pass these to the new
+:class:`~inpKeyword.inpKeyword` instance to ensure the new keyword block is consistent with existing keyword blocks. These 
+attributes are available in :attr:`~inpRW.inpRW.inpKeywordArgs`. The following is an example of the recommended method of 
+creating new :class:`~inpKeyword.inpKeyword` blocks, assuming an :class:`~inpRW.inpRW` instance "inp" has already been created ::
+
+    from inpKeyword import inpKeyword
+    text = '''*ORIENTATION, NAME="Connector1-2Pt1Orientation-1", SYSTEM=RECTANGULAR, DEFINITION=COORDINATES
+    1., 0., 0., 0., 1., 0.
+    1, 0.'''
+
+    newKW = inpKeyword(inputString=text, **inp.inpKeywordArgs)
+
+This method of creating a keyword block will perform several steps automatically. First, it will parse the entirety of the 
+keyword block according to the settings in :attr:`~inpRW.inpRW.inpKeywordArgs`. Second, it will automatically call several
+additional functions of :class:`~inpKeyword.inpKeyword` which determine the type of the keyword block (based on :attr:`~inpKeyword.inpKeyword.name`), 
+set the functions which should be used to parse the datalines and format output of the parsed data items, and specify information
+from the :class:`~inpKeyword.inpKeyword` block which needs to be written to special attributes of :class:`~inpRW.inpRW` (these
+attributes will be added when newKW is added to an :class:`~inpKeywordSequence.inpKeywordSequence` instance).
+
+Creating a new inpKeyword object: Alternate option
+----------------------------------------------------
+When creating a new keyword, perform something like the following::
+
+    from inpKeyword import inpKeyword
+    newKW = inpKeyword()
+
+This will create a blank inpKeyword object, with the following parameters::
+
+    newKW.name = ''
+    newKW.parameter = csid({})
+    newKW.data = []
+    newKW.path = ''
+    newKW.suboptions = inpKeywordSequence()
+    newKW.comments = []
+
+Any of the attributes of :class:`inpKeyword.inpKeyword` (:attr:`inpKeyword.inpKeyword.name`, :attr:`inpKeyword.inpKeyword.parameter`, 
+:attr:`inpKeyword.inpKeyword.data`, :attr:`inpKeyword.inpKeyword.path`, :attr:`inpKeyword.inpKeyword.suboptions`,
+:attr:`inpKeyword.inpKeyword.comments`) can be assigned when *newKW* is created, or they can be modified later.
+
+The easiest way to create the :attr:`inpKeyword.inpKeyword.parameter` :class:`csid` is to call :func:`~inpKeyword.createParamDictFromString`. Example::
+
+    inp.createParamDictFromString('NAME="Connector1-2Pt1Orientation-1", SYSTEM=RECTANGULAR, DEFINITION=COORDINATES')
+
+Results in::
+
+    {'NAME': '"Connector1-2Pt1Orientation-1"',
+    'SYSTEM': 'RECTANGULAR',
+    'DEFINITION': 'COORDINATES'}
+ 
+When adding to :attr:`~inpKeyword.inpKeyword.data`, make sure it is always a list of lists, even if there is only one line of data. 
+The functions that generate strings from an :class:`~inpKeyword.inpKeyword` instance assume :attr:`~inpKeyword.inpKeyword.data` is a 
+list of lists, and will produce an error or incorrect results if :attr:`~inpKeyword.inpKeyword.data` is incorrect. This does not apply to \*NODE or 
+\*ELEMENT keyword blocks, as the data attribute is a :class:`~mesh.Mesh` instance.
+
+Once you have populated :attr:`~inpKeyword.inpKeyword.name`, :attr:`~inpKeyword.inpKeyword.parameter`, :attr:`~inpKeyword.inpKeyword.data`, 
+:attr:`~inpKeyword.inpKeyword.comments`, and possibly :attr:`~inpKeyword.inpKeyword.suboptions`, you need to 
+call :func:`~inpKeyword.inpKeyword._setMiscInpKeywordAttrs` and set :attr:`~inpKeyword.inpKeyword._dataParsed` = True. These will set
+several important attributes for inserting the keyword into an :class:`~inpKeywordSequence.inpKeywordSequence` and producing a string
+from the keyword object.
+
+:attr:`.path` should not need to be specified manually. Once the new keyword has been placed into :attr:`~inpRW.inpRW.keywords`,
+you can call :func:`~inpRW.inpRW.updateInp`, which includes a call to update the :attr:`.path` of all keywords.
+
+Creating a new inpKeyword object: Hybrid option
+----------------------------------------------------
+
+Another technique for creating :class:`~inpKeyword.inpKeyword` objects is to set *inputString* to a string representing the 
+keyword lines of the new block, and then add the data later. This is possible if you know the keyword name and optionally the
+parameters before you know the data. You might wish to do this if the data for the keyword block has been calculated based on 
+other information, and thus it is already in the proper format (i.e. you wish to skip converting the data to strings and then
+parsing those strings). If you instance :class:`~inpKeyword.inpKeyword` with an *inputStr* specifying the keyword lines, this
+will automatically set the proper attributes of the class based on the keyword name, so you do not need to manually set them 
+later.

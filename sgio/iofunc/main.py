@@ -77,10 +77,10 @@ def read(
                 file, file_format, format_version, model_type
             )
     elif file_format == 'abaqus':
-        with open(filename, 'r') as file:
-            sg = _abaqus.read_buffer(
-                file, sgdim=sgdim, model=model_type
-            )
+        # with open(filename, 'r') as file:
+        sg = _abaqus.read(
+            filename, sgdim=sgdim, model=model_type
+        )
     else:
         raise ValueError(f"Unknown file format: {file_format}")
 

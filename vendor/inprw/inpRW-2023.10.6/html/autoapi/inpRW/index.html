@@ -1,0 +1,972 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>inpRW &#8212; inpRW 2023.10.6 documentation</title><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/pydoctheme.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles.css" />
+    
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
+    
+    <script src="../../_static/sidebar.js"></script>
+    
+    <link rel="shortcut icon" href="../../_static/3DS_SIMULIA_Blue_Icon_32.png"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="inpRW._inpR" href="_inpR/index.html" />
+    <link rel="prev" title="Glossary" href="../../user/glossary.html" /><link rel="shortcut icon" type="image/png" href="../../_static/icon-116-3dx-apps.svg" />
+            <script type="text/javascript" src="../../_static/copybutton.js"></script>
+            <script type="text/javascript" src="../../_static/menu.js"></script> 
+  </head>
+<body>
+<div class="mobile-nav">
+    <input type="checkbox" id="menuToggler" class="toggler__input" aria-controls="navigation"
+           aria-pressed="false" aria-expanded="false" role="button" aria-label="Menu" />
+    <label for="menuToggler" class="toggler__label">
+        <span></span>
+    </label>
+    <nav class="nav-content" role="navigation">
+         <a href="inpRW_toc.html" class="nav-logo">
+             <img src="../../_static/icon-116-3dx-apps.svg" alt="Logo"/>
+         </a>
+        <div class="version_switcher_placeholder"></div>
+        <form role="search" class="search" action="../../search.html" method="get">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" class="search-icon">
+                <path fill-rule="nonzero"
+                        d="M15.5 14h-.79l-.28-.27a6.5 6.5 0 001.48-5.34c-.47-2.78-2.79-5-5.59-5.34a6.505 6.505 0 00-7.27 7.27c.34 2.8 2.56 5.12 5.34 5.59a6.5 6.5 0 005.34-1.48l.27.28v.79l4.25 4.25c.41.41 1.08.41 1.49 0 .41-.41.41-1.08 0-1.49L15.5 14zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" fill="#444"></path>
+            </svg>
+            <input type="text" name="q" aria-label="Quick search"/>
+            <input type="submit" value="Go"/>
+        </form>
+    </nav>
+    <div class="menu-wrapper">
+        <nav class="menu" role="navigation" aria-label="main navigation">
+            <div class="language_switcher_placeholder"></div>
+            <p class="logo">
+                <a href="../../index.html">
+                <img class="logo" src="../../_static/3DS_SIMULIA_Logotype_RGB_BlueSteel.png" alt="Logo" style="border-radius:5px"/>
+                </a>
+            </p>
+  <div>
+    <h3><a href="../../inpRW_toc.html">Local Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW</span></code></a><ul>
+<li><a class="reference internal" href="#package-contents">Package Contents</a><ul>
+<li><a class="reference internal" href="#classes">Classes</a><ul>
+<li><a class="reference internal" href="#inpRW.inpRW"><code class="docutils literal notranslate"><span class="pre">inpRW</span></code></a><ul>
+<li><a class="reference internal" href="#inpRW.inpRW.__init__"><code class="docutils literal notranslate"><span class="pre">inpRW.__init__()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW.parse"><code class="docutils literal notranslate"><span class="pre">inpRW.parse()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW.printDocs"><code class="docutils literal notranslate"><span class="pre">inpRW.printDocs()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW.updateInp"><code class="docutils literal notranslate"><span class="pre">inpRW.updateInp()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW.__repr__"><code class="docutils literal notranslate"><span class="pre">inpRW.__repr__()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW.__str__"><code class="docutils literal notranslate"><span class="pre">inpRW.__str__()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW.delayParsingDataKws"><code class="docutils literal notranslate"><span class="pre">inpRW.delayParsingDataKws</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW.ed"><code class="docutils literal notranslate"><span class="pre">inpRW.ed</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW.fastElementParsing"><code class="docutils literal notranslate"><span class="pre">inpRW.fastElementParsing</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW.includeBlockPaths"><code class="docutils literal notranslate"><span class="pre">inpRW.includeBlockPaths</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW.includeFileNames"><code class="docutils literal notranslate"><span class="pre">inpRW.includeFileNames</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW.inpKeywordArgs"><code class="docutils literal notranslate"><span class="pre">inpRW.inpKeywordArgs</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW.inpName"><code class="docutils literal notranslate"><span class="pre">inpRW.inpName</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW.inputFolder"><code class="docutils literal notranslate"><span class="pre">inpRW.inputFolder</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW.jobSuffix"><code class="docutils literal notranslate"><span class="pre">inpRW.jobSuffix</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW.keywords"><code class="docutils literal notranslate"><span class="pre">inpRW.keywords</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW.ktridd"><code class="docutils literal notranslate"><span class="pre">inpRW.ktridd</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW.kwg"><code class="docutils literal notranslate"><span class="pre">inpRW.kwg</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW.namedRefs"><code class="docutils literal notranslate"><span class="pre">inpRW.namedRefs</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW.nd"><code class="docutils literal notranslate"><span class="pre">inpRW.nd</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW.nodesUpdatedConnectivity"><code class="docutils literal notranslate"><span class="pre">inpRW.nodesUpdatedConnectivity</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW.organize"><code class="docutils literal notranslate"><span class="pre">inpRW.organize</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW.outputFolder"><code class="docutils literal notranslate"><span class="pre">inpRW.outputFolder</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW.parseSubFiles"><code class="docutils literal notranslate"><span class="pre">inpRW.parseSubFiles</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW.pd"><code class="docutils literal notranslate"><span class="pre">inpRW.pd</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW.pktricd"><code class="docutils literal notranslate"><span class="pre">inpRW.pktricd</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW.preserveSpacing"><code class="docutils literal notranslate"><span class="pre">inpRW.preserveSpacing</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW.rmtrailing0"><code class="docutils literal notranslate"><span class="pre">inpRW.rmtrailing0</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW.ss"><code class="docutils literal notranslate"><span class="pre">inpRW.ss</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW.step_paths"><code class="docutils literal notranslate"><span class="pre">inpRW.step_paths</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW.steps"><code class="docutils literal notranslate"><span class="pre">inpRW.steps</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW.useDecimal"><code class="docutils literal notranslate"><span class="pre">inpRW.useDecimal</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW._ParamInInp"><code class="docutils literal notranslate"><span class="pre">inpRW._ParamInInp</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW.__members__"><code class="docutils literal notranslate"><span class="pre">inpRW.__members__</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW.__methods__"><code class="docutils literal notranslate"><span class="pre">inpRW.__methods__</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW._addSpace"><code class="docutils literal notranslate"><span class="pre">inpRW._addSpace</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW._bad_kwblock"><code class="docutils literal notranslate"><span class="pre">inpRW._bad_kwblock</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW._couplingSurfNames"><code class="docutils literal notranslate"><span class="pre">inpRW._couplingSurfNames</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW._curBaseStep"><code class="docutils literal notranslate"><span class="pre">inpRW._curBaseStep</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW._debug"><code class="docutils literal notranslate"><span class="pre">inpRW._debug</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW._delayedPlaceBlocks"><code class="docutils literal notranslate"><span class="pre">inpRW._delayedPlaceBlocks</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW._distCoupElsetNames"><code class="docutils literal notranslate"><span class="pre">inpRW._distCoupElsetNames</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW._firstItem"><code class="docutils literal notranslate"><span class="pre">inpRW._firstItem</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW._inpText"><code class="docutils literal notranslate"><span class="pre">inpRW._inpText</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW._joinPS"><code class="docutils literal notranslate"><span class="pre">inpRW._joinPS</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW._kinCoupNsetNames"><code class="docutils literal notranslate"><span class="pre">inpRW._kinCoupNsetNames</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW._kw"><code class="docutils literal notranslate"><span class="pre">inpRW._kw</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW._kwsumFile"><code class="docutils literal notranslate"><span class="pre">inpRW._kwsumFile</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW._kwsumName"><code class="docutils literal notranslate"><span class="pre">inpRW._kwsumName</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW._lbp"><code class="docutils literal notranslate"><span class="pre">inpRW._lbp</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW._leadingcomments"><code class="docutils literal notranslate"><span class="pre">inpRW._leadingcomments</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW._manBaseStep"><code class="docutils literal notranslate"><span class="pre">inpRW._manBaseStep</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW._nl"><code class="docutils literal notranslate"><span class="pre">inpRW._nl</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW._numCpus"><code class="docutils literal notranslate"><span class="pre">inpRW._numCpus</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW._parentINP"><code class="docutils literal notranslate"><span class="pre">inpRW._parentINP</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW._parentblock"><code class="docutils literal notranslate"><span class="pre">inpRW._parentblock</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW._parentkws"><code class="docutils literal notranslate"><span class="pre">inpRW._parentkws</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW._subP"><code class="docutils literal notranslate"><span class="pre">inpRW._subP</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW._subkwin"><code class="docutils literal notranslate"><span class="pre">inpRW._subkwin</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW._tree"><code class="docutils literal notranslate"><span class="pre">inpRW._tree</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+<h3><a href="../../inpRW_toc.html">Global Table of Contents</a></h3>
+<p class="caption" role="heading"><span class="caption-text">User Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Introduction.html">inpRW Utility Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Project-Background.html">Project Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Installation-and-Usage.html">Installation and Usage Instructions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Tests.html">inpRW Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Tests.html#running-inprw-tests">Running inpRW Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/inpKeyword-Basics.html">inpKeyword Basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Strings_Integers_and_Decimals.html">Strings, Integers, and Decimals</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Important-inpRW-Attributes.html">Important <code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW</span></code> Attributes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Miscellaneous-Usage-hints.html">Miscellaneous Usage Hints</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Example-Scenarios.html">Example Scenarios</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/glossary.html">Glossary</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="_inpR/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW._inpR</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="_inpW/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW._inpW</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="_inpFind/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW._inpFind</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="_inpFindRefs/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW._inpFindRefs</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="_inpMod/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW._inpMod</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="_importedModules/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW._importedModules</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="_inpCustom/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW._inpCustom</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../centroid/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">centroid</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../config/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">config</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../config_re/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">config_re</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../csid/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">csid</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../eval2/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">eval2</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../elType/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">elType</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inpDecimal/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpDecimal</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inpInt/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpInt</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inpKeyword/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpKeyword</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inpKeywordHelper/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpKeywordHelper</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inpKeywordSequence/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpKeywordSequence</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inpRWErrors/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRWErrors</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inpString/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpString</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../mesh/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">mesh</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../misc_functions/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">misc_functions</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../NoneSort/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">NoneSort</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../printer/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">printer</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../repr2/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">repr2</span></code></a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Update Notes</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Update-Notes/index.html">Update Notes</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Legal Notices and Usage Disclaimer</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../legal_notices/Legal_Notices_and_Usage_Disclaimer.html">Legal Notices and Usage Disclaimer</a></li>
+</ul>
+
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="../../user/glossary.html"
+                          title="previous chapter">Glossary</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="_inpR/index.html"
+                          title="next chapter"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW._inpR</span></code></a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/autoapi/inpRW/index.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </nav>
+    </div>
+</div>
+  
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="_inpR/index.html" title="inpRW._inpR"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../../user/glossary.html" title="Glossary"
+             accesskey="P">previous</a> |</li>
+          <li><img src="../../_static/icon-116-3dx-apps.svg" alt="python logo" style="vertical-align: middle; margin-top: -1px"/></li>
+          <li><a href="inpRW_toc.html"></a> &#187;</li>
+          <li class="switchers">
+            <div class="language_switcher_placeholder"></div>
+            <div class="version_switcher_placeholder"></div>
+          </li>
+          <li>
+              
+              <a href="../../inpRW_toc.html">inpRW 2023.10.6 documentation</a> &#187;
+              
+          </li>
+        <li class="nav-item nav-item-this"><a href=""><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW</span></code></a></li>
+                <li class="right">
+                    
+
+    <div class="inline-search" role="search">
+        <form class="inline-search" action="../../search.html" method="get">
+          <input placeholder="Quick search" aria-label="Quick search" type="text" name="q" />
+          <input type="submit" value="Go" />
+          <input type="hidden" name="check_keywords" value="yes" />
+          <input type="hidden" name="area" value="default" />
+        </form>
+    </div>
+                     |
+                </li>
+            
+      </ul>
+    </div>    
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="module-inpRW">
+<span id="inprw"></span><h1><a class="reference internal" href="#module-inpRW" title="inpRW"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW</span></code></a><a class="headerlink" href="#module-inpRW" title="Permalink to this heading">¶</a></h1>
+<section id="package-contents">
+<h2>Package Contents<a class="headerlink" href="#package-contents" title="Permalink to this heading">¶</a></h2>
+<section id="classes">
+<h3>Classes<a class="headerlink" href="#classes" title="Permalink to this heading">¶</a></h3>
+<blockquote>
+<div><dl class="py class">
+<dt class="sig sig-object py" id="inpRW.inpRW">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">inpRW.</span></span><span class="sig-name descname"><span class="pre">inpRW</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inpName</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">organize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ss</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rmtrailing0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">jobSuffix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'_NEW.inp'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parseSubFiles</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preserveSpacing</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">useDecimal</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_parentINP</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_parentblock</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_debug</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#inpRW.inpRW" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="_inpR/index.html#inpRW._inpR.Read" title="inpRW._inpR.Read"><code class="xref py py-class docutils literal notranslate"><span class="pre">Read</span></code></a>, <a class="reference internal" href="_inpW/index.html#inpRW._inpW.Write" title="inpRW._inpW.Write"><code class="xref py py-class docutils literal notranslate"><span class="pre">Write</span></code></a>, <a class="reference internal" href="_inpMod/index.html#inpRW._inpMod.Mod" title="inpRW._inpMod.Mod"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mod</span></code></a>, <a class="reference internal" href="_inpFind/index.html#inpRW._inpFind.Find" title="inpRW._inpFind.Find"><code class="xref py py-class docutils literal notranslate"><span class="pre">Find</span></code></a>, <a class="reference internal" href="_inpFindRefs/index.html#inpRW._inpFindRefs.FindRefs" title="inpRW._inpFindRefs.FindRefs"><code class="xref py py-class docutils literal notranslate"><span class="pre">FindRefs</span></code></a>, <a class="reference internal" href="_inpCustom/index.html#inpRW._inpCustom.Custom" title="inpRW._inpCustom.Custom"><code class="xref py py-class docutils literal notranslate"><span class="pre">Custom</span></code></a></p>
+<p>inpRW is a collection of Python modules for parsing, modifying, and writing Abaqus input files.</p>
+<p>The inpRW class is composed of <a class="reference internal" href="_inpR/index.html#module-inpRW._inpR" title="inpRW._inpR"><code class="xref py py-mod docutils literal notranslate"><span class="pre">_inpR</span></code></a>, <a class="reference internal" href="_inpW/index.html#module-inpRW._inpW" title="inpRW._inpW"><code class="xref py py-mod docutils literal notranslate"><span class="pre">_inpW</span></code></a>, <a class="reference internal" href="_inpMod/index.html#module-inpRW._inpMod" title="inpRW._inpMod"><code class="xref py py-mod docutils literal notranslate"><span class="pre">_inpMod</span></code></a>, <a class="reference internal" href="_inpFind/index.html#module-inpRW._inpFind" title="inpRW._inpFind"><code class="xref py py-mod docutils literal notranslate"><span class="pre">_inpFind</span></code></a>,
+<a class="reference internal" href="_inpFindRefs/index.html#module-inpRW._inpFindRefs" title="inpRW._inpFindRefs"><code class="xref py py-mod docutils literal notranslate"><span class="pre">_inpFindRefs</span></code></a>, <a class="reference internal" href="_inpCustom/index.html#module-inpRW._inpCustom" title="inpRW._inpCustom"><code class="xref py py-mod docutils literal notranslate"><span class="pre">_inpCustom</span></code></a>, and <a class="reference internal" href="_importedModules/index.html#module-inpRW._importedModules" title="inpRW._importedModules"><code class="xref py py-mod docutils literal notranslate"><span class="pre">_importedModules</span></code></a>. <a class="reference internal" href="_inpR/index.html#module-inpRW._inpR" title="inpRW._inpR"><code class="xref py py-mod docutils literal notranslate"><span class="pre">_inpR</span></code></a>
+has the functions for parsing data from the .inp. <a class="reference internal" href="_inpW/index.html#module-inpRW._inpW" title="inpRW._inpW"><code class="xref py py-mod docutils literal notranslate"><span class="pre">_inpW</span></code></a> has functions for writing the data in
+the <a class="reference internal" href="../inpKeyword/index.html#inpKeyword.inpKeyword" title="inpKeyword.inpKeyword"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpKeyword</span></code></a> object to an input file. <a class="reference internal" href="_inpMod/index.html#module-inpRW._inpMod" title="inpRW._inpMod"><code class="xref py py-mod docutils literal notranslate"><span class="pre">_inpMod</span></code></a> has functions for modifying the
+data in the inp object structure. <a class="reference internal" href="_inpFind/index.html#module-inpRW._inpFind" title="inpRW._inpFind"><code class="xref py py-mod docutils literal notranslate"><span class="pre">_inpFind</span></code></a> has functions for finding information in
+<a class="reference internal" href="#inpRW.inpRW.keywords" title="inpRW.inpRW.keywords"><code class="xref py py-attr docutils literal notranslate"><span class="pre">keywords</span></code></a>. <a class="reference internal" href="_inpFindRefs/index.html#module-inpRW._inpFindRefs" title="inpRW._inpFindRefs"><code class="xref py py-mod docutils literal notranslate"><span class="pre">_inpFindRefs</span></code></a> has functions to search for particular named
+items and all their references in the input file (i.e. node 1). <a class="reference internal" href="_inpCustom/index.html#module-inpRW._inpCustom" title="inpRW._inpCustom"><code class="xref py py-mod docutils literal notranslate"><span class="pre">_inpCustom</span></code></a> is empty; whatever
+functions the end user adds to this module will extend the class. <a class="reference internal" href="_importedModules/index.html#module-inpRW._importedModules" title="inpRW._importedModules"><code class="xref py py-mod docutils literal notranslate"><span class="pre">_importedModules</span></code></a> contains
+the module imports for all the _inp* modules.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="inpRW.inpRW.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inpName</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">organize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ss</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rmtrailing0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">jobSuffix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'_NEW.inp'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parseSubFiles</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preserveSpacing</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">useDecimal</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_parentINP</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_parentblock</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#inpRW.inpRW.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="#inpRW.inpRW.__init__" title="inpRW.inpRW.__init__"><code class="xref py py-func docutils literal notranslate"><span class="pre">__init__()</span></code></a> is called when <a class="reference internal" href="#module-inpRW" title="inpRW"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpRW</span></code></a> is instanced and it sets many instance variables before the input file is parsed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>inpName</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – The file name and optionally path to the input file.</p></li>
+<li><p><strong>organize</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><em>bool</em></a>) – Will group keywords together as parentblock and suboptions if True. Defaults to True.</p></li>
+<li><p><strong>ss</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><em>bool</em></a>) – Strip spaces from items in input file if True. Defaults to False.</p></li>
+<li><p><strong>rmtrailing0</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><em>bool</em></a>) – Remove trailing 0s from decimal numbers if True. Defaults to False.</p></li>
+<li><p><strong>jobSuffix</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – Suffix to be appended to each input file (and reference to input files) that inpRW writes out. Defaults to ‘_NEW.inp’.</p></li>
+<li><p><strong>parseSubFiles</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><em>bool</em></a>) – Parse sub input files (i.e. target of INCLUDE) if True. Defaults to False.</p></li>
+<li><p><strong>preserveSpacing</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><em>bool</em></a>) – Preserve the original spacing for every item in the input file if True. Defaults to True.</p></li>
+<li><p><strong>useDecimal</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><em>bool</em></a>) – If True, <a class="reference external" href="https://docs.python.org/3/library/decimal.html#decimal.Decimal" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Decimal</span></code></a> (or <a class="reference internal" href="../inpDecimal/index.html#module-inpDecimal" title="inpDecimal"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpDecimal</span></code></a> if <em>preserveSpacing</em> = True) will be used instead of <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a> for all floating point numbers. Will be True if <a class="reference internal" href="#inpRW.inpRW.preserveSpacing" title="inpRW.inpRW.preserveSpacing"><code class="xref py py-attr docutils literal notranslate"><span class="pre">preserveSpacing</span></code></a> is True. Defaults to True.</p></li>
+<li><p><strong>_parentInp</strong> (<a class="reference internal" href="#inpRW.inpRW" title="inpRW.inpRW"><em>inpRW</em></a>) – An <a class="reference internal" href="#module-inpRW" title="inpRW"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpRW</span></code></a> instance to serve as the parent for the new instance. Meant to be used when <a class="reference internal" href="#module-inpRW" title="inpRW"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpRW</span></code></a> instances itself recursively to handle child input files (i.e. *INCLUDE).</p></li>
+<li><p><strong>_parentblock</strong> (<a class="reference internal" href="../inpKeyword/index.html#inpKeyword.inpKeyword" title="inpKeyword.inpKeyword"><em>inpKeyword</em></a>) – An inpKeyword block which will serve as the parent to the new <a class="reference internal" href="#module-inpRW" title="inpRW"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpRW</span></code></a> instance. All keywords in the child inp will be suboptions to _parentblock.</p></li>
+<li><p><strong>_debug</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><em>bool</em></a>) – If True, prints some additional information while inpRW is performing certain tasks and keeps <a class="reference internal" href="#inpRW.inpRW._kw" title="inpRW.inpRW._kw"><code class="xref py py-attr docutils literal notranslate"><span class="pre">_kw</span></code></a> after parsing the input file. Defaults to False.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#module-inpRW" title="inpRW"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpRW</span></code></a> instance</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="inpRW.inpRW.parse">
+<span class="sig-name descname"><span class="pre">parse</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#inpRW.inpRW.parse" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function parses the input file.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="inpRW.inpRW.printDocs">
+<span class="sig-name descname"><span class="pre">printDocs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#inpRW.inpRW.printDocs" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function will print the documentation strings for all functions inside the inpRW class.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="inpRW.inpRW.updateInp">
+<span class="sig-name descname"><span class="pre">updateInp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gkw</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">startIndex</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parentBlock</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">updatePaths</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#inpRW.inpRW.updateInp" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function calls <a class="reference internal" href="_inpR/index.html#inpRW._inpR.Read.updateObjectsPath" title="inpRW._inpR.Read.updateObjectsPath"><code class="xref py py-func docutils literal notranslate"><span class="pre">updateObjectsPath()</span></code></a>, <a class="reference internal" href="_inpFind/index.html#inpRW._inpFind.Find._getLastBlockPath" title="inpRW._inpFind.Find._getLastBlockPath"><code class="xref py py-func docutils literal notranslate"><span class="pre">_getLastBlockPath()</span></code></a>,
+<a class="reference internal" href="_inpFind/index.html#inpRW._inpFind.Find.findStepLocations" title="inpRW._inpFind.Find.findStepLocations"><code class="xref py py-func docutils literal notranslate"><span class="pre">findStepLocations()</span></code></a>, <a class="reference internal" href="_inpR/index.html#inpRW._inpR.Read._groupKeywordBlocks" title="inpRW._inpR.Read._groupKeywordBlocks"><code class="xref py py-func docutils literal notranslate"><span class="pre">_groupKeywordBlocks()</span></code></a>, <a class="reference internal" href="_inpFind/index.html#inpRW._inpFind.Find._findIncludeFileNames" title="inpRW._inpFind.Find._findIncludeFileNames"><code class="xref py py-func docutils literal notranslate"><span class="pre">_findIncludeFileNames()</span></code></a>,
+and updates <a class="reference internal" href="#inpRW.inpRW.__methods__" title="inpRW.inpRW.__methods__"><code class="xref py py-attr docutils literal notranslate"><span class="pre">__methods__</span></code></a>, <a class="reference internal" href="#inpRW.inpRW.__members__" title="inpRW.inpRW.__members__"><code class="xref py py-attr docutils literal notranslate"><span class="pre">__members__</span></code></a>, <a class="reference internal" href="#inpRW.inpRW._couplingSurfNames" title="inpRW.inpRW._couplingSurfNames"><code class="xref py py-attr docutils literal notranslate"><span class="pre">_couplingSurfNames</span></code></a>, <a class="reference internal" href="#inpRW.inpRW._kinCoupNsetNames" title="inpRW.inpRW._kinCoupNsetNames"><code class="xref py py-attr docutils literal notranslate"><span class="pre">_kinCoupNsetNames</span></code></a>,
+and <a class="reference internal" href="#inpRW.inpRW._distCoupElsetNames" title="inpRW.inpRW._distCoupElsetNames"><code class="xref py py-attr docutils literal notranslate"><span class="pre">_distCoupElsetNames</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>gkw</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><em>bool</em></a>) – If True, calls <a class="reference internal" href="_inpR/index.html#inpRW._inpR.Read._groupKeywordBlocks" title="inpRW._inpR.Read._groupKeywordBlocks"><code class="xref py py-func docutils literal notranslate"><span class="pre">_groupKeywordBlocks()</span></code></a>. Defaults to True.</p></li>
+<li><p><strong>b</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a>) – Passed to <a class="reference internal" href="_inpR/index.html#inpRW._inpR.Read._groupKeywordBlocks" title="inpRW._inpR.Read._groupKeywordBlocks"><code class="xref py py-func docutils literal notranslate"><span class="pre">_groupKeywordBlocks()</span></code></a>. See that function for details. Defaults to None.</p></li>
+<li><p><strong>startIndex</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a>) – Passed to <a class="reference internal" href="_inpR/index.html#inpRW._inpR.Read.updateObjectsPath" title="inpRW._inpR.Read.updateObjectsPath"><code class="xref py py-func docutils literal notranslate"><span class="pre">updateObjectsPath()</span></code></a>. See that function for details. Defaults to 0.</p></li>
+<li><p><strong>parentBlock</strong> (<a class="reference internal" href="../inpKeyword/index.html#inpKeyword.inpKeyword" title="inpKeyword.inpKeyword"><em>inpKeyword</em></a>) – Passed to <a class="reference internal" href="_inpR/index.html#inpRW._inpR.Read.updateObjectsPath" title="inpRW._inpR.Read.updateObjectsPath"><code class="xref py py-func docutils literal notranslate"><span class="pre">updateObjectsPath()</span></code></a>. See that function for details. Defaults to ‘’.</p></li>
+<li><p><strong>updatePaths</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><em>bool</em></a>) – Updates <a class="reference internal" href="../inpKeyword/index.html#inpKeyword.inpKeyword.path" title="inpKeyword.inpKeyword.path"><code class="xref py py-attr docutils literal notranslate"><span class="pre">path</span></code></a> in all keyword blocks after <em>startIndex</em> if True. Defaults to True.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="inpRW.inpRW.__repr__">
+<span class="sig-name descname"><span class="pre">__repr__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#inpRW.inpRW.__repr__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Produces a representation of the <a class="reference internal" href="#inpRW.inpRW" title="inpRW.inpRW"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpRW</span></code></a> instance.</p>
+<p>This representation can be called to produce another <a class="reference internal" href="#inpRW.inpRW" title="inpRW.inpRW"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpRW</span></code></a> instance. This will only include
+the arguments to <a class="reference internal" href="#inpRW.inpRW" title="inpRW.inpRW"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpRW</span></code></a> which contain non-default values. This string does not guarantee
+producing an identical <a class="reference internal" href="#inpRW.inpRW" title="inpRW.inpRW"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpRW</span></code></a> instance upon calling <a class="reference internal" href="#inpRW.inpRW.parse" title="inpRW.inpRW.parse"><code class="xref py py-func docutils literal notranslate"><span class="pre">parse()</span></code></a>, as the
+applicable attributes might have changed after <a class="reference internal" href="#inpRW.inpRW.parse" title="inpRW.inpRW.parse"><code class="xref py py-func docutils literal notranslate"><span class="pre">parse()</span></code></a> was called, and there are additional
+attributes which affect parsing which are not output by this function.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><dl class="simple">
+<dt>The form will be <code class="docutils literal notranslate"><span class="pre">inpRW(inpName='path/name',</span> <span class="pre">arg=value)</span></code>. Additional args will be included only if</dt><dd><p>their value differs from the default value.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="inpRW.inpRW.__str__">
+<span class="sig-name descname"><span class="pre">__str__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#inpRW.inpRW.__str__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Produces a string of the <a class="reference internal" href="#inpRW.inpRW" title="inpRW.inpRW"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpRW</span></code></a> instance.</p>
+<p>This string is meant to help identify the <a class="reference internal" href="#inpRW.inpRW" title="inpRW.inpRW"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpRW</span></code></a> instance. It will always include <a class="reference internal" href="#inpRW.inpRW.inpName" title="inpRW.inpRW.inpName"><code class="xref py py-attr docutils literal notranslate"><span class="pre">inpName</span></code></a>
+and <a class="reference internal" href="#inpRW.inpRW.jobSuffix" title="inpRW.inpRW.jobSuffix"><code class="xref py py-attr docutils literal notranslate"><span class="pre">jobSuffix</span></code></a>, and will include <a class="reference internal" href="#inpRW.inpRW.inputFolder" title="inpRW.inpRW.inputFolder"><code class="xref py py-attr docutils literal notranslate"><span class="pre">inputFolder</span></code></a>, <a class="reference internal" href="#inpRW.inpRW.outputFolder" title="inpRW.inpRW.outputFolder"><code class="xref py py-attr docutils literal notranslate"><span class="pre">outputFolder</span></code></a>,
+<a class="reference internal" href="#inpRW.inpRW._parentINP" title="inpRW.inpRW._parentINP"><code class="xref py py-attr docutils literal notranslate"><span class="pre">_parentINP</span></code></a>, and <a class="reference internal" href="#inpRW.inpRW._parentblock" title="inpRW.inpRW._parentblock"><code class="xref py py-attr docutils literal notranslate"><span class="pre">_parentblock</span></code></a> only if they are non-empty.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<blockquote>
+<div><p class="centered">
+<strong><strong>Attributes</strong></strong></p><dl class="py attribute">
+<dt class="sig sig-object py" id="inpRW.inpRW.delayParsingDataKws">
+<span class="sig-name descname"><span class="pre">delayParsingDataKws</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#set" title="(in Python v3.12)"><span class="pre">set</span></a></em><a class="headerlink" href="#inpRW.inpRW.delayParsingDataKws" title="Permalink to this definition">¶</a></dt>
+<dd><p>A set for the user to specify the element names which will not have their keywords parsed. The keyword names should be all lower case and include no spaces.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="inpRW.inpRW.ed">
+<span class="sig-name descname"><span class="pre">ed</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../mesh/index.html#mesh.TotalElementMesh" title="mesh.TotalElementMesh"><span class="pre">TotalElementMesh</span></a></em><a class="headerlink" href="#inpRW.inpRW.ed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Element dictionary. Identical in concept to <a class="reference internal" href="#inpRW.inpRW.nd" title="inpRW.inpRW.nd"><code class="xref py py-attr docutils literal notranslate"><span class="pre">nd</span></code></a>, but holds element information. See <a class="reference internal" href="#inpRW.inpRW.nd" title="inpRW.inpRW.nd"><code class="xref py py-attr docutils literal notranslate"><span class="pre">nd</span></code></a> for further details.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="inpRW.inpRW.fastElementParsing">
+<span class="sig-name descname"><span class="pre">fastElementParsing</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></em><a class="headerlink" href="#inpRW.inpRW.fastElementParsing" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse element blocks with the fast mode if True and if the number of nodes to define the element type is less than 10.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="inpRW.inpRW.includeBlockPaths">
+<span class="sig-name descname"><span class="pre">includeBlockPaths</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><span class="pre">list</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></em><a class="headerlink" href="#inpRW.inpRW.includeBlockPaths" title="Permalink to this definition">¶</a></dt>
+<dd><p>Contains the paths to all keyword blocks which reference child input files. This will be populated as the input file is parsed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="inpRW.inpRW.includeFileNames">
+<span class="sig-name descname"><span class="pre">includeFileNames</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><span class="pre">list</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></em><a class="headerlink" href="#inpRW.inpRW.includeFileNames" title="Permalink to this definition">¶</a></dt>
+<dd><p>Contains the names of all input files referenced by this input file. This will be populated as the input file is parsed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="inpRW.inpRW.inpKeywordArgs">
+<span class="sig-name descname"><span class="pre">inpKeywordArgs</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><span class="pre">dict</span></a></em><a class="headerlink" href="#inpRW.inpRW.inpKeywordArgs" title="Permalink to this definition">¶</a></dt>
+<dd><p>A dictionary containing the attributes from <a class="reference internal" href="#inpRW.inpRW" title="inpRW.inpRW"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpRW</span></code></a> that should be passed to the <a class="reference internal" href="../inpKeyword/index.html#inpKeyword.inpKeyword" title="inpKeyword.inpKeyword"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpKeyword</span></code></a> constructor.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="inpRW.inpRW.inpName">
+<span class="sig-name descname"><span class="pre">inpName</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></em><a class="headerlink" href="#inpRW.inpRW.inpName" title="Permalink to this definition">¶</a></dt>
+<dd><p>Name of the input file without extension.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="inpRW.inpRW.inputFolder">
+<span class="sig-name descname"><span class="pre">inputFolder</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></em><a class="headerlink" href="#inpRW.inpRW.inputFolder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Name of the folder containing the input file, populated automatically if <em>inpName</em> passed to <a class="reference internal" href="#module-inpRW" title="inpRW"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpRW</span></code></a> includes a path.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="inpRW.inpRW.jobSuffix">
+<span class="sig-name descname"><span class="pre">jobSuffix</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'_NEW</span></em><a class="headerlink" href="#inpRW.inpRW.jobSuffix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Suffix to append to each new input file. This should include the file extension.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="inpRW.inpRW.keywords">
+<span class="sig-name descname"><span class="pre">keywords</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../inpKeywordSequence/index.html#inpKeywordSequence.inpKeywordSequence" title="inpKeywordSequence.inpKeywordSequence"><span class="pre">inpKeywordSequence</span></a></em><a class="headerlink" href="#inpRW.inpRW.keywords" title="Permalink to this definition">¶</a></dt>
+<dd><p>Holds all the parsed keyword blocks. This is the main point of interaction for the user.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="inpRW.inpRW.ktridd">
+<span class="sig-name descname"><span class="pre">ktridd</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#set" title="(in Python v3.12)"><span class="pre">set</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">set()</span></em><a class="headerlink" href="#inpRW.inpRW.ktridd" title="Permalink to this definition">¶</a></dt>
+<dd><p>A <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#set" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">set</span></code></a> containing the Keywords To Remove If Data Deleted from them. Meant to be used with <a class="reference internal" href="_inpMod/index.html#inpRW._inpMod.Mod.deleteItemReferences" title="inpRW._inpMod.Mod.deleteItemReferences"><code class="xref py py-func docutils literal notranslate"><span class="pre">deleteItemReferences()</span></code></a>. Can be updated with <a class="reference internal" href="_inpMod/index.html#inpRW._inpMod.Mod.updateKTRIDD" title="inpRW._inpMod.Mod.updateKTRIDD"><code class="xref py py-func docutils literal notranslate"><span class="pre">updateKTRIDD()</span></code></a>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="inpRW.inpRW.kwg">
+<span class="sig-name descname"><span class="pre">kwg</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../csid/index.html#csid.csid" title="csid.csid"><span class="pre">csid</span></a></em><a class="headerlink" href="#inpRW.inpRW.kwg" title="Permalink to this definition">¶</a></dt>
+<dd><p>A <a class="reference internal" href="../csid/index.html#module-csid" title="csid"><code class="xref py py-class docutils literal notranslate"><span class="pre">csid</span></code></a> that groups keyword blocks by their keyword name.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="inpRW.inpRW.namedRefs">
+<span class="sig-name descname"><span class="pre">namedRefs</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../csid/index.html#csid.csid" title="csid.csid"><span class="pre">csid</span></a></em><a class="headerlink" href="#inpRW.inpRW.namedRefs" title="Permalink to this definition">¶</a></dt>
+<dd><p>A <a class="reference internal" href="../csid/index.html#module-csid" title="csid"><code class="xref py py-class docutils literal notranslate"><span class="pre">csid</span></code></a> to track references to named objects. The keys will be the names of keyword blocks which can create named references. For example, ‘NSET’. Each value will be the block which defines the named reference. This <a class="reference internal" href="../csid/index.html#module-csid" title="csid"><code class="xref py py-class docutils literal notranslate"><span class="pre">csid</span></code></a> will be populated during <a class="reference internal" href="#inpRW.inpRW.parse" title="inpRW.inpRW.parse"><code class="xref py py-func docutils literal notranslate"><span class="pre">parse()</span></code></a>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="inpRW.inpRW.nd">
+<span class="sig-name descname"><span class="pre">nd</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../mesh/index.html#mesh.TotalNodeMesh" title="mesh.TotalNodeMesh"><span class="pre">TotalNodeMesh</span></a></em><a class="headerlink" href="#inpRW.inpRW.nd" title="Permalink to this definition">¶</a></dt>
+<dd><p>Node dictionary. A dictionary type object which contains every node in the input file. <a class="reference internal" href="#inpRW.inpRW.nd" title="inpRW.inpRW.nd"><code class="xref py py-attr docutils literal notranslate"><span class="pre">nd</span></code></a> is populated from <a class="reference internal" href="../mesh/index.html#mesh.Mesh" title="mesh.Mesh"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mesh</span></code></a>, which make up the <a class="reference internal" href="../inpKeyword/index.html#inpKeyword.inpKeyword.data" title="inpKeyword.inpKeyword.data"><code class="xref py py-attr docutils literal notranslate"><span class="pre">data</span></code></a> attribute of *NODE keyword blocks. When operating on nodes, the user should access them through <a class="reference internal" href="#inpRW.inpRW.nd" title="inpRW.inpRW.nd"><code class="xref py py-attr docutils literal notranslate"><span class="pre">nd</span></code></a>. When adding new nodes, they should be added to an existing <a class="reference internal" href="../mesh/index.html#mesh.Mesh" title="mesh.Mesh"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mesh</span></code></a>, or create a new *NODE keyword block with a new <a class="reference internal" href="../inpKeyword/index.html#inpKeyword.inpKeyword.data" title="inpKeyword.inpKeyword.data"><code class="xref py py-attr docutils literal notranslate"><span class="pre">data</span></code></a>, and then update <a class="reference internal" href="#inpRW.inpRW.nd" title="inpRW.inpRW.nd"><code class="xref py py-attr docutils literal notranslate"><span class="pre">nd</span></code></a> with the <a class="reference internal" href="../inpKeyword/index.html#inpKeyword.inpKeyword.data" title="inpKeyword.inpKeyword.data"><code class="xref py py-attr docutils literal notranslate"><span class="pre">data</span></code></a> of the new block.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="inpRW.inpRW.nodesUpdatedConnectivity">
+<span class="sig-name descname"><span class="pre">nodesUpdatedConnectivity</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><span class="pre">list</span></a></em><a class="headerlink" href="#inpRW.inpRW.nodesUpdatedConnectivity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tracks nodes which have had their connectivity updated (i.e. they are connected to fewer elements than they previously were, likely due to the user running <a class="reference internal" href="_inpMod/index.html#inpRW._inpMod.Mod.deleteItemReferences" title="inpRW._inpMod.Mod.deleteItemReferences"><code class="xref py py-func docutils literal notranslate"><span class="pre">deleteItemReferences()</span></code></a>).</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="inpRW.inpRW.organize">
+<span class="sig-name descname"><span class="pre">organize</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></em><a class="headerlink" href="#inpRW.inpRW.organize" title="Permalink to this definition">¶</a></dt>
+<dd><p>If True, keyword blocks will be grouped together as parent blocks and suboptions.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="inpRW.inpRW.outputFolder">
+<span class="sig-name descname"><span class="pre">outputFolder</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></em><a class="headerlink" href="#inpRW.inpRW.outputFolder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Name of the folder to which new input files will be written, populated automatically if <em>inpName</em> passed to <a class="reference internal" href="#module-inpRW" title="inpRW"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpRW</span></code></a> includes a path.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="inpRW.inpRW.parseSubFiles">
+<span class="sig-name descname"><span class="pre">parseSubFiles</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></em><a class="headerlink" href="#inpRW.inpRW.parseSubFiles" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse sub input files if True.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="inpRW.inpRW.pd">
+<span class="sig-name descname"><span class="pre">pd</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../csid/index.html#csid.csid" title="csid.csid"><span class="pre">csid</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">csid()</span></em><a class="headerlink" href="#inpRW.inpRW.pd" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parameter dictionary, uses each variable defined in *PARAMETER block datalines as the key, the value is the evaluated result. If the user needs the value of a group of items which may reference parameters, call <a class="reference internal" href="_inpR/index.html#inpRW._inpR.Read._subParam" title="inpRW._inpR.Read._subParam"><code class="xref py py-func docutils literal notranslate"><span class="pre">_subParam()</span></code></a> on the group of objects.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="inpRW.inpRW.pktricd">
+<span class="sig-name descname"><span class="pre">pktricd</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../csid/index.html#csid.csid" title="csid.csid"><span class="pre">csid</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">csid()</span></em><a class="headerlink" href="#inpRW.inpRW.pktricd" title="Permalink to this definition">¶</a></dt>
+<dd><p>A <a class="reference internal" href="../csid/index.html#module-csid" title="csid"><code class="xref py py-class docutils literal notranslate"><span class="pre">csid</span></code></a> containing the Parent Keywords To Remove If Child Deleted. Meant to be used with <a class="reference internal" href="_inpMod/index.html#inpRW._inpMod.Mod.deleteItemReferences" title="inpRW._inpMod.Mod.deleteItemReferences"><code class="xref py py-func docutils literal notranslate"><span class="pre">deleteItemReferences()</span></code></a>. Can be set with <a class="reference internal" href="_inpMod/index.html#inpRW._inpMod.Mod.updatePKTRICD" title="inpRW._inpMod.Mod.updatePKTRICD"><code class="xref py py-func docutils literal notranslate"><span class="pre">updatePKTRICD()</span></code></a>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="inpRW.inpRW.preserveSpacing">
+<span class="sig-name descname"><span class="pre">preserveSpacing</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></em><a class="headerlink" href="#inpRW.inpRW.preserveSpacing" title="Permalink to this definition">¶</a></dt>
+<dd><p>Preserve the exact spacing in the input file if true. If that is not important, set to False for a performance improvement.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="inpRW.inpRW.rmtrailing0">
+<span class="sig-name descname"><span class="pre">rmtrailing0</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#inpRW.inpRW.rmtrailing0" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove the trailing 0s (i.e. 1.0 -&gt; 1.) to reduce file-size.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="inpRW.inpRW.ss">
+<span class="sig-name descname"><span class="pre">ss</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#inpRW.inpRW.ss" title="Permalink to this definition">¶</a></dt>
+<dd><p>Strip spaces from strings.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="inpRW.inpRW.step_paths">
+<span class="sig-name descname"><span class="pre">step_paths</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><span class="pre">list</span></a></em><a class="headerlink" href="#inpRW.inpRW.step_paths" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stores the <a class="reference internal" href="../inpKeyword/index.html#inpKeyword.inpKeyword.path" title="inpKeyword.inpKeyword.path"><code class="xref py py-attr docutils literal notranslate"><span class="pre">path</span></code></a> to every *STEP keyword block, in order of appearance in the input file.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="inpRW.inpRW.steps">
+<span class="sig-name descname"><span class="pre">steps</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../csid/index.html#csid.csid" title="csid.csid"><span class="pre">csid</span></a></em><a class="headerlink" href="#inpRW.inpRW.steps" title="Permalink to this definition">¶</a></dt>
+<dd><p>Provides quick access to the steps in <a class="reference internal" href="#inpRW.inpRW.keywords" title="inpRW.inpRW.keywords"><code class="xref py py-attr docutils literal notranslate"><span class="pre">keywords</span></code></a> if the step names are known. The key is the step name and the value is <code class="docutils literal notranslate"><span class="pre">[index</span> <span class="pre">in</span> <span class="pre">inp.sortKWs(kwg['step'])</span> <span class="pre">,</span> <span class="pre">inpKeyword]</span></code>. If a step does not have a name, the index is used for the key.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="inpRW.inpRW.useDecimal">
+<span class="sig-name descname"><span class="pre">useDecimal</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></em><a class="headerlink" href="#inpRW.inpRW.useDecimal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use <a class="reference external" href="https://docs.python.org/3/library/decimal.html#decimal.Decimal" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Decimal</span></code></a> for all floating point numbers if True. Will be True if <a class="reference internal" href="#inpRW.inpRW.preserveSpacing" title="inpRW.inpRW.preserveSpacing"><code class="xref py py-attr docutils literal notranslate"><span class="pre">preserveSpacing</span></code></a> is True.</p>
+</dd></dl>
+
+</div></blockquote>
+<blockquote>
+<div><p class="centered">
+<strong><strong>Private Attributes</strong></strong></p><dl class="py attribute">
+<dt class="sig sig-object py" id="inpRW.inpRW._ParamInInp">
+<span class="sig-name descname"><span class="pre">_ParamInInp</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#inpRW.inpRW._ParamInInp" title="Permalink to this definition">¶</a></dt>
+<dd><p>If True, indicates that *PARAMETER is a keyword block in the input file. Will be set in <a class="reference internal" href="#inpRW.inpRW.parse" title="inpRW.inpRW.parse"><code class="xref py py-func docutils literal notranslate"><span class="pre">parse()</span></code></a>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="inpRW.inpRW.__members__">
+<span class="sig-name descname"><span class="pre">__members__</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><span class="pre">list</span></a></em><a class="headerlink" href="#inpRW.inpRW.__members__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Holds all the member names of the <a class="reference internal" href="#module-inpRW" title="inpRW"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpRW</span></code></a> instance.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="inpRW.inpRW.__methods__">
+<span class="sig-name descname"><span class="pre">__methods__</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><span class="pre">list</span></a></em><a class="headerlink" href="#inpRW.inpRW.__methods__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Holds all the method names of the <a class="reference internal" href="#module-inpRW" title="inpRW"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpRW</span></code></a> instance.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="inpRW.inpRW._addSpace">
+<span class="sig-name descname"><span class="pre">_addSpace</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></em><a class="headerlink" href="#inpRW.inpRW._addSpace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a space between items when <a class="reference internal" href="#inpRW.inpRW.ss" title="inpRW.inpRW.ss"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ss</span></code></a> is True.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="inpRW.inpRW._bad_kwblock">
+<span class="sig-name descname"><span class="pre">_bad_kwblock</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><span class="pre">list</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></em><a class="headerlink" href="#inpRW.inpRW._bad_kwblock" title="Permalink to this definition">¶</a></dt>
+<dd><p>For development purposes.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="inpRW.inpRW._couplingSurfNames">
+<span class="sig-name descname"><span class="pre">_couplingSurfNames</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#set" title="(in Python v3.12)"><span class="pre">set</span></a></em><a class="headerlink" href="#inpRW.inpRW._couplingSurfNames" title="Permalink to this definition">¶</a></dt>
+<dd><p>A set to track the surface names which are used by *COUPLING keywords.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="inpRW.inpRW._curBaseStep">
+<span class="sig-name descname"><span class="pre">_curBaseStep</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../inpKeyword/index.html#inpKeyword.inpKeyword" title="inpKeyword.inpKeyword"><span class="pre">inpKeyword</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#inpRW.inpRW._curBaseStep" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tracks the current base step in the model.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="inpRW.inpRW._debug">
+<span class="sig-name descname"><span class="pre">_debug</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a></em><a class="headerlink" href="#inpRW.inpRW._debug" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stores debug mode status.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="inpRW.inpRW._delayedPlaceBlocks">
+<span class="sig-name descname"><span class="pre">_delayedPlaceBlocks</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><span class="pre">dict</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{0:</span> <span class="pre">[],</span> <span class="pre">1:</span> <span class="pre">[],</span> <span class="pre">2:</span> <span class="pre">[]}</span></em><a class="headerlink" href="#inpRW.inpRW._delayedPlaceBlocks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tracks blocks that should be parsed on later passes. Any blocks placed into <a class="reference internal" href="#inpRW.inpRW._delayedPlaceBlocks" title="inpRW.inpRW._delayedPlaceBlocks"><code class="xref py py-attr docutils literal notranslate"><span class="pre">_delayedPlaceBlocks</span></code></a> will have the data in their <a class="reference internal" href="../inpKeyword/index.html#inpKeyword.inpKeyword._inpItemsToUpdate" title="inpKeyword.inpKeyword._inpItemsToUpdate"><code class="xref py py-attr docutils literal notranslate"><span class="pre">_inpItemsToUpdate</span></code></a> inserted at the end of the <a class="reference internal" href="#inpRW.inpRW.parse" title="inpRW.inpRW.parse"><code class="xref py py-func docutils literal notranslate"><span class="pre">parse()</span></code></a> function. For example, *PARAMETER keyword blocks should have their data placed before all other blocks (loop 0), and all *NODE blocks should have their data populated before any *ELEMENT blocks are placed. Unless otherwise specified in <a class="reference internal" href="../config/index.html#config._keywordsDelayPlacingData" title="config._keywordsDelayPlacingData"><code class="xref py py-attr docutils literal notranslate"><span class="pre">_keywordsDelayPlacingData</span></code></a>, all blocks will have their data placed in loop 1.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="inpRW.inpRW._distCoupElsetNames">
+<span class="sig-name descname"><span class="pre">_distCoupElsetNames</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#set" title="(in Python v3.12)"><span class="pre">set</span></a></em><a class="headerlink" href="#inpRW.inpRW._distCoupElsetNames" title="Permalink to this definition">¶</a></dt>
+<dd><p>A set to track the elset names which are used by *DISTRIBUTING COUPLING keywords.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="inpRW.inpRW._firstItem">
+<span class="sig-name descname"><span class="pre">_firstItem</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></em><a class="headerlink" href="#inpRW.inpRW._firstItem" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tracks the first item to be written to an output input file; a new line character will not be written prior to the item if True.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="inpRW.inpRW._inpText">
+<span class="sig-name descname"><span class="pre">_inpText</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></em><a class="headerlink" href="#inpRW.inpRW._inpText" title="Permalink to this definition">¶</a></dt>
+<dd><p>Holds the raw text string of the entire input file. Will be deleted once <a class="reference internal" href="#inpRW.inpRW._kw" title="inpRW.inpRW._kw"><code class="xref py py-attr docutils literal notranslate"><span class="pre">_kw</span></code></a> is generated unless <a class="reference internal" href="#inpRW.inpRW._debug" title="inpRW.inpRW._debug"><code class="xref py py-attr docutils literal notranslate"><span class="pre">_debug</span></code></a> = True</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="inpRW.inpRW._joinPS">
+<span class="sig-name descname"><span class="pre">_joinPS</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></em><a class="headerlink" href="#inpRW.inpRW._joinPS" title="Permalink to this definition">¶</a></dt>
+<dd><p>The string which is used to join items together when writing strings from the parsed data. If <a class="reference internal" href="#inpRW.inpRW.ss" title="inpRW.inpRW.ss"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ss</span></code></a> is True, this will be ‘, ‘, else it is ‘’ (spaces are assumed to be tracked with each item in this case).</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="inpRW.inpRW._kinCoupNsetNames">
+<span class="sig-name descname"><span class="pre">_kinCoupNsetNames</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#set" title="(in Python v3.12)"><span class="pre">set</span></a></em><a class="headerlink" href="#inpRW.inpRW._kinCoupNsetNames" title="Permalink to this definition">¶</a></dt>
+<dd><p>A set to track the nset names which are used by *KINEMATIC COUPLING keywords.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="inpRW.inpRW._kw">
+<span class="sig-name descname"><span class="pre">_kw</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><span class="pre">list</span></a></em><a class="headerlink" href="#inpRW.inpRW._kw" title="Permalink to this definition">¶</a></dt>
+<dd><p>A list of strings, with each string corresponding to a keyword block. If <a class="reference internal" href="#inpRW.inpRW._debug" title="inpRW.inpRW._debug"><code class="xref py py-attr docutils literal notranslate"><span class="pre">_debug</span></code></a> = False, <a class="reference internal" href="#inpRW.inpRW._kw" title="inpRW.inpRW._kw"><code class="xref py py-attr docutils literal notranslate"><span class="pre">_kw</span></code></a> will be deleted once all blocks have been parsed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="inpRW.inpRW._kwsumFile">
+<span class="sig-name descname"><span class="pre">_kwsumFile</span></span><a class="headerlink" href="#inpRW.inpRW._kwsumFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>File object to which a summary of the parsed keyword blocks will be written. Reference <a class="reference external" href="https://docs.python.org/3/glossary.html#term-file-object" title="(in Python v3.12)"><span class="xref std std-term">file object</span></a>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="inpRW.inpRW._kwsumName">
+<span class="sig-name descname"><span class="pre">_kwsumName</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">inpName</span></em><a class="headerlink" href="#inpRW.inpRW._kwsumName" title="Permalink to this definition">¶</a></dt>
+<dd><p>Name of the file to which a summary of the parsed keyword blocks will be written.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="inpRW.inpRW._lbp">
+<span class="sig-name descname"><span class="pre">_lbp</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></em><a class="headerlink" href="#inpRW.inpRW._lbp" title="Permalink to this definition">¶</a></dt>
+<dd><p>The path to the last block in <a class="reference internal" href="#inpRW.inpRW.keywords" title="inpRW.inpRW.keywords"><code class="xref py py-attr docutils literal notranslate"><span class="pre">keywords</span></code></a>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="inpRW.inpRW._leadingcomments">
+<span class="sig-name descname"><span class="pre">_leadingcomments</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#inpRW.inpRW._leadingcomments" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stores any comments prior to the first keyword block.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="inpRW.inpRW._manBaseStep">
+<span class="sig-name descname"><span class="pre">_manBaseStep</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../inpKeyword/index.html#inpKeyword.inpKeyword" title="inpKeyword.inpKeyword"><span class="pre">inpKeyword</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#inpRW.inpRW._manBaseStep" title="Permalink to this definition">¶</a></dt>
+<dd><p>The last base step for *MANIFEST simulations.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="inpRW.inpRW._nl">
+<span class="sig-name descname"><span class="pre">_nl</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></em><a class="headerlink" href="#inpRW.inpRW._nl" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tracks the new line character used by the file. If new line characters are inconsistent, <a class="reference internal" href="#inpRW.inpRW._nl" title="inpRW.inpRW._nl"><code class="xref py py-attr docutils literal notranslate"><span class="pre">_nl</span></code></a> will be set to ‘\n’.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="inpRW.inpRW._numCpus">
+<span class="sig-name descname"><span class="pre">_numCpus</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><span class="pre">int</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#inpRW.inpRW._numCpus" title="Permalink to this definition">¶</a></dt>
+<dd><p>Indicates the number of cpus to use for multi-threaded supported tasks, which is currently parsing keyword blocks. It is not recommended to use more than 1 cpu, as the current speedup does not justify the extra hardware use.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="inpRW.inpRW._parentINP">
+<span class="sig-name descname"><span class="pre">_parentINP</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#inpRW.inpRW" title="inpRW.inpRW"><span class="pre">inpRW</span></a></em><a class="headerlink" href="#inpRW.inpRW._parentINP" title="Permalink to this definition">¶</a></dt>
+<dd><p>References the parent inp instance if this is reading a sub input file (i.e. *INCLUDE, *MANIFEST). This is needed to track some variables from the parent instance.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="inpRW.inpRW._parentblock">
+<span class="sig-name descname"><span class="pre">_parentblock</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../inpKeyword/index.html#inpKeyword.inpKeyword" title="inpKeyword.inpKeyword"><span class="pre">inpKeyword</span></a></em><a class="headerlink" href="#inpRW.inpRW._parentblock" title="Permalink to this definition">¶</a></dt>
+<dd><p>References the parent block. All keyword blocks read by a child inpRW instance will be suboptions of _parentblock.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="inpRW.inpRW._parentkws">
+<span class="sig-name descname"><span class="pre">_parentkws</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><span class="pre">list</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></em><a class="headerlink" href="#inpRW.inpRW._parentkws" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tracks the open parent keyword blocks.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="inpRW.inpRW._subP">
+<span class="sig-name descname"><span class="pre">_subP</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#inpRW.inpRW._subP" title="Permalink to this definition">¶</a></dt>
+<dd><p>When evaluating particular items, check if item is a parameter and substitute the true value. If the input file has *PARAMETER keyword block, this will be set to True automatically.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="inpRW.inpRW._subkwin">
+<span class="sig-name descname"><span class="pre">_subkwin</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><span class="pre">int</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#inpRW.inpRW._subkwin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tracks the active suboptions index.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="inpRW.inpRW._tree">
+<span class="sig-name descname"><span class="pre">_tree</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.cKDTree.html#scipy.spatial.cKDTree" title="(in SciPy v1.11.4)"><span class="pre">scipy.spatial.cKDTree</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#inpRW.inpRW._tree" title="Permalink to this definition">¶</a></dt>
+<dd><p>A KDTree of some portion of the nodes in the input file. Created via <a class="reference internal" href="_inpFind/index.html#inpRW._inpFind.Find.findCloseNodes" title="inpRW._inpFind.Find.findCloseNodes"><code class="xref py py-func docutils literal notranslate"><span class="pre">findCloseNodes()</span></code></a>.</p>
+</dd></dl>
+
+</div></blockquote>
+</dd></dl>
+
+</div></blockquote>
+</section>
+</section>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading">¶</a></h2>
+<p>All of the functions in the submodules will be accessible directly through the <a class="reference internal" href="#module-inpRW" title="inpRW"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpRW</span></code></a> instance. For example, <a class="reference internal" href="_inpR/index.html#inpRW._inpR.Read.createPathFromSequence" title="inpRW._inpR.Read.createPathFromSequence"><code class="xref py py-func docutils literal notranslate"><span class="pre">createPathFromSequence()</span></code></a>
+can be accessed via <code class="docutils literal notranslate"><span class="pre">inp.createPathFromSequence</span></code> instead of <code class="docutils literal notranslate"><span class="pre">inp._inpR.Read.createPathFromSequence</span></code>. The submodules are merely for organizational purposes.</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="_inpR/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW._inpR</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="_inpW/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW._inpW</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="_inpFind/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW._inpFind</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="_inpFindRefs/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW._inpFindRefs</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="_inpMod/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW._inpMod</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="_importedModules/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW._importedModules</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="_inpCustom/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW._inpCustom</span></code></a></li>
+</ul>
+</div>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../inpRW_toc.html">
+              <img class="logo" src="../../_static/3DS_SIMULIA_Logotype_RGB_BlueSteel.png" alt="Logo", style="border-radius:5px"/>
+            </a></p>
+  <div>
+    <h3><a href="../../inpRW_toc.html">Local Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW</span></code></a><ul>
+<li><a class="reference internal" href="#package-contents">Package Contents</a><ul>
+<li><a class="reference internal" href="#classes">Classes</a><ul>
+<li><a class="reference internal" href="#inpRW.inpRW"><code class="docutils literal notranslate"><span class="pre">inpRW</span></code></a><ul>
+<li><a class="reference internal" href="#inpRW.inpRW.__init__"><code class="docutils literal notranslate"><span class="pre">inpRW.__init__()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW.parse"><code class="docutils literal notranslate"><span class="pre">inpRW.parse()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW.printDocs"><code class="docutils literal notranslate"><span class="pre">inpRW.printDocs()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW.updateInp"><code class="docutils literal notranslate"><span class="pre">inpRW.updateInp()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW.__repr__"><code class="docutils literal notranslate"><span class="pre">inpRW.__repr__()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW.__str__"><code class="docutils literal notranslate"><span class="pre">inpRW.__str__()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW.delayParsingDataKws"><code class="docutils literal notranslate"><span class="pre">inpRW.delayParsingDataKws</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW.ed"><code class="docutils literal notranslate"><span class="pre">inpRW.ed</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW.fastElementParsing"><code class="docutils literal notranslate"><span class="pre">inpRW.fastElementParsing</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW.includeBlockPaths"><code class="docutils literal notranslate"><span class="pre">inpRW.includeBlockPaths</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW.includeFileNames"><code class="docutils literal notranslate"><span class="pre">inpRW.includeFileNames</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW.inpKeywordArgs"><code class="docutils literal notranslate"><span class="pre">inpRW.inpKeywordArgs</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW.inpName"><code class="docutils literal notranslate"><span class="pre">inpRW.inpName</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW.inputFolder"><code class="docutils literal notranslate"><span class="pre">inpRW.inputFolder</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW.jobSuffix"><code class="docutils literal notranslate"><span class="pre">inpRW.jobSuffix</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW.keywords"><code class="docutils literal notranslate"><span class="pre">inpRW.keywords</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW.ktridd"><code class="docutils literal notranslate"><span class="pre">inpRW.ktridd</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW.kwg"><code class="docutils literal notranslate"><span class="pre">inpRW.kwg</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW.namedRefs"><code class="docutils literal notranslate"><span class="pre">inpRW.namedRefs</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW.nd"><code class="docutils literal notranslate"><span class="pre">inpRW.nd</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW.nodesUpdatedConnectivity"><code class="docutils literal notranslate"><span class="pre">inpRW.nodesUpdatedConnectivity</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW.organize"><code class="docutils literal notranslate"><span class="pre">inpRW.organize</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW.outputFolder"><code class="docutils literal notranslate"><span class="pre">inpRW.outputFolder</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW.parseSubFiles"><code class="docutils literal notranslate"><span class="pre">inpRW.parseSubFiles</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW.pd"><code class="docutils literal notranslate"><span class="pre">inpRW.pd</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW.pktricd"><code class="docutils literal notranslate"><span class="pre">inpRW.pktricd</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW.preserveSpacing"><code class="docutils literal notranslate"><span class="pre">inpRW.preserveSpacing</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW.rmtrailing0"><code class="docutils literal notranslate"><span class="pre">inpRW.rmtrailing0</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW.ss"><code class="docutils literal notranslate"><span class="pre">inpRW.ss</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW.step_paths"><code class="docutils literal notranslate"><span class="pre">inpRW.step_paths</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW.steps"><code class="docutils literal notranslate"><span class="pre">inpRW.steps</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW.useDecimal"><code class="docutils literal notranslate"><span class="pre">inpRW.useDecimal</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW._ParamInInp"><code class="docutils literal notranslate"><span class="pre">inpRW._ParamInInp</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW.__members__"><code class="docutils literal notranslate"><span class="pre">inpRW.__members__</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW.__methods__"><code class="docutils literal notranslate"><span class="pre">inpRW.__methods__</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW._addSpace"><code class="docutils literal notranslate"><span class="pre">inpRW._addSpace</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW._bad_kwblock"><code class="docutils literal notranslate"><span class="pre">inpRW._bad_kwblock</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW._couplingSurfNames"><code class="docutils literal notranslate"><span class="pre">inpRW._couplingSurfNames</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW._curBaseStep"><code class="docutils literal notranslate"><span class="pre">inpRW._curBaseStep</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW._debug"><code class="docutils literal notranslate"><span class="pre">inpRW._debug</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW._delayedPlaceBlocks"><code class="docutils literal notranslate"><span class="pre">inpRW._delayedPlaceBlocks</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW._distCoupElsetNames"><code class="docutils literal notranslate"><span class="pre">inpRW._distCoupElsetNames</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW._firstItem"><code class="docutils literal notranslate"><span class="pre">inpRW._firstItem</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW._inpText"><code class="docutils literal notranslate"><span class="pre">inpRW._inpText</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW._joinPS"><code class="docutils literal notranslate"><span class="pre">inpRW._joinPS</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW._kinCoupNsetNames"><code class="docutils literal notranslate"><span class="pre">inpRW._kinCoupNsetNames</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW._kw"><code class="docutils literal notranslate"><span class="pre">inpRW._kw</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW._kwsumFile"><code class="docutils literal notranslate"><span class="pre">inpRW._kwsumFile</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW._kwsumName"><code class="docutils literal notranslate"><span class="pre">inpRW._kwsumName</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW._lbp"><code class="docutils literal notranslate"><span class="pre">inpRW._lbp</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW._leadingcomments"><code class="docutils literal notranslate"><span class="pre">inpRW._leadingcomments</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW._manBaseStep"><code class="docutils literal notranslate"><span class="pre">inpRW._manBaseStep</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW._nl"><code class="docutils literal notranslate"><span class="pre">inpRW._nl</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW._numCpus"><code class="docutils literal notranslate"><span class="pre">inpRW._numCpus</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW._parentINP"><code class="docutils literal notranslate"><span class="pre">inpRW._parentINP</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW._parentblock"><code class="docutils literal notranslate"><span class="pre">inpRW._parentblock</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW._parentkws"><code class="docutils literal notranslate"><span class="pre">inpRW._parentkws</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW._subP"><code class="docutils literal notranslate"><span class="pre">inpRW._subP</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW._subkwin"><code class="docutils literal notranslate"><span class="pre">inpRW._subkwin</span></code></a></li>
+<li><a class="reference internal" href="#inpRW.inpRW._tree"><code class="docutils literal notranslate"><span class="pre">inpRW._tree</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+<h3><a href="../../inpRW_toc.html">Global Table of Contents</a></h3>
+<p class="caption" role="heading"><span class="caption-text">User Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Introduction.html">inpRW Utility Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Project-Background.html">Project Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Installation-and-Usage.html">Installation and Usage Instructions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Tests.html">inpRW Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Tests.html#running-inprw-tests">Running inpRW Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/inpKeyword-Basics.html">inpKeyword Basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Strings_Integers_and_Decimals.html">Strings, Integers, and Decimals</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Important-inpRW-Attributes.html">Important <code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW</span></code> Attributes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Miscellaneous-Usage-hints.html">Miscellaneous Usage Hints</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Example-Scenarios.html">Example Scenarios</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/glossary.html">Glossary</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="_inpR/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW._inpR</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="_inpW/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW._inpW</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="_inpFind/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW._inpFind</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="_inpFindRefs/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW._inpFindRefs</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="_inpMod/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW._inpMod</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="_importedModules/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW._importedModules</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="_inpCustom/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW._inpCustom</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../centroid/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">centroid</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../config/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">config</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../config_re/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">config_re</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../csid/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">csid</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../eval2/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">eval2</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../elType/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">elType</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inpDecimal/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpDecimal</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inpInt/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpInt</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inpKeyword/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpKeyword</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inpKeywordHelper/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpKeywordHelper</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inpKeywordSequence/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpKeywordSequence</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inpRWErrors/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRWErrors</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inpString/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpString</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../mesh/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">mesh</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../misc_functions/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">misc_functions</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../NoneSort/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">NoneSort</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../printer/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">printer</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../repr2/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">repr2</span></code></a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Update Notes</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Update-Notes/index.html">Update Notes</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Legal Notices and Usage Disclaimer</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../legal_notices/Legal_Notices_and_Usage_Disclaimer.html">Legal Notices and Usage Disclaimer</a></li>
+</ul>
+
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="../../user/glossary.html"
+                          title="previous chapter">Glossary</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="_inpR/index.html"
+                          title="next chapter"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW._inpR</span></code></a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/autoapi/inpRW/index.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>  
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="_inpR/index.html" title="inpRW._inpR"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../../user/glossary.html" title="Glossary"
+             >previous</a> |</li>
+          <li><img src="../../_static/icon-116-3dx-apps.svg" alt="python logo" style="vertical-align: middle; margin-top: -1px"/></li>
+          <li><a href="inpRW_toc.html"></a> &#187;</li>
+          <li class="switchers">
+            <div class="language_switcher_placeholder"></div>
+            <div class="version_switcher_placeholder"></div>
+          </li>
+          <li>
+              
+              <a href="../../inpRW_toc.html">inpRW 2023.10.6 documentation</a> &#187;
+              
+          </li>
+        <li class="nav-item nav-item-this"><a href=""><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW</span></code></a></li>
+                <li class="right">
+                    
+
+    <div class="inline-search" role="search">
+        <form class="inline-search" action="../../search.html" method="get">
+          <input placeholder="Quick search" aria-label="Quick search" type="text" name="q" />
+          <input type="submit" value="Go" />
+          <input type="hidden" name="check_keywords" value="yes" />
+          <input type="hidden" name="area" value="default" />
+        </form>
+    </div>
+                     |
+                </li>
+            
+      </ul>
+    </div>  
+    <div class="footer">
+    &copy; Copyright 2023, Dassault Systèmes Simulia Corp.
+     <a href="../../_static/legal_notices.pdf" >inpRW Legal Notices</a>.<br />
+     <a href="../../_static/Read_Disclaimer_First.txt" >inpRW Usage Disclaimer</a>.<br />
+    Last updated on Nov 21, 2023.
+    <a href="https://r1132100503382-eu1-3dswym.3dexperience.3ds.com/#community:39/post:nE1VLzylQoKgfG2wekOpFg">Found a bug</a>?
+    </div>
+
+  </body>
+</html>

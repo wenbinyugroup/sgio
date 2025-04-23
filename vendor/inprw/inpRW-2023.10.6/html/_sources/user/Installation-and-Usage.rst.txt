@@ -1,0 +1,67 @@
+Installation and Usage Instructions
+===================================
+
+There are three options for installing inpRW. First, a packaged version with a convenient installer is available.
+The installer can be used to install inpRW to the **3D**\ EXPERIENCE Python 3.7 interpreter.
+
+Second, if you wish to install inpRW to a different Python interpreter, you can use :term:`pip` to install inpRW from the .whl file.
+
+Third, if you do not wish to install :mod:`inpRW` to a Python interpreter (or venv), you can simply extract the source files from the .whl and set the PYTHONPATH variable or modify sys.path prior to importing inpRW.
+
+Option 1: Using install_to_3DEXPERIENCE.bat
+###########################################
+
+inpRW can be easily installed to a **3D**\ EXPERIENCE Python 3.7 interpreter using install_to_3DEXPERIENCE.bat. install_to_3DEXPERIENCE.bat 
+will check for admin rights and relaunch the command if it does not have them, will open a file-browser so the user can specify the 
+version folder of **3D**\ EXPERIENCE (the script will then 
+find the 3.7 python.exe for that installation), and will finally install :mod:`numpy`, :mod:`scipy` (requirements
+of :mod:`inpRW`) and :mod:`inpRW`.
+
+Option 2: Install inpRW from .whl
+##################################
+
+If inpRW is to be installed and/or upgraded for a different Python installation, the command is ::
+
+    PYTHON -m pip install inpRW*.whl --upgrade
+
+PYTHON should refer to the desired Python executable, which should be at least version 3.7. This is essentially what install.bat does, although that file performs some extra tasks like finding the specific Python interpreter used by the Keyword Edit feature of **3D**\ EXPERIENCE. 
+
+Make sure :term:`pip` is upgraded first, or there might be problems installing :mod:`inpRW`. The following command will work::
+
+    PYTHON -m pip install --upgrade pip
+
+Option 3: Extract inpRW from .whl
+##################################
+
+If you do not want to install inpRW, you can instead extract all the files from inpRW*.whl to a directory; we'll call it inpRW_src for this example. You will then need to tell the Python interpreter where to find the utility. You can do this in several ways; here are a few examples for Windows systems:
+
+* Set the PYTHONPATH variable to the inpRW_src directory. You can set this globally, or add the commands to a .bat file prior to calling the Python interpreter. Example: ``set PYTHONPATH=PATH_TO\inpRW_src``
+* Modify sys.path to include the path to inpRW_src. This can be done in a Python script before importing inpRW. Example: ``sys.path.insert(0, 'PATH_TO\inpRW_src')``.
+
+Calling inpRW
+##############
+
+Have any Abaqus input file available and open a Python interpreter in the directory with the input file. Create an :class:`inpRW` class object with the following commands::
+
+    import inpRW
+    inp = inpRW.inpRW('inputFileName.inp')
+    inp.parse()
+
+Please see the :ref:`API Reference` for all the available functions and their syntax. 
+
+.. _Using-inpRW-with-Keyword-Edit-in-3DEXPERIENCE:
+
+Using inpRW with Keyword Edit in **3D**\ EXPERIENCE
+########################################################
+
+Once inpRW has been installed to **3D**\ EXPERIENCE, you can use inpRW with the Keyword Edit functionality of the Mechanical Scenario
+app. You'll need to first write a Python script which will edit the input file, and then you can upload that file to **3D**\ EXPERIENCE
+using the Keyword Edit tool. See the `documentation <https://help.3ds.com/HelpDS.aspx?P=dsdoc&L=english&contextscope=cloud&F=SimMecsUserMap/mpm-m-KeywordEditor-sb.htm>`_ for more details on Keyword Editing.
+
+Here's a brief video showing how to install and use inpRW with the Keyword Edit feature of **3D**\ EXPERIENCE.
+
+.. raw:: html
+    
+    <video width="960" height="540" controls>
+       <source src="../_static/inpRW_with_3DEXPERIENCE.mp4" type="video/mp4"> 
+    </video>

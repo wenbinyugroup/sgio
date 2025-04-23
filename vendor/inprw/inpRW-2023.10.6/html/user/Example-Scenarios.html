@@ -1,0 +1,796 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>Example Scenarios &#8212; inpRW 2023.10.6 documentation</title><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pydoctheme.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles.css" />
+    
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
+    
+    <script src="../_static/sidebar.js"></script>
+    
+    <link rel="shortcut icon" href="../_static/3DS_SIMULIA_Blue_Icon_32.png"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Glossary" href="glossary.html" />
+    <link rel="prev" title="Miscellaneous Usage Hints" href="Miscellaneous-Usage-hints.html" /><link rel="shortcut icon" type="image/png" href="../_static/icon-116-3dx-apps.svg" />
+            <script type="text/javascript" src="../_static/copybutton.js"></script>
+            <script type="text/javascript" src="../_static/menu.js"></script> 
+  </head>
+<body>
+<div class="mobile-nav">
+    <input type="checkbox" id="menuToggler" class="toggler__input" aria-controls="navigation"
+           aria-pressed="false" aria-expanded="false" role="button" aria-label="Menu" />
+    <label for="menuToggler" class="toggler__label">
+        <span></span>
+    </label>
+    <nav class="nav-content" role="navigation">
+         <a href="inpRW_toc.html" class="nav-logo">
+             <img src="../_static/icon-116-3dx-apps.svg" alt="Logo"/>
+         </a>
+        <div class="version_switcher_placeholder"></div>
+        <form role="search" class="search" action="../search.html" method="get">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" class="search-icon">
+                <path fill-rule="nonzero"
+                        d="M15.5 14h-.79l-.28-.27a6.5 6.5 0 001.48-5.34c-.47-2.78-2.79-5-5.59-5.34a6.505 6.505 0 00-7.27 7.27c.34 2.8 2.56 5.12 5.34 5.59a6.5 6.5 0 005.34-1.48l.27.28v.79l4.25 4.25c.41.41 1.08.41 1.49 0 .41-.41.41-1.08 0-1.49L15.5 14zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" fill="#444"></path>
+            </svg>
+            <input type="text" name="q" aria-label="Quick search"/>
+            <input type="submit" value="Go"/>
+        </form>
+    </nav>
+    <div class="menu-wrapper">
+        <nav class="menu" role="navigation" aria-label="main navigation">
+            <div class="language_switcher_placeholder"></div>
+            <p class="logo">
+                <a href="../index.html">
+                <img class="logo" src="../_static/3DS_SIMULIA_Logotype_RGB_BlueSteel.png" alt="Logo" style="border-radius:5px"/>
+                </a>
+            </p>
+  <div>
+    <h3><a href="../inpRW_toc.html">Local Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">Example Scenarios</a><ul>
+<li><a class="reference internal" href="#example-input-file">Example input file</a></li>
+<li><a class="reference internal" href="#modifying-data-in-an-existing-inpkeyword-block">Modifying data in an existing inpKeyword block</a></li>
+<li><a class="reference internal" href="#creating-a-new-keyword-block-and-inserting-it-into-the-inp-data-structure">Creating a new keyword block and inserting it into the inp data structure</a></li>
+<li><a class="reference internal" href="#deleting-a-keyword-block">Deleting a keyword block</a></li>
+<li><a class="reference internal" href="#writing-the-new-input-file">Writing the new input file</a></li>
+<li><a class="reference internal" href="#complete-python-script">Complete Python Script</a></li>
+<li><a class="reference internal" href="#modified-input-file">Modified Input File</a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+<h3><a href="../inpRW_toc.html">Global Table of Contents</a></h3>
+<p class="caption" role="heading"><span class="caption-text">User Documentation</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="Introduction.html">inpRW Utility Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Project-Background.html">Project Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Installation-and-Usage.html">Installation and Usage Instructions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Tests.html">inpRW Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Tests.html#running-inprw-tests">Running inpRW Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="inpKeyword-Basics.html">inpKeyword Basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Strings_Integers_and_Decimals.html">Strings, Integers, and Decimals</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Important-inpRW-Attributes.html">Important <code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW</span></code> Attributes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Miscellaneous-Usage-hints.html">Miscellaneous Usage Hints</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Example Scenarios</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossary.html">Glossary</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/inpRW/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/centroid/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">centroid</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/config/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">config</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/config_re/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">config_re</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/csid/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">csid</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/eval2/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">eval2</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/elType/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">elType</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/inpDecimal/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpDecimal</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/inpInt/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpInt</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/inpKeyword/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpKeyword</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/inpKeywordHelper/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpKeywordHelper</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/inpKeywordSequence/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpKeywordSequence</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/inpRWErrors/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRWErrors</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/inpString/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpString</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/mesh/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">mesh</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/misc_functions/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">misc_functions</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/NoneSort/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">NoneSort</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/printer/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">printer</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/repr2/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">repr2</span></code></a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Update Notes</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Update-Notes/index.html">Update Notes</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Legal Notices and Usage Disclaimer</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../legal_notices/Legal_Notices_and_Usage_Disclaimer.html">Legal Notices and Usage Disclaimer</a></li>
+</ul>
+
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="Miscellaneous-Usage-hints.html"
+                          title="previous chapter">Miscellaneous Usage Hints</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="glossary.html"
+                          title="next chapter">Glossary</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/user/Example-Scenarios.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </nav>
+    </div>
+</div>
+  
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="glossary.html" title="Glossary"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="Miscellaneous-Usage-hints.html" title="Miscellaneous Usage Hints"
+             accesskey="P">previous</a> |</li>
+          <li><img src="../_static/icon-116-3dx-apps.svg" alt="python logo" style="vertical-align: middle; margin-top: -1px"/></li>
+          <li><a href="inpRW_toc.html"></a> &#187;</li>
+          <li class="switchers">
+            <div class="language_switcher_placeholder"></div>
+            <div class="version_switcher_placeholder"></div>
+          </li>
+          <li>
+              
+              <a href="../inpRW_toc.html">inpRW 2023.10.6 documentation</a> &#187;
+              
+          </li>
+        <li class="nav-item nav-item-this"><a href="">Example Scenarios</a></li>
+                <li class="right">
+                    
+
+    <div class="inline-search" role="search">
+        <form class="inline-search" action="../search.html" method="get">
+          <input placeholder="Quick search" aria-label="Quick search" type="text" name="q" />
+          <input type="submit" value="Go" />
+          <input type="hidden" name="check_keywords" value="yes" />
+          <input type="hidden" name="area" value="default" />
+        </form>
+    </div>
+                     |
+                </li>
+            
+      </ul>
+    </div>    
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="example-scenarios">
+<h1>Example Scenarios<a class="headerlink" href="#example-scenarios" title="Permalink to this heading">¶</a></h1>
+<p>This guide is intended to show some common and simple operations that can be performed with inpRW.
+It will introduce you to some of the key functions, but it does not provide the full documentation
+for these functions. That information can be found in the <a class="reference internal" href="../inpRW_toc.html#api-reference"><span class="std std-ref">API Reference</span></a>.</p>
+<section id="example-input-file">
+<h2>Example input file<a class="headerlink" href="#example-input-file" title="Permalink to this heading">¶</a></h2>
+<p>This example input file was created in Abaqus/CAE and will be used for all examples mentioned in
+this article. To follow along, copy the text of the input file and save it as <strong>example_inp.inp</strong>.</p>
+<details>
+<summary>Expand to see example_inp.inp</summary><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span><span class="n">Heading</span>
+<span class="o">**</span> <span class="n">Job</span> <span class="n">name</span><span class="p">:</span> <span class="n">example_inp</span> <span class="n">Model</span> <span class="n">name</span><span class="p">:</span> <span class="n">Model</span><span class="o">-</span><span class="mi">1</span>
+<span class="o">**</span> <span class="n">Generated</span> <span class="n">by</span><span class="p">:</span> <span class="n">Abaqus</span><span class="o">/</span><span class="n">CAE</span> <span class="mf">2021.</span><span class="n">HF9</span>
+<span class="o">*</span><span class="n">Preprint</span><span class="p">,</span> <span class="n">echo</span><span class="o">=</span><span class="n">NO</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="n">NO</span><span class="p">,</span> <span class="n">history</span><span class="o">=</span><span class="n">NO</span><span class="p">,</span> <span class="n">contact</span><span class="o">=</span><span class="n">NO</span>
+<span class="o">**</span> <span class="o">----------------------------------------------------------------</span>
+<span class="o">**</span>
+<span class="o">**</span> <span class="n">PART</span> <span class="n">INSTANCE</span><span class="p">:</span> <span class="n">Part</span><span class="o">-</span><span class="mi">1</span><span class="o">-</span><span class="mi">1</span>
+<span class="o">**</span>
+<span class="o">*</span><span class="n">Node</span>
+    <span class="mi">1</span><span class="p">,</span>           <span class="mf">0.</span><span class="p">,</span>           <span class="mf">0.</span><span class="p">,</span>           <span class="mf">0.</span>
+    <span class="mi">2</span><span class="p">,</span>           <span class="mf">5.</span><span class="p">,</span>           <span class="mf">0.</span><span class="p">,</span>           <span class="mf">0.</span>
+    <span class="mi">3</span><span class="p">,</span>           <span class="mf">0.</span><span class="p">,</span>           <span class="mf">5.</span><span class="p">,</span>           <span class="mf">0.</span>
+    <span class="mi">4</span><span class="p">,</span>           <span class="mf">5.</span><span class="p">,</span>           <span class="mf">5.</span><span class="p">,</span>           <span class="mf">0.</span>
+<span class="o">*</span><span class="n">Element</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">S4R</span>
+<span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">3</span>
+<span class="o">*</span><span class="n">Nset</span><span class="p">,</span> <span class="n">nset</span><span class="o">=</span><span class="n">Part</span><span class="o">-</span><span class="mi">1</span><span class="o">-</span><span class="mi">1</span><span class="n">_shell_set</span><span class="p">,</span> <span class="n">generate</span>
+<span class="mi">1</span><span class="p">,</span>  <span class="mi">4</span><span class="p">,</span>  <span class="mi">1</span>
+<span class="o">*</span><span class="n">Elset</span><span class="p">,</span> <span class="n">elset</span><span class="o">=</span><span class="n">Part</span><span class="o">-</span><span class="mi">1</span><span class="o">-</span><span class="mi">1</span><span class="n">_shell_set</span>
+<span class="mi">1</span><span class="p">,</span>
+<span class="o">**</span> <span class="n">Section</span><span class="p">:</span> <span class="n">shell_section</span>
+<span class="o">*</span><span class="n">Shell</span> <span class="n">Section</span><span class="p">,</span> <span class="n">elset</span><span class="o">=</span><span class="n">Part</span><span class="o">-</span><span class="mi">1</span><span class="o">-</span><span class="mi">1</span><span class="n">_shell_set</span><span class="p">,</span> <span class="n">material</span><span class="o">=</span><span class="n">steel</span>
+<span class="mf">0.5</span><span class="p">,</span> <span class="mi">5</span>
+<span class="o">*</span><span class="n">System</span>
+<span class="o">*</span><span class="n">Nset</span><span class="p">,</span> <span class="n">nset</span><span class="o">=</span><span class="n">Set</span><span class="o">-</span><span class="mi">2</span>
+<span class="mi">2</span><span class="p">,</span>
+<span class="o">*</span><span class="n">Nset</span><span class="p">,</span> <span class="n">nset</span><span class="o">=</span><span class="n">Set</span><span class="o">-</span><span class="mi">3</span>
+<span class="mi">3</span><span class="p">,</span>
+<span class="o">*</span><span class="n">Nset</span><span class="p">,</span> <span class="n">nset</span><span class="o">=</span><span class="n">Set</span><span class="o">-</span><span class="mi">4</span>
+<span class="mi">2</span><span class="p">,</span> <span class="mi">4</span>
+<span class="o">*</span><span class="n">Nset</span><span class="p">,</span> <span class="n">nset</span><span class="o">=</span><span class="n">origin</span>
+<span class="mi">1</span><span class="p">,</span>
+<span class="o">**</span>
+<span class="o">**</span> <span class="n">MATERIALS</span>
+<span class="o">**</span>
+<span class="o">*</span><span class="n">Material</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">steel</span>
+<span class="o">*</span><span class="n">Elastic</span>
+<span class="mf">210000.</span><span class="p">,</span> <span class="mf">0.3</span>
+<span class="o">**</span>
+<span class="o">**</span> <span class="n">BOUNDARY</span> <span class="n">CONDITIONS</span>
+<span class="o">**</span>
+<span class="o">**</span> <span class="n">Name</span><span class="p">:</span> <span class="n">BC</span><span class="o">-</span><span class="mi">2</span> <span class="n">Type</span><span class="p">:</span> <span class="n">Displacement</span><span class="o">/</span><span class="n">Rotation</span>
+<span class="o">*</span><span class="n">Boundary</span>
+<span class="n">Set</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span>
+<span class="n">Set</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span>
+<span class="n">Set</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">4</span>
+<span class="n">Set</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">5</span>
+<span class="n">Set</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">6</span>
+<span class="o">**</span> <span class="n">Name</span><span class="p">:</span> <span class="n">BC</span><span class="o">-</span><span class="mi">3</span> <span class="n">Type</span><span class="p">:</span> <span class="n">Displacement</span><span class="o">/</span><span class="n">Rotation</span>
+<span class="o">*</span><span class="n">Boundary</span>
+<span class="n">Set</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span>
+<span class="n">Set</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span>
+<span class="n">Set</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">4</span>
+<span class="n">Set</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">5</span>
+<span class="n">Set</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">6</span>
+<span class="o">**</span> <span class="n">Name</span><span class="p">:</span> <span class="n">fix_origin</span> <span class="n">Type</span><span class="p">:</span> <span class="n">Displacement</span><span class="o">/</span><span class="n">Rotation</span>
+<span class="o">*</span><span class="n">Boundary</span>
+<span class="n">origin</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span>
+<span class="n">origin</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span>
+<span class="n">origin</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span>
+<span class="n">origin</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">4</span>
+<span class="n">origin</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">5</span>
+<span class="n">origin</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">6</span>
+<span class="o">**</span> <span class="o">----------------------------------------------------------------</span>
+<span class="o">**</span>
+<span class="o">**</span> <span class="n">STEP</span><span class="p">:</span> <span class="n">Step</span><span class="o">-</span><span class="mi">1</span>
+<span class="o">**</span>
+<span class="o">*</span><span class="n">Step</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">Step</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">nlgeom</span><span class="o">=</span><span class="n">YES</span>
+<span class="o">*</span><span class="n">Static</span>
+<span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">1e-05</span><span class="p">,</span> <span class="mf">1.</span>
+<span class="o">**</span>
+<span class="o">**</span> <span class="n">BOUNDARY</span> <span class="n">CONDITIONS</span>
+<span class="o">**</span>
+<span class="o">**</span> <span class="n">Name</span><span class="p">:</span> <span class="n">Load</span> <span class="n">Type</span><span class="p">:</span> <span class="n">Displacement</span><span class="o">/</span><span class="n">Rotation</span>
+<span class="o">*</span><span class="n">Boundary</span>
+<span class="n">Set</span><span class="o">-</span><span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">0.1</span>
+<span class="o">**</span>
+<span class="o">**</span> <span class="n">OUTPUT</span> <span class="n">REQUESTS</span>
+<span class="o">**</span>
+<span class="o">*</span><span class="n">Restart</span><span class="p">,</span> <span class="n">write</span><span class="p">,</span> <span class="n">frequency</span><span class="o">=</span><span class="mi">0</span>
+<span class="o">*</span><span class="n">Output</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">frequency</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">variable</span><span class="o">=</span><span class="n">PRESELECT</span>
+<span class="o">**</span>
+<span class="o">**</span> <span class="n">HISTORY</span> <span class="n">OUTPUT</span><span class="p">:</span> <span class="n">H</span><span class="o">-</span><span class="n">Output</span><span class="o">-</span><span class="mi">1</span>
+<span class="o">**</span>
+<span class="o">*</span><span class="n">End</span> <span class="n">Step</span>
+<span class="o">**</span> <span class="o">----------------------------------------------------------------</span>
+<span class="o">**</span>
+<span class="o">**</span> <span class="n">STEP</span><span class="p">:</span> <span class="n">Step</span><span class="o">-</span><span class="mi">2</span>
+<span class="o">**</span>
+<span class="o">*</span><span class="n">Step</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">Step</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="n">nlgeom</span><span class="o">=</span><span class="n">YES</span>
+<span class="o">*</span><span class="n">Static</span>
+<span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">1e-05</span><span class="p">,</span> <span class="mf">1.</span>
+<span class="o">**</span>
+<span class="o">**</span> <span class="n">OUTPUT</span> <span class="n">REQUESTS</span>
+<span class="o">**</span>
+<span class="o">*</span><span class="n">Restart</span><span class="p">,</span> <span class="n">write</span><span class="p">,</span> <span class="n">frequency</span><span class="o">=</span><span class="mi">0</span>
+<span class="o">*</span><span class="n">Output</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">frequency</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">variable</span><span class="o">=</span><span class="n">PRESELECT</span>
+<span class="o">**</span>
+<span class="o">**</span> <span class="n">HISTORY</span> <span class="n">OUTPUT</span><span class="p">:</span> <span class="n">H</span><span class="o">-</span><span class="n">Output</span><span class="o">-</span><span class="mi">1</span>
+<span class="o">**</span>
+<span class="o">*</span><span class="n">End</span> <span class="n">Step</span>
+</pre></div>
+</div>
+</details><p>Then run the following commands to generate the inp object:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">inpRW</span>
+
+<span class="n">inp</span> <span class="o">=</span> <span class="n">inpRW</span><span class="o">.</span><span class="n">inpRW</span><span class="p">(</span><span class="s1">&#39;example_inp.inp&#39;</span><span class="p">,</span> <span class="n">preserveSpacing</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">useDecimal</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">organize</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">inp</span><span class="o">.</span><span class="n">parse</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>You will obviously need to know the syntax of any keywords you wish to modify or create, so you will
+need to use the <a class="reference external" href="https://help.3ds.com/2022/English/DSSIMULIA_Established/SIMACAEKEYRefMap/simakey-c-ov.htm?contextscope=all&amp;id=38209adfa4364bc6ab0bb6e8eb323815">Abaqus Keywords Reference Guide</a>
+to find this information.</p>
+<p>This guide will use Python’s 0-based indexing for all such numbers.</p>
+</section>
+<section id="modifying-data-in-an-existing-inpkeyword-block">
+<h2>Modifying data in an existing inpKeyword block<a class="headerlink" href="#modifying-data-in-an-existing-inpkeyword-block" title="Permalink to this heading">¶</a></h2>
+<p>In this example, we will change the initial increment size in Step-1, and set the INC parameter of Step-1. We will
+use the following steps to accomplish this:</p>
+<ul class="simple">
+<li><p>Find the <a class="reference internal" href="../autoapi/inpKeyword/index.html#module-inpKeyword" title="inpKeyword"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpKeyword</span></code></a> blocks to modify</p></li>
+<li><p>Modify the appropriate fields</p></li>
+</ul>
+<p>First, we will change the initial increment size in Step-1. We need to find the <a class="reference internal" href="../autoapi/inpKeyword/index.html#module-inpKeyword" title="inpKeyword"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpKeyword</span></code></a> block for Step-1.
+In general, we can use <a class="reference internal" href="../autoapi/inpRW/_inpFind/index.html#inpRW._inpFind.Find.findKeyword" title="inpRW._inpFind.Find.findKeyword"><code class="xref py py-func docutils literal notranslate"><span class="pre">findKeyword()</span></code></a> to find a specific keyword block. However, <strong>inp</strong> has
+two attributes which are shortcuts for locating steps. <a class="reference internal" href="../autoapi/inpRW/index.html#inpRW.inpRW.steps" title="inpRW.inpRW.steps"><code class="xref py py-attr docutils literal notranslate"><span class="pre">steps</span></code></a> is a case- and space-insensitive
+dictionary (<a class="reference internal" href="../autoapi/csid/index.html#module-csid" title="csid"><code class="xref py py-class docutils literal notranslate"><span class="pre">csid</span></code></a>) that uses the step name as the key. <a class="reference internal" href="../autoapi/inpRW/index.html#inpRW.inpRW.kwg" title="inpRW.inpRW.kwg"><code class="xref py py-attr docutils literal notranslate"><span class="pre">kwg</span></code></a> is a <a class="reference internal" href="../autoapi/csid/index.html#module-csid" title="csid"><code class="xref py py-class docutils literal notranslate"><span class="pre">csid</span></code></a> with keys
+corresponding to the unique keyword names in the input file. For example, <a class="reference internal" href="../autoapi/inpRW/index.html#inpRW.inpRW.kwg" title="inpRW.inpRW.kwg"><code class="xref py py-attr docutils literal notranslate"><span class="pre">inp.kwg['step']</span></code></a>
+is a list with all the *STEP keyword blocks, in the order they appear in the input file. Thus, we can easily select
+the steps by their name or relative order using one of these two attributes.</p>
+<p>For this example, we’ll use the <a class="reference internal" href="../autoapi/inpRW/index.html#inpRW.inpRW.steps" title="inpRW.inpRW.steps"><code class="xref py py-attr docutils literal notranslate"><span class="pre">steps</span></code></a> approach. First, let’s check the contents of
+<code class="docutils literal notranslate"><span class="pre">inp.steps['step-1']</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">In</span> <span class="p">:</span> <span class="n">inp</span><span class="o">.</span><span class="n">steps</span><span class="p">[</span><span class="s1">&#39;step-1&#39;</span><span class="p">]</span>
+<span class="n">Out</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">inpKeyword</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;Step&#39;</span><span class="p">,</span> <span class="n">parameter</span><span class="o">=</span><span class="n">csid</span><span class="p">({</span><span class="s1">&#39; name&#39;</span><span class="p">:</span> <span class="n">Step</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39; nlgeom&#39;</span><span class="p">:</span> <span class="n">YES</span><span class="p">}),</span> <span class="n">data</span><span class="o">=</span><span class="p">[],</span> <span class="n">path</span><span class="o">=</span><span class="s1">&#39;self.keywords[16]&#39;</span><span class="p">,</span> <span class="n">comments</span><span class="o">=</span><span class="p">[],</span> <span class="n">suboptions</span><span class="o">=</span><span class="p">[</span><span class="o">...</span><span class="p">]</span> <span class="n">Len</span> <span class="mi">5</span><span class="p">)]</span>
+</pre></div>
+</div>
+<p>Since the entry contains a list with the relative step index (0) and the <a class="reference internal" href="../autoapi/inpKeyword/index.html#inpKeyword.inpKeyword" title="inpKeyword.inpKeyword"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpKeyword</span></code></a> block,
+and we want just the last item from the list (the <a class="reference internal" href="../autoapi/inpKeyword/index.html#inpKeyword.inpKeyword" title="inpKeyword.inpKeyword"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpKeyword</span></code></a> block, we can use this command:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">step1</span> <span class="o">=</span> <span class="n">inp</span><span class="o">.</span><span class="n">steps</span><span class="p">[</span><span class="s1">&#39;step-1&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Please note that <a class="reference internal" href="../autoapi/inpRW/index.html#inpRW.inpRW.steps" title="inpRW.inpRW.steps"><code class="xref py py-attr docutils literal notranslate"><span class="pre">steps</span></code></a> is a <a class="reference internal" href="../autoapi/csid/index.html#module-csid" title="csid"><code class="xref py py-class docutils literal notranslate"><span class="pre">csid</span></code></a> with the step name as the key, and a value of
+[relative step index, parsed keyword block]. If you would prefer to reference the steps by their relative order, you
+could use the following command to retrieve the same block:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">step1</span> <span class="o">=</span> <span class="n">inp</span><span class="o">.</span><span class="n">sortKWs</span><span class="p">(</span><span class="n">inp</span><span class="o">.</span><span class="n">kwg</span><span class="p">[</span><span class="s1">&#39;step&#39;</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Now that we found the <strong>step1</strong> keyword block, we need to find the *STATIC block in that step. Since we created
+<strong>inp</strong> with <strong>organize=True</strong>, we can find *STATIC as the 0th suboption of <strong>step1</strong> since the procedure must
+immediately follow *STEP in a valid input file. Then we merely change the 0th item of the 0th data line.</p>
+<p>Please recall that floating point like numbers should be specified as <a class="reference external" href="https://docs.python.org/3/library/decimal.html#decimal.Decimal" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">decimals</span></code></a> if
+<a class="reference internal" href="../autoapi/inpRW/index.html#module-inpRW" title="inpRW"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpRW</span></code></a> has been specified with <em>useDecimal</em> = True. We can also use <a class="reference internal" href="../autoapi/inpDecimal/index.html#inpDecimal.inpDecimal" title="inpDecimal.inpDecimal"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpDecimal</span></code></a>,
+which inherits from <a class="reference external" href="https://docs.python.org/3/library/decimal.html#decimal.Decimal" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Decimal</span></code></a>, but also captures the exact string formatting of its input string.
+Since <em>useDecimal</em> was set when we instanced <a class="reference internal" href="../autoapi/inpRW/index.html#module-inpRW" title="inpRW"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpRW</span></code></a>, we will use the following commands:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">inpDecimal</span> <span class="kn">import</span> <span class="n">inpDecimal</span>
+<span class="n">static</span> <span class="o">=</span> <span class="n">step1</span><span class="o">.</span><span class="n">suboptions</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">static</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">inpDecimal</span><span class="p">(</span><span class="s1">&#39;0.1&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Next, we will add the “INC=1000” parameter to the <strong>step1</strong> <a class="reference internal" href="../autoapi/inpKeyword/index.html#module-inpKeyword" title="inpKeyword"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpKeyword</span></code></a> block. We will accomplish this by creating
+a new parameter <a class="reference internal" href="../autoapi/csid/index.html#csid.csid" title="csid.csid"><code class="xref py py-class docutils literal notranslate"><span class="pre">csid</span></code></a> with just the new parameter, and then updating the existing parameter <a class="reference internal" href="../autoapi/csid/index.html#csid.csid" title="csid.csid"><code class="xref py py-class docutils literal notranslate"><span class="pre">csid</span></code></a>.
+We do not want to replace the parameter field (as was proposed in a previous version of the guide), as this would break
+any shared memory references to items in the parameter field.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">newpar</span> <span class="o">=</span> <span class="n">inpKeyword</span><span class="o">.</span><span class="n">createParamDictFromString</span><span class="p">(</span><span class="s1">&#39; INC=1000&#39;</span><span class="p">,</span> <span class="n">ps</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">step1</span><span class="o">.</span><span class="n">parameter</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">newpar</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="creating-a-new-keyword-block-and-inserting-it-into-the-inp-data-structure">
+<h2>Creating a new keyword block and inserting it into the inp data structure<a class="headerlink" href="#creating-a-new-keyword-block-and-inserting-it-into-the-inp-data-structure" title="Permalink to this heading">¶</a></h2>
+<p>There are several steps to creating a new <a class="reference internal" href="../autoapi/inpKeyword/index.html#module-inpKeyword" title="inpKeyword"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpKeyword</span></code></a> block and inserting the block into <a class="reference internal" href="../autoapi/inpRW/index.html#inpRW.inpRW.keywords" title="inpRW.inpRW.keywords"><code class="xref py py-attr docutils literal notranslate"><span class="pre">inp.keywords</span></code></a>.</p>
+<ul class="simple">
+<li><p>Create the new <a class="reference internal" href="../autoapi/inpKeyword/index.html#module-inpKeyword" title="inpKeyword"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpKeyword</span></code></a> and populate the appropriate fields</p></li>
+<li><p>Find the desired location in <a class="reference internal" href="../autoapi/inpRW/index.html#inpRW.inpRW.keywords" title="inpRW.inpRW.keywords"><code class="xref py py-attr docutils literal notranslate"><span class="pre">inp.keywords</span></code></a> to place the new <a class="reference internal" href="../autoapi/inpKeyword/index.html#module-inpKeyword" title="inpKeyword"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpKeyword</span></code></a> block</p></li>
+<li><p>Insert the new <a class="reference internal" href="../autoapi/inpKeyword/index.html#module-inpKeyword" title="inpKeyword"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpKeyword</span></code></a></p></li>
+<li><p>Update <a class="reference internal" href="../autoapi/inpRW/index.html#inpRW.inpRW.keywords" title="inpRW.inpRW.keywords"><code class="xref py py-attr docutils literal notranslate"><span class="pre">inp.keywords</span></code></a></p></li>
+</ul>
+<p>In this example, we will create a “*OUTPUT, HISTORY” <a class="reference internal" href="../autoapi/inpKeyword/index.html#module-inpKeyword" title="inpKeyword"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpKeyword</span></code></a> block, and add a “*ENERGY OUTPUT” suboption.
+We need to import the <a class="reference internal" href="../autoapi/inpKeyword/index.html#module-inpKeyword" title="inpKeyword"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpKeyword</span></code></a> module to create a new <a class="reference internal" href="../autoapi/inpKeyword/index.html#module-inpKeyword" title="inpKeyword"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpKeyword</span></code></a>. We will use
+<a class="reference internal" href="../autoapi/misc_functions/index.html#misc_functions.makeDataList" title="misc_functions.makeDataList"><code class="xref py py-func docutils literal notranslate"><span class="pre">makeDataList()</span></code></a> to split up the output variables to multiple data lines.
+We do not need to specify <a class="reference internal" href="../autoapi/inpKeyword/index.html#inpKeyword.inpKeyword.path" title="inpKeyword.inpKeyword.path"><code class="xref py py-attr docutils literal notranslate"><span class="pre">path</span></code></a> for the <a class="reference internal" href="../autoapi/inpKeyword/index.html#module-inpKeyword" title="inpKeyword"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpKeyword</span></code></a>; this will be handled by <a class="reference internal" href="../autoapi/inpRW/index.html#inpRW.inpRW.updateInp" title="inpRW.inpRW.updateInp"><code class="xref py py-func docutils literal notranslate"><span class="pre">inp.updateInp()</span></code></a>,
+which will be called when we insert the keyword block.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">inpKeyword</span> <span class="kn">import</span> <span class="n">inpKeyword</span>
+<span class="kn">from</span> <span class="nn">misc_functions</span> <span class="kn">import</span> <span class="n">makeDataList</span>
+
+<span class="nb">vars</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;ALLAE&#39;</span><span class="p">,</span> <span class="s1">&#39;ALLCCDW&#39;</span><span class="p">,</span> <span class="s1">&#39;ALLCCE&#39;</span><span class="p">,</span> <span class="s1">&#39;ALLCCEN&#39;</span><span class="p">,</span> <span class="s1">&#39;ALLCCET&#39;</span><span class="p">,</span> <span class="s1">&#39;ALLCCSD&#39;</span><span class="p">,</span> <span class="s1">&#39;ALLCCSDN&#39;</span><span class="p">,</span> <span class="s1">&#39;ALLCCSDT&#39;</span><span class="p">,</span> <span class="s1">&#39;ALLCD&#39;</span><span class="p">,</span>
+<span class="s1">&#39;ALLFD&#39;</span><span class="p">,</span> <span class="s1">&#39;ALLIE&#39;</span><span class="p">,</span> <span class="s1">&#39;ALLKE&#39;</span><span class="p">,</span> <span class="s1">&#39;ALLPD&#39;</span><span class="p">,</span> <span class="s1">&#39;ALLSE&#39;</span><span class="p">,</span> <span class="s1">&#39;ALLVD&#39;</span><span class="p">,</span> <span class="s1">&#39;ALLDMD&#39;</span><span class="p">,</span> <span class="s1">&#39;ALLWK&#39;</span><span class="p">,</span> <span class="s1">&#39;ALLKL&#39;</span><span class="p">,</span> <span class="s1">&#39;ALLQB&#39;</span><span class="p">,</span> <span class="s1">&#39;ALLEE&#39;</span><span class="p">,</span>
+<span class="s1">&#39;ALLJD&#39;</span><span class="p">,</span> <span class="s1">&#39;ALLSD&#39;</span><span class="p">,</span> <span class="s1">&#39;ETOTAL&#39;</span><span class="p">]</span>
+<span class="n">eo</span> <span class="o">=</span> <span class="n">inpKeyword</span><span class="o">.</span><span class="n">inpKeyword</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;Energy Output&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">makeDataList</span><span class="p">(</span><span class="nb">vars</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>
+<span class="n">eo</span><span class="o">.</span><span class="n">_setMiscInpKeywordAttrs</span><span class="p">()</span>
+<span class="n">eo</span><span class="o">.</span><span class="n">_dataParsed</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">oh</span> <span class="o">=</span> <span class="n">inpKeyword</span><span class="o">.</span><span class="n">inpKeyword</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;Output&#39;</span><span class="p">,</span> <span class="n">parameter</span><span class="o">=</span><span class="n">inpKeyword</span><span class="o">.</span><span class="n">createParamDictFromString</span><span class="p">(</span><span class="s1">&#39; History, Frequency=1&#39;</span><span class="p">))</span>
+<span class="n">oh</span><span class="o">.</span><span class="n">_setMiscInpKeywordAttrs</span><span class="p">()</span>
+<span class="n">oh</span><span class="o">.</span><span class="n">_dataParsed</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">oh</span><span class="o">.</span><span class="n">suboptions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">eo</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Note that items for the <a class="reference internal" href="../autoapi/inpKeyword/index.html#inpKeyword.inpKeyword" title="inpKeyword.inpKeyword"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpKeyword</span></code></a> can either be specified at creation, or they can be modified afterwards.</p>
+<p>Let’s also add another keyword block; this one will modify the field controls. We’ll use a different technique to
+create this <a class="reference internal" href="../autoapi/inpKeyword/index.html#inpKeyword.inpKeyword" title="inpKeyword.inpKeyword"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpKeyword</span></code></a> block. We’ll specify the entire keyword block as a string, and let
+the <a class="reference internal" href="../autoapi/inpKeyword/index.html#inpKeyword.inpKeyword" title="inpKeyword.inpKeyword"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpKeyword</span></code></a> instance parse the string and generate the appropriate fields.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">controlsKwText</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;*CONTROLS, parameter=field</span>
+<span class="s1">,,,1.0&#39;&#39;&#39;</span>
+<span class="n">controlsKw</span> <span class="o">=</span> <span class="n">inpKeyword</span><span class="o">.</span><span class="n">inpKeyword</span><span class="p">(</span><span class="n">inputString</span><span class="o">=</span><span class="n">controlsKwText</span><span class="p">,</span> <span class="o">**</span><span class="n">inp</span><span class="o">.</span><span class="n">inpKeywordArgs</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>We pass <code class="docutils literal notranslate"><span class="pre">inp.inpKeywordArgs</span></code> to the <a class="reference internal" href="../autoapi/inpKeyword/index.html#inpKeyword.inpKeyword" title="inpKeyword.inpKeyword"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpKeyword</span></code></a> instance to ensure we use the same parsing
+settings we used for the rest of the input file.</p>
+<p>Next, we need to find the right place to insert the new keyword blocks. Let’s insert it before *END STEP in <strong>step1</strong>.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">step1</span> <span class="o">=</span> <span class="n">inp</span><span class="o">.</span><span class="n">steps</span><span class="p">[</span><span class="s1">&#39;Step-1&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="c1">#step1 was assigned earlier in this tutorial, but it&#39;s included here for reference</span>
+<span class="n">step1end</span> <span class="o">=</span> <span class="n">inp</span><span class="o">.</span><span class="n">findKeyword</span><span class="p">(</span><span class="n">keywordName</span><span class="o">=</span><span class="s1">&#39;End Step&#39;</span><span class="p">,</span> <span class="n">parentBlock</span><span class="o">=</span><span class="n">step1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">path</span> <span class="o">=</span> <span class="n">step1end</span><span class="o">.</span><span class="n">path</span>
+<span class="n">inp</span><span class="o">.</span><span class="n">insertKeyword</span><span class="p">(</span><span class="n">controlsKw</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">,</span> <span class="n">updateInpStructure</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">inp</span><span class="o">.</span><span class="n">insertKeyword</span><span class="p">(</span><span class="n">oh</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Note that <a class="reference internal" href="../autoapi/inpRW/_inpFind/index.html#inpRW._inpFind.Find.findKeyword" title="inpRW._inpFind.Find.findKeyword"><code class="xref py py-func docutils literal notranslate"><span class="pre">findKeyword()</span></code></a> returns a list, so we grab the 0th (and only item if we setup the search properly).
+Setting <em>parentBlock</em> for <a class="reference internal" href="../autoapi/inpRW/_inpFind/index.html#inpRW._inpFind.Find.findKeyword" title="inpRW._inpFind.Find.findKeyword"><code class="xref py py-func docutils literal notranslate"><span class="pre">findKeyword()</span></code></a> forces the function to check only suboptions of <em>parentBlock</em>.</p>
+<p>Also note that <a class="reference internal" href="../autoapi/inpRW/_inpMod/index.html#inpRW._inpMod.Mod.insertKeyword" title="inpRW._inpMod.Mod.insertKeyword"><code class="xref py py-func docutils literal notranslate"><span class="pre">insertKeyword()</span></code></a> will place the new keyword ahead of whatever was at <em>path</em>. Thus, <strong>controlsKw</strong>
+will be in front of <strong>step1end</strong>, and then <strong>oh</strong> will be in front of <strong>controlsKw</strong>.</p>
+<p>Finally, note that <a class="reference internal" href="../autoapi/inpRW/_inpMod/index.html#inpRW._inpMod.Mod.insertKeyword" title="inpRW._inpMod.Mod.insertKeyword"><code class="xref py py-func docutils literal notranslate"><span class="pre">insertKeyword()</span></code></a> command will by default update <a class="reference internal" href="../autoapi/inpKeyword/index.html#inpKeyword.inpKeyword.path" title="inpKeyword.inpKeyword.path"><code class="xref py py-attr docutils literal notranslate"><span class="pre">path</span></code></a> of every
+<a class="reference internal" href="../autoapi/inpKeyword/index.html#module-inpKeyword" title="inpKeyword"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpKeyword</span></code></a> (and their <a class="reference internal" href="../autoapi/inpKeyword/index.html#inpKeyword.inpKeyword.suboptions" title="inpKeyword.inpKeyword.suboptions"><code class="xref py py-attr docutils literal notranslate"><span class="pre">suboptions</span></code></a>) in <a class="reference internal" href="../autoapi/inpRW/index.html#inpRW.inpRW.keywords" title="inpRW.inpRW.keywords"><code class="xref py py-attr docutils literal notranslate"><span class="pre">keywords</span></code></a> after the location of the inserted keyword.
+This can be turned off (set the <em>updateInpStructure</em> parameter to False) if you need to insert a lot of keywords and want to
+update after inserting all keywords.</p>
+</section>
+<section id="deleting-a-keyword-block">
+<h2>Deleting a keyword block<a class="headerlink" href="#deleting-a-keyword-block" title="Permalink to this heading">¶</a></h2>
+<p>Deleting a keyword block is a relatively simple process.</p>
+<ul class="simple">
+<li><p>Find the keyword block to delete</p></li>
+<li><p>Call <a class="reference internal" href="../autoapi/inpRW/_inpMod/index.html#inpRW._inpMod.Mod.deleteKeyword" title="inpRW._inpMod.Mod.deleteKeyword"><code class="xref py py-func docutils literal notranslate"><span class="pre">deleteKeyword()</span></code></a></p></li>
+</ul>
+<p>For this example, we will delete the *RESTART keyword blocks, as they are not used in this analysis, and the *OUTPUT, FIELD
+request in the second step, as it is unnecessary.</p>
+<p>First, we find the *RESTART keyword blocks.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rblocks</span> <span class="o">=</span> <span class="n">inp</span><span class="o">.</span><span class="n">findKeyword</span><span class="p">(</span><span class="n">keywordName</span><span class="o">=</span><span class="s1">&#39;Restart&#39;</span><span class="p">)</span>
+<span class="n">rblocks</span><span class="o">.</span><span class="n">reverse</span><span class="p">()</span>
+</pre></div>
+</div>
+<p><a class="reference internal" href="../autoapi/inpRW/_inpFind/index.html#inpRW._inpFind.Find.findKeyword" title="inpRW._inpFind.Find.findKeyword"><code class="xref py py-func docutils literal notranslate"><span class="pre">findKeyword()</span></code></a> will return the valid blocks in the order it found them in the input file.
+Recall that <a class="reference internal" href="../autoapi/inpRW/index.html#inpRW.inpRW.keywords" title="inpRW.inpRW.keywords"><code class="xref py py-attr docutils literal notranslate"><span class="pre">keywords</span></code></a> inherits from the list type. If we remove an item from a list, all items after that item
+will be moved to a different index. Thus, we reverse <em>rblocks</em> so we can delete from the back of the sequence, as
+subsequent blocks to be deleted will be ahead of the previously deleted block in <a class="reference internal" href="../autoapi/inpRW/index.html#inpRW.inpRW.keywords" title="inpRW.inpRW.keywords"><code class="xref py py-attr docutils literal notranslate"><span class="pre">keywords</span></code></a>.</p>
+<p>Please note that you will normally not be able to sort a list of keywords using the default functions assorted with
+<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a> types if the input file was parsed with <em>Organize</em> = True. The keywords need to be sorted by their
+<a class="reference internal" href="../autoapi/inpKeyword/index.html#inpKeyword.inpKeyword.path" title="inpKeyword.inpKeyword.path"><code class="xref py py-attr docutils literal notranslate"><span class="pre">path</span></code></a> attributes, and this will be too complicated for the built-in ordering functions.
+<a class="reference internal" href="../autoapi/inpRW/_inpR/index.html#inpRW._inpR.Read.sortKWs" title="inpRW._inpR.Read.sortKWs"><code class="xref py py-func docutils literal notranslate"><span class="pre">sortKWs()</span></code></a> will sort any sequence of keywords in their proper order. <a class="reference internal" href="../autoapi/inpRW/_inpFind/index.html#inpRW._inpFind.Find.findKeyword" title="inpRW._inpFind.Find.findKeyword"><code class="xref py py-func docutils literal notranslate"><span class="pre">findKeyword()</span></code></a>
+calls <a class="reference internal" href="../autoapi/inpRW/_inpR/index.html#inpRW._inpR.Read.sortKWs" title="inpRW._inpR.Read.sortKWs"><code class="xref py py-func docutils literal notranslate"><span class="pre">sortKWs()</span></code></a>, so the keyword list will already be in order.</p>
+<p>We will delete the keywords by passing <a class="reference internal" href="../autoapi/inpKeyword/index.html#inpKeyword.inpKeyword.path" title="inpKeyword.inpKeyword.path"><code class="xref py py-attr docutils literal notranslate"><span class="pre">path</span></code></a> from a keyword block to the <em>path</em> parameter of <a class="reference internal" href="../autoapi/inpRW/_inpMod/index.html#inpRW._inpMod.Mod.deleteKeyword" title="inpRW._inpMod.Mod.deleteKeyword"><code class="xref py py-func docutils literal notranslate"><span class="pre">deleteKeyword()</span></code></a>.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">block</span> <span class="ow">in</span> <span class="n">rblocks</span><span class="p">:</span>
+    <span class="n">inp</span><span class="o">.</span><span class="n">deleteKeyword</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">block</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="n">updateInpStructure</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">inp</span><span class="o">.</span><span class="n">updateInp</span><span class="p">()</span>
+</pre></div>
+</div>
+<p><a class="reference internal" href="../autoapi/inpRW/_inpMod/index.html#inpRW._inpMod.Mod.deleteKeyword" title="inpRW._inpMod.Mod.deleteKeyword"><code class="xref py py-func docutils literal notranslate"><span class="pre">deleteKeyword()</span></code></a> normally calls <a class="reference internal" href="../autoapi/inpRW/index.html#inpRW.inpRW.updateInp" title="inpRW.inpRW.updateInp"><code class="xref py py-func docutils literal notranslate"><span class="pre">updateInp()</span></code></a> when it executes, but we turned it
+off in the loop. We manually call it after we deleted all the desired keyword blocks. Updating the inp structure can take
+a significant amount of time for a large input file, especially if it is called multiple times unnecessarily.</p>
+<p>Finally, we repeat the same process, except we are deleting just one block, the *OUTPUT, FIELD keyword block in the last
+step. Here are the commands for this task:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ofblock</span> <span class="o">=</span> <span class="n">inp</span><span class="o">.</span><span class="n">findKeyword</span><span class="p">(</span><span class="n">keywordName</span><span class="o">=</span><span class="s1">&#39;Output&#39;</span><span class="p">,</span> <span class="n">parentBlock</span><span class="o">=</span><span class="n">inp</span><span class="o">.</span><span class="n">sortKWs</span><span class="p">(</span><span class="n">inp</span><span class="o">.</span><span class="n">kwg</span><span class="p">[</span><span class="s1">&#39;step&#39;</span><span class="p">])[</span><span class="o">-</span><span class="mi">1</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">inp</span><span class="o">.</span><span class="n">deleteKeyword</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">ofblock</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="writing-the-new-input-file">
+<h2>Writing the new input file<a class="headerlink" href="#writing-the-new-input-file" title="Permalink to this heading">¶</a></h2>
+<p>Now that we’ve made changes to the input file data structure, we merely need to write it out using the following command:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">inp</span><span class="o">.</span><span class="n">writeInp</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>This will create a new input file using the original name, but ending with “_NEW.inp”. If the original job was multiple files
+(i.e. *INCLUDE), <a class="reference internal" href="../autoapi/inpRW/_inpW/index.html#inpRW._inpW.Write.writeInp" title="inpRW._inpW.Write.writeInp"><code class="xref py py-func docutils literal notranslate"><span class="pre">writeInp()</span></code></a> will write the data out to the same relative file structure, while
+appending <a class="reference internal" href="../autoapi/inpRW/index.html#inpRW.inpRW.jobSuffix" title="inpRW.inpRW.jobSuffix"><code class="xref py py-attr docutils literal notranslate"><span class="pre">jobSuffix</span></code></a> to each file and adjusting the *INCLUDE keyword blocks in the parent file.</p>
+</section>
+<section id="complete-python-script">
+<h2>Complete Python Script<a class="headerlink" href="#complete-python-script" title="Permalink to this heading">¶</a></h2>
+<p>Here are all of the python commands used in this guide in the form of a single script:</p>
+<details>
+<summary>Expand to see example.py</summary><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">inpRW</span>
+<span class="kn">import</span> <span class="nn">inpKeyword</span>
+<span class="kn">from</span> <span class="nn">inpDecimal</span> <span class="kn">import</span> <span class="n">inpDecimal</span>
+<span class="kn">from</span> <span class="nn">misc_functions</span> <span class="kn">import</span> <span class="n">makeDataList</span>
+
+<span class="n">inp</span> <span class="o">=</span> <span class="n">inpRW</span><span class="o">.</span><span class="n">inpRW</span><span class="p">(</span><span class="s1">&#39;example_inp.inp&#39;</span><span class="p">,</span> <span class="n">preserveSpacing</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">useDecimal</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">organize</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">inp</span><span class="o">.</span><span class="n">parse</span><span class="p">()</span>
+<span class="n">step1</span> <span class="o">=</span> <span class="n">inp</span><span class="o">.</span><span class="n">steps</span><span class="p">[</span><span class="s1">&#39;step-1&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">static</span> <span class="o">=</span> <span class="n">step1</span><span class="o">.</span><span class="n">suboptions</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">static</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">inpDecimal</span><span class="p">(</span><span class="s1">&#39;0.1&#39;</span><span class="p">)</span>
+<span class="n">newpar</span> <span class="o">=</span> <span class="n">inpKeyword</span><span class="o">.</span><span class="n">createParamDictFromString</span><span class="p">(</span><span class="s1">&#39; INC=1000&#39;</span><span class="p">,</span> <span class="n">ps</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">step1</span><span class="o">.</span><span class="n">parameter</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">newpar</span><span class="p">)</span>
+<span class="nb">vars</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;ALLAE&#39;</span><span class="p">,</span> <span class="s1">&#39;ALLCCDW&#39;</span><span class="p">,</span> <span class="s1">&#39;ALLCCE&#39;</span><span class="p">,</span> <span class="s1">&#39;ALLCCEN&#39;</span><span class="p">,</span> <span class="s1">&#39;ALLCCET&#39;</span><span class="p">,</span> <span class="s1">&#39;ALLCCSD&#39;</span><span class="p">,</span> <span class="s1">&#39;ALLCCSDN&#39;</span><span class="p">,</span> <span class="s1">&#39;ALLCCSDT&#39;</span><span class="p">,</span> <span class="s1">&#39;ALLCD&#39;</span><span class="p">,</span>
+<span class="s1">&#39;ALLFD&#39;</span><span class="p">,</span> <span class="s1">&#39;ALLIE&#39;</span><span class="p">,</span> <span class="s1">&#39;ALLKE&#39;</span><span class="p">,</span> <span class="s1">&#39;ALLPD&#39;</span><span class="p">,</span> <span class="s1">&#39;ALLSE&#39;</span><span class="p">,</span> <span class="s1">&#39;ALLVD&#39;</span><span class="p">,</span> <span class="s1">&#39;ALLDMD&#39;</span><span class="p">,</span> <span class="s1">&#39;ALLWK&#39;</span><span class="p">,</span> <span class="s1">&#39;ALLKL&#39;</span><span class="p">,</span> <span class="s1">&#39;ALLQB&#39;</span><span class="p">,</span> <span class="s1">&#39;ALLEE&#39;</span><span class="p">,</span>
+<span class="s1">&#39;ALLJD&#39;</span><span class="p">,</span> <span class="s1">&#39;ALLSD&#39;</span><span class="p">,</span> <span class="s1">&#39;ETOTAL&#39;</span><span class="p">]</span>
+<span class="n">eo</span> <span class="o">=</span> <span class="n">inpKeyword</span><span class="o">.</span><span class="n">inpKeyword</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;Energy Output&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">makeDataList</span><span class="p">(</span><span class="nb">vars</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>
+<span class="n">eo</span><span class="o">.</span><span class="n">_setMiscInpKeywordAttrs</span><span class="p">()</span>
+<span class="n">eo</span><span class="o">.</span><span class="n">_dataParsed</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">oh</span> <span class="o">=</span> <span class="n">inpKeyword</span><span class="o">.</span><span class="n">inpKeyword</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;Output&#39;</span><span class="p">,</span> <span class="n">parameter</span><span class="o">=</span><span class="n">inpKeyword</span><span class="o">.</span><span class="n">createParamDictFromString</span><span class="p">(</span><span class="s1">&#39; History, Frequency=1&#39;</span><span class="p">))</span>
+<span class="n">oh</span><span class="o">.</span><span class="n">_setMiscInpKeywordAttrs</span><span class="p">()</span>
+<span class="n">oh</span><span class="o">.</span><span class="n">_dataParsed</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">oh</span><span class="o">.</span><span class="n">suboptions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">eo</span><span class="p">)</span>
+<span class="n">controlsKwText</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;*CONTROLS, parameter=field</span>
+<span class="s1">,,,1.0&#39;&#39;&#39;</span>
+<span class="n">controlsKw</span> <span class="o">=</span> <span class="n">inpKeyword</span><span class="o">.</span><span class="n">inpKeyword</span><span class="p">(</span><span class="n">inputString</span><span class="o">=</span><span class="n">controlsKwText</span><span class="p">,</span> <span class="o">**</span><span class="n">inp</span><span class="o">.</span><span class="n">inpKeywordArgs</span><span class="p">)</span>
+<span class="n">step1end</span> <span class="o">=</span> <span class="n">inp</span><span class="o">.</span><span class="n">findKeyword</span><span class="p">(</span><span class="n">keywordName</span><span class="o">=</span><span class="s1">&#39;End Step&#39;</span><span class="p">,</span> <span class="n">parentBlock</span><span class="o">=</span><span class="n">step1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">path</span> <span class="o">=</span> <span class="n">step1end</span><span class="o">.</span><span class="n">path</span>
+<span class="n">inp</span><span class="o">.</span><span class="n">insertKeyword</span><span class="p">(</span><span class="n">controlsKw</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">)</span>
+<span class="n">inp</span><span class="o">.</span><span class="n">insertKeyword</span><span class="p">(</span><span class="n">oh</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">)</span>
+<span class="n">rblocks</span> <span class="o">=</span> <span class="n">inp</span><span class="o">.</span><span class="n">findKeyword</span><span class="p">(</span><span class="n">keywordName</span><span class="o">=</span><span class="s1">&#39;Restart&#39;</span><span class="p">)</span>
+<span class="n">rblocks</span><span class="o">.</span><span class="n">reverse</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">block</span> <span class="ow">in</span> <span class="n">rblocks</span><span class="p">:</span>
+    <span class="n">inp</span><span class="o">.</span><span class="n">deleteKeyword</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">block</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="n">updateInpStructure</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">inp</span><span class="o">.</span><span class="n">updateInp</span><span class="p">()</span>
+<span class="n">ofblock</span> <span class="o">=</span> <span class="n">inp</span><span class="o">.</span><span class="n">findKeyword</span><span class="p">(</span><span class="n">keywordName</span><span class="o">=</span><span class="s1">&#39;Output&#39;</span><span class="p">,</span> <span class="n">parentBlock</span><span class="o">=</span><span class="n">inp</span><span class="o">.</span><span class="n">sortKWs</span><span class="p">(</span><span class="n">inp</span><span class="o">.</span><span class="n">kwg</span><span class="p">[</span><span class="s1">&#39;step&#39;</span><span class="p">])[</span><span class="o">-</span><span class="mi">1</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">inp</span><span class="o">.</span><span class="n">deleteKeyword</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">ofblock</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
+<span class="n">inp</span><span class="o">.</span><span class="n">writeInp</span><span class="p">()</span>
+</pre></div>
+</div>
+</details></section>
+<section id="modified-input-file">
+<h2>Modified Input File<a class="headerlink" href="#modified-input-file" title="Permalink to this heading">¶</a></h2>
+<p>Here is the new input file, with all the changes performed in this guide:</p>
+<details>
+<summary>Expand to see example_inp_NEW.inp</summary><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span><span class="n">Heading</span>
+<span class="o">**</span> <span class="n">Job</span> <span class="n">name</span><span class="p">:</span> <span class="n">example_inp</span> <span class="n">Model</span> <span class="n">name</span><span class="p">:</span> <span class="n">Model</span><span class="o">-</span><span class="mi">1</span>
+<span class="o">**</span> <span class="n">Generated</span> <span class="n">by</span><span class="p">:</span> <span class="n">Abaqus</span><span class="o">/</span><span class="n">CAE</span> <span class="mf">2021.</span><span class="n">HF9</span>
+<span class="o">*</span><span class="n">Preprint</span><span class="p">,</span> <span class="n">echo</span><span class="o">=</span><span class="n">NO</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="n">NO</span><span class="p">,</span> <span class="n">history</span><span class="o">=</span><span class="n">NO</span><span class="p">,</span> <span class="n">contact</span><span class="o">=</span><span class="n">NO</span>
+<span class="o">**</span> <span class="o">----------------------------------------------------------------</span>
+<span class="o">**</span>
+<span class="o">**</span> <span class="n">PART</span> <span class="n">INSTANCE</span><span class="p">:</span> <span class="n">Part</span><span class="o">-</span><span class="mi">1</span><span class="o">-</span><span class="mi">1</span>
+<span class="o">**</span>
+<span class="o">*</span><span class="n">Node</span>
+      <span class="mi">1</span><span class="p">,</span>           <span class="mf">0.</span><span class="p">,</span>           <span class="mf">0.</span><span class="p">,</span>           <span class="mf">0.</span>
+      <span class="mi">2</span><span class="p">,</span>           <span class="mf">5.</span><span class="p">,</span>           <span class="mf">0.</span><span class="p">,</span>           <span class="mf">0.</span>
+      <span class="mi">3</span><span class="p">,</span>           <span class="mf">0.</span><span class="p">,</span>           <span class="mf">5.</span><span class="p">,</span>           <span class="mf">0.</span>
+      <span class="mi">4</span><span class="p">,</span>           <span class="mf">5.</span><span class="p">,</span>           <span class="mf">5.</span><span class="p">,</span>           <span class="mf">0.</span>
+<span class="o">*</span><span class="n">Element</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">S4R</span>
+<span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">3</span>
+<span class="o">*</span><span class="n">Nset</span><span class="p">,</span> <span class="n">nset</span><span class="o">=</span><span class="n">Part</span><span class="o">-</span><span class="mi">1</span><span class="o">-</span><span class="mi">1</span><span class="n">_shell_set</span><span class="p">,</span> <span class="n">generate</span>
+ <span class="mi">1</span><span class="p">,</span>  <span class="mi">4</span><span class="p">,</span>  <span class="mi">1</span>
+<span class="o">*</span><span class="n">Elset</span><span class="p">,</span> <span class="n">elset</span><span class="o">=</span><span class="n">Part</span><span class="o">-</span><span class="mi">1</span><span class="o">-</span><span class="mi">1</span><span class="n">_shell_set</span>
+ <span class="mi">1</span><span class="p">,</span>
+<span class="o">**</span> <span class="n">Section</span><span class="p">:</span> <span class="n">shell_section</span>
+<span class="o">*</span><span class="n">Shell</span> <span class="n">Section</span><span class="p">,</span> <span class="n">elset</span><span class="o">=</span><span class="n">Part</span><span class="o">-</span><span class="mi">1</span><span class="o">-</span><span class="mi">1</span><span class="n">_shell_set</span><span class="p">,</span> <span class="n">material</span><span class="o">=</span><span class="n">steel</span>
+<span class="mf">0.5</span><span class="p">,</span> <span class="mi">5</span>
+<span class="o">*</span><span class="n">System</span>
+<span class="o">*</span><span class="n">Nset</span><span class="p">,</span> <span class="n">nset</span><span class="o">=</span><span class="n">Set</span><span class="o">-</span><span class="mi">2</span>
+ <span class="mi">2</span><span class="p">,</span>
+<span class="o">*</span><span class="n">Nset</span><span class="p">,</span> <span class="n">nset</span><span class="o">=</span><span class="n">Set</span><span class="o">-</span><span class="mi">3</span>
+ <span class="mi">3</span><span class="p">,</span>
+<span class="o">*</span><span class="n">Nset</span><span class="p">,</span> <span class="n">nset</span><span class="o">=</span><span class="n">Set</span><span class="o">-</span><span class="mi">4</span>
+ <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span>
+<span class="o">*</span><span class="n">Nset</span><span class="p">,</span> <span class="n">nset</span><span class="o">=</span><span class="n">origin</span>
+ <span class="mi">1</span><span class="p">,</span>
+<span class="o">**</span>
+<span class="o">**</span> <span class="n">MATERIALS</span>
+<span class="o">**</span>
+<span class="o">*</span><span class="n">Material</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">steel</span>
+<span class="o">*</span><span class="n">Elastic</span>
+<span class="mf">210000.</span><span class="p">,</span> <span class="mf">0.3</span>
+<span class="o">**</span>
+<span class="o">**</span> <span class="n">BOUNDARY</span> <span class="n">CONDITIONS</span>
+<span class="o">**</span>
+<span class="o">**</span> <span class="n">Name</span><span class="p">:</span> <span class="n">BC</span><span class="o">-</span><span class="mi">2</span> <span class="n">Type</span><span class="p">:</span> <span class="n">Displacement</span><span class="o">/</span><span class="n">Rotation</span>
+<span class="o">*</span><span class="n">Boundary</span>
+<span class="n">Set</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span>
+<span class="n">Set</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span>
+<span class="n">Set</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">4</span>
+<span class="n">Set</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">5</span>
+<span class="n">Set</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">6</span>
+<span class="o">**</span> <span class="n">Name</span><span class="p">:</span> <span class="n">BC</span><span class="o">-</span><span class="mi">3</span> <span class="n">Type</span><span class="p">:</span> <span class="n">Displacement</span><span class="o">/</span><span class="n">Rotation</span>
+<span class="o">*</span><span class="n">Boundary</span>
+<span class="n">Set</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span>
+<span class="n">Set</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span>
+<span class="n">Set</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">4</span>
+<span class="n">Set</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">5</span>
+<span class="n">Set</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">6</span>
+<span class="o">**</span> <span class="n">Name</span><span class="p">:</span> <span class="n">fix_origin</span> <span class="n">Type</span><span class="p">:</span> <span class="n">Displacement</span><span class="o">/</span><span class="n">Rotation</span>
+<span class="o">*</span><span class="n">Boundary</span>
+<span class="n">origin</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span>
+<span class="n">origin</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span>
+<span class="n">origin</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span>
+<span class="n">origin</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">4</span>
+<span class="n">origin</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">5</span>
+<span class="n">origin</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">6</span>
+<span class="o">**</span> <span class="o">----------------------------------------------------------------</span>
+<span class="o">**</span>
+<span class="o">**</span> <span class="n">STEP</span><span class="p">:</span> <span class="n">Step</span><span class="o">-</span><span class="mi">1</span>
+<span class="o">**</span>
+<span class="o">*</span><span class="n">Step</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">Step</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">nlgeom</span><span class="o">=</span><span class="n">YES</span><span class="p">,</span> <span class="n">INC</span><span class="o">=</span><span class="mi">1000</span>
+<span class="o">*</span><span class="n">Static</span>
+<span class="mf">0.1</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">1e-05</span><span class="p">,</span> <span class="mf">1.</span>
+<span class="o">**</span>
+<span class="o">**</span> <span class="n">BOUNDARY</span> <span class="n">CONDITIONS</span>
+<span class="o">**</span>
+<span class="o">**</span> <span class="n">Name</span><span class="p">:</span> <span class="n">Load</span> <span class="n">Type</span><span class="p">:</span> <span class="n">Displacement</span><span class="o">/</span><span class="n">Rotation</span>
+<span class="o">*</span><span class="n">Boundary</span>
+<span class="n">Set</span><span class="o">-</span><span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">0.1</span>
+<span class="o">**</span>
+<span class="o">**</span> <span class="n">OUTPUT</span> <span class="n">REQUESTS</span>
+<span class="o">**</span>
+<span class="o">*</span><span class="n">Output</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">frequency</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">variable</span><span class="o">=</span><span class="n">PRESELECT</span>
+<span class="o">**</span>
+<span class="o">**</span> <span class="n">HISTORY</span> <span class="n">OUTPUT</span><span class="p">:</span> <span class="n">H</span><span class="o">-</span><span class="n">Output</span><span class="o">-</span><span class="mi">1</span>
+<span class="o">**</span>
+<span class="o">*</span><span class="n">Output</span><span class="p">,</span> <span class="n">History</span><span class="p">,</span> <span class="n">Frequency</span><span class="o">=</span><span class="mi">1</span>
+<span class="o">*</span><span class="n">Energy</span> <span class="n">Output</span>
+<span class="n">ALLAE</span><span class="p">,</span><span class="n">ALLCCDW</span><span class="p">,</span><span class="n">ALLCCE</span><span class="p">,</span><span class="n">ALLCCEN</span><span class="p">,</span><span class="n">ALLCCET</span><span class="p">,</span><span class="n">ALLCCSD</span><span class="p">,</span><span class="n">ALLCCSDN</span><span class="p">,</span><span class="n">ALLCCSDT</span>
+<span class="n">ALLCD</span><span class="p">,</span><span class="n">ALLFD</span><span class="p">,</span><span class="n">ALLIE</span><span class="p">,</span><span class="n">ALLKE</span><span class="p">,</span><span class="n">ALLPD</span><span class="p">,</span><span class="n">ALLSE</span><span class="p">,</span><span class="n">ALLVD</span><span class="p">,</span><span class="n">ALLDMD</span>
+<span class="n">ALLWK</span><span class="p">,</span><span class="n">ALLKL</span><span class="p">,</span><span class="n">ALLQB</span><span class="p">,</span><span class="n">ALLEE</span><span class="p">,</span><span class="n">ALLJD</span><span class="p">,</span><span class="n">ALLSD</span><span class="p">,</span><span class="n">ETOTAL</span>
+<span class="o">*</span><span class="n">CONTROLS</span><span class="p">,</span> <span class="n">parameter</span><span class="o">=</span><span class="n">field</span>
+<span class="p">,,,</span><span class="mf">1.0</span>
+<span class="o">*</span><span class="n">End</span> <span class="n">Step</span>
+<span class="o">**</span> <span class="o">----------------------------------------------------------------</span>
+<span class="o">**</span>
+<span class="o">**</span> <span class="n">STEP</span><span class="p">:</span> <span class="n">Step</span><span class="o">-</span><span class="mi">2</span>
+<span class="o">**</span>
+<span class="o">*</span><span class="n">Step</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">Step</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="n">nlgeom</span><span class="o">=</span><span class="n">YES</span>
+<span class="o">*</span><span class="n">Static</span>
+<span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">1e-05</span><span class="p">,</span> <span class="mf">1.</span>
+<span class="o">**</span>
+<span class="o">**</span> <span class="n">OUTPUT</span> <span class="n">REQUESTS</span>
+<span class="o">**</span>
+<span class="o">*</span><span class="n">End</span> <span class="n">Step</span>
+</pre></div>
+</div>
+</details></section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../inpRW_toc.html">
+              <img class="logo" src="../_static/3DS_SIMULIA_Logotype_RGB_BlueSteel.png" alt="Logo", style="border-radius:5px"/>
+            </a></p>
+  <div>
+    <h3><a href="../inpRW_toc.html">Local Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">Example Scenarios</a><ul>
+<li><a class="reference internal" href="#example-input-file">Example input file</a></li>
+<li><a class="reference internal" href="#modifying-data-in-an-existing-inpkeyword-block">Modifying data in an existing inpKeyword block</a></li>
+<li><a class="reference internal" href="#creating-a-new-keyword-block-and-inserting-it-into-the-inp-data-structure">Creating a new keyword block and inserting it into the inp data structure</a></li>
+<li><a class="reference internal" href="#deleting-a-keyword-block">Deleting a keyword block</a></li>
+<li><a class="reference internal" href="#writing-the-new-input-file">Writing the new input file</a></li>
+<li><a class="reference internal" href="#complete-python-script">Complete Python Script</a></li>
+<li><a class="reference internal" href="#modified-input-file">Modified Input File</a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+<h3><a href="../inpRW_toc.html">Global Table of Contents</a></h3>
+<p class="caption" role="heading"><span class="caption-text">User Documentation</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="Introduction.html">inpRW Utility Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Project-Background.html">Project Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Installation-and-Usage.html">Installation and Usage Instructions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Tests.html">inpRW Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Tests.html#running-inprw-tests">Running inpRW Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="inpKeyword-Basics.html">inpKeyword Basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Strings_Integers_and_Decimals.html">Strings, Integers, and Decimals</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Important-inpRW-Attributes.html">Important <code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW</span></code> Attributes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Miscellaneous-Usage-hints.html">Miscellaneous Usage Hints</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Example Scenarios</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossary.html">Glossary</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/inpRW/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/centroid/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">centroid</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/config/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">config</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/config_re/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">config_re</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/csid/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">csid</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/eval2/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">eval2</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/elType/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">elType</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/inpDecimal/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpDecimal</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/inpInt/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpInt</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/inpKeyword/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpKeyword</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/inpKeywordHelper/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpKeywordHelper</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/inpKeywordSequence/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpKeywordSequence</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/inpRWErrors/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRWErrors</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/inpString/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpString</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/mesh/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">mesh</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/misc_functions/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">misc_functions</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/NoneSort/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">NoneSort</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/printer/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">printer</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/repr2/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">repr2</span></code></a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Update Notes</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Update-Notes/index.html">Update Notes</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Legal Notices and Usage Disclaimer</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../legal_notices/Legal_Notices_and_Usage_Disclaimer.html">Legal Notices and Usage Disclaimer</a></li>
+</ul>
+
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="Miscellaneous-Usage-hints.html"
+                          title="previous chapter">Miscellaneous Usage Hints</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="glossary.html"
+                          title="next chapter">Glossary</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/user/Example-Scenarios.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>  
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="glossary.html" title="Glossary"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="Miscellaneous-Usage-hints.html" title="Miscellaneous Usage Hints"
+             >previous</a> |</li>
+          <li><img src="../_static/icon-116-3dx-apps.svg" alt="python logo" style="vertical-align: middle; margin-top: -1px"/></li>
+          <li><a href="inpRW_toc.html"></a> &#187;</li>
+          <li class="switchers">
+            <div class="language_switcher_placeholder"></div>
+            <div class="version_switcher_placeholder"></div>
+          </li>
+          <li>
+              
+              <a href="../inpRW_toc.html">inpRW 2023.10.6 documentation</a> &#187;
+              
+          </li>
+        <li class="nav-item nav-item-this"><a href="">Example Scenarios</a></li>
+                <li class="right">
+                    
+
+    <div class="inline-search" role="search">
+        <form class="inline-search" action="../search.html" method="get">
+          <input placeholder="Quick search" aria-label="Quick search" type="text" name="q" />
+          <input type="submit" value="Go" />
+          <input type="hidden" name="check_keywords" value="yes" />
+          <input type="hidden" name="area" value="default" />
+        </form>
+    </div>
+                     |
+                </li>
+            
+      </ul>
+    </div>  
+    <div class="footer">
+    &copy; Copyright 2023, Dassault Systèmes Simulia Corp.
+     <a href="../_static/legal_notices.pdf" >inpRW Legal Notices</a>.<br />
+     <a href="../_static/Read_Disclaimer_First.txt" >inpRW Usage Disclaimer</a>.<br />
+    Last updated on Nov 21, 2023.
+    <a href="https://r1132100503382-eu1-3dswym.3dexperience.3ds.com/#community:39/post:nE1VLzylQoKgfG2wekOpFg">Found a bug</a>?
+    </div>
+
+  </body>
+</html>
