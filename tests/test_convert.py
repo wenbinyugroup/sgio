@@ -2,7 +2,7 @@ import logging
 import os
 import yaml
 
-from sgio import convert
+from sgio import convert, run
 
 
 logging.basicConfig(level=logging.DEBUG)
@@ -42,6 +42,10 @@ def test_convert(fn_test_cases, input_dir, output_dir):
             file_version_out=_case.get('version_out', None),
             model_type=_case.get('model', None),
         )
+
+        _solver = _case.get('solver', None)
+        if _solver:
+            run(_solver, fn_out, analysis='h')
 
 
 

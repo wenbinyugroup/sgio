@@ -12,7 +12,11 @@ from ._exceptions import (
     OutputFileError,
 )
 
-from .core.sg import StructureGene
+from .core import (
+    StructureGene,
+    check_isolated_nodes,
+    renumber_elements,
+    )
 from .core.builder import buildSG1D
 # from .core.solid import MaterialProperty
 # from .core.shell import ShellProperty

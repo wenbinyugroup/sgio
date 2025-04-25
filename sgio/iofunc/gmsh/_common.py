@@ -82,10 +82,10 @@ def _write_data(fh, tag, name, data, binary):
         fmt = " ".join(["{}"] + ["{!r}"] * num_components) + "\n"
         # TODO unify
         if num_components == 1:
-            for k, x in enumerate(data):
+            for k, x in enumerate(data.tolist()):
                 fh.write(fmt.format(k + 1, x))
         else:
-            for k, x in enumerate(data):
+            for k, x in enumerate(data.tolist()):
                 fh.write(fmt.format(k + 1, *x))
         fh.write(f"$End{tag}\n")
 

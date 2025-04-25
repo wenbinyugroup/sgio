@@ -5,6 +5,7 @@ import logging
 import numpy as np
 # from meshio._files import is_buffer, open_file
 from inpRW import inpRW
+from misc_functions import rsl
 from meshio import Mesh, CellBlock
 from meshio.abaqus._abaqus import (
     abaqus_to_meshio_type,
@@ -178,11 +179,12 @@ def process_mesh(inprw:inpRW):
 
         elems = _elem_block.data
         for _eid, _elem in elems.items():
-            cells[cell_block_i][1].append(_elem.data[1:])
-            cell_elem_ids[meshio_type].append(_eid)
-            eid2cid[_eid] = (cell_block_i, len(cells[cell_block_i][1]) - 1)
+            _nids = [i - 1 for i in _elem.data[1:]]  # Convert to 0-based
+            cells[cell_block_i][1].append(_nids)
+            cell_elem_ids[meshio_type].append(_eid)  # Store the original element id
+            eid2cid[_eid] = (cell_block_i, len(cells[cell_block_i][1]) - 1)  # Store the mapping from original element id to cell block index and cell index
             if set_name is not None:
-                cell_sets[set_name].append(_eid)
+                cell_sets[set_name].append(_eid)  # Store the element ids in the cell set
 
     logger.debug('cells_types:')
     logger.debug(cell_types)
@@ -202,6 +204,30 @@ def process_mesh(inprw:inpRW):
     logger.debug('eid2cid:')
     for _k, _v in list(eid2cid.items())[:10]:
         logger.debug(f'{_k}: {_v}')
+
+
+    # Process sets
+    for _set_block in inprw.findKeyword('elset'):
+        params = _set_block.parameter
+        logger.debug(f'params: {params}')
+
+        set_name = params['elset']._value
+        logger.debug(f'set_name: {set_name}')
+
+        generate = params.get('generate', None)
+        logger.debug(f'generate: {generate}')
+
+        if set_name not in cell_sets.keys():
+            cell_sets[set_name] = []
+
+        if generate is not None:
+            _eid_start, _eid_end, _eid_inc = _set_block.data[0]
+            for _eid in range(_eid_start, _eid_end + 1, _eid_inc):
+                cell_sets[set_name].append(_eid)
+        else:
+            for _row in _set_block.data:
+                cell_sets[set_name].extend(_row)
+
     logger.debug('----------')
     logger.debug('cell_sets:')
     for _k, _v in cell_sets.items():
@@ -284,30 +310,8 @@ def process_mesh(inprw:inpRW):
     }
     """
     for _material_block in inprw.findKeyword('material'):
-        name = _material_block.parameter['name']
-        logger.debug(f'name: {name}')
+        process_material(_material_block, inprw, materials)
 
-        density = inprw.findKeyword('density', parentBlock=_material_block)
-        logger.debug(f'density: {density}')
-        density = density[0].data[0][0]
-        logger.debug(f'density: {density}')
-
-        elastic = inprw.findKeyword('elastic', parentBlock=_material_block)
-        logger.debug(f'elastic: {elastic}')
-        elastic_type = elastic[0].parameter['type']
-        elastic_constants = []
-        for _row in elastic[0].data:
-            try:
-                elastic_constants.extend(list(map(float, _row)))
-            except ValueError:
-                pass
-
-        materials[name] = {
-            'id': 0,
-            'density': float(density),
-            'type': elastic_type._value.lower(),
-            'elastic': list(map(float, elastic_constants)),
-        }
 
     logger.debug('----------')
     logger.debug('materials:')
@@ -321,17 +325,7 @@ def process_mesh(inprw:inpRW):
         ...
     }
     """
-    # cell_sections = []
-    # """
-    # cell_sections = [
-    #     {
-    #         'material': 'material_name',
-    #         'angle': 'angle',
-    #         'elset': 'elset_name',
-    #         'orientation': 'orientation_name',
-    #     }
-    # ]
-    # """
+
     used_materials = []
     mocombos = {}
     """
@@ -341,60 +335,17 @@ def process_mesh(inprw:inpRW):
     """
     used_orientations = []
 
+    for _section_block in inprw.findKeyword('solid section'):
+        process_section(
+            _section_block, materials, mocombos, cell_sets, cell_prop_ids,
+            used_materials, used_orientations)
+
     for _section_block in inprw.findKeyword('shell section'):
-        params = _section_block.parameter
-        logger.debug(f'params: {params}')
-
-        elset_name = params.get('elset')
-        logger.debug(f'elset: {elset_name}')
-
-        material_name = params.get('material', None)
-        logger.debug(f'material: {material_name}')
-
-        orient_name = params.get('orientation', None)
-        logger.debug(f'orient_name: {orient_name}')
-
-        if orient_name is not None:
-            if orient_name not in used_orientations:
-                used_orientations.append(orient_name._value)
-
-        angle = 0
-        try:
-            angle = float(_section_block.data[-2])
-        except ValueError:
-            pass
-        except IndexError:
-            pass
-
-        if material_name not in used_materials:
-            used_materials.append(material_name)
-            materials[material_name]['id'] = len(used_materials)
-
-        prop_id = 0
-        for _k, _v in mocombos.items():
-            if _v[0] == material_name and _v[1] == angle:
-                prop_id = _k
-                break
-
-        if prop_id == 0:  # New material-angle combination
-            prop_id = len(mocombos) + 1
-            mat_id = materials[material_name]['id']
-            mocombos[prop_id] = [mat_id, angle]
-            cell_prop_ids[prop_id] = []
-
-        cell_prop_ids[prop_id].extend(cell_sets[elset_name])
+        process_section(
+            _section_block, materials, mocombos, cell_sets, cell_prop_ids,
+            used_materials, used_orientations)
 
 
-        # cell_sections.append({
-        #     'material': material_name,
-        #     'angle': 0,
-        #     'elset': elset_name,
-        #     'orientation': orient_name,
-        # })
-
-    # logger.debug('----------')
-    # logger.debug('cell_sections:')
-    # logger.debug(cell_sections)
     logger.debug('----------')
     logger.debug('mocombos:')
     logger.debug(mocombos)
@@ -411,7 +362,7 @@ def process_mesh(inprw:inpRW):
     cell_data = {
         'element_id': [],
         'property_id': init_cell_data_list(cells, None),
-        'property_ref_csys': init_cell_data_list(cells, [1, 0, 0, 0, 1, 0]),
+        'property_ref_csys': init_cell_data_list(cells, [1, 0, 0, 0, 1, 0, 0, 0, 0]),
     }
 
     # Convert element id to cell data
@@ -439,7 +390,7 @@ def process_mesh(inprw:inpRW):
         # logger.debug(_distr)
         for _eid, _coords in distrs[_distr_name].items():
             _cbi, _ci = eid2cid[_eid]
-            cell_data['property_ref_csys'][_cbi][_ci] = _coords
+            cell_data['property_ref_csys'][_cbi][_ci] = _coords + [0, 0, 0]
 
     logger.debug('----------')
     logger.debug('cell_data:')
@@ -460,3 +411,97 @@ def process_mesh(inprw:inpRW):
 
     return mesh, materials, mocombos
 
+
+
+
+def process_material(_material_block, inprw, materials):
+    """
+    """
+    name = _material_block.parameter['name']._value
+    logger.debug(f'name: {name}')
+
+    density = inprw.findKeyword('density', parentBlock=_material_block)
+    if density:
+        logger.debug(f'density: {density}')
+        density = float(density[0].data[0][0])
+        logger.debug(f'density: {density}')
+    else:
+        density = 0.0
+
+    elastic = inprw.findKeyword('elastic', parentBlock=_material_block)
+    logger.debug(f'elastic: {elastic}')
+
+    try:
+        elastic_type = elastic[0].parameter['type']._value.lower()
+    except KeyError:
+        elastic_type = 'isotropic'
+
+    elastic_constants = []
+    logger.debug(f'elastic[0].data: {elastic[0].data}')
+    for _row in elastic[0].data:
+        for _v in _row:
+            try:
+                elastic_constants.append(float(_v))
+            except ValueError:
+                pass
+
+    materials[name] = {
+        'id': 0,
+        'density': density,
+        'type': elastic_type,
+        'elastic': list(map(float, elastic_constants)),
+    }
+
+
+
+
+def process_section(
+    _section_block, materials, mocombos, cell_sets, cell_prop_ids,
+    used_materials, used_orientations):
+    """
+    """
+    params = _section_block.parameter
+    logger.debug(f'params: {params}')
+
+    elset_name = params.get('elset')
+    logger.debug(f'elset: {elset_name}')
+
+    material_name = params.get('material', None)
+    logger.debug(f'material: {material_name}')
+    if material_name is None:
+        if 'composite' in params.keys():
+            material_name = _section_block.data[0][2]
+    material_name = material_name._value
+
+    orient_name = params.get('orientation', None)
+    logger.debug(f'orient_name: {orient_name}')
+
+    if orient_name is not None:
+        if orient_name not in used_orientations:
+            used_orientations.append(orient_name._value)
+
+    angle = 0
+    try:
+        angle = float(_section_block.data[-2])
+    except ValueError:
+        pass
+    except IndexError:
+        pass
+
+    if material_name not in used_materials:
+        used_materials.append(material_name)
+        materials[material_name]['id'] = len(used_materials)
+
+    prop_id = 0
+    for _k, _v in mocombos.items():
+        if _v[0] == material_name and _v[1] == angle:
+            prop_id = _k
+            break
+
+    if prop_id == 0:  # New material-angle combination
+        prop_id = len(mocombos) + 1
+        mat_id = materials[material_name]['id']
+        mocombos[prop_id] = [mat_id, angle]
+        cell_prop_ids[prop_id] = []
+
+    cell_prop_ids[prop_id].extend(cell_sets[elset_name])
