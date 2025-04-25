@@ -265,6 +265,8 @@ def _writeMaterial(
 
         # Write elastic properties
         if anisotropy == 0:
+            print(material.get('e'))
+            print(material.get('nu'))
             sutl.writeFormatFloats(file, [material.get('e'), material.get('nu')], sff)
             if thermal_flag == 3:
                 sutl.writeFormatFloats(file, [material.get('alpha'),], sff)

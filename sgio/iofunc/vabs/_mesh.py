@@ -3,6 +3,8 @@ I/O for VABS format
 """
 from __future__ import annotations
 
+import logging
+
 import numpy as np
 from meshio._files import is_buffer
 
@@ -14,6 +16,8 @@ from sgio.iofunc._meshio import (
     _read_nodes,
     _write_nodes,
 )
+
+logger = logging.getLogger(__name__)
 
 vabs_to_meshio_type = {
     3: 'triangle',
@@ -350,7 +354,7 @@ def _write_property_id_ref_csys(
                     # _vx2 = np.array([1, 0, 0])
 
                     _vy2 = np.array(_csys[:3])
-                    # print(f'_vy2 = {_vy2}')
+                    # logger.debug(f'_vy2 = {_vy2}')
 
                     # Method 1
                     # _cos_theta_1 = np.dot(_vx2, _vy2) / (np.linalg.norm(_vx2) * np.linalg.norm(_vy2))

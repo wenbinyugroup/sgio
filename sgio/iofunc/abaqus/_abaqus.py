@@ -10,6 +10,7 @@ from meshio.abaqus._abaqus import (
     abaqus_to_meshio_type,
     )
 
+import sgio.model as smdl
 from sgio.core.sg import StructureGene
 
 logger = logging.getLogger(__name__)
@@ -69,9 +70,35 @@ def read(filename, **kwargs):
 
 
     # Process materials
+    for _mname, _mdata in materials.items():
+        _mid = _mdata['id']
+        if _mid == 0:  # Skip not used materials
+            continue
 
+        m = smdl.CauchyContinuumModel(_mname)
+        m.temperature = _mdata.get('temperature', 0)
+        m.set('density', _mdata.get('density', 0))
+
+        _type = _mdata['type']
+        _elastic = _mdata['elastic']
+        logger.debug(f'{_type}: {_elastic}')
+        if _type == 'isotropic':
+            m.set('isotropy', 0)
+            m.set('elastic', _elastic)
+        elif _type == 'engineering constants':
+            m.set('isotropy', 1)
+            _e1, _e2, _e3 = _elastic[:3]
+            _g12, _g13, _g23 = _elastic[6:9]
+            _nu12, _nu13, _nu23 = _elastic[3:6]
+            m.set(
+                'elastic',
+                [_e1, _e2, _e3, _g12, _g13, _g23, _nu12, _nu13, _nu23],
+                input_type='engineering')
+
+        sg.materials[_mid] = m
 
     # Process material-orientation combinations
+    sg.mocombos = mocombos
 
     return sg
 
@@ -95,7 +122,8 @@ def process_mesh(inprw:inpRW):
 
     points = []
     for _nid, _node in inprw.nd.items():
-        points.append(_node.data[1:])
+        # points.append([x._evalDecimal for x in _node.data[1:]])
+        points.append(list(map(float, _node.data[1:])))
     points = np.asarray(points)
 
     # Process cells
@@ -182,7 +210,7 @@ def process_mesh(inprw:inpRW):
             logger.debug(f'{_v[_i]}')
 
 
-    # Process distributions
+    # Process distributions and orientations
     distrs = {}
     """
     distrs = {
@@ -197,7 +225,7 @@ def process_mesh(inprw:inpRW):
         params = _distr_block.parameter
         logger.debug(f'params: {params}')
 
-        distr_name = params.get('name', None)
+        distr_name = params['name']._value
         logger.debug(f'distr_name: {distr_name}')
         if distr_name is not None:
             if distr_name not in distrs.keys():
@@ -206,7 +234,8 @@ def process_mesh(inprw:inpRW):
         for _i in range(1, len(_distr_block.data)):
             _elem_id = _distr_block.data[_i][0]
             _distr = _distr_block.data[_i][1:]
-            distrs[distr_name][_elem_id] = _distr
+            distrs[distr_name][_elem_id] = list(map(float, _distr))
+            # distrs[distr_name][_elem_id] = [x._evalDecimal for x in _distr]
 
     logger.debug('----------')
     logger.debug('distrs:')
@@ -227,6 +256,18 @@ def process_mesh(inprw:inpRW):
         ...
     }
     """
+    for _orient_block in inprw.findKeyword('orientation'):
+        params = _orient_block.parameter
+        logger.debug(f'params: {params}')
+
+        orient_name = params['name']._value
+        logger.debug(f'orient_name: {orient_name}')
+
+        distr_name = _orient_block.data[0][0]._value
+
+        orients[orient_name] = distr_name
+    logger.debug('----------')
+    logger.debug(orients)
 
 
     # Process materials
@@ -256,13 +297,16 @@ def process_mesh(inprw:inpRW):
         elastic_type = elastic[0].parameter['type']
         elastic_constants = []
         for _row in elastic[0].data:
-            elastic_constants.extend(_row[1:])
+            try:
+                elastic_constants.extend(list(map(float, _row)))
+            except ValueError:
+                pass
 
         materials[name] = {
             'id': 0,
-            'density': density,
-            'type': elastic_type,
-            'elastic': elastic_constants,
+            'density': float(density),
+            'type': elastic_type._value.lower(),
+            'elastic': list(map(float, elastic_constants)),
         }
 
     logger.debug('----------')
@@ -295,6 +339,7 @@ def process_mesh(inprw:inpRW):
         prop_id: [material_id, angle]
     }
     """
+    used_orientations = []
 
     for _section_block in inprw.findKeyword('shell section'):
         params = _section_block.parameter
@@ -308,6 +353,10 @@ def process_mesh(inprw:inpRW):
 
         orient_name = params.get('orientation', None)
         logger.debug(f'orient_name: {orient_name}')
+
+        if orient_name is not None:
+            if orient_name not in used_orientations:
+                used_orientations.append(orient_name._value)
 
         angle = 0
         try:
@@ -329,7 +378,8 @@ def process_mesh(inprw:inpRW):
 
         if prop_id == 0:  # New material-angle combination
             prop_id = len(mocombos) + 1
-            mocombos[prop_id] = [material_name, angle]
+            mat_id = materials[material_name]['id']
+            mocombos[prop_id] = [mat_id, angle]
             cell_prop_ids[prop_id] = []
 
         cell_prop_ids[prop_id].extend(cell_sets[elset_name])
@@ -361,7 +411,7 @@ def process_mesh(inprw:inpRW):
     cell_data = {
         'element_id': [],
         'property_id': init_cell_data_list(cells, None),
-        'property_ref_csys': init_cell_data_list(cells, None),
+        'property_ref_csys': init_cell_data_list(cells, [1, 0, 0, 0, 1, 0]),
     }
 
     # Convert element id to cell data
@@ -375,6 +425,21 @@ def process_mesh(inprw:inpRW):
             cell_data['property_id'][_cbi][_ci] = _prop_id
 
     # Convert orientation to cell data
+    # print(distrs)
+    for _orient_name in used_orientations:
+        # logger.debug(f'orient_name: {_orient_name}')
+        # logger.debug(orients.keys())
+        _distr_name = orients[_orient_name]
+        # logger.debug('distr_name')
+        # logger.debug(_distr_name)
+        # logger.debug('distrs')
+        # logger.debug(distrs.keys())
+        _distr = distrs[_distr_name]
+        # logger.debug('_distr')
+        # logger.debug(_distr)
+        for _eid, _coords in distrs[_distr_name].items():
+            _cbi, _ci = eid2cid[_eid]
+            cell_data['property_ref_csys'][_cbi][_ci] = _coords
 
     logger.debug('----------')
     logger.debug('cell_data:')
