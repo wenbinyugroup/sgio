@@ -102,8 +102,8 @@ def read_buffer(f, file_format:str, format_version:str, model:int|str):
 # Read output
 # ====================================================================
 def read_output_buffer(
-    file, analysis='h', sg:StructureGene=None, ext:str='', model_type='BM1',
-    tool_ver='', ncase=1, nelem=0,
+    file, analysis='h', sg:StructureGene=None, extension:str='', model_type='BM1',
+    tool_version='', ncase=1, nelem=0,
     **kwargs):
     """Read VABS output file buffer.
 
@@ -115,11 +115,11 @@ def read_output_buffer(
         Analysis type. Default is homogenization.
     sg: StructureGene, optional
         StructureGene object.
-    ext: str, optional
+    extension: str, optional
         File extension of the output file.
     model_type: str, optional
         Model type. Default is 'BM1'.
-    tool_ver: str, optional
+    tool_version: str, optional
         Tool version.
     ncase: int, optional
         Number of load cases. Default is 1.
@@ -131,6 +131,8 @@ def read_output_buffer(
     Model or list of dict:
         Model object or list of dictionaries containing the output data.
     """
+    logger.debug(f'reading vabs output...')
+    logger.debug(locals())
 
     if analysis == 0 or analysis == 'h' or analysis == '':
         if not sg is None:
@@ -143,14 +145,14 @@ def read_output_buffer(
             return _readOutputH(file, model_type=model_type, **kwargs)
 
     elif analysis == 1 or analysis == 2 or analysis == 'dl' or analysis == 'd' or analysis == 'l':
-        if ext == 'u':
+        if extension == 'u':
             return _readOutputNodeDisplacement(file)
-        elif ext == 'ele':
+        elif extension == 'ele':
             if nelem == 0:
                 nelem = sg.nelems
 
             if ncase == 1:
-                if float(tool_ver) > 4:
+                if float(tool_version) > 4:
                     line = file.readline()  # skip the first line
                 return _readOutputElementStrainStressCase(file, nelem)
             else:
@@ -170,7 +172,7 @@ def read_output_buffer(
             nelem = sg.nelems
 
         if ncase == 1:
-            if float(tool_ver) > 4:
+            if float(tool_version) > 4:
                 line = file.readline()  # skip the first line
             return _readOutputFailureIndexCase(file, nelem)
         else:

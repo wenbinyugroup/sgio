@@ -83,9 +83,11 @@ def _write_data(fh, tag, name, data, binary):
         # TODO unify
         if num_components == 1:
             for k, x in enumerate(data):
-                fh.write(fmt.format(k + 1, x))
+                # fh.write(fmt.format(k + 1, x))
+                fh.write(fmt.format(k + 1, float(x)))
         else:
             for k, x in enumerate(data):
-                fh.write(fmt.format(k + 1, *x))
+                # fh.write(fmt.format(k + 1, *x))
+                fh.write(fmt.format(k + 1, *[float(i) for i in x]))
         fh.write(f"$End{tag}\n")
 

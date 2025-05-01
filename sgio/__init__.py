@@ -29,6 +29,8 @@ from .iofunc import (
     write,
     convert,
     readLoadCsv,
+    addCellDictDataToMesh,
+    addPointDictDataToMesh,
     # write_points_cells,
     # register_format,
     # deregister_format,

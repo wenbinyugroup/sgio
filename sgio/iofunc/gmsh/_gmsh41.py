@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import logging
+
 import numpy as np
 
 
@@ -21,6 +23,8 @@ from sgio.iofunc._meshio import (
     WriteError
 )
 
+logger = logging.getLogger(__name__)
+
 c_int = np.dtype("i")
 c_size_t = np.dtype("P")
 c_double = np.dtype("d")
@@ -29,6 +33,9 @@ def write_buffer(file, mesh, float_fmt=".16e", binary=True, **kwargs):
     """Writes msh files, cf.
     <http://gmsh.info/doc/texinfo/gmsh.html#MSH-file-format>.
     """
+    logger.debug('writing gmsh buffer...')
+    logger.debug(locals())
+
     # Filter the point data: gmsh:dim_tags are tags, the rest is actual point data.
     point_data = {}
     for key, d in mesh.point_data.items():
@@ -64,9 +71,9 @@ def write_buffer(file, mesh, float_fmt=".16e", binary=True, **kwargs):
     if mesh.field_data:
         _write_physical_names(file, mesh.field_data)
 
-    _write_entities(
-        file, mesh.cells, tag_data, mesh.cell_sets, mesh.point_data, binary
-    )
+    # _write_entities(
+    #     file, mesh.cells, tag_data, mesh.cell_sets, mesh.point_data, binary
+    # )
     _write_nodes(file, mesh.points, mesh.cells, mesh.point_data, float_fmt, binary)
     _write_elements(file, mesh.cells, tag_data, binary)
     if mesh.gmsh_periodic is not None:

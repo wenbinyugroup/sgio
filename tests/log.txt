@@ -1,1 +1,2 @@
-[23:05:33] INFO     Reading file...                                                                           main.py:64
+[14:07:54] INFO     Reading file...                                                                           main.py:64
+           INFO     Writing file...                                                                          main.py:477
