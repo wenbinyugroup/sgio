@@ -398,6 +398,132 @@ def calc_direction_cosine_matrix(a_basis, b_basis):
 
 
 
+
+def rotation_matrix(axis, angle):
+    """
+    Returns the 3x3 rotation matrix for a rotation
+    about 'axis' (must be length 3) by 'angle' (radians).
+
+    Parameters
+    ----------
+    axis : list of float
+        The axis of rotation.
+    angle : float
+        The angle of rotation in radians.
+
+    Returns
+    -------
+    rotation_matrix : list of lists of float
+        3x3 rotation matrix.
+
+    Examples
+    --------
+    >>> rotation_matrix([1, 0, 0], np.pi/2)
+    array([[1. , 0. , 0. ],
+           [0. , 0. , -1. ],
+           [0. , 1. , 0. ]])
+    """
+    axis = np.array(axis, dtype=float)
+    axis = axis / np.linalg.norm(axis)
+    x, y, z = axis
+    c = np.cos(angle)
+    s = np.sin(angle)
+    t = 1 - c
+    R = np.array([
+        [t*x*x + c,   t*x*y - s*z, t*x*z + s*y],
+        [t*x*y + s*z, t*y*y + c,   t*y*z - s*x],
+        [t*x*z - s*y, t*y*z + s*x, t*z*z + c  ]
+    ])
+    return R
+
+
+
+
+def rotate_stiffness_matrix(C, axis, angle_rad):
+    """
+    Rotate a 6x6 stiffness matrix using a rotation around an arbitrary axis.
+
+    Parameters:
+    - C: 6x6 stiffness matrix (2D array or list)
+    - axis: 3-element list or array defining the rotation axis
+    - angle_rad: rotation angle in radians
+
+    Returns:
+    - C_rot: rotated 6x6 stiffness matrix
+    """
+    C = np.array(C, dtype=np.float64)
+    # axis = np.array(axis, dtype=np.float64)
+    # axis /= np.linalg.norm(axis)  # normalize axis
+
+    # # Rodrigues' rotation formula for 3x3 rotation matrix
+    # ux, uy, uz = axis
+    # cos_a = np.cos(angle_rad)
+    # sin_a = np.sin(angle_rad)
+    # one_c = 1 - cos_a
+
+    # R = np.array([
+    #     [cos_a + ux**2 * one_c,       ux*uy*one_c - uz*sin_a, ux*uz*one_c + uy*sin_a],
+    #     [uy*ux*one_c + uz*sin_a, cos_a + uy**2 * one_c,       uy*uz*one_c - ux*sin_a],
+    #     [uz*ux*one_c - uy*sin_a, uz*uy*one_c + ux*sin_a, cos_a + uz**2 * one_c]
+    # ])
+
+    b = rotation_matrix(axis, angle_rad)
+
+    # Construct 6x6 transformation matrix T for stiffness in Voigt notation
+    R = np.zeros((6, 6))
+
+    # Populate R using standard transformation rules
+    for i in range(3):
+        for j in range(3):
+            R[i, j] = b[i, j]**2  # upper-left 3x3 block
+
+    # Fill other transformation parts
+    # upper-right 3x3 block
+    R[0, 3] = 2*b[0, 1] * b[0, 2]
+    R[0, 4] = 2*b[0, 0] * b[0, 2]
+    R[0, 5] = 2*b[0, 0] * b[0, 1]
+
+    R[1, 3] = 2*b[1, 1] * b[1, 2]
+    R[1, 4] = 2*b[1, 0] * b[1, 2]
+    R[1, 5] = 2*b[1, 0] * b[1, 1]
+
+    R[2, 3] = 2*b[2, 1] * b[2, 2]
+    R[2, 4] = 2*b[2, 0] * b[2, 2]
+    R[2, 5] = 2*b[2, 0] * b[2, 1]
+
+    # lower-left 3x3 block
+    R[3, 0] = 2*b[1, 0] * b[2, 0]
+    R[3, 1] = 2*b[1, 1] * b[2, 1]
+    R[3, 2] = 2*b[1, 2] * b[2, 2]
+
+    R[4, 0] = 2*b[2, 0] * b[0, 0]
+    R[4, 1] = 2*b[2, 1] * b[0, 1]
+    R[4, 2] = 2*b[2, 2] * b[0, 2]
+
+    R[5, 0] = 2*b[0, 0] * b[1, 0]
+    R[5, 1] = 2*b[0, 1] * b[1, 1]
+    R[5, 2] = 2*b[0, 2] * b[1, 2]
+
+    # lower-right 3x3 block
+    R[3, 3] = b[1,1]*b[2,2] + b[1,2]*b[2,1]
+    R[3, 4] = b[1,0]*b[2,2] + b[1,2]*b[2,0]
+    R[3, 5] = b[1,0]*b[2,1] + b[1,1]*b[2,0]
+
+    R[4, 3] = b[0,1]*b[2,2] + b[0,2]*b[2,1]
+    R[4, 4] = b[0,0]*b[2,2] + b[0,2]*b[2,0]
+    R[4, 5] = b[0,0]*b[2,1] + b[0,1]*b[2,0]
+
+    R[5, 3] = b[0,1]*b[1,2] + b[0,2]*b[1,1]
+    R[5, 4] = b[0,0]*b[1,2] + b[0,2]*b[1,0]
+    R[5, 5] = b[0,0]*b[1,1] + b[0,1]*b[1,0]
+
+    # Now rotate the stiffness matrix: C' = R C R^T
+    C_rot = R @ C @ R.T
+    return C_rot
+
+
+
+
 def distance(p1, p2):
     s2 = (p1[0] - p2[0])**2 + (p1[1] - p2[1])**2
     return sqrt(s2)

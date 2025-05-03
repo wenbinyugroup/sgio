@@ -96,6 +96,18 @@ def read(filename, **kwargs):
                 [_e1, _e2, _e3, _g12, _g13, _g23, _nu12, _nu13, _nu23],
                 input_type='engineering')
 
+        elif _type == 'anisotropic':
+            _c = [
+                [_elastic[0], _elastic[1], _elastic[3], _elastic[6], _elastic[10], _elastic[15]],
+                [_elastic[1], _elastic[2], _elastic[4], _elastic[7], _elastic[11], _elastic[16]],
+                [_elastic[3], _elastic[4], _elastic[5], _elastic[8], _elastic[12], _elastic[17]],
+                [_elastic[6], _elastic[7], _elastic[8], _elastic[9], _elastic[13], _elastic[18]],
+                [_elastic[10], _elastic[11], _elastic[12], _elastic[13], _elastic[14], _elastic[19]],
+                [_elastic[15], _elastic[16], _elastic[17], _elastic[18], _elastic[19], _elastic[20]],
+            ]
+            m.set('isotropy', 2)
+            m.set('elastic', _c, input_type='stiffness')
+
         sg.materials[_mid] = m
 
     # Process material-orientation combinations
