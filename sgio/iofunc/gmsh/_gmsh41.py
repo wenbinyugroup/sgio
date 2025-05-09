@@ -33,6 +33,10 @@ def write_buffer(file, mesh, float_fmt=".16e", mesh_only=False, binary=True, **k
     """Writes msh files, cf.
     <http://gmsh.info/doc/texinfo/gmsh.html#MSH-file-format>.
     """
+<<<<<<< HEAD
+=======
+    logger.debug('writing gmsh buffer...')
+>>>>>>> dev
     logger.debug(locals())
 
     # Filter the point data: gmsh:dim_tags are tags, the rest is actual point data.
@@ -70,11 +74,17 @@ def write_buffer(file, mesh, float_fmt=".16e", mesh_only=False, binary=True, **k
     if mesh.field_data:
         _write_physical_names(file, mesh.field_data)
 
+<<<<<<< HEAD
     if not mesh_only:
         _write_entities(
             file, mesh.cells, tag_data, mesh.cell_sets, mesh.point_data, binary
         )
 
+=======
+    # _write_entities(
+    #     file, mesh.cells, tag_data, mesh.cell_sets, mesh.point_data, binary
+    # )
+>>>>>>> dev
     _write_nodes(file, mesh.points, mesh.cells, mesh.point_data, float_fmt, binary)
     _write_elements(file, mesh.cells, tag_data, binary)
     if mesh.gmsh_periodic is not None:

@@ -1,41 +1,49 @@
+import logging
 import sgio
 
-ver = '4.0'
-fn_base = 'vabs40/uh60a'
+logger = logging.getLogger('sgio')
+sgio.configure_logging(cout_level='debug')
+
+
+# Base name of the VABS files
+fn_base = 'files/vabs/version_4_1/uh60a'
+model_type = 'bm2'  # bm1: Euler-Bernoulli beam, bm2: Timoshenko beam
+
+
+
+ver = '4.1'  # VABS version
 fn_sg = f'{fn_base}.sg'
 fn_sg_ele = f'{fn_sg}.ele'
 fn_msh = f'{fn_base}.msh'
 
-name_u = 'u'
+# Component labels in visualization
 # name_u = ['u1', 'u2', 'u3']
-name_e = [
-    'e11', '2e12', '2e13', 'e22', '2e23', 'e33'
-]
-name_sm = [
-    's11m', 's12m', 's13m', 's22m', 's23m', 's33m'
-]
+name_e = ['e11', '2e12', '2e13', 'e22', '2e23', 'e33']  # Strain in global coordinate
+name_em = ['e11m', '2e12m', '2e13m', 'e22m', '2e23m', 'e33m']  # Strain in material coordinate
+name_s = ['s11', '2s12', '2s13', 's22', '2s23', 's33']  # Stress in global coordinate
+name_sm = ['s11m', 's12m', 's13m', 's22m', 's23m', 's33m']  # Stress in material coordinate
 
-sg = sgio.read(fn_sg, 'vabs', sgdim=2, model='bm2')
-# print(sg.nelems)
-state_case = sgio.readOutputState(fn_sg, 'v', 'd', sg=sg, tool_ver=ver)
-print(state_case)
-
-eid = 1
-print(f'element {eid}')
-print("strain global: ", *[f"{v:e}" for v in state_case.getState('ee').data[eid]])
-print("stress global: ", *[f"{v:e}" for v in state_case.getState('es').data[eid]])
-print("strain material: ", *[f"{v:e}" for v in state_case.getState('eem').data[eid]])
-print("stress material: ", *[f"{v:e}" for v in state_case.getState('esm').data[eid]])
-
-# _u = state_field.getDisplacementField()
-# print(_u)
-# sgio.addPointDictDataToMesh(name_u, state_case.getState('u').data, sg.mesh)
-# _ee = state_field.getStrainField(where='e', cs='s')
-# print(_ee)
-sgio.addCellDictDataToMesh(name_e, state_case.getState('ee').data, sg.mesh)
-sgio.addCellDictDataToMesh(name_sm, state_case.getState('esm').data, sg.mesh)
-
+# Read the cross-section model
+sg = sgio.read(fn_sg, 'vabs', sgdim=2, model_type=model_type)
 # print(sg)
 
-sgio.write(sg, fn_msh, 'gmsh', mesh_only=True)
+# Read the output state
+state_case = sgio.readOutputState(fn_sg, 'v', 'd', sg=sg, tool_version=ver)
+# print(state_case)
+
+
+# Add data to the mesh
+# sgio.addPointDictDataToMesh(name_u, state_case.getState('u').data, sg.mesh)
+# Element strain in global coordinate
+sgio.addCellDictDataToMesh(name_e, state_case.getState('ee').data, sg.mesh)
+# Element strain in material coordinate
+sgio.addCellDictDataToMesh(name_em, state_case.getState('eem').data, sg.mesh)
+# Element stress in global coordinate
+sgio.addCellDictDataToMesh(name_s, state_case.getState('es').data, sg.mesh)
+# Element stress in material coordinate
+sgio.addCellDictDataToMesh(name_sm, state_case.getState('esm').data, sg.mesh)
+
+
+# Write the mesh to a file
+sgio.write(sg, fn_msh, 'gmsh', format_version='4.1', mesh_only=True)
 

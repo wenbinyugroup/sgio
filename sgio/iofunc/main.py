@@ -194,6 +194,8 @@ def readOutputState(
     StateCase
         State case object
     """
+    logger.debug('reading output state...')
+    logger.debug(locals())
 
     state_case = sgmodel.StateCase()
 
@@ -272,7 +274,7 @@ def readOutputState(
                     try:
                         ee, es, eem, esm = _vabs.read_output_buffer(
                             file, analysis, sg=sg, extension="ele", tool_version=tool_version,
-                            num_cases=num_cases, num_elements=num_elements, **kwargs
+                            ncase=num_cases, nelem=num_elements, **kwargs
                         )
                     except Exception as e:
                         logger.error(f"Error: {e}")

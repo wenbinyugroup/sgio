@@ -11,7 +11,7 @@
   ff_out: 'vabs'
   version_out: '4.0'
   model: 'BM2'
-  solver: 'vabs'
+  solver: 'vabs40'
 # - fn_base: 'sg21eb_tri3_vabs40'
 #   ff_in: 'vabs'
 #   ext_in: 'dat'

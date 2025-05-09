@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 [14:43:01] INFO     Converting file format...                                                                main.py:612
            INFO     Reading file...                                                                           main.py:64
 [14:43:02] INFO     Writing file...                                                                          main.py:475
@@ -32,3 +33,7 @@
            INFO     Reading file...                                                                           main.py:64
 [14:43:07] INFO     Writing file...                                                                          main.py:475
            INFO     File format converted.                                                                   main.py:649
+=======
+[14:07:54] INFO     Reading file...                                                                           main.py:64
+           INFO     Writing file...                                                                          main.py:477
+>>>>>>> dev

@@ -85,10 +85,10 @@ def configure_logging(cout_level='INFO', fout_level='INFO', filename='log.txt'):
 
 
 # Configure logging
-configure_logging()
+# configure_logging()
 
 SC_VERSION_DEFAULT = '2.1'
-VABS_VERSION_DEFAULT = '4.0'
+VABS_VERSION_DEFAULT = '4.1'
 
 MSG_COMMANDS = (
     'swiftcomp', 'sc', 'vabs'

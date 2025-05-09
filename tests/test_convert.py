@@ -2,10 +2,11 @@ import logging
 import os
 import yaml
 
-from sgio import convert, run
+from sgio import convert, run, configure_logging
 
 
-logging.basicConfig(level=logging.DEBUG)
+# logger = logging.getLogger(__name__)
+configure_logging(cout_level='info')
 
 
 test_case_files = [
