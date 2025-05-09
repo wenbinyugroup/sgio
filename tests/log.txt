@@ -1,39 +1,42 @@
-<<<<<<< HEAD
-[14:43:01] INFO     Converting file format...                                                                main.py:612
+[17:08:04] INFO     Converting file format...                                                                main.py:614
            INFO     Reading file...                                                                           main.py:64
-[14:43:02] INFO     Writing file...                                                                          main.py:475
-           INFO     File format converted.                                                                   main.py:649
-           INFO     vabs _temp/sg2_airfoil_vabs41.dat                                                        execu.py:37
-           INFO     Converting file format...                                                                main.py:612
-           INFO     Reading file...                                                                           main.py:64
-[14:43:03] INFO     Writing file...                                                                          main.py:475
-           INFO     File format converted.                                                                   main.py:649
-           INFO     vabs _temp/sg2_airfoil_vabs40.dat                                                        execu.py:37
-[14:43:04] INFO     Converting file format...                                                                main.py:612
-           INFO     Reading file...                                                                           main.py:64
-           INFO     Writing file...                                                                          main.py:475
-           INFO     File format converted.                                                                   main.py:649
-           INFO     Converting file format...                                                                main.py:612
-           INFO     Reading file...                                                                           main.py:64
-           INFO     Writing file...                                                                          main.py:475
-           INFO     File format converted.                                                                   main.py:649
-           INFO     Converting file format...                                                                main.py:612
-           INFO     Reading file...                                                                           main.py:64
-           INFO     Writing file...                                                                          main.py:475
-           INFO     File format converted.                                                                   main.py:649
-           INFO     Converting file format...                                                                main.py:612
-           INFO     Reading file...                                                                           main.py:64
-           INFO     Writing file...                                                                          main.py:475
-           INFO     File format converted.                                                                   main.py:649
-           INFO     Converting file format...                                                                main.py:612
-           INFO     Reading file...                                                                           main.py:64
-[14:43:06] INFO     Writing file...                                                                          main.py:475
-           INFO     File format converted.                                                                   main.py:649
-           INFO     Converting file format...                                                                main.py:612
-           INFO     Reading file...                                                                           main.py:64
-[14:43:07] INFO     Writing file...                                                                          main.py:475
-           INFO     File format converted.                                                                   main.py:649
-=======
-[14:07:54] INFO     Reading file...                                                                           main.py:64
            INFO     Writing file...                                                                          main.py:477
->>>>>>> dev
+           INFO     File format converted.                                                                   main.py:651
+           INFO     vabs _temp/sg2_airfoil_vabs41.dat                                                        execu.py:37
+[17:08:05] INFO     return code: 0                                                                           execu.py:51
+           INFO     Converting file format...                                                                main.py:614
+           INFO     Reading file...                                                                           main.py:64
+           INFO     Writing file...                                                                          main.py:477
+           INFO     File format converted.                                                                   main.py:651
+           INFO     vabs40 _temp/sg2_airfoil_vabs40.dat                                                      execu.py:37
+[17:08:06] INFO     return code: 0                                                                           execu.py:51
+           INFO     Converting file format...                                                                main.py:614
+           INFO     Reading file...                                                                           main.py:64
+           INFO     Writing file...                                                                          main.py:477
+           INFO     File format converted.                                                                   main.py:651
+           INFO     Converting file format...                                                                main.py:614
+           INFO     Reading file...                                                                           main.py:64
+           INFO     Writing file...                                                                          main.py:477
+           INFO     File format converted.                                                                   main.py:651
+           INFO     Converting file format...                                                                main.py:614
+           INFO     Reading file...                                                                           main.py:64
+           INFO     Writing file...                                                                          main.py:477
+[17:08:07] INFO     File format converted.                                                                   main.py:651
+           INFO     Converting file format...                                                                main.py:614
+           INFO     Reading file...                                                                           main.py:64
+           INFO     Writing file...                                                                          main.py:477
+           INFO     File format converted.                                                                   main.py:651
+           INFO     swiftcomp _temp/sg33_cube_sc21.sg 3D H                                                   execu.py:37
+           INFO     return code: 0                                                                           execu.py:51
+           INFO     Converting file format...                                                                main.py:614
+           INFO     Reading file...                                                                           main.py:64
+[17:08:09] INFO     Writing file...                                                                          main.py:477
+           INFO     File format converted.                                                                   main.py:651
+           INFO     swiftcomp _temp/sg33_udfrp_sc21.sg 3D H                                                  execu.py:37
+[17:08:20] INFO     return code: 0                                                                           execu.py:51
+           INFO     Converting file format...                                                                main.py:614
+           INFO     Reading file...                                                                           main.py:64
+           INFO     Writing file...                                                                          main.py:477
+           INFO     File format converted.                                                                   main.py:651
+           INFO     swiftcomp _temp/sg33_inclusion_ellipsoid_meshsize01_sc21.sg 3D H                         execu.py:37
+[17:08:23] INFO     return code: 0                                                                           execu.py:51

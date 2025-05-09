@@ -1,6 +1,9 @@
 from __future__ import annotations
 
+import io
 import logging
+import sys
+from contextlib import redirect_stdout
 
 import numpy as np
 # from meshio._files import is_buffer, open_file
@@ -26,6 +29,10 @@ abaqus_to_meshio_type.update({
 })
 meshio_to_abaqus_type = {v: k for k, v in abaqus_to_meshio_type.items()}
 
+inprw_print = False
+if logger.getEffectiveLevel() <= logging.DEBUG:
+    inprw_print = True
+
 
 # ====================================================================
 # Readers
@@ -40,7 +47,15 @@ def read(filename, **kwargs):
 
     # Parse input file
     inprw = inpRW(filename)
-    inprw.parse()
+
+    stdout_capture = io.StringIO()
+    with redirect_stdout(stdout_capture):
+        inprw.parse()
+    print()
+
+    inprw_output = stdout_capture.getvalue()
+    if inprw_output.strip():
+        logger.debug(inprw_output.strip())
 
     # Process parsed data
 
@@ -66,7 +81,7 @@ def read(filename, **kwargs):
 
     # Process mesh
     mesh, materials, mocombos = process_mesh(inprw)
-    print(mesh)
+    # print(mesh)
     sg.mesh = mesh
 
 
@@ -169,7 +184,7 @@ def process_mesh(inprw:inpRW):
         ...
     }
     """
-    for _elem_block in inprw.findKeyword('element'):
+    for _elem_block in inprw.findKeyword('element', printOutput=inprw_print):
         params = _elem_block.parameter
         logger.debug(f'params: {params}')
 
@@ -219,7 +234,7 @@ def process_mesh(inprw:inpRW):
 
 
     # Process sets
-    for _set_block in inprw.findKeyword('elset'):
+    for _set_block in inprw.findKeyword('elset', printOutput=inprw_print):
         params = _set_block.parameter
         logger.debug(f'params: {params}')
 
@@ -259,7 +274,7 @@ def process_mesh(inprw:inpRW):
         ...
     }
     """
-    for _distr_block in inprw.findKeyword('distribution'):
+    for _distr_block in inprw.findKeyword('distribution', printOutput=inprw_print):
         params = _distr_block.parameter
         logger.debug(f'params: {params}')
 
@@ -294,7 +309,7 @@ def process_mesh(inprw:inpRW):
         ...
     }
     """
-    for _orient_block in inprw.findKeyword('orientation'):
+    for _orient_block in inprw.findKeyword('orientation', printOutput=inprw_print):
         params = _orient_block.parameter
         logger.debug(f'params: {params}')
 
@@ -321,7 +336,7 @@ def process_mesh(inprw:inpRW):
         ...
     }
     """
-    for _material_block in inprw.findKeyword('material'):
+    for _material_block in inprw.findKeyword('material', printOutput=inprw_print):
         process_material(_material_block, inprw, materials)
 
 
@@ -347,12 +362,12 @@ def process_mesh(inprw:inpRW):
     """
     used_orientations = []
 
-    for _section_block in inprw.findKeyword('solid section'):
+    for _section_block in inprw.findKeyword('solid section', printOutput=inprw_print):
         process_section(
             _section_block, materials, mocombos, cell_sets, cell_prop_ids,
             used_materials, used_orientations)
 
-    for _section_block in inprw.findKeyword('shell section'):
+    for _section_block in inprw.findKeyword('shell section', printOutput=inprw_print):
         process_section(
             _section_block, materials, mocombos, cell_sets, cell_prop_ids,
             used_materials, used_orientations)
@@ -426,13 +441,13 @@ def process_mesh(inprw:inpRW):
 
 
 
-def process_material(_material_block, inprw, materials):
+def process_material(_material_block, inprw:inpRW, materials):
     """
     """
     name = _material_block.parameter['name']._value
     logger.debug(f'name: {name}')
 
-    density = inprw.findKeyword('density', parentBlock=_material_block)
+    density = inprw.findKeyword('density', parentBlock=_material_block, printOutput=inprw_print)
     if density:
         logger.debug(f'density: {density}')
         density = float(density[0].data[0][0])
@@ -440,7 +455,7 @@ def process_material(_material_block, inprw, materials):
     else:
         density = 0.0
 
-    elastic = inprw.findKeyword('elastic', parentBlock=_material_block)
+    elastic = inprw.findKeyword('elastic', parentBlock=_material_block, printOutput=inprw_print)
     logger.debug(f'elastic: {elastic}')
 
     try:

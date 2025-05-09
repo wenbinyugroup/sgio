@@ -16,7 +16,6 @@ def read_buffer(file, format_version="4.1", **kwargs):
 
 
 def write_buffer(
-<<<<<<< HEAD
     file, mesh, format_version="4.1", float_fmt=".16e", sgdim=3,
     mesh_only=False, binary=False,
     **kwargs):
@@ -27,13 +26,6 @@ def write_buffer(
     if format_version == "":
         format_version = "4.1"
 
-=======
-    file, mesh, format_version="4.1", float_fmt=".16e",
-    binary=False, sgdim=3, **kwargs):
-    logger.debug('writing gmsh buffer...')
-    logger.debug(locals())
-
->>>>>>> dev
     if format_version == "2.2":
         _gmsh22.write_buffer(file, mesh, float_fmt=float_fmt, binary=binary)
     # elif format_version == "4.0":

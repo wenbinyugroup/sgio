@@ -46,7 +46,7 @@ def test_convert(fn_test_cases, input_dir, output_dir):
 
         _solver = _case.get('solver', None)
         if _solver:
-            run(_solver, fn_out, analysis='h')
+            run(_solver, fn_out, analysis='h', smdim=_case.get('model', None))
 
 
 
