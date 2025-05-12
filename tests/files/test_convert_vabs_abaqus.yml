@@ -10,12 +10,9 @@
   ff_out: 'vabs'
   version_out: '4.0'
   model: 'BM2'
-# - fn_base: 'sg21eb_tri3_vabs40'
-#   ff_in: 'vabs'
-#   ext_in: 'dat'
-#   ff_out: 'abaqus'
-#   ext_out: 'inp'
-#   sgdim: 2
-#   model: 'BM2'
-#   mesh_only: True
-
+- fn_in: 'abaqus/sg2_i_simple_eo1.inp'
+  ff_in: 'abaqus'
+  fn_out: 'sg2_i_simple_eo1_vabs41.dat'
+  ff_out: 'vabs'
+  version_out: '4.1'
+  model: 'BM2'

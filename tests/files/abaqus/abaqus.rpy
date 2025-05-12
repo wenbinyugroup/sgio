@@ -2,7 +2,7 @@
 #
 # Abaqus/CAE Release 2023 replay file
 # Internal Version: 2022_09_28-14.11.55 183150
-# Run by tian50 on Tue Apr  8 13:19:34 2025
+# Run by tian50 on Mon May 12 09:38:16 2025
 #
 
 # from driverUtils import executeOnCaeGraphicsStartup
@@ -10,7 +10,7 @@
 #: Executing "onCaeGraphicsStartup()" in the site directory ...
 from abaqus import *
 from abaqusConstants import *
-session.Viewport(name='Viewport: 1', origin=(0.0, 0.0), width=307.691131591797, 
+session.Viewport(name='Viewport: 1', origin=(0.0, 0.0), width=312.906219482422, 
     height=197.607406616211)
 session.viewports['Viewport: 1'].makeCurrent()
 session.viewports['Viewport: 1'].maximize()
@@ -19,171 +19,311 @@ from driverUtils import executeOnCaeStartup
 executeOnCaeStartup()
 session.viewports['Viewport: 1'].partDisplay.geometryOptions.setValues(
     referenceRepresentation=ON)
+s = mdb.models['Model-1'].ConstrainedSketch(name='__profile__', sheetSize=10.0)
+g, v, d, c = s.geometry, s.vertices, s.dimensions, s.constraints
+s.setPrimaryObject(option=STANDALONE)
+s.ConstructionLine(point1=(-0.45, 0.0), point2=(0.35, 0.0))
+s.HorizontalConstraint(entity=g[2], addUndoState=False)
+s.ConstructionLine(point1=(0.0, -0.3), point2=(0.0, 0.3))
+s.VerticalConstraint(entity=g[3], addUndoState=False)
+session.viewports['Viewport: 1'].view.setValues(width=6.54781, height=3.29, 
+    cameraPosition=(-0.0837495, 0.0227099, 9.42809), cameraTarget=(-0.0837495, 
+    0.0227099, 0))
+s.FixedConstraint(entity=g[2])
+s.FixedConstraint(entity=g[3])
+session.viewports['Viewport: 1'].view.setValues(nearPlane=8.67976, 
+    farPlane=10.1764, width=8.95838, height=4.50121, cameraPosition=(0.0371426, 
+    0.229169, 9.42809), cameraTarget=(0.0371426, 0.229169, 0))
+s.Line(point1=(-1.3, 1.65), point2=(1.3, 1.65))
+s.HorizontalConstraint(entity=g[4], addUndoState=False)
+s.Line(point1=(1.3, 1.65), point2=(1.3, 1.35))
+s.VerticalConstraint(entity=g[5], addUndoState=False)
+s.PerpendicularConstraint(entity1=g[4], entity2=g[5], addUndoState=False)
+s.Line(point1=(1.3, 1.35), point2=(0.55, 1.35))
+s.HorizontalConstraint(entity=g[6], addUndoState=False)
+s.PerpendicularConstraint(entity1=g[5], entity2=g[6], addUndoState=False)
+s.Line(point1=(0.55, 1.35), point2=(0.55, -0.65))
+s.VerticalConstraint(entity=g[7], addUndoState=False)
+s.PerpendicularConstraint(entity1=g[6], entity2=g[7], addUndoState=False)
+s.Line(point1=(0.55, -0.65), point2=(1.3, -0.65))
+s.HorizontalConstraint(entity=g[8], addUndoState=False)
+s.PerpendicularConstraint(entity1=g[7], entity2=g[8], addUndoState=False)
+s.Line(point1=(1.3, -0.65), point2=(1.3, -1.1))
+s.VerticalConstraint(entity=g[9], addUndoState=False)
+s.PerpendicularConstraint(entity1=g[8], entity2=g[9], addUndoState=False)
+s.Line(point1=(1.3, -1.1), point2=(-1.5, -1.1))
+s.HorizontalConstraint(entity=g[10], addUndoState=False)
+s.PerpendicularConstraint(entity1=g[9], entity2=g[10], addUndoState=False)
+s.Line(point1=(-1.5, -1.1), point2=(-1.5, -0.65))
+s.VerticalConstraint(entity=g[11], addUndoState=False)
+s.PerpendicularConstraint(entity1=g[10], entity2=g[11], addUndoState=False)
+s.Line(point1=(-1.5, -0.65), point2=(-0.85, -0.65))
+s.HorizontalConstraint(entity=g[12], addUndoState=False)
+s.PerpendicularConstraint(entity1=g[11], entity2=g[12], addUndoState=False)
+s.Line(point1=(-0.85, -0.65), point2=(-0.85, 1.35))
+s.VerticalConstraint(entity=g[13], addUndoState=False)
+s.PerpendicularConstraint(entity1=g[12], entity2=g[13], addUndoState=False)
+s.Line(point1=(-0.85, 1.35), point2=(-1.3, 1.35))
+s.HorizontalConstraint(entity=g[14], addUndoState=False)
+s.PerpendicularConstraint(entity1=g[13], entity2=g[14], addUndoState=False)
+s.Line(point1=(-1.3, 1.35), point2=(-1.3, 1.65))
+s.VerticalConstraint(entity=g[15], addUndoState=False)
+s.PerpendicularConstraint(entity1=g[14], entity2=g[15], addUndoState=False)
+session.viewports['Viewport: 1'].view.setValues(nearPlane=8.52344, 
+    farPlane=10.3327, width=9.56918, height=4.80812, cameraPosition=(0.563419, 
+    0.138142, 9.42809), cameraTarget=(0.563419, 0.138142, 0))
+s.ObliqueDimension(vertex1=v[6], vertex2=v[7], textPoint=(0.710448503494263, 
+    -1.49619507789612), value=1.0)
+s.undo()
+s.SymmetryConstraint(entity1=g[11], entity2=g[9], symmetryAxis=g[3])
+s.SymmetryConstraint(entity1=g[13], entity2=g[7], symmetryAxis=g[3])
+s.SymmetryConstraint(entity1=g[15], entity2=g[5], symmetryAxis=g[3])
+s.SymmetryConstraint(entity1=g[10], entity2=g[4], symmetryAxis=g[2])
+s.SymmetryConstraint(entity1=g[8], entity2=g[6], symmetryAxis=g[2])
+s.DistanceDimension(entity1=g[13], entity2=g[7], textPoint=(0.69206976890564, 
+    -0.565785586833954), value=0.001016)
+session.viewports['Viewport: 1'].view.setValues(nearPlane=9.21424, 
+    farPlane=9.64194, width=2.26202, height=1.13657, cameraPosition=(1.12656, 
+    0.719131, 9.42809), cameraTarget=(1.12656, 0.719131, 0))
+s.ObliqueDimension(vertex1=v[1], vertex2=v[2], textPoint=(1.41619396209717, 
+    1.04469275474548), value=0.001016)
+session.viewports['Viewport: 1'].view.setValues(nearPlane=9.4102, 
+    farPlane=9.44598, width=0.189277, height=0.0951038, cameraPosition=(
+    0.0824691, -1.03659, 9.42809), cameraTarget=(0.0824691, -1.03659, 0))
+s.ObliqueDimension(vertex1=v[6], vertex2=v[7], textPoint=(0.0549621805548668, 
+    -1.04530811309814), value=1.0)
+session.viewports['Viewport: 1'].view.setValues(nearPlane=9.40132, 
+    farPlane=9.45486, width=0.283142, height=0.142267, cameraPosition=(
+    0.0869958, -1.03187, 9.42809), cameraTarget=(0.0869958, -1.03187, 0))
+s.undo()
+s.ObliqueDimension(vertex1=v[6], vertex2=v[7], textPoint=(0.0467540919780731, 
+    -1.05197465419769), value=0.0254)
+session.viewports['Viewport: 1'].view.setValues(nearPlane=9.42008, 
+    farPlane=9.4361, width=0.0847635, height=0.0425901, cameraPosition=(
+    0.0305624, 1.02281, 9.42809), cameraTarget=(0.0305624, 1.02281, 0))
+s.DistanceDimension(entity1=g[10], entity2=g[4], textPoint=(0.0269808638840914, 
+    1.02335429191589), value=0.0127)
+session.viewports['Viewport: 1'].view.setValues(nearPlane=9.4233, 
+    farPlane=9.43288, width=0.0507115, height=0.0254804, cameraPosition=(
+    0.00446395, -0.000373484, 9.42809), cameraTarget=(0.00446395, -0.000373484, 
+    0))
+p = mdb.models['Model-1'].Part(name='Part-1', dimensionality=TWO_D_PLANAR, 
+    type=DEFORMABLE_BODY)
+p = mdb.models['Model-1'].parts['Part-1']
+p.BaseShell(sketch=s)
+s.unsetPrimaryObject()
+p = mdb.models['Model-1'].parts['Part-1']
+session.viewports['Viewport: 1'].setValues(displayedObject=p)
+del mdb.models['Model-1'].sketches['__profile__']
+session.viewports['Viewport: 1'].view.setValues(nearPlane=0.0542304, 
+    farPlane=0.0593618, width=0.0306594, height=0.0154051, 
+    viewOffsetX=0.0010664, viewOffsetY=0.000170518)
+p = mdb.models['Model-1'].parts['Part-1']
+f, e, d1 = p.faces, p.edges, p.datums
+t = p.MakeSketchTransform(sketchPlane=f[0], sketchPlaneSide=SIDE1, origin=(0.0, 
+    0.0, 0.0))
+s1 = mdb.models['Model-1'].ConstrainedSketch(name='__profile__', 
+    sheetSize=0.056, gridSpacing=0.001, transform=t)
+g, v, d, c = s1.geometry, s1.vertices, s1.dimensions, s1.constraints
+s1.sketchOptions.setValues(decimalPlaces=3)
+s1.setPrimaryObject(option=SUPERIMPOSE)
+p = mdb.models['Model-1'].parts['Part-1']
+p.projectReferencesOntoSketch(sketch=s1, filter=COPLANAR_EDGES)
+session.viewports['Viewport: 1'].view.setValues(nearPlane=0.0535668, 
+    farPlane=0.0600255, width=0.0341595, height=0.0171637, cameraPosition=(
+    0.00154526, -0.000652283, 0.0567961), cameraTarget=(0.00154526, 
+    -0.000652283, 0))
+s1.Line(point1=(-0.0127, 0.005842), point2=(0.0127000000396743, 0.005842))
+s1.HorizontalConstraint(entity=g[14], addUndoState=False)
+s1.PerpendicularConstraint(entity1=g[2], entity2=g[14], addUndoState=False)
+s1.CoincidentConstraint(entity1=v[12], entity2=g[2], addUndoState=False)
+s1.EqualDistanceConstraint(entity1=v[0], entity2=v[1], midpoint=v[12], 
+    addUndoState=False)
+s1.CoincidentConstraint(entity1=v[13], entity2=g[12], addUndoState=False)
+s1.EqualDistanceConstraint(entity1=v[10], entity2=v[11], midpoint=v[13], 
+    addUndoState=False)
+s1.Line(point1=(-0.0127, -0.005842), point2=(0.0127000000396743, -0.005842))
+s1.HorizontalConstraint(entity=g[15], addUndoState=False)
+s1.PerpendicularConstraint(entity1=g[6], entity2=g[15], addUndoState=False)
+s1.CoincidentConstraint(entity1=v[14], entity2=g[6], addUndoState=False)
+s1.EqualDistanceConstraint(entity1=v[4], entity2=v[5], midpoint=v[14], 
+    addUndoState=False)
+s1.CoincidentConstraint(entity1=v[15], entity2=g[8], addUndoState=False)
+s1.EqualDistanceConstraint(entity1=v[6], entity2=v[7], midpoint=v[15], 
+    addUndoState=False)
+s1.Line(point1=(0.0, 0.005842), point2=(0.0, -0.00584200000660866))
+s1.VerticalConstraint(entity=g[16], addUndoState=False)
+s1.PerpendicularConstraint(entity1=g[14], entity2=g[16], addUndoState=False)
+s1.CoincidentConstraint(entity1=v[16], entity2=g[14], addUndoState=False)
+s1.EqualDistanceConstraint(entity1=v[12], entity2=v[13], midpoint=v[16], 
+    addUndoState=False)
+s1.CoincidentConstraint(entity1=v[17], entity2=g[15], addUndoState=False)
+s1.EqualDistanceConstraint(entity1=v[14], entity2=v[15], midpoint=v[17], 
+    addUndoState=False)
+session.viewports['Viewport: 1'].view.setValues(nearPlane=0.0539427, 
+    farPlane=0.0596496, width=0.0341595, height=0.0171637, cameraPosition=(
+    0.000298575, -0.000112646, 0.0567961), cameraTarget=(0.000298575, 
+    -0.000112646, 0))
+p = mdb.models['Model-1'].parts['Part-1']
+f = p.faces
+pickedFaces = f.getSequenceFromMask(mask=('[#1 ]', ), )
+e1, d2 = p.edges, p.datums
+p.PartitionFaceBySketch(faces=pickedFaces, sketch=s1)
+s1.unsetPrimaryObject()
+del mdb.models['Model-1'].sketches['__profile__']
+mdb.saveAs(
+    pathName='C:/Users/tian50/work/dev/sgio/tests/files/abaqus/sg2_i_simple')
+#: The model database has been saved to "C:\Users\tian50\work\dev\sgio\tests\files\abaqus\sg2_i_simple.cae".
+session.viewports['Viewport: 1'].partDisplay.setValues(sectionAssignments=ON, 
+    engineeringFeatures=ON)
+session.viewports['Viewport: 1'].partDisplay.geometryOptions.setValues(
+    referenceRepresentation=OFF)
+mdb.models['Model-1'].Material(name='aluminum')
+mdb.models['Model-1'].materials['aluminum'].Elastic(table=((71000000000.0, 
+    0.33), ))
+mdb.models['Model-1'].Material(name='gfrp')
+mdb.models['Model-1'].materials['gfrp'].Elastic(type=LAMINA, table=((
+    37600000000.0, 9584000000.0, 0.26, 4081000000.0, 4081000000.0, 
+    4081000000.0), ))
+mdb.models['Model-1'].materials['gfrp'].Density(table=((1903.0, ), ))
+mdb.models['Model-1'].materials['aluminum'].Density(table=((2640.0, ), ))
+mdb.models['Model-1'].Material(name='cfrp')
+mdb.models['Model-1'].materials['cfrp'].Elastic(type=ENGINEERING_CONSTANTS, 
+    table=((126000000000.0, 11000000000.0, 11000000000.0, 0.28, 0.28, 0.4, 
+    6600000000.0, 6600000000.0, 3929000000.0), ))
+mdb.save()
+#: The model database has been saved to "C:\Users\tian50\work\dev\sgio\tests\files\abaqus\sg2_i_simple.cae".
+mdb.models['Model-1'].HomogeneousSolidSection(name='aluminum', 
+    material='aluminum', thickness=None)
+p = mdb.models['Model-1'].parts['Part-1']
+f = p.faces
+faces = f.getSequenceFromMask(mask=('[#8 ]', ), )
+region = p.Set(faces=faces, name='Set-1')
+p = mdb.models['Model-1'].parts['Part-1']
+p.SectionAssignment(region=region, sectionName='aluminum', offset=0.0, 
+    offsetType=MIDDLE_SURFACE, offsetField='', 
+    thicknessAssignment=FROM_SECTION)
+p = mdb.models['Model-1'].parts['Part-1']
+f = p.faces
+faces = f.getSequenceFromMask(mask=('[#1 ]', ), )
+region = p.Set(faces=faces, name='Set-2')
+p = mdb.models['Model-1'].parts['Part-1']
+p.SectionAssignment(region=region, sectionName='aluminum', offset=0.0, 
+    offsetType=MIDDLE_SURFACE, offsetField='', 
+    thicknessAssignment=FROM_SECTION)
+mdb.models['Model-1'].HomogeneousSolidSection(name='gfrp', material='gfrp', 
+    thickness=None)
+del mdb.models['Model-1'].sections['gfrp']
+session.viewports['Viewport: 1'].view.setValues(nearPlane=0.0428827, 
+    farPlane=0.072656, width=0.0242439, height=0.0121816, cameraPosition=(
+    0.0513344, -0.00714647, 0.0255268), cameraUpVector=(0.240311, 0.948226, 
+    -0.207648), cameraTarget=(0.000647467, 0.000332031, 0.00101754), 
+    viewOffsetX=0.000843251, viewOffsetY=0.000134837)
+session.viewports['Viewport: 1'].view.setValues(nearPlane=0.042497, 
+    farPlane=0.0733932, width=0.024026, height=0.012072, cameraPosition=(
+    0.0517083, 0.0173886, 0.0195484), cameraUpVector=(-0.146018, 0.902668, 
+    -0.404807), cameraTarget=(0.000686472, 0.000783379, 0.000924911), 
+    viewOffsetX=0.000835667, viewOffsetY=0.000133624)
+session.viewports['Viewport: 1'].view.setValues(nearPlane=0.0450292, 
+    farPlane=0.0704782, width=0.0254576, height=0.0127914, cameraPosition=(
+    0.0395797, 0.0163638, 0.0387537), cameraUpVector=(-0.032025, 0.934008, 
+    -0.355813), cameraTarget=(8.65228e-05, 0.000657391, 0.0010789), 
+    viewOffsetX=0.000885461, viewOffsetY=0.000141586)
+session.viewports['Viewport: 1'].view.setValues(nearPlane=0.0498325, 
+    farPlane=0.0652786, width=0.0281732, height=0.0141559, cameraPosition=(
+    0.0175954, 0.0130536, 0.0532294), cameraUpVector=(-0.000110418, 0.9721, 
+    -0.234568), cameraTarget=(-0.000540236, 0.000426641, 0.000908732), 
+    viewOffsetX=0.000979914, viewOffsetY=0.000156689)
+session.viewports['Viewport: 1'].view.setValues(nearPlane=0.0511786, 
+    farPlane=0.0637889, width=0.0289343, height=0.0145383, cameraPosition=(
+    0.0138123, 0.00550818, 0.0555332), cameraUpVector=(-0.0300034, 0.995654, 
+    -0.0881591), cameraTarget=(-0.000606177, 0.000232065, 0.000851693), 
+    viewOffsetX=0.00100638, viewOffsetY=0.000160921)
+layupOrientation = None
+p = mdb.models['Model-1'].parts['Part-1']
+f = p.faces
+faces = f.getSequenceFromMask(mask=('[#2 ]', ), )
+region1 = regionToolset.Region(faces=faces)
+p = mdb.models['Model-1'].parts['Part-1']
+e = p.edges
+edges = e.getSequenceFromMask(mask=('[#61 ]', ), )
+primaryAxisRegion = p.Set(edges=edges, name='Set-3')
+compositeLayup = mdb.models['Model-1'].parts['Part-1'].CompositeLayup(
+    name='CompositeLayup-1', description='', elementType=SOLID, 
+    symmetric=False, thicknessAssignment=FROM_SECTION)
+compositeLayup.CompositePly(suppressed=False, plyName='Ply-1', region=region1, 
+    material='gfrp', thicknessType=SPECIFY_THICKNESS, thickness=1.0, 
+    orientationType=SPECIFY_ORIENT, orientationValue=0.0, 
+    additionalRotationType=ROTATION_NONE, additionalRotationField='', 
+    axis=AXIS_3, angle=0.0, numIntPoints=1)
+compositeLayup.ReferenceOrientation(orientationType=DISCRETE, localCsys=None, 
+    additionalRotationType=ROTATION_NONE, angle=0.0, 
+    additionalRotationField='', axis=AXIS_3, stackDirection=STACK_3, 
+    normalAxisDefinition=VECTOR, normalAxisVector=(0.0, 0.0, 1.0), 
+    normalAxisDirection=AXIS_3, flipNormalDirection=False, 
+    primaryAxisDefinition=EDGE, primaryAxisRegion=primaryAxisRegion, 
+    primaryAxisDirection=AXIS_1, flipPrimaryDirection=True)
+session.viewports['Viewport: 1'].view.setValues(nearPlane=0.0510946, 
+    farPlane=0.0638729, width=0.0307307, height=0.0154409, 
+    viewOffsetX=0.000787127, viewOffsetY=0.000650569)
+layupOrientation = None
+p = mdb.models['Model-1'].parts['Part-1']
+f = p.faces
+faces = f.getSequenceFromMask(mask=('[#4 ]', ), )
+region1 = regionToolset.Region(faces=faces)
+p = mdb.models['Model-1'].parts['Part-1']
+e = p.edges
+edges = e.getSequenceFromMask(mask=('[#1030 ]', ), )
+primaryAxisRegion = p.Set(edges=edges, name='Set-5')
+compositeLayup = mdb.models['Model-1'].parts['Part-1'].CompositeLayup(
+    name='CompositeLayup-2', description='', elementType=SOLID, 
+    symmetric=False, thicknessAssignment=FROM_SECTION)
+compositeLayup.CompositePly(suppressed=False, plyName='Ply-1', region=region1, 
+    material='cfrp', thicknessType=SPECIFY_THICKNESS, thickness=1.0, 
+    orientationType=SPECIFY_ORIENT, orientationValue=90.0, 
+    additionalRotationType=ROTATION_NONE, additionalRotationField='', 
+    axis=AXIS_3, angle=0.0, numIntPoints=1)
+compositeLayup.ReferenceOrientation(orientationType=DISCRETE, localCsys=None, 
+    additionalRotationType=ROTATION_NONE, angle=0.0, 
+    additionalRotationField='', axis=AXIS_3, stackDirection=STACK_3, 
+    normalAxisDefinition=VECTOR, normalAxisVector=(0.0, 0.0, 1.0), 
+    normalAxisDirection=AXIS_3, flipNormalDirection=False, 
+    primaryAxisDefinition=EDGE, primaryAxisRegion=primaryAxisRegion, 
+    primaryAxisDirection=AXIS_1, flipPrimaryDirection=False)
+mdb.save()
+#: The model database has been saved to "C:\Users\tian50\work\dev\sgio\tests\files\abaqus\sg2_i_simple.cae".
+session.viewports['Viewport: 1'].view.setValues(nearPlane=0.0505759, 
+    farPlane=0.0643916, width=0.0367731, height=0.018477, 
+    viewOffsetX=7.12839e-05, viewOffsetY=0.000254002)
+session.viewports['Viewport: 1'].partDisplay.setValues(sectionAssignments=OFF, 
+    engineeringFeatures=OFF, mesh=ON)
+session.viewports['Viewport: 1'].partDisplay.meshOptions.setValues(
+    meshTechnique=ON)
+p = mdb.models['Model-1'].parts['Part-1']
+p.seedPart(size=0.0013, deviationFactor=0.1, minSizeFactor=0.1)
+p = mdb.models['Model-1'].parts['Part-1']
+p.generateMesh()
+mdb.save()
+#: The model database has been saved to "C:\Users\tian50\work\dev\sgio\tests\files\abaqus\sg2_i_simple.cae".
 a = mdb.models['Model-1'].rootAssembly
 session.viewports['Viewport: 1'].setValues(displayedObject=a)
-mdb.ModelFromInputFile(name='sg33_cube', 
-    inputFileName='C:/Users/tian50/work/dev/sgio/tests/files/abaqus/sg33_cube.inp')
-#: The model "sg33_cube" has been created.
-#: The part "PART-1" has been imported from the input file.
-#: Discrete field "PART-1_ORI-1-DISCORIENT" is created for distribution "ORI-1-DISCORIENT".
-#: 
-#: WARNING: The following keywords/parameters are not yet supported by the input file reader:
-#: ---------------------------------------------------------------------------------
-#: *PREPRINT
-#: The model "sg33_cube" has been imported from an input file. 
-#: Please scroll up to check for error and warning messages.
 session.viewports['Viewport: 1'].assemblyDisplay.setValues(
     optimizationTasks=OFF, geometricRestrictions=OFF, stopConditions=OFF)
-a = mdb.models['sg33_cube'].rootAssembly
-session.viewports['Viewport: 1'].setValues(displayedObject=a)
-session.viewports['Viewport: 1'].view.setValues(nearPlane=2.76374, 
-    farPlane=4.59596, width=2.74535, height=1.29692, cameraPosition=(1.05749, 
-    0.360803, 3.50642), cameraUpVector=(-0.186904, 0.898106, -0.398086), 
-    cameraTarget=(0.0209791, -0.041958, 0.0209789))
-session.viewports['Viewport: 1'].view.setValues(nearPlane=2.57813, 
-    farPlane=4.76342, width=2.56098, height=1.20982, cameraPosition=(2.12276, 
-    1.45971, 2.61531), cameraUpVector=(-0.520546, 0.717795, -0.462387), 
-    cameraTarget=(0.0271486, -0.0355937, 0.0158181))
-p = mdb.models['sg33_cube'].parts['PART-1']
-session.viewports['Viewport: 1'].setValues(displayedObject=p)
-session.viewports['Viewport: 1'].view.setValues(nearPlane=2.56976, 
-    farPlane=4.73782, width=2.55266, height=1.20589, cameraPosition=(1.36444, 
-    2.28506, 3.00392), cameraUpVector=(-0.489, 0.511876, -0.706301), 
-    cameraTarget=(0.0209792, -0.041958, 0.520979))
-session.viewports['Viewport: 1'].view.setValues(nearPlane=2.65238, 
-    farPlane=4.68395, width=2.63473, height=1.24466, cameraPosition=(1.24988, 
-    1.29926, 3.69493), cameraUpVector=(-0.684893, 0.62101, -0.381141), 
-    cameraTarget=(0.021128, -0.0406777, 0.520082))
-session.viewports['Viewport: 1'].view.setValues(nearPlane=2.66007, 
-    farPlane=4.74153, width=2.64237, height=1.24827, cameraPosition=(2.94188, 
-    -1.04434, 2.48796), cameraUpVector=(-0.274266, 0.926905, 0.256173), 
-    cameraTarget=(0.0255675, -0.046827, 0.516915))
-session.viewports['Viewport: 1'].view.setValues(nearPlane=2.64866, 
-    farPlane=4.76665, width=2.63104, height=1.24292, cameraPosition=(1.52237, 
-    -1.60064, 3.47798), cameraUpVector=(0.148275, 0.988518, 0.0291), 
-    cameraTarget=(0.00935772, -0.0531797, 0.52822))
-session.viewports['Viewport: 1'].view.setValues(nearPlane=2.68423, 
-    farPlane=4.68839, width=2.66637, height=1.25961, cameraPosition=(3.18328, 
-    0.725048, 2.21194), cameraUpVector=(-0.500438, 0.850236, -0.163278), 
-    cameraTarget=(0.0313599, -0.0223712, 0.511449))
-session.viewports['Viewport: 1'].view.setValues(nearPlane=2.58782, 
-    farPlane=4.76706, width=2.5706, height=1.21437, cameraPosition=(2.67153, 
-    1.74915, 2.32421), cameraUpVector=(-0.645629, 0.66396, -0.377253), 
-    cameraTarget=(0.027505, -0.0146569, 0.512295))
-session.viewports['Viewport: 1'].view.setValues(nearPlane=2.61755, 
-    farPlane=4.74344, width=2.60014, height=1.22832, cameraPosition=(2.85751, 
-    1.38918, 2.35785), cameraUpVector=(-0.563217, 0.74236, -0.362889), 
-    cameraTarget=(0.0284609, -0.016507, 0.512468))
-session.viewports['Viewport: 1'].view.setValues(nearPlane=2.61458, 
-    farPlane=4.74619, width=2.59719, height=1.22693, cameraPosition=(2.84707, 
-    1.40076, 2.36496), cameraUpVector=(-0.564023, 0.740072, -0.366295), 
-    cameraTarget=(0.0283986, -0.0164379, 0.51251))
-a = mdb.models['sg33_cube'].rootAssembly
-session.viewports['Viewport: 1'].setValues(displayedObject=a)
-mdb.ModelFromInputFile(name='sg33_udfrp', 
-    inputFileName='C:/Users/tian50/work/dev/sgio/tests/files/abaqus/sg33_udfrp.inp')
-#: The model "sg33_udfrp" has been created.
-#: The part "PART-1" has been imported from the input file.
-#: 
-#: WARNING: The following keywords/parameters are not yet supported by the input file reader:
-#: ---------------------------------------------------------------------------------
-#: *PREPRINT
-#: The model "sg33_udfrp" has been imported from an input file. 
-#: Please scroll up to check for error and warning messages.
-a = mdb.models['sg33_udfrp'].rootAssembly
-session.viewports['Viewport: 1'].setValues(displayedObject=a)
-session.viewports['Viewport: 1'].view.setValues(nearPlane=2.77973, 
-    farPlane=4.59517, width=2.76123, height=1.30442, cameraPosition=(3.45393, 
-    -0.220162, 1.27317), cameraUpVector=(-0.266209, 0.957873, -0.107757), 
-    cameraTarget=(0.0209789, -0.0419579, 0.0209791))
-session.viewports['Viewport: 1'].view.setValues(nearPlane=2.60173, 
-    farPlane=4.71329, width=2.58441, height=1.22089, cameraPosition=(2.91487, 
-    1.95415, -1.03108), cameraUpVector=(-0.711854, 0.608999, 0.349835), 
-    cameraTarget=(0.0167527, -0.0249113, 0.00291375))
-p = mdb.models['sg33_udfrp'].parts['PART-1']
-session.viewports['Viewport: 1'].setValues(displayedObject=p)
-session.viewports['Viewport: 1'].enableMultipleColors()
-session.viewports['Viewport: 1'].setColor(initialColor='#BDBDBD')
-cmap=session.viewports['Viewport: 1'].colorMappings['Section']
-session.viewports['Viewport: 1'].setColor(colorMapping=cmap)
-session.viewports['Viewport: 1'].disableMultipleColors()
-session.viewports['Viewport: 1'].view.setValues(nearPlane=2.66918, 
-    farPlane=4.65682, width=2.65142, height=1.25255, cameraPosition=(0.711993, 
-    1.52968, 3.75167), cameraUpVector=(-0.254772, 0.702362, -0.664664))
-session.viewports['Viewport: 1'].view.setValues(nearPlane=2.66086, 
-    farPlane=4.65898, width=2.64316, height=1.24865, cameraPosition=(-1.52959, 
-    0.753223, 3.73892), cameraUpVector=(0.0263266, 0.821531, -0.569556), 
-    cameraTarget=(0.0182477, -0.0429041, 0.520963))
-session.viewports['Viewport: 1'].view.setValues(nearPlane=2.79853, 
-    farPlane=4.5467, width=2.77993, height=1.31325, cameraPosition=(-1.16576, 
-    -0.0526077, 3.98264), cameraUpVector=(0.130741, 0.943331, -0.305013), 
-    cameraTarget=(0.0183851, -0.0432084, 0.521055))
-session.viewports['Viewport: 1'].view.setValues(nearPlane=2.64647, 
-    farPlane=4.67133, width=2.62888, height=1.2419, cameraPosition=(-1.19209, 
-    1.06584, 3.79131), cameraUpVector=(0.322284, 0.790636, -0.520604), 
-    cameraTarget=(0.0182842, -0.03892, 0.520321))
-session.viewports['Viewport: 1'].view.setValues(nearPlane=2.69601, 
-    farPlane=4.63077, width=2.67809, height=1.26515, cameraPosition=(-1.33772, 
-    0.609271, 3.85589), cameraUpVector=(0.195147, 0.868784, -0.455117), 
-    cameraTarget=(0.0182696, -0.0389658, 0.520328))
-session.viewports['Viewport: 1'].view.setValues(nearPlane=2.6284, 
-    farPlane=4.68448, width=2.61094, height=1.23342, cameraPosition=(-1.40733, 
-    1.14182, 3.67608), cameraUpVector=(0.223798, 0.784312, -0.578593), 
-    cameraTarget=(0.0181773, -0.0382596, 0.52009))
-a = mdb.models['sg33_udfrp'].rootAssembly
-session.viewports['Viewport: 1'].setValues(displayedObject=a)
-mdb.ModelFromInputFile(name='sg33_inclusion_ellipsoid_meshsize01', 
-    inputFileName='C:/Users/tian50/work/dev/sgio/tests/files/abaqus/sg33_inclusion_ellipsoid_meshsize01.inp')
-#: The model "sg33_inclusion_ellipsoid_meshsize01" has been created.
-#: The part "COMPOSITE" has been imported from the input file.
-#: 
-#: WARNING: The following keywords/parameters are not yet supported by the input file reader:
-#: ---------------------------------------------------------------------------------
-#: *PREPRINT
-#: The model "sg33_inclusion_ellipsoid_meshsize01" has been imported from an input file. 
-#: Please scroll up to check for error and warning messages.
-a = mdb.models['sg33_inclusion_ellipsoid_meshsize01'].rootAssembly
-session.viewports['Viewport: 1'].setValues(displayedObject=a)
-session.viewports['Viewport: 1'].view.setValues(nearPlane=2.57431, 
-    farPlane=4.76126, width=2.55718, height=1.20803, cameraPosition=(2.51422, 
-    1.49493, 2.21338), cameraUpVector=(-0.518741, 0.715521, -0.467908), 
-    cameraTarget=(0.020979, -0.0419581, 0.020979))
-session.viewports['Viewport: 1'].view.setValues(nearPlane=2.62215, 
-    farPlane=4.71125, width=2.6047, height=1.23048, cameraPosition=(1.41647, 
-    1.50495, 3.02919), cameraUpVector=(-0.421555, 0.70383, -0.571764), 
-    cameraTarget=(0.0182125, -0.0419329, 0.023035))
-session.viewports['Viewport: 1'].view.setValues(nearPlane=2.58347, 
-    farPlane=4.75055, width=2.56628, height=1.21233, cameraPosition=(2.05932, 
-    1.54401, 2.61242), cameraUpVector=(-0.536018, 0.697419, -0.475701), 
-    cameraTarget=(0.0196427, -0.041846, 0.0221077))
-p = mdb.models['sg33_inclusion_ellipsoid_meshsize01'].parts['COMPOSITE']
-session.viewports['Viewport: 1'].setValues(displayedObject=p)
-session.viewports['Viewport: 1'].view.setValues(nearPlane=2.57564, 
-    farPlane=4.76114, width=2.55851, height=1.20865, cameraPosition=(2.31452, 
-    1.45779, 2.44489), cameraUpVector=(-0.458891, 0.723085, -0.516302), 
-    cameraTarget=(0.020979, -0.0419581, 0.020979))
-session.viewports['Viewport: 1'].partDisplay.setValues(renderStyle=WIREFRAME)
-session.viewports['Viewport: 1'].partDisplay.setValues(renderStyle=WIREFRAME)
-session.viewports['Viewport: 1'].partDisplay.setValues(renderStyle=SHADED)
-session.viewports['Viewport: 1'].setColor(globalTranslucency=True)
-session.viewports['Viewport: 1'].view.setValues(nearPlane=2.64145, 
-    farPlane=4.69573, width=2.62389, height=1.23954, cameraPosition=(1.3352, 
-    1.34549, 3.14134), cameraUpVector=(-0.350869, 0.740943, -0.572621), 
-    cameraTarget=(0.0183492, -0.0422597, 0.0228491))
-session.viewports['Viewport: 1'].view.setValues(nearPlane=2.59317, 
-    farPlane=4.74507, width=2.57593, height=1.21688, cameraPosition=(2.04249, 
-    1.3961, 2.71001), cameraUpVector=(-0.439953, 0.735029, -0.515921), 
-    cameraTarget=(0.020287, -0.0421211, 0.0216673))
-a = mdb.models['sg33_inclusion_ellipsoid_meshsize01'].rootAssembly
-session.viewports['Viewport: 1'].setValues(displayedObject=a)
-session.viewports['Viewport: 1'].setColor(globalTranslucency=True)
-session.viewports['Viewport: 1'].view.setValues(nearPlane=2.57763, 
-    farPlane=4.75401, width=2.56048, height=1.20959, cameraPosition=(2.26166, 
-    1.62534, 2.3841), cameraUpVector=(-0.552577, 0.684792, -0.475098), 
-    cameraTarget=(0.0201098, -0.0416583, 0.0215807))
-session.viewports['Viewport: 1'].setColor(globalTranslucency=False)
-session.viewports['Viewport: 1'].setColor(globalTranslucency=True)
-session.viewports['Viewport: 1'].view.setValues(nearPlane=2.58681, 
-    farPlane=4.74877, width=2.56961, height=1.2139, cameraPosition=(2.49451, 
-    1.49064, 2.23845), cameraUpVector=(-0.534653, 0.716216, -0.448532), 
-    cameraTarget=(0.020572, -0.0419256, 0.0212916))
+mdb.Job(name='sg2_i_simple_eo1', model='Model-1', description='', 
+    type=ANALYSIS, atTime=None, waitMinutes=0, waitHours=0, queue=None, 
+    memory=90, memoryUnits=PERCENTAGE, getMemoryFromAnalysis=True, 
+    explicitPrecision=SINGLE, nodalOutputPrecision=SINGLE, echoPrint=OFF, 
+    modelPrint=OFF, contactPrint=OFF, historyPrint=OFF, userSubroutine='', 
+    scratch='', resultsFormat=ODB, numDomains=1, activateLoadBalancing=False, 
+    numThreadsPerMpiProcess=1, multiprocessingMode=DEFAULT, numCpus=1, 
+    numGPUs=0)
+mdb.jobs['sg2_i_simple_eo1'].writeInput(consistencyChecking=OFF)
+#: The job input file has been written to "sg2_i_simple_eo1.inp".
+a = mdb.models['Model-1'].rootAssembly
+a.DatumCsysByDefault(CARTESIAN)
+p = mdb.models['Model-1'].parts['Part-1']
+a.Instance(name='Part-1-1', part=p, dependent=ON)
+mdb.save()
+#: The model database has been saved to "C:\Users\tian50\work\dev\sgio\tests\files\abaqus\sg2_i_simple.cae".
+mdb.jobs['sg2_i_simple_eo1'].writeInput(consistencyChecking=OFF)
+#: The job input file has been written to "sg2_i_simple_eo1.inp".

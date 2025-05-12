@@ -1,2 +1,11 @@
-[14:07:54] INFO     Reading file...                                                                           main.py:64
+[14:47:54] INFO     Converting file format...                                                                main.py:613
+           INFO     Reading file...                                                                           main.py:64
+[14:47:56] INFO     Writing file...                                                                          main.py:477
+           INFO     File format converted.                                                                   main.py:650
+           INFO     Converting file format...                                                                main.py:613
+           INFO     Reading file...                                                                           main.py:64
+[14:47:58] INFO     Writing file...                                                                          main.py:477
+           INFO     File format converted.                                                                   main.py:650
+           INFO     Converting file format...                                                                main.py:613
+           INFO     Reading file...                                                                           main.py:64
            INFO     Writing file...                                                                          main.py:477
