@@ -4,4 +4,5 @@
   fn_out: '3cells.sg'
   ff_out: 'vabs'
   version_out: '4.1'
+  format_flag_out: 1
   model: 'BM2'

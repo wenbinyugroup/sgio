@@ -74,7 +74,7 @@ def read(
     elif file_format == 'vabs':
         with open(filename, 'r') as file:
             sg = _vabs.read_buffer(
-                file, file_format, format_version, model_type
+                file, format_version
             )
     elif file_format == 'abaqus':
         # with open(filename, 'r') as file:

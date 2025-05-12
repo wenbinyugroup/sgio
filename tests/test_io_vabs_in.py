@@ -1,49 +1,52 @@
-import sys
-from msgd.model.io import readLoadCsv
+# import logging
+import os
+import yaml
+
+from sgio import convert, run, logger, configure_logging
 
 
-fn = sys.argv[1]
-smdim = int(sys.argv[2])
-model = int(sys.argv[3])
-
-rcases = readLoadCsv(fn, smdim, model)
-
-print(rcases)
+configure_logging(cout_level='info')
 
 
-
-# import sgio
-
-# fn_sg = 'uh60a.sg'
-# model = 'BM2'
-
-# f1 = 4.677700e+04
-# f2 = 2.507620e+02
-# f3 = 4.149390e+02
-# m1 = -3.061000e+02
-# m2 = -1.613190e+03
-# m3 = 2.727670e+03
-
-# sff = '16.6e'
-
-# # sg = sgio.read(
-# #     fn=fn_sg, file_format='vabs', model=model
-# # )
-# # print(sg)
+test_case_files = [
+    'test_convert_vabs_formats.yml',
+]
 
 
-# load = [f1, f2, f3, m1, m2, m3]
-# state = sgio.State(data=load)
-# state_case = sgio.StateCase()
-# state_case.addState(name='load', state=state)
+def test_convert(fn_test_cases, input_dir, output_dir):
 
-# fn_glb = f'{fn_sg}.glb'
-# sgio.write(
-#     sg=None,
-#     fn=fn_glb,
-#     file_format='vabs',
-#     analysis='d',
-#     model=model,
-#     macro_responses=[state_case,],
-#     sff=sff
-#     )
+    with open(f'{input_dir}/{fn_test_cases}', 'r') as file:
+        test_cases = yaml.safe_load(file)
+
+    # Create directory if it doesn't exist
+    os.makedirs(output_dir, exist_ok=True)
+
+    for _i, _case in enumerate(test_cases):
+        ff_in = _case['ff_in']
+        ff_out = _case['ff_out']
+
+        fn_in = f'{input_dir}/{_case["fn_in"]}'
+        fn_out = f'{output_dir}/{_case["fn_out"]}'
+
+        logger.info(f'Converting {fn_in} to {fn_out}...')
+
+        convert(
+            fn_in, fn_out,
+            ff_in, ff_out,
+            file_version_in=_case.get('version_in', None),
+            file_version_out=_case.get('version_out', None),
+            model_type=_case.get('model', None),
+            vabs_format_version=_case.get('format_flag_out', 1),
+        )
+
+        _solver = _case.get('solver', None)
+        if _solver:
+            run(_solver, fn_out, analysis='h', smdim=_case.get('model', None))
+
+
+if __name__ == '__main__':
+    input_dir = 'files'
+    output_dir = '_temp'
+
+    for fn_test_cases in test_case_files:
+        test_convert(fn_test_cases, input_dir, output_dir)

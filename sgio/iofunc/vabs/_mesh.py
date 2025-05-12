@@ -39,7 +39,7 @@ vabs_to_meshio_type = {
 
 
 
-def read_buffer(f, sgdim:int, nnode:int, nelem:int, **kwargs):
+def read_buffer(f, sgdim:int, nnode:int, nelem:int, format_flag, **kwargs):
     """
     """
     # Initialize the optional data fields
@@ -143,8 +143,28 @@ def _read_elements(f, nelem:int, point_ids):
 
 
 
-def _read_property_id_ref_csys(file, nelem, cells, elem_id_to_cell_id):
-    """
+def _read_property_id_ref_csys(file, nelem, cells, elem_id_to_cell_id, format_flag):
+    """Read the data block of element property id and reference csys.
+
+    Parameters
+    ----------
+    file : file
+        The file to read from.
+    nelem : int
+        The number of elements.
+    cells : list
+        The list of cells.
+    elem_id_to_cell_id : dict
+        The dictionary of element id to cell id.
+    format_flag : int
+        The format flag. 0 for old format, 1 for new format.
+
+    Returns
+    -------
+    cell_prop_id : list
+        The list of property ids.
+    cell_csys : list
+        The list of reference csys.
     """
 
     cell_prop_id = []

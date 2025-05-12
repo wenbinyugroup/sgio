@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 
 
 
-def _readHeader(file, file_format:str, format_version:str, smdim:int):
+def _readHeader(file):
     """
     """
 
@@ -62,7 +62,7 @@ def _readHeader(file, file_format:str, format_version:str, smdim:int):
     return configs
 
 
-def _readMesh(file, file_format:str, sgdim:int, nnode:int, nelem:int, read_local_frame):
+def _readMesh(file, sgdim:int, nnode:int, nelem:int, format_flag):
     """
     """
 
@@ -70,7 +70,8 @@ def _readMesh(file, file_format:str, sgdim:int, nnode:int, nelem:int, read_local
 
     mesh = read_buffer(
         file,
-        sgdim=sgdim, nnode=nnode, nelem=nelem, read_local_frame=read_local_frame
+        sgdim=sgdim, nnode=nnode, nelem=nelem,
+        format_flag=format_flag
     )
 
     return mesh
@@ -110,7 +111,7 @@ def _readMaterialRotationCombinations(file, ncomb):
 
 
 
-def _readMaterials(file, file_format:str, nmate:int):
+def _readMaterials(file, nmate:int):
     """
     """
 
@@ -131,7 +132,7 @@ def _readMaterials(file, file_format:str, nmate:int):
         ntemp = 1
         # material, line = _readMaterial(file, file_format, isotropy)
 
-        material = _readMaterial(file, file_format, isotropy, ntemp)
+        material = _readMaterial(file, isotropy, ntemp)
 
         materials[mate_id] = material
 
@@ -142,7 +143,7 @@ def _readMaterials(file, file_format:str, nmate:int):
 
 
 
-def _readMaterial(file, file_format:str, isotropy:int, ntemp:int=1):
+def _readMaterial(file, isotropy:int, ntemp:int=1):
     """
     """
 
