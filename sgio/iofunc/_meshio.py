@@ -220,7 +220,7 @@ def addCellDictDataToMesh(name:str|list, dict_data:dict[int, list], mesh:SGMesh)
 
         for _i, _name in enumerate(name):
             _data = _cell_data_all[_i]
-            mesh.cell_data[_name] = np.array(_data)
+            mesh.cell_data[_name] = _data
 
     return
 

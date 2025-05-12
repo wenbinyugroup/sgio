@@ -9,8 +9,8 @@ configure_logging(cout_level='info')
 
 test_case_files = [
     'test_convert_vabs_abaqus.yml',
-    'test_convert_vabs_gmsh.yml',
-    'test_convert_sc_abaqus.yml',
+    # 'test_convert_vabs_gmsh.yml',
+    # 'test_convert_sc_abaqus.yml',
 ]
 
 

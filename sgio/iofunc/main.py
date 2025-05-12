@@ -16,6 +16,9 @@ from sgio.core import (
     StructureGene,
     renumber_elements,
 )
+from sgio.utils import (
+    readNextNonEmptyLine,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -147,10 +150,10 @@ def readOutputModel(
 
 
 def readOutputState(
-    filename: str, file_format: str, analysis: str, model_type: str = "",
-    extension: str = "ele", sg: StructureGene = None, tool_version: str = "",
-    num_cases: int = 1, num_elements: int = 0, **kwargs
-) -> sgmodel.StateCase:
+    filename:str, file_format:str, analysis:str, model_type:str="",
+    extension:str="ele", sg:StructureGene=None, tool_version:str="",
+    num_cases:int=1, num_elements:int=0, **kwargs
+    ):
     """Read SG dehomogenization or failure analysis output.
 
     Parameters
@@ -197,7 +200,7 @@ def readOutputState(
     logger.debug('reading output state...')
     logger.debug(locals())
 
-    state_case = sgmodel.StateCase()
+    state_cases = [sgmodel.StateCase({}, {}) for _ in range(num_cases)]
 
     if analysis == "fi":
         # Read failure index
@@ -269,41 +272,74 @@ def readOutputState(
 
             # Element strain and stress
             if "ele" in extension:
-                ee, es, eem, esm = None, None, None, None
-                with open(f"{filename}.ELE", "r") as file:
-                    try:
-                        ee, es, eem, esm = _vabs.read_output_buffer(
-                            file, analysis, sg=sg, extension="ele", tool_version=tool_version,
-                            ncase=num_cases, nelem=num_elements, **kwargs
-                        )
-                    except Exception as e:
-                        logger.error(f"Error: {e}")
-                        return None
-                if ee is None or es is None or eem is None or esm is None:
-                    logger.error("Error: No data read")
-                    return None
-                state_case.addState(
-                    name="ee", state=sgmodel.State(
-                        name="ee", data=ee, label=["e11", "2e12", "2e13", "e22", "2e23", "e33"], location="element"
-                    )
-                )
-                state_case.addState(
-                    name="es", state=sgmodel.State(
-                        name="es", data=es, label=["s11", "s12", "s13", "s22", "s23", "s33"], location="element"
-                    )
-                )
-                state_case.addState(
-                    name="eem", state=sgmodel.State(
-                        name="eem", data=eem, label=["em11", "2em12", "2em13", "em22", "2em23", "em33"], location="element"
-                    )
-                )
-                state_case.addState(
-                    name="esm", state=sgmodel.State(
-                        name="esm", data=esm, label=["sm11", "sm12", "sm13", "sm22", "sm23", "sm33"], location="element"
-                    )
-                )
 
-    return state_case
+                if num_elements == 0:
+                    num_elements = sg.nelems
+
+                with open(f"{filename}.ELE", "r") as file:
+                    for i_case in range(num_cases):
+
+                        print(f'i_case: {i_case}')
+
+                        state_case = state_cases[i_case]
+
+                        ee, es, eem, esm = None, None, None, None
+
+                        try:
+                            # ee, es, eem, esm = _vabs.read_output_buffer(
+                            #     file, analysis, sg=sg, extension="ele", tool_version=tool_version,
+                            #     ncase=num_cases, nelem=num_elements, **kwargs
+                            # )
+                            # print(float(tool_version))
+                            if float(tool_version) > 4:
+                                line = file.readline()  # skip the first line
+                                while line.strip() == '':
+                                    line = file.readline()
+                                print(f'line: {line}')
+                            ee, es, eem, esm = _vabs._readOutputElementStrainStressCase(
+                                file, num_elements
+                            )
+
+                        except Exception as e:
+                            logger.error(f"Error: {e}")
+                            return None
+
+                        if ee is None or es is None or eem is None or esm is None:
+                            logger.error("Error: No data read")
+                            return None
+
+                        state_case.addState(
+                            name="ee", state=sgmodel.State(
+                                name="ee", data=ee,
+                                label=["e11", "2e12", "2e13", "e22", "2e23", "e33"],
+                                location="element"
+                            )
+                        )
+                        state_case.addState(
+                            name="es", state=sgmodel.State(
+                                name="es", data=es,
+                                label=["s11", "s12", "s13", "s22", "s23", "s33"],
+                                location="element"
+                            )
+                        )
+                        state_case.addState(
+                            name="eem", state=sgmodel.State(
+                                name="eem", data=eem,
+                                label=["em11", "2em12", "2em13", "em22", "2em23", "em33"],
+                                location="element"
+                            )
+                        )
+                        state_case.addState(
+                            name="esm", state=sgmodel.State(
+                                name="esm", data=esm,
+                                label=["sm11", "sm12", "sm13", "sm22", "sm23", "sm33"],
+                                location="element"
+                            )
+                        )
+
+                        # state_cases.append(state_case)
+
+    return state_cases
 
 
 
@@ -423,11 +459,12 @@ def readOutput(
 
 
 def write(
-    sg: StructureGene, fn: str, file_format: str,
-    format_version: str = '', analysis: str = 'h', sg_format: int = 1,
-    model_space: str = '', prop_ref_y: str = 'x',
-    macro_responses: list[sgmodel.StateCase] = [], model_type: str = 'SD1',
-    load_type: int = 0, sfi: str = '8d', sff: str = '20.12e', mesh_only: bool = False
+    sg:StructureGene, fn:str, file_format:str,
+    format_version:str='', analysis:str='h', sg_format:int=1,
+    model_space:str='', prop_ref_y:str='x',
+    macro_responses:list[sgmodel.StateCase]=[], model_type:str='SD1',
+    load_type:int=0, sfi:str='8d', sff:str='20.12e', mesh_only:bool=False,
+    binary:bool=False
 ) -> str:
     """Write analysis input
 
@@ -519,11 +556,13 @@ def write(
 
         elif file_format.startswith('gmsh'):
             _gmsh.write_buffer(
-                file, sg.mesh,
+                file,
+                sg.mesh,
                 format_version=format_version,
                 float_fmt=sff,
                 sgdim=sg.sgdim,
-                mesh_only=mesh_only
+                mesh_only=mesh_only,
+                binary=binary
             )
 
         else:

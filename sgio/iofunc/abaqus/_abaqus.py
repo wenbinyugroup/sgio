@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import io
 import logging
-import sys
+# import sys
 from contextlib import redirect_stdout
 
 import numpy as np
@@ -20,6 +20,9 @@ from sgio.core.sg import StructureGene
 logger = logging.getLogger(__name__)
 
 abaqus_to_meshio_type.update({
+    "CPS6M": "triangle6",
+    "CPS8": "quad8",
+    "CPS8R": "quad8",
     "WARP2D4": "quad",
     "WARPF2D4": "quad",
     "WARPF2D8": "quad8",
@@ -28,6 +31,8 @@ abaqus_to_meshio_type.update({
     "WARPF2D6": "triangle6",
 })
 meshio_to_abaqus_type = {v: k for k, v in abaqus_to_meshio_type.items()}
+# for k, v in abaqus_to_meshio_type.items():
+#     print(k, v)
 
 inprw_print = False
 if logger.getEffectiveLevel() <= logging.DEBUG:
@@ -98,9 +103,11 @@ def read(filename, **kwargs):
         _type = _mdata['type']
         _elastic = _mdata['elastic']
         logger.debug(f'{_type}: {_elastic}')
+
         if _type == 'isotropic':
             m.set('isotropy', 0)
             m.set('elastic', _elastic)
+
         elif _type == 'engineering constants':
             m.set('isotropy', 1)
             _e1, _e2, _e3 = _elastic[:3]
@@ -110,6 +117,18 @@ def read(filename, **kwargs):
                 'elastic',
                 [_e1, _e2, _e3, _g12, _g13, _g23, _nu12, _nu13, _nu23],
                 input_type='engineering')
+
+        elif _type == 'lamina':
+            m.set('isotropy', 1)
+            _e1, _e2, _e3 = [_elastic[0], _elastic[1], _elastic[1]]
+            _g12, _g13, _g23 = [_elastic[3], _elastic[4], _elastic[5]]
+            _nu12, _nu13 = [_elastic[2], _elastic[2]]
+            _nu23 = _e3 / (2 * _g23) - 1
+            m.set(
+                'elastic',
+                [_e1, _e2, _e3, _g12, _g13, _g23, _nu12, _nu13, _nu23],
+                input_type='engineering',
+            )
 
         elif _type == 'anisotropic':
             _c = [
@@ -509,7 +528,10 @@ def process_section(
 
     angle = 0
     try:
-        angle = float(_section_block.data[-2])
+        if 'composite' in params.keys():
+            angle = float(_section_block.data[0][-2])
+        else:
+            angle = float(_section_block.data[-2])
     except ValueError:
         pass
     except IndexError:

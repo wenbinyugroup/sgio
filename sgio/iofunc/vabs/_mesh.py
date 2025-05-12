@@ -63,7 +63,8 @@ def read_buffer(f, sgdim:int, nnode:int, nelem:int, format_flag, **kwargs):
     cell_data['element_id'] = elem_ids
 
     # Read local coordinate system for sectional properties
-    cell_prop_id, cell_csys = _read_property_id_ref_csys(f, nelem, cells, elem_id_to_cell_id)
+    cell_prop_id, cell_csys = _read_property_id_ref_csys(
+        f, nelem, cells, elem_id_to_cell_id, format_flag)
     cell_data['property_id'] = cell_prop_id
     cell_data['property_ref_csys'] = cell_csys
 

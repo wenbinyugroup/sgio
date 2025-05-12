@@ -29,7 +29,7 @@ c_int = np.dtype("i")
 c_size_t = np.dtype("P")
 c_double = np.dtype("d")
 
-def write_buffer(file, mesh, float_fmt=".16e", mesh_only=False, binary=True, **kwargs):
+def write_buffer(file, mesh, float_fmt, mesh_only, binary, **kwargs):
     """Writes msh files, cf.
     <http://gmsh.info/doc/texinfo/gmsh.html#MSH-file-format>.
     """
