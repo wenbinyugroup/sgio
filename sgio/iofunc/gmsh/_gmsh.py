@@ -28,6 +28,7 @@ def write_buffer(
     elif format_version == "4.1":
         # handle gmsh:dim_tags
         # mesh.point_data['gmsh:dim_tags'] = np.array([[sgdim, 0]])
-        mesh.point_data['gmsh:dim_tags'] = np.array([[sgdim, 0] for i in range(len(mesh.points))])
-        mesh.cell_data['gmsh:geometrical'] = np.array([[i,] for i in range(len(mesh.cells))])
+        mesh.point_data['gmsh:dim_tags'] = np.array([[sgdim, 1] for i in range(len(mesh.points))])
+        # mesh.cell_data['gmsh:geometrical'] = np.array([[i,] for i in range(len(mesh.cells))])
+        mesh.cell_data['gmsh:geometrical'] = [[1,],] * len(mesh.cells)
         _gmsh41.write_buffer(file, mesh, float_fmt=float_fmt, binary=binary)
