@@ -1,0 +1,133 @@
+Metadata-Version: 2.1
+Name: inpRW
+Version: 2023.10.6
+Summary: A module for parsing, editing, and writing Abaqus input files
+Author: Erik Kane
+Author-email: erik.kane@3ds.com
+License: See terms in LOCATION/inpRW/legal_notices.pdf
+Classifier: Programming Language :: Python :: 3
+Classifier: Operating System :: OS Independent
+Classifier: License :: OSI Approved :: BSD License
+Requires-Python: >=3.7
+Description-Content-Type: text/markdown
+License-File: license.txt
+Requires-Dist: numpy >=1.21.5
+Requires-Dist: scipy >=1.7.3
+
+## Project Description:
+
+Python Modules for parsing, modifying, and writing input files
+
+## Project Goals:
+
+- Parse an input file to make the data contained therein usable to Python, while storing the original formatting as closely as possible.
+- Write out an input file from the inp object that is as close to identical to the original input file as possible, except any changes the user makes.
+- Add functions to help the user find data in the input file.
+- Add functions to help the user modify data in the input file.
+- Provide the user the same flexibility Abaqus provides (case-insensitivity, space-insensitivity) without modifying the data.
+- Give the user the ability to easily extend the inpRW class with their own functions.
+
+This code should be considered Beta quality. There might be bugs. Please report them to erik.kane@3ds.com.
+Some functions might need to change during the continued development of this utility. Scripters are strongly encouraged to
+use keyword names (instead of relying on positioning) when calling any of the functions provided by this module, as the
+position of input arguments for functions might need to change in future versions.
+
+The inpRW class is composed of \_inpR, \_inpW, \_inpMod, \_inpFind, \_inpFindRefs, \_inpCustom, and \_importedModules due to the complexity of the class. \_inpR has
+the functions for parsing data from the .inp. \_inpW has functions for writing the data in the inp object to an input file.
+\_inpMod has functions for modifying the data in the inp object structure. \_inpFind has functions for finding information
+in the inp object structure. \_inpFindRefs has functions for finding references to names or labels in the input file. \_inpCustom is empty; 
+whatever functions the end user adds to this module will extend the class. \_importedModules contains the module imports for all the \_inp* modules.
+
+The other modules included with this utility are all used by inpRW, but they are not directly part of this class. Those
+modules can also be used independently from inpRW if desired.
+
+## Running inpRW
+
+If you install inpRW using the instructions in the install procedure, inpRW and it's submodules will be included in the site-packages folder for that Python 
+interpreter and availabe to be imported by that interpreter. If you would prefer to run inpRW from source code, you need to include the *src* directory in 
+the PYTHONPATH system variable so Python knows where to find the module. On Windows, you can run the command ```set PYTHONPATH=path_to_src\src``` from a 
+command prompt to set it only for the current command session (you can include this command in a .bat file for convenience), or you can use different methods 
+to set it system-wide to apply to all Python interpreters and all command sessions.
+
+## Build Instructions:
+
+This section is only applicable to Dassault Systèmes employees, as the entire inpRW repository (i.e. the build system an other supporting files) 
+is not distributed outside of Dassault Systèmes at this time.
+
+If you only need to run inpRW, skip ahead to the **Install inpRW from .whl section**.
+
+This section provides instructions on building a .whl from the source code, in case you need to make modifications for your own project. These instructions
+assume you have obtained the inpRW git repository and wish to build a packaged utility from the source files. The process of building inpRW has been mostly 
+automated, but there are a few manual steps developers will need to take.
+
+### Pre-requisites:
+
+Python version 3.7+, modules: build, pyc_wheel,
+numpy and scipy .whl files in dist folder, 7zip
+
+Any Python 3 interpreter should work when building the inpRW module, but these instructions are for modifying the Python 3.7 interpreter that comes with **3D**EXPERIENCE. All of these commands should be run from an administrative command prompt.
+
+Find python.exe in the **3D**EXPERIENCE folder (default: C:\Program Files\Dassault Systemes\VERSION\win_b64\tools\SMApy\python3.7\python.exe). In these 
+instructions from this point forward, PYTHON refers to this executable, or a .bat file that points to this executable, and VERSION is the **3D**EXPERIENCE 
+version string (for version 2022x, this is B424). To install build and pyc_wheel to the **3D**EXPERIENCE Python interpreter, first make sure pip is updated:
+
+    PYTHON -m pip install --upgrade pip
+
+and then run the following command:
+
+    PYTHON -m pip install --upgrade build pyc_wheel setuptools
+
+Some Python executables are missing from this folder: C:\Program Files\Dassault Systemes\VERSION\win_b64\tools\SMApy\python3.7\Lib\venv\scripts\nt. The 
+executables can be copied using the following commands (or copy them manually):
+
+    xcopy "C:\Program Files\Dassault Systemes\VERSION\win_b64\tools\SMApy\python3.7\python_d.exe" "C:\Program Files\Dassault Systemes\VERSION\win_b64\tools\SMApy\python3.7\Lib\venv\scripts\nt"
+    xcopy "C:\Program Files\Dassault Systemes\VERSION\win_b64\tools\SMApy\python3.7\python_d.pdb" "C:\Program Files\Dassault Systemes\VERSION\win_b64\tools\SMApy\python3.7\Lib\venv\scripts\nt"
+    xcopy "C:\Program Files\Dassault Systemes\VERSION\win_b64\tools\SMApy\python3.7\pythonw_d.exe" "C:\Program Files\Dassault Systemes\VERSION\win_b64\tools\SMApy\python3.7\Lib\venv\scripts\nt"
+    xcopy "C:\Program Files\Dassault Systemes\VERSION\win_b64\tools\SMApy\python3.7\pythonw_d.pdb" "C:\Program Files\Dassault Systemes\VERSION\win_b64\tools\SMApy\python3.7\Lib\venv\scripts\nt"
+    
+After the Python installation is properly configured, you should modify python3_inpRW.bat to refer to the desired Python executable. If you have added any 
+new files to inpRW, you should modify the appropriate setup.py folder in build\main_setup or build\dev_setup. Also, you can download .whl files of numpy and 
+scipy to the dist folder if they will need to be installed by the end-user and the end-users do not want to pull these automatically using pip (these .whls 
+are not included with the git repository because they are quite large). 
+
+### Build inpRW.whl and inpRW.zip
+
+Once the pre-requisite tasks have been handled, simply call the appropriate build_*.bat to build inpRW in a packaged form. Please run this tool from the 
+build directory, as these scripts use relative paths and assume the starting point is the build directory.
+
+The packaged inpRW utility will be available in the dist\packaged folder. There will be two zip files; in one inpRW*.whl will include .pyc files only, while 
+the other will include .py files. Both will also include install_to_3DEXPERIENCE.bat (to make it easier to install inpRW to a **3D**EXPERIENCE Python installation), a 
+.sha256 file for inpRW*.whl, and the numpy and scipy .whl files if they were available in the dist folder.
+
+## Install inpRW from .whl
+
+inpRW can be easily installed to the **3D**EXPERIENCE Python interpreter used for Keyword Edit using install_to_3DEXPERIENCE.bat from /dist. install_to_3DEXPERIENCE.bat will check for admin rights and relaunch the command if it does not have them, will 
+open a file-browser so the user can specify the version folder of **3D**EXPERIENCE (the script will then find the 3.7 python.exe for that installation), will 
+upgrade pip, and will finally install numpy, scipy (both requirements of inpRW) and inpRW.
+
+If inpRW is to be installed for a different Python installation, the command is
+
+    PYTHON -m pip install inpRW*.whl --upgrade
+
+Make sure pip is upgraded first, or there might be problems installing inpRW. The following command will work:
+
+    PYTHON -m pip install --upgrade pip
+
+## Testing inpRW
+
+Before testing inpRW, you should either install it or ensure it is importable by python3_inpRW.bat. Also, make sure python3_inpRW.bat is set to the desired 
+Python interpreter. The test_createManifest function is hardcoded to call this .bat file, so it must be set properly. You can then run the test suite by 
+navigating to the tests folder and running test_all.bat. The test suite does not yet test every function of inpRW, but if it passes all tests you can be 
+confident that inpRW is installed and configured properly. You can read the unittest section of the Python documentation if you would like to learn about 
+different options for running these tests.
+
+## Calling inpRW
+
+Have any Abaqus input file available and open a Python interpreter in the directory with the input file. Create an inpRW class object with the following 
+commands:
+
+    import inpRW
+    inp = inpRW.inpRW('inputFileName')
+    inp.parse()
+
+Please see the documentation of this project for all the available functions and their syntax. 

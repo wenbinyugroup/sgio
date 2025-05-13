@@ -1,0 +1,96 @@
+Legal Notices
+
+    inpRW 2023.10.06 is © 2023 Dassault Systemès Simulia Corp.
+    This page specifies the patents, trademarks, copyrights, and restricted rights for the inpRW 2023.10.06:
+
+Trademarks
+
+    3DEXPERIENCE, the Compass icon, the 3DS logo, CATIA, BIOVIA, GEOVIA, SOLIDWORKS, 3DVIA,
+    ENOVIA, NETVIBES, MEDIDATA, CENTRIC PLM, 3DEXCITE, SIMULIA, DELMIA and IFWE are
+    commercial trademarks or registered trademarks of Dassault Systèmes, a French "société européenne" (Versailles
+    Commercial Register # B 322 306 440), or its subsidiaries in the United States and/or other countries. All other
+    trademarks are owned by their respective owners. Use of any Dassault Systèmes or its subsidiaries trademarks
+    is subject to their express written approval.
+    
+    DS Offerings and services names may be trademarks or service marks of Dassault Systèmes or its subsidiaries.
+
+
+Third-Party Copyrights Notices
+
+    inpRW 2023.10.06 may include open source software components. Source code for open source software components
+    licensed under terms and conditions that mandate availability of such source code is available upon request. The
+    original licensors of said open source software components provide them on an "as is" basis and without any
+    liability whatsoever to customer (or licensee).
+    
+    Under BSD 3-Clause "New" or "Revised" License:
+    
+        NumPy 1.21.5
+        Copyright © 2005-2021, NumPy Developers.
+        All rights reserved.
+        The NumPy repository and source distributions bundle several libraries that are compatibly licensed. We list these here.
+        Name: lapack-lite
+        Files: numpy/linalg/lapack_lite/*
+        License: BSD-3-Clause
+        For details, see numpy/linalg/lapack_lite/LICENSE.txt
+        Name: tempita
+        Files: tools/npy_tempita/*
+        License: MIT
+        For details, see tools/npy_tempita/license.txt
+        Name: dragon4
+        Files: numpy/core/src/multiarray/dragon4.c
+        License: MIT
+        For license text, see numpy/core/src/multiarray/dragon4.c
+        Name: libdivide
+        Files: numpy/core/include/numpy/libdivide/*
+        License: Zlib
+        For license text, see numpy/core/include/numpy/libdivide/LICENSE.txt
+        
+        SciPy 1.7.3
+        Copyright © 2001-2002 Enthought, Inc. 2003-2019, SciPy Developers.
+        All rights reserved.
+
+License Terms
+
+    BSD 3-Clause "New" or "Revised" License
+    
+        Copyright © <year> <owner>. All rights reserved.
+        Redistribution and use in source and binary forms, with or without modification, are permitted provided that the
+        following conditions are met:
+        1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following
+        disclaimer.
+        2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the
+        following disclaimer in the documentation and/or other materials provided with the distribution.
+        3. Neither the name of the copyright holder nor the names of its contributors may be used to endorse or promote
+        products derived from this software without specific prior written permission.
+        THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+        ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+        WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+        DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+        FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+        DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+        SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED
+        AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+        (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+        SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+Restricted Rights
+
+    This clause applies to all acquisitions of Dassault Systèmes Offerings by or for the United States federal
+    government, or by any prime contractor or subcontractor (at any tier) under any contract, grant, cooperative
+    agreement or other activity with the federal government. The software, documentation and any other technical
+    data provided hereunder is commercial in nature and developed solely at private expense. The Software is
+    delivered as "Commercial Computer Software" as defined in DFARS 252.227-7014 (June 1995) or as a
+    "Commercial Item" as defined in FAR 2.101(a) and as such is provided with only such rights as are provided in
+    Dassault Systèmes standard commercial end user license agreement. Technical data is provided with limited
+    rights only as provided in DFAR 252.227-7015 (Nov. 1995) or FAR 52.227-14 (June 1987), whichever is
+    applicable. The terms and conditions of the Dassault Systèmes standard commercial end user license agreement
+    shall pertain to the United States government's use and disclosure of this software, and shall supersede any
+    conflicting contractual terms and conditions. If the DS standard commercial license fails to meet the United
+    States government's needs or is inconsistent in any respect with United States Federal law, the United States
+    government agrees to return this software, unused, to DS. The following additional statement applies only to
+    acquisitions governed by DFARS Subpart 227.4 (October 1988): "Restricted Rights - use, duplication and
+    disclosure by the Government is subject to restrictions as set forth in subparagraph (c)(l)(ii) of the Rights in
+    Technical Data and Computer Software clause at DFARS 252-227-7013 (Oct. 1988)
+    
+    inpRW 2023.10.06 is © 2023 Dassault Systemès Simulia Corp.
+    

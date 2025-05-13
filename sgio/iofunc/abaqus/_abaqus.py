@@ -7,8 +7,8 @@ from contextlib import redirect_stdout
 
 import numpy as np
 # from meshio._files import is_buffer, open_file
-from inpRW import inpRW
-from misc_functions import rsl
+from sgio._vendors.inprw.inpRW import inpRW
+from sgio._vendors.inprw.misc_functions import rsl
 from meshio import Mesh, CellBlock
 from meshio.abaqus._abaqus import (
     abaqus_to_meshio_type,

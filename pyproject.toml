@@ -18,7 +18,8 @@ dependencies = [
     # "numpy>=2",
     # "rich",
     "matplotlib",
-    "inpRW @ file:///${PROJECT_ROOT}/vendor/inprw/inpRW-2023.10.6-py3-none-any/inpRW-2023.10.6-py3-none-any.whl",
+    "pyyaml",
+    "scipy",
 ]
 classifiers = [
     "Programming Language :: Python :: 3",
@@ -31,7 +32,6 @@ license-files = ["LICEN[CS]E*"]
 all = [
     "h5py",
     "netCDF4",
-    "pyyaml",
     "pytest",
 ]
 
@@ -50,7 +50,6 @@ only-include = [
     "LICENSE",
     "README.md",
     "pyproject.toml",
-    "vendor",
 ]
 # exclude = [
 #   ".github",
@@ -61,4 +60,3 @@ only-include = [
 #   "build_and_publish.bat",
 #   "requirements.txt",
 # ]
-
