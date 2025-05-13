@@ -1,286 +1,70 @@
-[00:11:58] INFO     Converting files/abaqus/sg2_airfoil.inp to _temp/sg2_airfoil_vabs41.dat...        test_convert.py:34
-           INFO     Converting file format...                                                                main.py:653
+[19:01:33] INFO     num_cases: 3                                                          test_io_vabs_out_state_f.py:42
            INFO     Reading file...                                                                           main.py:67
-[00:11:59] INFO     Writing file...                                                                          main.py:514
-           INFO     File format converted.                                                                   main.py:690
-           INFO     vabs _temp/sg2_airfoil_vabs41.dat                                                        execu.py:37
-           CRITICAL Traceback (most recent call last):                                                      execu.py:232
-                      File "C:\Users\foxta\anaconda3\envs\test_py39\lib\site-packages\sgio\execu.py", line              
-                    222, in runVABS                                                                                     
-                        sue.run(cmd, timeout)                                                                           
-                      File "C:\Users\foxta\anaconda3\envs\test_py39\lib\site-packages\sgio\utils\execu.py",             
-                    line 44, in run                                                                                     
-                        out = sbp.run(                                                                                  
-                      File "C:\Users\foxta\anaconda3\envs\test_py39\lib\subprocess.py", line 505, in run                
-                        with Popen(*popenargs, **kwargs) as process:                                                    
-                      File "C:\Users\foxta\anaconda3\envs\test_py39\lib\subprocess.py", line 951, in                    
-                    __init__                                                                                            
-                        self._execute_child(args, executable, preexec_fn, close_fds,                                    
-                      File "C:\Users\foxta\anaconda3\envs\test_py39\lib\subprocess.py", line 1436, in                   
-                    _execute_child                                                                                      
-                        hp, ht, pid, tid = _winapi.CreateProcess(executable, args,                                      
-                    FileNotFoundError: [WinError 2] The system cannot find the file specified                           
-                    Traceback (most recent call last):                                                                  
-                      File "C:\Users\foxta\anaconda3\envs\test_py39\lib\site-packages\sgio\execu.py", line              
-                    222, in runVABS                                                                                     
-                        sue.run(cmd, timeout)                                                                           
-                      File "C:\Users\foxta\anaconda3\envs\test_py39\lib\site-packages\sgio\utils\execu.py",             
-                    line 44, in run                                                                                     
-                        out = sbp.run(                                                                                  
-                      File "C:\Users\foxta\anaconda3\envs\test_py39\lib\subprocess.py", line 505, in run                
-                        with Popen(*popenargs, **kwargs) as process:                                                    
-                      File "C:\Users\foxta\anaconda3\envs\test_py39\lib\subprocess.py", line 951, in                    
-                    __init__                                                                                            
-                        self._execute_child(args, executable, preexec_fn, close_fds,                                    
-                      File "C:\Users\foxta\anaconda3\envs\test_py39\lib\subprocess.py", line 1436, in                   
-                    _execute_child                                                                                      
-                        hp, ht, pid, tid = _winapi.CreateProcess(executable, args,                                      
-                    FileNotFoundError: [WinError 2] The system cannot find the file specified                           
-           INFO     Converting files/abaqus/sg2_airfoil.inp to _temp/sg2_airfoil_vabs40.dat...        test_convert.py:34
-           INFO     Converting file format...                                                                main.py:653
-           INFO     Reading file...                                                                           main.py:67
-[00:12:00] INFO     Writing file...                                                                          main.py:514
-           INFO     File format converted.                                                                   main.py:690
-           INFO     vabs40 _temp/sg2_airfoil_vabs40.dat                                                      execu.py:37
-           CRITICAL Traceback (most recent call last):                                                      execu.py:232
-                      File "C:\Users\foxta\anaconda3\envs\test_py39\lib\site-packages\sgio\execu.py", line              
-                    222, in runVABS                                                                                     
-                        sue.run(cmd, timeout)                                                                           
-                      File "C:\Users\foxta\anaconda3\envs\test_py39\lib\site-packages\sgio\utils\execu.py",             
-                    line 44, in run                                                                                     
-                        out = sbp.run(                                                                                  
-                      File "C:\Users\foxta\anaconda3\envs\test_py39\lib\subprocess.py", line 505, in run                
-                        with Popen(*popenargs, **kwargs) as process:                                                    
-                      File "C:\Users\foxta\anaconda3\envs\test_py39\lib\subprocess.py", line 951, in                    
-                    __init__                                                                                            
-                        self._execute_child(args, executable, preexec_fn, close_fds,                                    
-                      File "C:\Users\foxta\anaconda3\envs\test_py39\lib\subprocess.py", line 1436, in                   
-                    _execute_child                                                                                      
-                        hp, ht, pid, tid = _winapi.CreateProcess(executable, args,                                      
-                    FileNotFoundError: [WinError 2] The system cannot find the file specified                           
-                    Traceback (most recent call last):                                                                  
-                      File "C:\Users\foxta\anaconda3\envs\test_py39\lib\site-packages\sgio\execu.py", line              
-                    222, in runVABS                                                                                     
-                        sue.run(cmd, timeout)                                                                           
-                      File "C:\Users\foxta\anaconda3\envs\test_py39\lib\site-packages\sgio\utils\execu.py",             
-                    line 44, in run                                                                                     
-                        out = sbp.run(                                                                                  
-                      File "C:\Users\foxta\anaconda3\envs\test_py39\lib\subprocess.py", line 505, in run                
-                        with Popen(*popenargs, **kwargs) as process:                                                    
-                      File "C:\Users\foxta\anaconda3\envs\test_py39\lib\subprocess.py", line 951, in                    
-                    __init__                                                                                            
-                        self._execute_child(args, executable, preexec_fn, close_fds,                                    
-                      File "C:\Users\foxta\anaconda3\envs\test_py39\lib\subprocess.py", line 1436, in                   
-                    _execute_child                                                                                      
-                        hp, ht, pid, tid = _winapi.CreateProcess(executable, args,                                      
-                    FileNotFoundError: [WinError 2] The system cannot find the file specified                           
-           INFO     Converting files/abaqus/sg2_i_simple_eo1.inp to                                   test_convert.py:34
-                    _temp/sg2_i_simple_eo1_vabs41.dat...                                                                
-           INFO     Converting file format...                                                                main.py:653
-           INFO     Reading file...                                                                           main.py:67
-           INFO     Writing file...                                                                          main.py:514
-           INFO     File format converted.                                                                   main.py:690
-           INFO     vabs _temp/sg2_i_simple_eo1_vabs41.dat                                                   execu.py:37
-           CRITICAL Traceback (most recent call last):                                                      execu.py:232
-                      File "C:\Users\foxta\anaconda3\envs\test_py39\lib\site-packages\sgio\execu.py", line              
-                    222, in runVABS                                                                                     
-                        sue.run(cmd, timeout)                                                                           
-                      File "C:\Users\foxta\anaconda3\envs\test_py39\lib\site-packages\sgio\utils\execu.py",             
-                    line 44, in run                                                                                     
-                        out = sbp.run(                                                                                  
-                      File "C:\Users\foxta\anaconda3\envs\test_py39\lib\subprocess.py", line 505, in run                
-                        with Popen(*popenargs, **kwargs) as process:                                                    
-                      File "C:\Users\foxta\anaconda3\envs\test_py39\lib\subprocess.py", line 951, in                    
-                    __init__                                                                                            
-                        self._execute_child(args, executable, preexec_fn, close_fds,                                    
-                      File "C:\Users\foxta\anaconda3\envs\test_py39\lib\subprocess.py", line 1436, in                   
-                    _execute_child                                                                                      
-                        hp, ht, pid, tid = _winapi.CreateProcess(executable, args,                                      
-                    FileNotFoundError: [WinError 2] The system cannot find the file specified                           
-                    Traceback (most recent call last):                                                                  
-                      File "C:\Users\foxta\anaconda3\envs\test_py39\lib\site-packages\sgio\execu.py", line              
-                    222, in runVABS                                                                                     
-                        sue.run(cmd, timeout)                                                                           
-                      File "C:\Users\foxta\anaconda3\envs\test_py39\lib\site-packages\sgio\utils\execu.py",             
-                    line 44, in run                                                                                     
-                        out = sbp.run(                                                                                  
-                      File "C:\Users\foxta\anaconda3\envs\test_py39\lib\subprocess.py", line 505, in run                
-                        with Popen(*popenargs, **kwargs) as process:                                                    
-                      File "C:\Users\foxta\anaconda3\envs\test_py39\lib\subprocess.py", line 951, in                    
-                    __init__                                                                                            
-                        self._execute_child(args, executable, preexec_fn, close_fds,                                    
-                      File "C:\Users\foxta\anaconda3\envs\test_py39\lib\subprocess.py", line 1436, in                   
-                    _execute_child                                                                                      
-                        hp, ht, pid, tid = _winapi.CreateProcess(executable, args,                                      
-                    FileNotFoundError: [WinError 2] The system cannot find the file specified                           
-           INFO     Converting files/abaqus/sg2_i_simple_eo2.inp to                                   test_convert.py:34
-                    _temp/sg2_i_simple_eo2_vabs41.dat...                                                                
-           INFO     Converting file format...                                                                main.py:653
-           INFO     Reading file...                                                                           main.py:67
-           INFO     Writing file...                                                                          main.py:514
-           INFO     File format converted.                                                                   main.py:690
-           INFO     vabs _temp/sg2_i_simple_eo2_vabs41.dat                                                   execu.py:37
-           CRITICAL Traceback (most recent call last):                                                      execu.py:232
-                      File "C:\Users\foxta\anaconda3\envs\test_py39\lib\site-packages\sgio\execu.py", line              
-                    222, in runVABS                                                                                     
-                        sue.run(cmd, timeout)                                                                           
-                      File "C:\Users\foxta\anaconda3\envs\test_py39\lib\site-packages\sgio\utils\execu.py",             
-                    line 44, in run                                                                                     
-                        out = sbp.run(                                                                                  
-                      File "C:\Users\foxta\anaconda3\envs\test_py39\lib\subprocess.py", line 505, in run                
-                        with Popen(*popenargs, **kwargs) as process:                                                    
-                      File "C:\Users\foxta\anaconda3\envs\test_py39\lib\subprocess.py", line 951, in                    
-                    __init__                                                                                            
-                        self._execute_child(args, executable, preexec_fn, close_fds,                                    
-                      File "C:\Users\foxta\anaconda3\envs\test_py39\lib\subprocess.py", line 1436, in                   
-                    _execute_child                                                                                      
-                        hp, ht, pid, tid = _winapi.CreateProcess(executable, args,                                      
-                    FileNotFoundError: [WinError 2] The system cannot find the file specified                           
-                    Traceback (most recent call last):                                                                  
-                      File "C:\Users\foxta\anaconda3\envs\test_py39\lib\site-packages\sgio\execu.py", line              
-                    222, in runVABS                                                                                     
-                        sue.run(cmd, timeout)                                                                           
-                      File "C:\Users\foxta\anaconda3\envs\test_py39\lib\site-packages\sgio\utils\execu.py",             
-                    line 44, in run                                                                                     
-                        out = sbp.run(                                                                                  
-                      File "C:\Users\foxta\anaconda3\envs\test_py39\lib\subprocess.py", line 505, in run                
-                        with Popen(*popenargs, **kwargs) as process:                                                    
-                      File "C:\Users\foxta\anaconda3\envs\test_py39\lib\subprocess.py", line 951, in                    
-                    __init__                                                                                            
-                        self._execute_child(args, executable, preexec_fn, close_fds,                                    
-                      File "C:\Users\foxta\anaconda3\envs\test_py39\lib\subprocess.py", line 1436, in                   
-                    _execute_child                                                                                      
-                        hp, ht, pid, tid = _winapi.CreateProcess(executable, args,                                      
-                    FileNotFoundError: [WinError 2] The system cannot find the file specified                           
-           INFO     Converting files/vabs/version_4_1/uh60a.sg to _temp/uh60a.msh...                  test_convert.py:34
-           INFO     Converting file format...                                                                main.py:653
-           INFO     Reading file...                                                                           main.py:67
-           INFO     Writing file...                                                                          main.py:514
-           INFO     File format converted.                                                                   main.py:690
-           INFO     Converting files/vabs/version_4_0/sg21eb_tri3_vabs40.sg to                        test_convert.py:34
-                    _temp/sg21eb_tri3_vabs40.msh...                                                                     
-           INFO     Converting file format...                                                                main.py:653
-           INFO     Reading file...                                                                           main.py:67
-           INFO     Writing file...                                                                          main.py:514
-           INFO     File format converted.                                                                   main.py:690
-           INFO     Converting files/vabs/version_4_0/sg21t_tri3_vabs40.sg to                         test_convert.py:34
-                    _temp/sg21t_tri3_vabs40.msh...                                                                      
-           INFO     Converting file format...                                                                main.py:653
-           INFO     Reading file...                                                                           main.py:67
-           INFO     Writing file...                                                                          main.py:514
-           INFO     File format converted.                                                                   main.py:690
-           INFO     Converting files/abaqus/sg33_cube.inp to _temp/sg33_cube_sc21.sg...               test_convert.py:34
-           INFO     Converting file format...                                                                main.py:653
-           INFO     Reading file...                                                                           main.py:67
-           INFO     Writing file...                                                                          main.py:514
-           INFO     File format converted.                                                                   main.py:690
-           INFO     swiftcomp _temp/sg33_cube_sc21.sg 3D H                                                   execu.py:37
-           CRITICAL Traceback (most recent call last):                                                      execu.py:324
-                      File "C:\Users\foxta\anaconda3\envs\test_py39\lib\site-packages\sgio\execu.py", line              
-                    314, in runSwiftComp                                                                                
-                        sue.run(cmd, timeout)                                                                           
-                      File "C:\Users\foxta\anaconda3\envs\test_py39\lib\site-packages\sgio\utils\execu.py",             
-                    line 44, in run                                                                                     
-                        out = sbp.run(                                                                                  
-                      File "C:\Users\foxta\anaconda3\envs\test_py39\lib\subprocess.py", line 505, in run                
-                        with Popen(*popenargs, **kwargs) as process:                                                    
-                      File "C:\Users\foxta\anaconda3\envs\test_py39\lib\subprocess.py", line 951, in                    
-                    __init__                                                                                            
-                        self._execute_child(args, executable, preexec_fn, close_fds,                                    
-                      File "C:\Users\foxta\anaconda3\envs\test_py39\lib\subprocess.py", line 1436, in                   
-                    _execute_child                                                                                      
-                        hp, ht, pid, tid = _winapi.CreateProcess(executable, args,                                      
-                    FileNotFoundError: [WinError 2] The system cannot find the file specified                           
-                    Traceback (most recent call last):                                                                  
-                      File "C:\Users\foxta\anaconda3\envs\test_py39\lib\site-packages\sgio\execu.py", line              
-                    314, in runSwiftComp                                                                                
-                        sue.run(cmd, timeout)                                                                           
-                      File "C:\Users\foxta\anaconda3\envs\test_py39\lib\site-packages\sgio\utils\execu.py",             
-                    line 44, in run                                                                                     
-                        out = sbp.run(                                                                                  
-                      File "C:\Users\foxta\anaconda3\envs\test_py39\lib\subprocess.py", line 505, in run                
-                        with Popen(*popenargs, **kwargs) as process:                                                    
-                      File "C:\Users\foxta\anaconda3\envs\test_py39\lib\subprocess.py", line 951, in                    
-                    __init__                                                                                            
-                        self._execute_child(args, executable, preexec_fn, close_fds,                                    
-                      File "C:\Users\foxta\anaconda3\envs\test_py39\lib\subprocess.py", line 1436, in                   
-                    _execute_child                                                                                      
-                        hp, ht, pid, tid = _winapi.CreateProcess(executable, args,                                      
-                    FileNotFoundError: [WinError 2] The system cannot find the file specified                           
-           INFO     Converting files/abaqus/sg33_udfrp.inp to _temp/sg33_udfrp_sc21.sg...             test_convert.py:34
-           INFO     Converting file format...                                                                main.py:653
-           INFO     Reading file...                                                                           main.py:67
-[00:12:03] INFO     Writing file...                                                                          main.py:514
-           INFO     File format converted.                                                                   main.py:690
-           INFO     swiftcomp _temp/sg33_udfrp_sc21.sg 3D H                                                  execu.py:37
-           CRITICAL Traceback (most recent call last):                                                      execu.py:324
-                      File "C:\Users\foxta\anaconda3\envs\test_py39\lib\site-packages\sgio\execu.py", line              
-                    314, in runSwiftComp                                                                                
-                        sue.run(cmd, timeout)                                                                           
-                      File "C:\Users\foxta\anaconda3\envs\test_py39\lib\site-packages\sgio\utils\execu.py",             
-                    line 44, in run                                                                                     
-                        out = sbp.run(                                                                                  
-                      File "C:\Users\foxta\anaconda3\envs\test_py39\lib\subprocess.py", line 505, in run                
-                        with Popen(*popenargs, **kwargs) as process:                                                    
-                      File "C:\Users\foxta\anaconda3\envs\test_py39\lib\subprocess.py", line 951, in                    
-                    __init__                                                                                            
-                        self._execute_child(args, executable, preexec_fn, close_fds,                                    
-                      File "C:\Users\foxta\anaconda3\envs\test_py39\lib\subprocess.py", line 1436, in                   
-                    _execute_child                                                                                      
-                        hp, ht, pid, tid = _winapi.CreateProcess(executable, args,                                      
-                    FileNotFoundError: [WinError 2] The system cannot find the file specified                           
-                    Traceback (most recent call last):                                                                  
-                      File "C:\Users\foxta\anaconda3\envs\test_py39\lib\site-packages\sgio\execu.py", line              
-                    314, in runSwiftComp                                                                                
-                        sue.run(cmd, timeout)                                                                           
-                      File "C:\Users\foxta\anaconda3\envs\test_py39\lib\site-packages\sgio\utils\execu.py",             
-                    line 44, in run                                                                                     
-                        out = sbp.run(                                                                                  
-                      File "C:\Users\foxta\anaconda3\envs\test_py39\lib\subprocess.py", line 505, in run                
-                        with Popen(*popenargs, **kwargs) as process:                                                    
-                      File "C:\Users\foxta\anaconda3\envs\test_py39\lib\subprocess.py", line 951, in                    
-                    __init__                                                                                            
-                        self._execute_child(args, executable, preexec_fn, close_fds,                                    
-                      File "C:\Users\foxta\anaconda3\envs\test_py39\lib\subprocess.py", line 1436, in                   
-                    _execute_child                                                                                      
-                        hp, ht, pid, tid = _winapi.CreateProcess(executable, args,                                      
-                    FileNotFoundError: [WinError 2] The system cannot find the file specified                           
-           INFO     Converting files/abaqus/sg33_inclusion_ellipsoid_meshsize01.inp to                test_convert.py:34
-                    _temp/sg33_inclusion_ellipsoid_meshsize01_sc21.sg...                                                
-           INFO     Converting file format...                                                                main.py:653
-           INFO     Reading file...                                                                           main.py:67
-[00:12:04] INFO     Writing file...                                                                          main.py:514
-           INFO     File format converted.                                                                   main.py:690
-           INFO     swiftcomp _temp/sg33_inclusion_ellipsoid_meshsize01_sc21.sg 3D H                         execu.py:37
-           CRITICAL Traceback (most recent call last):                                                      execu.py:324
-                      File "C:\Users\foxta\anaconda3\envs\test_py39\lib\site-packages\sgio\execu.py", line              
-                    314, in runSwiftComp                                                                                
-                        sue.run(cmd, timeout)                                                                           
-                      File "C:\Users\foxta\anaconda3\envs\test_py39\lib\site-packages\sgio\utils\execu.py",             
-                    line 44, in run                                                                                     
-                        out = sbp.run(                                                                                  
-                      File "C:\Users\foxta\anaconda3\envs\test_py39\lib\subprocess.py", line 505, in run                
-                        with Popen(*popenargs, **kwargs) as process:                                                    
-                      File "C:\Users\foxta\anaconda3\envs\test_py39\lib\subprocess.py", line 951, in                    
-                    __init__                                                                                            
-                        self._execute_child(args, executable, preexec_fn, close_fds,                                    
-                      File "C:\Users\foxta\anaconda3\envs\test_py39\lib\subprocess.py", line 1436, in                   
-                    _execute_child                                                                                      
-                        hp, ht, pid, tid = _winapi.CreateProcess(executable, args,                                      
-                    FileNotFoundError: [WinError 2] The system cannot find the file specified                           
-                    Traceback (most recent call last):                                                                  
-                      File "C:\Users\foxta\anaconda3\envs\test_py39\lib\site-packages\sgio\execu.py", line              
-                    314, in runSwiftComp                                                                                
-                        sue.run(cmd, timeout)                                                                           
-                      File "C:\Users\foxta\anaconda3\envs\test_py39\lib\site-packages\sgio\utils\execu.py",             
-                    line 44, in run                                                                                     
-                        out = sbp.run(                                                                                  
-                      File "C:\Users\foxta\anaconda3\envs\test_py39\lib\subprocess.py", line 505, in run                
-                        with Popen(*popenargs, **kwargs) as process:                                                    
-                      File "C:\Users\foxta\anaconda3\envs\test_py39\lib\subprocess.py", line 951, in                    
-                    __init__                                                                                            
-                        self._execute_child(args, executable, preexec_fn, close_fds,                                    
-                      File "C:\Users\foxta\anaconda3\envs\test_py39\lib\subprocess.py", line 1436, in                   
-                    _execute_child                                                                                      
-                        hp, ht, pid, tid = _winapi.CreateProcess(executable, args,                                      
-                    FileNotFoundError: [WinError 2] The system cannot find the file specified                           
+           INFO     [state case                                                           test_io_vabs_out_state_f.py:51
+                    case:                                                                                               
+                    states:                                                                                             
+                      state: fi (['fi'])                                                                                
+                      field data: 98 element data                                                                       
+                        1: 11636.365                                                                                    
+                        2: 11633.759                                                                                    
+                        3: 11634.39                                                                                     
+                        4: 11634.007                                                                                    
+                        5: 11633.682                                                                                    
+                        ...                                                                                             
+                      state: sr (['sr'])                                                                                
+                      field data: 98 element data                                                                       
+                        1: 8.5937488e-05                                                                                
+                        2: 8.5956743e-05                                                                                
+                        3: 8.5952078e-05                                                                                
+                        4: 8.5954906e-05                                                                                
+                        5: 8.5957308e-05                                                                                
+                        ...                                                                                             
+                      state: sr_min (['sr_min'])                                                                        
+                      field data: 1 element data                                                                        
+                        70: 7.6885222e-05, state case                                                                   
+                    case:                                                                                               
+                    states:                                                                                             
+                      state: fi (['fi'])                                                                                
+                      field data: 98 element data                                                                       
+                        1: 23272.731                                                                                    
+                        2: 23267.517                                                                                    
+                        3: 23268.78                                                                                     
+                        4: 23268.014                                                                                    
+                        5: 23267.364                                                                                    
+                        ...                                                                                             
+                      state: sr (['sr'])                                                                                
+                      field data: 98 element data                                                                       
+                        1: 4.2968744e-05                                                                                
+                        2: 4.2978371e-05                                                                                
+                        3: 4.2976039e-05                                                                                
+                        4: 4.2977453e-05                                                                                
+                        5: 4.2978654e-05                                                                                
+                        ...                                                                                             
+                      state: sr_min (['sr_min'])                                                                        
+                      field data: 1 element data                                                                        
+                        70: 3.8442611e-05, state case                                                                   
+                    case:                                                                                               
+                    states:                                                                                             
+                      state: fi (['fi'])                                                                                
+                      field data: 98 element data                                                                       
+                        1: 34909.096                                                                                    
+                        2: 34901.276                                                                                    
+                        3: 34903.17                                                                                     
+                        4: 34902.022                                                                                    
+                        5: 34901.046                                                                                    
+                        ...                                                                                             
+                      state: sr (['sr'])                                                                                
+                      field data: 98 element data                                                                       
+                        1: 2.8645829e-05                                                                                
+                        2: 2.8652248e-05                                                                                
+                        3: 2.8650693e-05                                                                                
+                        4: 2.8651635e-05                                                                                
+                        5: 2.8652436e-05                                                                                
+                        ...                                                                                             
+                      state: sr_min (['sr_min'])                                                                        
+                      field data: 1 element data                                                                        
+                        70: 2.5628407e-05]                                                                              
+           INFO     state case 1                                                          test_io_vabs_out_state_f.py:55
+           INFO     state case 2                                                          test_io_vabs_out_state_f.py:55
+           INFO     state case 3                                                          test_io_vabs_out_state_f.py:55
+           INFO     Writing file...                                                                          main.py:534
