@@ -88,6 +88,43 @@ class SGMesh(Mesh):
 
 
 
+def check_isolated_nodes(mesh: Union[SGMesh, Mesh]):
+    """
+    Check if there are isolated/unconnected nodes in the mesh.
+
+    Go through all cells and check if every node is used at least once.
+
+    Create a list of cell ids for each node:
+    node_cell_ids = [
+        [
+            (cell_block_id, cell_id_in_block),
+            ...
+        ],
+        ...
+    ]
+    """
+    nodes_in_cells = []
+    node_cell_ids = [[] for _ in mesh.points]
+    for _cb_id, _cb in enumerate(mesh.cells):
+        for _ci, _nis in enumerate(_cb.data):
+            for _ni in _nis:
+                node_cell_ids[_ni].append((_cb_id, _ci))
+                nodes_in_cells.append(_ni)
+
+    nodes_in_cells = list(set(nodes_in_cells))
+    nodes_in_cells.sort()
+
+    # Check if any node is not in any cell
+    isolated_nodes = [i for i, _ncids in enumerate(node_cell_ids) if not _ncids]
+    if isolated_nodes:
+        raise ValueError(f"Isolated nodes found: {isolated_nodes}")
+
+    return node_cell_ids, nodes_in_cells
+
+
+
+
+
 def renumber_elements(mesh: Union[SGMesh, Mesh]):
     """
     """

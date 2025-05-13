@@ -1,0 +1,7 @@
+- fn_in: 'vabs/version_4_1/sg2_i_simple_eo1.dat'
+  ff_in: 'vabs'
+  version_in: '4.1'
+  num_cases: 3
+  fn_out: 'sg2_i_simple_eo1_vabs41_out_d.msh'
+  ff_out: 'gmsh'
+  format_version: '4.1'

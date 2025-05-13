@@ -84,7 +84,7 @@ def read_input_buffer(file, format_version:str, model:int|str):
 
     # Read materials
     nmate = configs['num_materials']
-    sg.materials = _readMaterials(file, nmate)
+    sg.materials = _readMaterials(file, nmate, sg.physics)
 
     return sg
 

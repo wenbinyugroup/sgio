@@ -1,0 +1,482 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>inpRW Tests &#8212; inpRW 2023.10.6 documentation</title><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pydoctheme.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles.css" />
+    
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
+    
+    <script src="../_static/sidebar.js"></script>
+    
+    <link rel="shortcut icon" href="../_static/3DS_SIMULIA_Blue_Icon_32.png"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="inpKeyword Basics" href="inpKeyword-Basics.html" />
+    <link rel="prev" title="Installation and Usage Instructions" href="Installation-and-Usage.html" /><link rel="shortcut icon" type="image/png" href="../_static/icon-116-3dx-apps.svg" />
+            <script type="text/javascript" src="../_static/copybutton.js"></script>
+            <script type="text/javascript" src="../_static/menu.js"></script> 
+  </head>
+<body>
+<div class="mobile-nav">
+    <input type="checkbox" id="menuToggler" class="toggler__input" aria-controls="navigation"
+           aria-pressed="false" aria-expanded="false" role="button" aria-label="Menu" />
+    <label for="menuToggler" class="toggler__label">
+        <span></span>
+    </label>
+    <nav class="nav-content" role="navigation">
+         <a href="inpRW_toc.html" class="nav-logo">
+             <img src="../_static/icon-116-3dx-apps.svg" alt="Logo"/>
+         </a>
+        <div class="version_switcher_placeholder"></div>
+        <form role="search" class="search" action="../search.html" method="get">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" class="search-icon">
+                <path fill-rule="nonzero"
+                        d="M15.5 14h-.79l-.28-.27a6.5 6.5 0 001.48-5.34c-.47-2.78-2.79-5-5.59-5.34a6.505 6.505 0 00-7.27 7.27c.34 2.8 2.56 5.12 5.34 5.59a6.5 6.5 0 005.34-1.48l.27.28v.79l4.25 4.25c.41.41 1.08.41 1.49 0 .41-.41.41-1.08 0-1.49L15.5 14zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" fill="#444"></path>
+            </svg>
+            <input type="text" name="q" aria-label="Quick search"/>
+            <input type="submit" value="Go"/>
+        </form>
+    </nav>
+    <div class="menu-wrapper">
+        <nav class="menu" role="navigation" aria-label="main navigation">
+            <div class="language_switcher_placeholder"></div>
+            <p class="logo">
+                <a href="../index.html">
+                <img class="logo" src="../_static/3DS_SIMULIA_Logotype_RGB_BlueSteel.png" alt="Logo" style="border-radius:5px"/>
+                </a>
+            </p>
+  <div>
+    <h3><a href="../inpRW_toc.html">Local Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">inpRW Tests</a></li>
+<li><a class="reference internal" href="#running-inprw-tests">Running inpRW Tests</a></li>
+</ul>
+
+  </div>
+<h3><a href="../inpRW_toc.html">Global Table of Contents</a></h3>
+<p class="caption" role="heading"><span class="caption-text">User Documentation</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="Introduction.html">inpRW Utility Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Project-Background.html">Project Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Installation-and-Usage.html">Installation and Usage Instructions</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">inpRW Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#running-inprw-tests">Running inpRW Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="inpKeyword-Basics.html">inpKeyword Basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Strings_Integers_and_Decimals.html">Strings, Integers, and Decimals</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Important-inpRW-Attributes.html">Important <code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW</span></code> Attributes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Miscellaneous-Usage-hints.html">Miscellaneous Usage Hints</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Example-Scenarios.html">Example Scenarios</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossary.html">Glossary</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/inpRW/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/centroid/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">centroid</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/config/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">config</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/config_re/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">config_re</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/csid/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">csid</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/eval2/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">eval2</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/elType/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">elType</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/inpDecimal/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpDecimal</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/inpInt/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpInt</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/inpKeyword/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpKeyword</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/inpKeywordHelper/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpKeywordHelper</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/inpKeywordSequence/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpKeywordSequence</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/inpRWErrors/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRWErrors</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/inpString/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpString</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/mesh/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">mesh</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/misc_functions/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">misc_functions</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/NoneSort/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">NoneSort</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/printer/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">printer</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/repr2/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">repr2</span></code></a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Update Notes</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Update-Notes/index.html">Update Notes</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Legal Notices and Usage Disclaimer</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../legal_notices/Legal_Notices_and_Usage_Disclaimer.html">Legal Notices and Usage Disclaimer</a></li>
+</ul>
+
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="Installation-and-Usage.html"
+                          title="previous chapter">Installation and Usage Instructions</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="inpKeyword-Basics.html"
+                          title="next chapter">inpKeyword Basics</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/user/Tests.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </nav>
+    </div>
+</div>
+  
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="inpKeyword-Basics.html" title="inpKeyword Basics"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="Installation-and-Usage.html" title="Installation and Usage Instructions"
+             accesskey="P">previous</a> |</li>
+          <li><img src="../_static/icon-116-3dx-apps.svg" alt="python logo" style="vertical-align: middle; margin-top: -1px"/></li>
+          <li><a href="inpRW_toc.html"></a> &#187;</li>
+          <li class="switchers">
+            <div class="language_switcher_placeholder"></div>
+            <div class="version_switcher_placeholder"></div>
+          </li>
+          <li>
+              
+              <a href="../inpRW_toc.html">inpRW 2023.10.6 documentation</a> &#187;
+              
+          </li>
+        <li class="nav-item nav-item-this"><a href="">inpRW Tests</a></li>
+                <li class="right">
+                    
+
+    <div class="inline-search" role="search">
+        <form class="inline-search" action="../search.html" method="get">
+          <input placeholder="Quick search" aria-label="Quick search" type="text" name="q" />
+          <input type="submit" value="Go" />
+          <input type="hidden" name="check_keywords" value="yes" />
+          <input type="hidden" name="area" value="default" />
+        </form>
+    </div>
+                     |
+                </li>
+            
+      </ul>
+    </div>    
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="inprw-tests">
+<h1>inpRW Tests<a class="headerlink" href="#inprw-tests" title="Permalink to this heading">¶</a></h1>
+<p>inpRW has an in-progress test suite. This can be downloaded from <a class="reference external" href="https://r1132100503382-eu1-3dswym.3dexperience.3ds.com/#community:39/post:Eikusg7KSIalgJTqMm8kIQ">the inpRW Files page</a> of the SIMULIA Community. The test suite utilizes the <a class="reference external" href="https://docs.python.org/3/library/unittest.html#module-unittest" title="(in Python v3.12)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">unittest</span></code></a>
+and <a class="reference external" href="https://docs.python.org/3/library/doctest.html#module-doctest" title="(in Python v3.12)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">doctest</span></code></a> functionality built in to Python. The <a class="reference external" href="https://docs.python.org/3/library/doctest.html#module-doctest" title="(in Python v3.12)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">doctest</span></code></a> examples which have been completed are
+written in the documentation strings of the corresponding function. These are actually designed to be run using
+the <a class="reference external" href="https://docs.python.org/3/library/unittest.html#module-unittest" title="(in Python v3.12)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">unittest</span></code></a> framework. test_all.bat and test_all.sh will run all the tests on Windows and Linux, respectively.</p>
+<p><a class="reference internal" href="../autoapi/inpRW/index.html#module-inpRW" title="inpRW"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW</span></code></a> has been developed on a Windows 10 machine, using Python 3.7, numpy 1.21.6, and scipy 1.7.3. The following configurations have been able to run the test_suite for inpRW:</p>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-text">Tested platforms</span><a class="headerlink" href="#id1" title="Permalink to this table">¶</a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>Operating System</p></th>
+<th class="head"><p>Python Version</p></th>
+<th class="head"><p>Numpy Version</p></th>
+<th class="head"><p>Scipy Version</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Windows 10</p></td>
+<td><p>3.7.9</p></td>
+<td><p>1.21.5</p></td>
+<td><p>1.7.3</p></td>
+</tr>
+<tr class="row-odd"><td><p>Windows 10</p></td>
+<td><p>3.9.10</p></td>
+<td><p>1.26.0</p></td>
+<td><p>1.11.3</p></td>
+</tr>
+<tr class="row-even"><td><p>Windows 10</p></td>
+<td><p>3.10.0</p></td>
+<td><p>1.26.0</p></td>
+<td><p>1.11.3</p></td>
+</tr>
+<tr class="row-odd"><td><p>Windows 10</p></td>
+<td><p>3.11.6</p></td>
+<td><p>1.26.0</p></td>
+<td><p>1.11.3</p></td>
+</tr>
+<tr class="row-even"><td><p>Windows 10</p></td>
+<td><p>3.12.0*</p></td>
+<td><p>1.26.0</p></td>
+<td><p>1.11.3</p></td>
+</tr>
+<tr class="row-odd"><td><p>Arch Linux, lts kernel 6.1.62-1</p></td>
+<td><p>3.7.17</p></td>
+<td><p>1.21.6</p></td>
+<td><p>1.7.3</p></td>
+</tr>
+<tr class="row-even"><td><p>Arch Linux, lts kernel 6.1.62-1</p></td>
+<td><p>3.8.18</p></td>
+<td><p>1.24.4</p></td>
+<td><p>1.10.1</p></td>
+</tr>
+<tr class="row-odd"><td><p>Arch Linux, lts kernel 6.1.62-1</p></td>
+<td><p>3.9.18</p></td>
+<td><p>1.24.4</p></td>
+<td><p>1.10.1</p></td>
+</tr>
+<tr class="row-even"><td><p>Arch Linux, lts kernel 6.1.62-1</p></td>
+<td><p>3.10.13</p></td>
+<td><p>1.26.2</p></td>
+<td><p>1.11.4</p></td>
+</tr>
+<tr class="row-odd"><td><p>Arch Linux, lts kernel 6.1.62-1</p></td>
+<td><p>3.11.5</p></td>
+<td><p>1.26.2</p></td>
+<td><p>1.11.4</p></td>
+</tr>
+<tr class="row-even"><td><p>Arch Linux, lts kernel 6.1.62-1</p></td>
+<td><p>3.12.0</p></td>
+<td><p>1.26.2</p></td>
+<td><p>1.11.4</p></td>
+</tr>
+</tbody>
+</table>
+<p><a class="reference internal" href="../autoapi/inpRW/index.html#module-inpRW" title="inpRW"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW</span></code></a> is expected to work on
+any OS and with newer versions of Python, numpy, and scipy, so please report any problems.</p>
+<p>* The inpRW test suite reports SyntaxWarnings for “invalid escape sequences”. These do not appear to be causing a problem,
+but I have not yet investigated why they are arising.</p>
+</section>
+<section id="running-inprw-tests">
+<h1>Running inpRW Tests<a class="headerlink" href="#running-inprw-tests" title="Permalink to this heading">¶</a></h1>
+<p>It is a good idea to run the inpRW test suite to verify it is configured properly on your system. This can be useful when
+you first install inpRW, and also if you make any changes to inpRW (for example, you should run the test suite to make sure your changes
+had no unintended consequences). While the test suite is yet incomplete, it still tests a good deal of inpRW, especially
+the most basic features like importing the module, parsing some input files, etc.</p>
+<p>To run the inpRW test suite, you should first extract the test suite from inpRW_tests.zip. Next, you need to modify test_all.bat
+or test_all.sh from the extracted test suite. The INPRW_TEST variable needs to point to the Python interpreter you would like to
+use for the tests. This interpreter should be able to import inpRW. If you are running on Linux, make sure the shell scripts are
+executable.</p>
+<p>Once you’ve specified the INPRW_TEST environment variable in test_all, you can simply call test_all.bat (or test_all.sh) to run
+all of the existing tests. Of course, you can also see the commands used to the tests in this file, so using one of these files is not required.</p>
+<p>The test suite also includes the files test_all_multi_py.bat and test_all_multi_py.sh. These files are designed to call the test
+suite on all Python interpreters in a given folder. These are primarily used to test inpRW prior to shipping the code, but they
+might be useful to others if they need to test inpRW against multiple versions of Python. If you wish to use these scripts, you’ll
+need to create a folder of .bat or .sh files which point to the Python interpreters to test, and modify test_all_multi_py.* to point
+to this folder.</p>
+<p>Here’s an example .bat file which prints the Python, numpy, and scipy versions before calling the Python interpreter with the specified arguments:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@echo</span> <span class="n">off</span>
+<span class="n">setlocal</span>
+<span class="nb">set</span> <span class="n">TMPRELPATH</span><span class="o">=%~</span><span class="n">dp0</span><span class="o">..</span>\<span class="n">py37</span>\<span class="n">Scripts</span>\
+<span class="n">pushd</span> <span class="o">%</span><span class="n">TMPRELPATH</span><span class="o">%</span>
+<span class="nb">set</span> <span class="n">TMPABSPATH</span><span class="o">=%</span><span class="n">CD</span><span class="o">%</span>\<span class="n">python</span><span class="o">.</span><span class="n">exe</span>
+<span class="n">popd</span>
+<span class="n">echo</span><span class="o">.</span>
+<span class="n">echo</span> <span class="o">====================</span> <span class="n">venv</span> <span class="n">info</span> <span class="o">====================</span>
+<span class="n">echo</span> <span class="n">Running</span> <span class="o">%</span><span class="n">TMPABSPATH</span><span class="o">%</span>
+<span class="n">call</span> <span class="o">%</span><span class="n">TMPABSPATH</span><span class="o">%</span> <span class="o">-</span><span class="n">VV</span>
+<span class="n">echo</span> <span class="n">numpy</span>
+<span class="n">call</span> <span class="o">%</span><span class="n">TMPABSPATH</span><span class="o">%</span> <span class="o">-</span><span class="n">m</span> <span class="n">pip</span> <span class="n">show</span> <span class="n">numpy</span> <span class="o">|</span> <span class="n">grep</span> <span class="o">-</span><span class="n">E</span> <span class="s2">&quot;Version:&quot;</span>
+<span class="n">echo</span> <span class="n">scipy</span>
+<span class="n">call</span> <span class="o">%</span><span class="n">TMPABSPATH</span><span class="o">%</span> <span class="o">-</span><span class="n">m</span> <span class="n">pip</span> <span class="n">show</span> <span class="n">scipy</span> <span class="o">|</span> <span class="n">grep</span> <span class="o">-</span><span class="n">E</span> <span class="s2">&quot;Version:&quot;</span>
+<span class="n">echo</span> <span class="o">===================================================</span>
+<span class="n">echo</span><span class="o">.</span>
+
+<span class="nb">set</span> <span class="n">PYTHONPATH</span><span class="o">=%~</span><span class="n">dp0</span><span class="o">..</span>\<span class="o">..</span>\<span class="o">..</span>\<span class="n">src</span>
+<span class="n">call</span> <span class="o">%</span><span class="n">TMPABSPATH</span><span class="o">%</span> <span class="o">%*</span>
+<span class="n">endlocal</span>
+</pre></div>
+</div>
+<p>Here’s an example .sh file which accomplishes the same task:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>#!/bin/sh
+
+PY=/home/erik/inpRW_test/inpRW_tests/venv/py37/bin/python
+echo
+echo ==================== venv info ====================
+echo Running $PY
+$PY -VV
+echo numpy
+$PY -m pip show numpy | grep -E &quot;Version:&quot;
+echo scipy
+$PY -m pip show scipy | grep -E &quot;Version:&quot;
+echo ===================================================
+echo
+
+$PY &quot;$@&quot;
+</pre></div>
+</div>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../inpRW_toc.html">
+              <img class="logo" src="../_static/3DS_SIMULIA_Logotype_RGB_BlueSteel.png" alt="Logo", style="border-radius:5px"/>
+            </a></p>
+  <div>
+    <h3><a href="../inpRW_toc.html">Local Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">inpRW Tests</a></li>
+<li><a class="reference internal" href="#running-inprw-tests">Running inpRW Tests</a></li>
+</ul>
+
+  </div>
+<h3><a href="../inpRW_toc.html">Global Table of Contents</a></h3>
+<p class="caption" role="heading"><span class="caption-text">User Documentation</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="Introduction.html">inpRW Utility Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Project-Background.html">Project Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Installation-and-Usage.html">Installation and Usage Instructions</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">inpRW Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#running-inprw-tests">Running inpRW Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="inpKeyword-Basics.html">inpKeyword Basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Strings_Integers_and_Decimals.html">Strings, Integers, and Decimals</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Important-inpRW-Attributes.html">Important <code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW</span></code> Attributes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Miscellaneous-Usage-hints.html">Miscellaneous Usage Hints</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Example-Scenarios.html">Example Scenarios</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossary.html">Glossary</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/inpRW/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/centroid/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">centroid</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/config/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">config</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/config_re/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">config_re</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/csid/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">csid</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/eval2/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">eval2</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/elType/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">elType</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/inpDecimal/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpDecimal</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/inpInt/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpInt</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/inpKeyword/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpKeyword</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/inpKeywordHelper/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpKeywordHelper</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/inpKeywordSequence/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpKeywordSequence</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/inpRWErrors/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRWErrors</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/inpString/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpString</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/mesh/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">mesh</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/misc_functions/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">misc_functions</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/NoneSort/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">NoneSort</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/printer/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">printer</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/repr2/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">repr2</span></code></a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Update Notes</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Update-Notes/index.html">Update Notes</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Legal Notices and Usage Disclaimer</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../legal_notices/Legal_Notices_and_Usage_Disclaimer.html">Legal Notices and Usage Disclaimer</a></li>
+</ul>
+
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="Installation-and-Usage.html"
+                          title="previous chapter">Installation and Usage Instructions</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="inpKeyword-Basics.html"
+                          title="next chapter">inpKeyword Basics</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/user/Tests.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>  
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="inpKeyword-Basics.html" title="inpKeyword Basics"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="Installation-and-Usage.html" title="Installation and Usage Instructions"
+             >previous</a> |</li>
+          <li><img src="../_static/icon-116-3dx-apps.svg" alt="python logo" style="vertical-align: middle; margin-top: -1px"/></li>
+          <li><a href="inpRW_toc.html"></a> &#187;</li>
+          <li class="switchers">
+            <div class="language_switcher_placeholder"></div>
+            <div class="version_switcher_placeholder"></div>
+          </li>
+          <li>
+              
+              <a href="../inpRW_toc.html">inpRW 2023.10.6 documentation</a> &#187;
+              
+          </li>
+        <li class="nav-item nav-item-this"><a href="">inpRW Tests</a></li>
+                <li class="right">
+                    
+
+    <div class="inline-search" role="search">
+        <form class="inline-search" action="../search.html" method="get">
+          <input placeholder="Quick search" aria-label="Quick search" type="text" name="q" />
+          <input type="submit" value="Go" />
+          <input type="hidden" name="check_keywords" value="yes" />
+          <input type="hidden" name="area" value="default" />
+        </form>
+    </div>
+                     |
+                </li>
+            
+      </ul>
+    </div>  
+    <div class="footer">
+    &copy; Copyright 2023, Dassault Systèmes Simulia Corp.
+     <a href="../_static/legal_notices.pdf" >inpRW Legal Notices</a>.<br />
+     <a href="../_static/Read_Disclaimer_First.txt" >inpRW Usage Disclaimer</a>.<br />
+    Last updated on Nov 21, 2023.
+    <a href="https://r1132100503382-eu1-3dswym.3dexperience.3ds.com/#community:39/post:nE1VLzylQoKgfG2wekOpFg">Found a bug</a>?
+    </div>
+
+  </body>
+</html>

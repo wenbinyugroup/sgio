@@ -1,0 +1,794 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>inpRW._inpFind &#8212; inpRW 2023.10.6 documentation</title><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/pydoctheme.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles.css" />
+    
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/sphinx_highlight.js"></script>
+    
+    <script src="../../../_static/sidebar.js"></script>
+    
+    <link rel="shortcut icon" href="../../../_static/3DS_SIMULIA_Blue_Icon_32.png"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="inpRW._inpFindRefs" href="../_inpFindRefs/index.html" />
+    <link rel="prev" title="inpRW._inpW" href="../_inpW/index.html" /><link rel="shortcut icon" type="image/png" href="../../../_static/icon-116-3dx-apps.svg" />
+            <script type="text/javascript" src="../../../_static/copybutton.js"></script>
+            <script type="text/javascript" src="../../../_static/menu.js"></script> 
+  </head>
+<body>
+<div class="mobile-nav">
+    <input type="checkbox" id="menuToggler" class="toggler__input" aria-controls="navigation"
+           aria-pressed="false" aria-expanded="false" role="button" aria-label="Menu" />
+    <label for="menuToggler" class="toggler__label">
+        <span></span>
+    </label>
+    <nav class="nav-content" role="navigation">
+         <a href="inpRW_toc.html" class="nav-logo">
+             <img src="../../../_static/icon-116-3dx-apps.svg" alt="Logo"/>
+         </a>
+        <div class="version_switcher_placeholder"></div>
+        <form role="search" class="search" action="../../../search.html" method="get">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" class="search-icon">
+                <path fill-rule="nonzero"
+                        d="M15.5 14h-.79l-.28-.27a6.5 6.5 0 001.48-5.34c-.47-2.78-2.79-5-5.59-5.34a6.505 6.505 0 00-7.27 7.27c.34 2.8 2.56 5.12 5.34 5.59a6.5 6.5 0 005.34-1.48l.27.28v.79l4.25 4.25c.41.41 1.08.41 1.49 0 .41-.41.41-1.08 0-1.49L15.5 14zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" fill="#444"></path>
+            </svg>
+            <input type="text" name="q" aria-label="Quick search"/>
+            <input type="submit" value="Go"/>
+        </form>
+    </nav>
+    <div class="menu-wrapper">
+        <nav class="menu" role="navigation" aria-label="main navigation">
+            <div class="language_switcher_placeholder"></div>
+            <p class="logo">
+                <a href="../../../index.html">
+                <img class="logo" src="../../../_static/3DS_SIMULIA_Logotype_RGB_BlueSteel.png" alt="Logo" style="border-radius:5px"/>
+                </a>
+            </p>
+  <div>
+    <h3><a href="../../../inpRW_toc.html">Local Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW._inpFind</span></code></a><ul>
+<li><a class="reference internal" href="#module-inpRW._inpFind">Module Contents</a><ul>
+<li><a class="reference internal" href="#inpRW._inpFind.Find"><code class="docutils literal notranslate"><span class="pre">Find</span></code></a><ul>
+<li><a class="reference internal" href="#inpRW._inpFind.Find.findItemReferences"><code class="docutils literal notranslate"><span class="pre">Find.findItemReferences()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpFind.Find.findKeyword"><code class="docutils literal notranslate"><span class="pre">Find.findKeyword()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpFind.Find.findKeywordsIgnoreParam"><code class="docutils literal notranslate"><span class="pre">Find.findKeywordsIgnoreParam()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpFind.Find.findStepLocations"><code class="docutils literal notranslate"><span class="pre">Find.findStepLocations()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpFind.Find.findValidParentKW"><code class="docutils literal notranslate"><span class="pre">Find.findValidParentKW()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpFind.Find.getParentBlock"><code class="docutils literal notranslate"><span class="pre">Find.getParentBlock()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpFind.Find._findActiveSystem"><code class="docutils literal notranslate"><span class="pre">Find._findActiveSystem()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpFind.Find.findCloseNodes"><code class="docutils literal notranslate"><span class="pre">Find.findCloseNodes()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpFind.Find._findData"><code class="docutils literal notranslate"><span class="pre">Find._findData()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpFind.Find._findIncludeFileNames"><code class="docutils literal notranslate"><span class="pre">Find._findIncludeFileNames()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpFind.Find._findParam"><code class="docutils literal notranslate"><span class="pre">Find._findParam()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpFind.Find._getLastBlockPath"><code class="docutils literal notranslate"><span class="pre">Find._getLastBlockPath()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  </div>
+<h3><a href="../../../inpRW_toc.html">Global Table of Contents</a></h3>
+<p class="caption" role="heading"><span class="caption-text">User Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/Introduction.html">inpRW Utility Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/Project-Background.html">Project Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/Installation-and-Usage.html">Installation and Usage Instructions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/Tests.html">inpRW Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/Tests.html#running-inprw-tests">Running inpRW Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/inpKeyword-Basics.html">inpKeyword Basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/Strings_Integers_and_Decimals.html">Strings, Integers, and Decimals</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/Important-inpRW-Attributes.html">Important <code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW</span></code> Attributes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/Miscellaneous-Usage-hints.html">Miscellaneous Usage Hints</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/Example-Scenarios.html">Example Scenarios</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/glossary.html">Glossary</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW</span></code></a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../_inpR/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW._inpR</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_inpW/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW._inpW</span></code></a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW._inpFind</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_inpFindRefs/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW._inpFindRefs</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_inpMod/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW._inpMod</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_importedModules/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW._importedModules</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_inpCustom/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW._inpCustom</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../centroid/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">centroid</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../config/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">config</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../config_re/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">config_re</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../csid/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">csid</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../eval2/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">eval2</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../elType/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">elType</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../inpDecimal/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpDecimal</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../inpInt/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpInt</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../inpKeyword/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpKeyword</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../inpKeywordHelper/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpKeywordHelper</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../inpKeywordSequence/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpKeywordSequence</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../inpRWErrors/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRWErrors</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../inpString/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpString</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../mesh/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">mesh</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../misc_functions/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">misc_functions</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../NoneSort/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">NoneSort</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../printer/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">printer</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../repr2/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">repr2</span></code></a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Update Notes</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../Update-Notes/index.html">Update Notes</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Legal Notices and Usage Disclaimer</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../legal_notices/Legal_Notices_and_Usage_Disclaimer.html">Legal Notices and Usage Disclaimer</a></li>
+</ul>
+
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="../_inpW/index.html"
+                          title="previous chapter"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW._inpW</span></code></a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="../_inpFindRefs/index.html"
+                          title="next chapter"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW._inpFindRefs</span></code></a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../../_sources/autoapi/inpRW/_inpFind/index.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </nav>
+    </div>
+</div>
+  
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../_inpFindRefs/index.html" title="inpRW._inpFindRefs"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../_inpW/index.html" title="inpRW._inpW"
+             accesskey="P">previous</a> |</li>
+          <li><img src="../../../_static/icon-116-3dx-apps.svg" alt="python logo" style="vertical-align: middle; margin-top: -1px"/></li>
+          <li><a href="inpRW_toc.html"></a> &#187;</li>
+          <li class="switchers">
+            <div class="language_switcher_placeholder"></div>
+            <div class="version_switcher_placeholder"></div>
+          </li>
+          <li>
+              
+              <a href="../../../inpRW_toc.html">inpRW 2023.10.6 documentation</a> &#187;
+              
+          </li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW</span></code></a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href=""><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW._inpFind</span></code></a></li>
+                <li class="right">
+                    
+
+    <div class="inline-search" role="search">
+        <form class="inline-search" action="../../../search.html" method="get">
+          <input placeholder="Quick search" aria-label="Quick search" type="text" name="q" />
+          <input type="submit" value="Go" />
+          <input type="hidden" name="check_keywords" value="yes" />
+          <input type="hidden" name="area" value="default" />
+        </form>
+    </div>
+                     |
+                </li>
+            
+      </ul>
+    </div>    
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="inprw-inpfind">
+<h1><a class="reference internal" href="#module-inpRW._inpFind" title="inpRW._inpFind"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW._inpFind</span></code></a><a class="headerlink" href="#inprw-inpfind" title="Permalink to this heading">¶</a></h1>
+<section id="module-inpRW._inpFind">
+<span id="module-contents"></span><h2>Module Contents<a class="headerlink" href="#module-inpRW._inpFind" title="Permalink to this heading">¶</a></h2>
+<p>This module contains functions for finding information in <a class="reference internal" href="../index.html#inpRW.inpRW.keywords" title="inpRW.inpRW.keywords"><code class="xref py py-attr docutils literal notranslate"><span class="pre">keywords</span></code></a>.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="inpRW._inpFind.Find">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">inpRW._inpFind.</span></span><span class="sig-name descname"><span class="pre">Find</span></span><a class="headerlink" href="#inpRW._inpFind.Find" title="Permalink to this definition">¶</a></dt>
+<dd><p>The <a class="reference internal" href="#inpRW._inpFind.Find" title="inpRW._inpFind.Find"><code class="xref py py-class docutils literal notranslate"><span class="pre">Find</span></code></a> class contains functions related to finding information from the <a class="reference internal" href="../index.html#inpRW.inpRW" title="inpRW.inpRW"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpRW</span></code></a>
+data structure.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="inpRW._inpFind.Find.findItemReferences">
+<span class="sig-name descname"><span class="pre">findItemReferences</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">blockName</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">refNames</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#inpRW._inpFind.Find.findItemReferences" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function will call the appropriate function from <a class="reference internal" href="../_inpFindRefs/index.html#inpRW._inpFindRefs.FindRefs" title="inpRW._inpFindRefs.FindRefs"><code class="xref py py-class docutils literal notranslate"><span class="pre">FindRefs</span></code></a> based on the
+value of <em>blockName</em>. <em>refNames</em> will serve as the input to the final function.</p>
+<p>This function is mainly meant to be used in <a class="reference internal" href="../_inpMod/index.html#inpRW._inpMod.Mod.deleteItemReferences" title="inpRW._inpMod.Mod.deleteItemReferences"><code class="xref py py-func docutils literal notranslate"><span class="pre">deleteItemReferences()</span></code></a>, where chains
+of data items and their references need to be deleted. When this happens, a function needs to be called
+which will search for references to the new keyword block.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>blockName</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – A string which should be the <a class="reference internal" href="../../inpKeyword/index.html#inpKeyword.inpKeyword.name" title="inpKeyword.inpKeyword.name"><code class="xref py py-attr docutils literal notranslate"><span class="pre">name</span></code></a> attribute of a keyword block.
+This function will call <code class="docutils literal notranslate"><span class="pre">rsl(blockName).title()</span></code> to format <em>blockName</em> prior to calling the appropriate
+function in <a class="reference internal" href="../_inpFindRefs/index.html#inpRW._inpFindRefs.FindRefs" title="inpRW._inpFindRefs.FindRefs"><code class="xref py py-class docutils literal notranslate"><span class="pre">FindRefs</span></code></a>, so the user just needs to specify the full name of the
+Abaqus keyword in any formatting, without the *.</p></li>
+<li><p><strong>refNames</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a>) – A sequence of reference items for which to search. These could be strings (i.e.
+names of sets, surfaces, etc.) or integers (i.e. node labels).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>csid</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="inpRW._inpFind.Find.findKeyword">
+<span class="sig-name descname"><span class="pre">findKeyword</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">keywordName</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">excludeParameters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'all'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">printOutput</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parentBlock</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#inpRW._inpFind.Find.findKeyword" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finds keyword blocks in <a class="reference internal" href="../index.html#inpRW.inpRW.keywords" title="inpRW.inpRW.keywords"><code class="xref py py-attr docutils literal notranslate"><span class="pre">keywords</span></code></a> using multiple criteria.</p>
+<p>This function uses a system of filters to find keyword blocks. It will first create a list of potential
+blocks by getting blocks that match <em>keywordName</em>. It will then try to match using <em>parameters</em>, and finally
+<em>data</em>. If one of <em>keywordName</em>, <em>parameters</em>, or <em>data</em> are not specified, they will not be used to filter the
+search. For example, if we call <code class="docutils literal notranslate"><span class="pre">inp.findKeyword(keywordName='BOUNDARY')</span></code>, this will return all *BOUNDARY
+keyword blocks. If we call <code class="docutils literal notranslate"><span class="pre">inp.findKeyword(keywordName='BOUNDARY',</span> <span class="pre">parameters='AMPLITUDE=amp1')</span></code> this will
+return the *BOUNDARY keyword blocks that include ‘AMPLITUDE=amp1’ as a parameter.</p>
+<p>All inputs to this function are case-insensitive.</p>
+<p><em>keywordName</em> can be a string or a list of strings indicating for which keywords to search. Potential blocks
+will be taken from matching entries in <a class="reference internal" href="../index.html#inpRW.inpRW.kwg" title="inpRW.inpRW.kwg"><code class="xref py py-attr docutils literal notranslate"><span class="pre">kwg</span></code></a> instead of looping through every block in
+<a class="reference internal" href="../index.html#inpRW.inpRW.keywords" title="inpRW.inpRW.keywords"><code class="xref py py-attr docutils literal notranslate"><span class="pre">keywords</span></code></a> to find matches.</p>
+<p><em>parameters</em> can be a string, a list, or a dictionary of parameters for which to look. The parameters may or
+may not include values. Specifying <em>parameters</em> as a string will be the simplest option for the user. This
+function will convert <em>parameters</em> to a parameter <a class="reference internal" href="../../csid/index.html#module-csid" title="csid"><code class="xref py py-class docutils literal notranslate"><span class="pre">csid</span></code></a> if it is not already one.</p>
+<p><em>excludeParameters</em> can be a string, a list, or a dictionary of parameters. A keyword block must not include
+a parameter in <em>excludeParameters</em> for <a class="reference internal" href="#inpRW._inpFind.Find.findKeyword" title="inpRW._inpFind.Find.findKeyword"><code class="xref py py-func docutils literal notranslate"><span class="pre">findKeyword()</span></code></a> to match the keyword block. The parameters may or
+may not include values. Specifying <em>excludeParameters</em> as a string will be the simplest option for the user. This
+function will convert <em>excludeParameters</em> to a parameter <a class="reference internal" href="../../csid/index.html#module-csid" title="csid"><code class="xref py py-class docutils literal notranslate"><span class="pre">csid</span></code></a> if it is not already one.</p>
+<p><em>data</em> should be a string for which the entirety of the data for the keyword block will be searched, or it can
+be a list containing parsed data objects. If <em>data</em> is a list, the matching will be very strict, so it is best
+to retrieve the list items from the keyword block’s data field directly. Specifying <em>data</em> as a list is
+primarily intended for cases where you have identified a keyword block of interest, but need to perform an
+operation that moves the keyword block (such as deleting or inserting keywords) and precisely find the same
+keyword block in its new location.</p>
+<p><em>mode</em> should specifically be ‘all’ (default), ‘any’, or ‘keyandone’. If <em>mode</em> == ‘all’, only keyword blocks
+that match every input to this function will be returned. If <em>mode</em> == ‘any’, every keyword block that matches
+one of the inputs will be returned. If <em>mode</em> == ‘keyandone’, every keyword block that matches <em>keywordName</em>
+and at least one other input will be returned. <em>mode</em> == ‘all’ will likely be the most useful.</p>
+<p><em>printOutput</em> is a boolean: True (default) or False. If True, the function will print whether it found
+any keyword blocks matching the input parameters. True is useful if using this function interactively,
+False is useful if calling this function in batch and you don’t want a lot of printed output.</p>
+<p><em>parentBlock</em> should be a keyword object that will contain suboptions. This function will search for
+keywords that match the input parameters, but the potential matches are limited to the suboptions of
+<em>parentBlock</em>. This is very useful for finding a *BOUNDARY in a specific *STEP, for example.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>modes ‘any’, and ‘keyandone’ have not been extensively tested with the <em>parentBlock</em> and list of <em>keywordName</em>
+options, so they might not behave properly.</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Do not use this function if you need to search for many specific keywords in a large keyword group. For
+example, you should not use this function to search for 100,000 *COUPLING blocks with different surface
+names. Each time this function is called, it will loop through the list of available keywords searching for
+the appropriate item. If you have a specific search you need to perform multiple times, you should instead
+create a <a class="reference internal" href="../../csid/index.html#module-csid" title="csid"><code class="xref py py-class docutils literal notranslate"><span class="pre">csid</span></code></a> using the item of interest as the key and the block as the value. Example:
+<code class="docutils literal notranslate"><span class="pre">coupD</span> <span class="pre">=</span> <span class="pre">csid([</span> <span class="pre">[[block.parameter['surface']],</span> <span class="pre">[block]]</span> <span class="pre">for</span> <span class="pre">block</span> <span class="pre">in</span> <span class="pre">self.kwg['coupling']</span> <span class="pre">])</span></code></p>
+</div>
+<div class="admonition-todo admonition" id="id1">
+<p class="admonition-title">Todo</p>
+<p>The search for data functionality should be augmented to search for data in specific lines or locations
+in a line to give fewer false positives.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>keywordName</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a>) – The name(s) of the keyword(s) for which to search. Defaults to ‘’.</p></li>
+<li><p><strong>parameters</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><em>dict</em></a>) – The parameters and possibly values for which to search. Users
+are recommended to use a string, as this will be simplest.</p></li>
+<li><p><strong>excludeParameters</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><em>dict</em></a>) – The parameters and possibly values which should not be in
+keywords (i.e. the block will only match if the other parameters are matched and <em>excludeParameters</em>
+is not matched). Users are recommended to use a string, as this will be simplest.</p></li>
+<li><p><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a>) – A string or list for which to search in any potential block’s data.</p></li>
+<li><p><strong>mode</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – Indicates the matching mode. Can be one of ‘all’, ‘any’, or ‘keyandone’. Defaults to ‘all’</p></li>
+<li><p><strong>printOutput</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><em>bool</em></a>) – Indicates if this function should print out a summary (i.e. how many keyword blocks
+matched the given criteria). Defaults to True.</p></li>
+<li><p><strong>parentBlock</strong> (<a class="reference internal" href="../../inpKeyword/index.html#inpKeyword.inpKeyword" title="inpKeyword.inpKeyword"><em>inpKeyword</em></a>) – If parentBlock is specified, the search will be restricted to
+<a class="reference internal" href="../../inpKeyword/index.html#inpKeyword.inpKeyword.suboptions" title="inpKeyword.inpKeyword.suboptions"><code class="xref py py-attr docutils literal notranslate"><span class="pre">suboptions</span></code></a> of parentBlock.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A list of all matching <a class="reference internal" href="../../inpKeyword/index.html#module-inpKeyword" title="inpKeyword"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpKeyword</span></code></a> blocks.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)">list</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="inpRW._inpFind.Find.findKeywordsIgnoreParam">
+<span class="sig-name descname"><span class="pre">findKeywordsIgnoreParam</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">kwNameGroup</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#inpRW._inpFind.Find.findKeywordsIgnoreParam" title="Permalink to this definition">¶</a></dt>
+<dd><p>Searches <a class="reference internal" href="../index.html#inpRW.inpRW.kwg" title="inpRW.inpRW.kwg"><code class="xref py py-attr docutils literal notranslate"><span class="pre">kwg</span></code></a> for the keywords in <em>kwNameGroup</em>, and returns the keyword groups it finds.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>kwNameGroup</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a>) – A sequence of strings designating the keyword names of interest.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>This returns a list of <a class="reference internal" href="../index.html#inpRW.inpRW.kwg" title="inpRW.inpRW.kwg"><code class="xref py py-attr docutils literal notranslate"><span class="pre">keyword</span> <span class="pre">groups</span></code></a> as specified by “kwNameGroup”.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)">list</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="inpRW._inpFind.Find.findStepLocations">
+<span class="sig-name descname"><span class="pre">findStepLocations</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#inpRW._inpFind.Find.findStepLocations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates objects <a class="reference internal" href="../index.html#inpRW.inpRW.steps" title="inpRW.inpRW.steps"><code class="xref py py-attr docutils literal notranslate"><span class="pre">steps</span></code></a> and <a class="reference internal" href="../index.html#inpRW.inpRW.step_paths" title="inpRW.inpRW.step_paths"><code class="xref py py-attr docutils literal notranslate"><span class="pre">step_paths</span></code></a>.</p>
+<p>If a step does not set the “name” <a class="reference internal" href="../../inpKeyword/index.html#inpKeyword.inpKeyword.parameter" title="inpKeyword.inpKeyword.parameter"><code class="xref py py-attr docutils literal notranslate"><span class="pre">parameter</span></code></a>, the key for the step will be its index in
+<a class="reference internal" href="../index.html#inpRW.inpRW.kwg" title="inpRW.inpRW.kwg"><code class="xref py py-attr docutils literal notranslate"><span class="pre">kwg['STEP']</span></code></a>.</p>
+<p>This function is called by <a class="reference internal" href="../index.html#inpRW.inpRW.updateInp" title="inpRW.inpRW.updateInp"><code class="xref py py-func docutils literal notranslate"><span class="pre">updateInp()</span></code></a>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="inpRW._inpFind.Find.findValidParentKW">
+<span class="sig-name descname"><span class="pre">findValidParentKW</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">child</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#inpRW._inpFind.Find.findValidParentKW" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prints the keyword names that can be parent blocks for child.</p>
+<p>This function searches through all subkeywords for every parent keyword in <a class="reference internal" href="../../config/index.html#config._subBlockKWs" title="config._subBlockKWs"><code class="xref py py-attr docutils literal notranslate"><span class="pre">_subBlockKWs</span></code></a>.
+<a class="reference internal" href="../../config/index.html#config._subBlockKWs" title="config._subBlockKWs"><code class="xref py py-attr docutils literal notranslate"><span class="pre">_subBlockKWs</span></code></a> gives you the valid child keywords for a given parent keyword; this function
+finds the valid parent keywords for a given child keyword.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>child</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – The keyword name for which the valid keyword block</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="inpRW._inpFind.Find.getParentBlock">
+<span class="sig-name descname"><span class="pre">getParentBlock</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">item</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parentKWName</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#inpRW._inpFind.Find.getParentBlock" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves the parent block for <em>item</em>.</p>
+<p>This function will find the parent keyword block for <em>item</em>. If <em>parentKWName</em> is specified, the function will
+keep searching up the <a class="reference internal" href="../../inpKeyword/index.html#inpKeyword.inpKeyword.path" title="inpKeyword.inpKeyword.path"><code class="xref py py-attr docutils literal notranslate"><span class="pre">path</span></code></a> of <em>item</em> until it finds <em>parentKWName</em>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>item</strong> (<a class="reference internal" href="../../inpKeyword/index.html#inpKeyword.inpKeyword" title="inpKeyword.inpKeyword"><em>inpKeyword</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a><em>, or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.12)"><em>tuple</em></a>) – If <em>item</em> is a string, it must be of the form in <a class="reference internal" href="../../inpKeyword/index.html#inpKeyword.inpKeyword.path" title="inpKeyword.inpKeyword.path"><code class="xref py py-attr docutils literal notranslate"><span class="pre">path</span></code></a>.
+Example: <code class="docutils literal notranslate"><span class="pre">'self.keywords[0].suboptions[1]'</span></code>. If <em>item</em> is a list or tuple, it must be of the form
+of the <em>seq</em> parameter described in <a class="reference internal" href="../_inpR/index.html#inpRW._inpR.Read.createPathFromSequence" title="inpRW._inpR.Read.createPathFromSequence"><code class="xref py py-func docutils literal notranslate"><span class="pre">createPathFromSequence()</span></code></a>.</p></li>
+<li><p><strong>parentKWName</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – Must correspond to a valid Abaqus keyword. Case- and space-insensitive.</p></li>
+<li><p><strong>_level</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a>) – Indicates how many times to split <a class="reference internal" href="../../inpKeyword/index.html#inpKeyword.inpKeyword.path" title="inpKeyword.inpKeyword.path"><code class="xref py py-attr docutils literal notranslate"><span class="pre">item.path</span></code></a>. Should only be specified by
+this function.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>If a parent block is found that matches the input parameters, an <a class="reference internal" href="../../inpKeyword/index.html#module-inpKeyword" title="inpKeyword"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpKeyword</span></code></a>
+is returned. Otherwise, this function returns None.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../../inpKeyword/index.html#inpKeyword.inpKeyword" title="inpKeyword.inpKeyword">inpKeyword</a> or None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="inpRW._inpFind.Find._findActiveSystem">
+<span class="sig-name descname"><span class="pre">_findActiveSystem</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#inpRW._inpFind.Find._findActiveSystem" title="Permalink to this definition">¶</a></dt>
+<dd><p>module: _inpFind.py</p>
+<p>Finds which *SYSTEM is active at all points in the .inp</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>THIS FUNCTION HAS NOT BEEN TESTED WITH THE inpRW MODULE.
+IT NEEDS TO BE REWORKED BEFORE IT SHOULD BE USED.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="inpRW._inpFind.Find.findCloseNodes">
+<span class="sig-name descname"><span class="pre">findCloseNodes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nodeGroup1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nodeGroup2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">searchDist</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-06</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_sliceStart</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#inpRW._inpFind.Find.findCloseNodes" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function searches for nodes that are within <em>searchDist</em> of each other. It will generate a cKDTree
+from <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/spatial.html#module-scipy.spatial" title="(in SciPy v1.11.4)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">scipy.spatial</span></code></a>, and the function will return a dictionary using the pairs of nodes which
+fall withing <em>searchDist</em> as the key-value pairs.</p>
+<p><em>nodeGroup1</em> must be a <a class="reference internal" href="../../mesh/index.html#mesh.TotalMesh" title="mesh.TotalMesh"><code class="xref py py-class docutils literal notranslate"><span class="pre">TotalMesh</span></code></a> or <a class="reference internal" href="../../mesh/index.html#mesh.Mesh" title="mesh.Mesh"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mesh</span></code></a> instance. In most cases the user
+should use <a class="reference internal" href="../index.html#inpRW.inpRW.nd" title="inpRW.inpRW.nd"><code class="xref py py-attr docutils literal notranslate"><span class="pre">nd</span></code></a>, which will contain all nodes in the input file.</p>
+<p>The nodes in <em>nodeGroup1</em> will be used to generate a <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.cKDTree.html#scipy.spatial.cKDTree" title="(in SciPy v1.11.4)"><code class="xref py py-class docutils literal notranslate"><span class="pre">cKDTree</span></code></a>, which will be stored
+to <a class="reference internal" href="../index.html#inpRW.inpRW._tree" title="inpRW.inpRW._tree"><code class="xref py py-attr docutils literal notranslate"><span class="pre">_tree</span></code></a>. If <a class="reference internal" href="../index.html#inpRW.inpRW._tree" title="inpRW.inpRW._tree"><code class="xref py py-attr docutils literal notranslate"><span class="pre">_tree</span></code></a> already exists and <em>nodeGroup1</em> contains the
+same number of entities as <a class="reference internal" href="../index.html#inpRW.inpRW._tree" title="inpRW.inpRW._tree"><code class="xref py py-attr docutils literal notranslate"><span class="pre">_tree</span></code></a>, the existing tree will be used. The
+<a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.cKDTree.html#scipy.spatial.cKDTree" title="(in SciPy v1.11.4)"><code class="xref py py-class docutils literal notranslate"><span class="pre">cKDTree</span></code></a> allows for quick nearest-neighbor lookups.</p>
+<p><em>nodeGroup2</em> can be specified as a <a class="reference internal" href="../../mesh/index.html#mesh.Mesh" title="mesh.Mesh"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mesh</span></code></a> or <a class="reference internal" href="../../mesh/index.html#mesh.TotalMesh" title="mesh.TotalMesh"><code class="xref py py-class docutils literal notranslate"><span class="pre">TotalMesh</span></code></a> instance. These nodes
+are the source nodes for which this function will search for close nodes from <em>nodeGroup1</em>. If <em>nodeGroup2</em>
+is not specified, it will be identical to <em>nodeGroup1</em>. <em>nodeGroup2 can be a subset of *nodeGroup1</em>; this
+function will automatically filter out nodes which are only close to themselves. A node from <em>nodeGroup1</em>
+will be considered close to a node from <em>nodeGroup2</em> if it falls within <em>searchDist</em> of the <em>nodeGroup2</em>
+node. The search is performed using <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.cKDTree.query_ball_point.html#scipy.spatial.cKDTree.query_ball_point" title="(in SciPy v1.11.4)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">query_ball_point()</span></code></a>, with <em>nodeGroup2</em> being
+passed to the “x” parameter and <em>searchDist</em> being passed to the “r” parameter.</p>
+<p>Not specifying <em>nodeGroup2</em> will thus look for close nodes over the entire mesh. If the user has an idea
+of where to find close nodes (i.e. a particular node set), then <em>nodeGroup2</em> should be specified to reduce
+the number of locations this function needs to check.</p>
+<p><em>searchDist</em> should be a small float. This defaults to 1e-6.</p>
+<p><em>_sliceStart</em> = 1 will remove the 0th data column (i.e. remove the node labels). It should not be changed
+in most cases as this functions is written specifically to operate on information stored in <a class="reference internal" href="../../mesh/index.html#mesh.Mesh" title="mesh.Mesh"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mesh</span></code></a>
+or <a class="reference internal" href="../../mesh/index.html#mesh.TotalMesh" title="mesh.TotalMesh"><code class="xref py py-class docutils literal notranslate"><span class="pre">TotalMesh</span></code></a> instances.</p>
+<p>The output dictionary will be key-value pairs of node labels. There will strictly be one value for each key.
+If <em>nodeGroup2</em> is specified, the values of this dictionary will be node labels from <em>nodeGroup2</em>, and the
+keys will be node labels from <em>nodeGroup1</em> which are close to each node from <em>nodeGroup2</em>. For example, let’s
+say we have three nodes (1, 2, and 3) which are within <em>searchDist</em> of each other (and many other nodes in
+the mesh), and we want to search for the nodes which are close to node 3. The output of this function would
+look like the following:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="mi">1</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span> <span class="mi">3</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>If <em>nodeGroup2</em> is not specified, the lower node label will always be the value.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>nodeGroup1</strong> (<a class="reference internal" href="../../mesh/index.html#mesh.Mesh" title="mesh.Mesh"><em>Mesh</em></a><em> or </em><a class="reference internal" href="../../mesh/index.html#mesh.TotalMesh" title="mesh.TotalMesh"><em>TotalMesh</em></a>) – <em>nodeGroup1</em> defines the search domain. In most cases, it should
+include every node in the input file. Defaults to <a class="reference internal" href="../index.html#inpRW.inpRW.nd" title="inpRW.inpRW.nd"><code class="xref py py-attr docutils literal notranslate"><span class="pre">nd</span></code></a>, which will include
+every node.</p></li>
+<li><p><strong>nodeGroup2</strong> (<a class="reference internal" href="../../mesh/index.html#mesh.Mesh" title="mesh.Mesh"><em>Mesh</em></a><em> or </em><a class="reference internal" href="../../mesh/index.html#mesh.TotalMesh" title="mesh.TotalMesh"><em>TotalMesh</em></a>) – <em>nodeGroup2</em> defines the nodes for which close nodes should be found
+If <em>nodeGroup2</em> is specified, the each value in the output dictionary will be a node label from
+<em>nodeGroup2</em>. Defaults to <a class="reference internal" href="../index.html#inpRW.inpRW.nd" title="inpRW.inpRW.nd"><code class="xref py py-attr docutils literal notranslate"><span class="pre">nd</span></code></a>.</p></li>
+<li><p><strong>searchDist</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><em>float</em></a>) – The distance which defines close nodes. Defaults to 1e-6.</p></li>
+<li><p><strong>_sliceStart</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a>) – Used to specify the “column” in a list where the nodal coordinates begin. Since
+the datalines for a node begin with the node label before the coordinates, <em>_sliceStart</em>
+defaults to 1. Since this function needs to operate on <a class="reference internal" href="../../mesh/index.html#mesh.Mesh" title="mesh.Mesh"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mesh</span></code></a> or <a class="reference internal" href="../../mesh/index.html#mesh.TotalMesh" title="mesh.TotalMesh"><code class="xref py py-class docutils literal notranslate"><span class="pre">TotalMesh</span></code></a>
+objects, this argument should be left at the default of 1.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>This dictionary will always contain a 1:1 mapping of nodelabels which fall within <em>searchDist</em></dt><dd><p>of each other. If <em>nodeGroup2</em> is specified, a nodelabel from <em>nodeGroup2</em> will always be the
+value, otherwise the lower nodelabel will be the value.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)">dict</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="inpRW._inpFind.Find._findData">
+<span class="sig-name descname"><span class="pre">_findData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">labelD</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kwNames</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">excludeParameters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'all'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_pos</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">linesToCheck</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">custom</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataOffset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataStep</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lineOffset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lineStep</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataGroup</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'line'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kwBlocks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#inpRW._inpFind.Find._findData" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function will search for references to the keys in labelD in the locations specified by the rest of
+the parameters to this function. It is meant to be called from one of the functions in <a class="reference internal" href="../_inpFindRefs/index.html#inpRW._inpFindRefs.FindRefs" title="inpRW._inpFindRefs.FindRefs"><code class="xref py py-class docutils literal notranslate"><span class="pre">FindRefs</span></code></a>.</p>
+<p>If <em>kwBlocks</em> is specified, <a class="reference internal" href="#inpRW._inpFind.Find._findData" title="inpRW._inpFind.Find._findData"><code class="xref py py-func docutils literal notranslate"><span class="pre">_findData()</span></code></a> will check the locations indicated by any combination of
+<em>data_pos</em>, <em>linesToCheck</em>, <em>custom</em>, <em>dataOffset</em>, <em>dataStep</em>, <em>lineOffset</em>, and <em>lineStep</em> for items
+which are in <em>labelD</em>. If any location matches an item in <em>labelD</em>, the item in <em>labelD</em> will be updated with
+the path to the location, along with the region of the keyword block the item affects (specified by <em>dataGroup</em>).
+If <em>kwBlocks</em> is not specified, <em>kwNames</em> must be specified, and <a class="reference internal" href="#inpRW._inpFind.Find.findKeyword" title="inpRW._inpFind.Find.findKeyword"><code class="xref py py-func docutils literal notranslate"><span class="pre">findKeyword()</span></code></a> will be called with
+arguments <em>kwNames</em>, <em>parameters</em>, <em>excludeParameters</em>, and <em>mode</em>. The function will then run as before,
+but using the resulting keyword blocks from <a class="reference internal" href="#inpRW._inpFind.Find.findKeyword" title="inpRW._inpFind.Find.findKeyword"><code class="xref py py-func docutils literal notranslate"><span class="pre">findKeyword()</span></code></a> instead of those specified by <em>kwBlocks</em>.</p>
+<p>When using <em>kwNames</em>, this function will find the <a class="reference internal" href="../../inpKeyword/index.html#module-inpKeyword" title="inpKeyword"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpKeyword</span></code></a> blocks to search using this command:
+<code class="docutils literal notranslate"><span class="pre">`list(flatten([j</span> <span class="pre">for</span> <span class="pre">j</span> <span class="pre">in</span> <span class="pre">self.findKeyword(keywordName=kwNames,</span> <span class="pre">parameters=parameters,</span> <span class="pre">excludeParameters=excludeParameters,</span> <span class="pre">mode=mode,</span> <span class="pre">printOutput=False)</span> <span class="pre">if</span> <span class="pre">j]))`</span></code>
+If this is not sufficient to generate a list of keywords to search, the list should be generated prior to
+calling <a class="reference internal" href="#inpRW._inpFind.Find._findData" title="inpRW._inpFind.Find._findData"><code class="xref py py-func docutils literal notranslate"><span class="pre">_findData()</span></code></a> and input using the <em>kwBlocks</em> parameter.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>labelD</strong> (<a class="reference internal" href="../../csid/index.html#csid.csid" title="csid.csid"><em>csid</em></a>) – A csid of the form <code class="docutils literal notranslate"><span class="pre">`csid([[name,</span> <span class="pre">[]]</span> <span class="pre">for</span> <span class="pre">name</span> <span class="pre">in</span> <span class="pre">names])`</span></code>. The items in names can be
+<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">integers</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">strings</span></code></a>, but the function might not work properly if
+<em>labelD</em> contains both types.</p></li>
+<li><p><strong>kwNames</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a>) – A sequence containing the keyword names in which to search. Will be passed to
+<a class="reference internal" href="#inpRW._inpFind.Find.findKeyword" title="inpRW._inpFind.Find.findKeyword"><code class="xref py py-func docutils literal notranslate"><span class="pre">findKeyword()</span></code></a>. Defaults to None. Must be specified if <em>kwBlocks</em> is omitted.</p></li>
+<li><p><strong>parameters</strong> – See <a class="reference internal" href="#inpRW._inpFind.Find.findKeyword" title="inpRW._inpFind.Find.findKeyword"><code class="xref py py-func docutils literal notranslate"><span class="pre">findKeyword()</span></code></a>. Defaults to None.</p></li>
+<li><p><strong>excludeParameters</strong> – See <a class="reference internal" href="#inpRW._inpFind.Find.findKeyword" title="inpRW._inpFind.Find.findKeyword"><code class="xref py py-func docutils literal notranslate"><span class="pre">findKeyword()</span></code></a>. Defaults to None.</p></li>
+<li><p><strong>mode</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – See <a class="reference internal" href="#inpRW._inpFind.Find.findKeyword" title="inpRW._inpFind.Find.findKeyword"><code class="xref py py-func docutils literal notranslate"><span class="pre">findKeyword()</span></code></a>. Defaults to ‘all’.</p></li>
+<li><p><strong>data_pos</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – Indicates which positions in the dataline to search for a match. Can be an <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>,
+or a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>. If a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, can be ‘EVEN’, ‘ODD’, or a string indicating a slicing notation.
+Defaults to ‘’, which will be converted to ‘[:]’ and check every data position. Works in conjunction with
+<em>linesToCheck</em></p></li>
+<li><p><strong>linesToCheck</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – Indicates which datalines to search for a match. Can be an <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>,
+or a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>. If a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, can be ‘EVEN’, ‘ODD’, or a string indicating a slicing notation.
+Defaults to ‘’, which will be converted to ‘[:]’ and check every dataline. Works in conjunction with
+<em>data_pos</em>.</p></li>
+<li><p><strong>custom</strong> (<a class="reference external" href="https://docs.python.org/3/glossary.html#term-function" title="(in Python v3.12)"><span class="xref std std-term">function</span></a>) – A custom function to determine which locations should be examined for data matching.
+This is an alternative to <em>data_pos</em> and <em>linesToCheck</em>, and should only be used in the few
+cases where those options are not sufficient. This function will have access to all the local
+variables of <a class="reference internal" href="#inpRW._inpFind.Find._findData" title="inpRW._inpFind.Find._findData"><code class="xref py py-func docutils literal notranslate"><span class="pre">_findData()</span></code></a>, and needs to be written like it’s a part of <a class="reference internal" href="#inpRW._inpFind.Find._findData" title="inpRW._inpFind.Find._findData"><code class="xref py py-func docutils literal notranslate"><span class="pre">_findData()</span></code></a>.
+See function externalFieldCustomSub inside <a class="reference internal" href="../_inpFindRefs/index.html#inpRW._inpFindRefs.FindRefs.findElementRefs" title="inpRW._inpFindRefs.FindRefs.findElementRefs"><code class="xref py py-func docutils literal notranslate"><span class="pre">findElementRefs()</span></code></a> for an example.</p></li>
+<li><p><strong>dataOffset</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a>) – Used to override the value the function will calculate.
+They are used in this manner with slicing [Offset : : Step]. They should not be used in most
+cases, as the appropriate values will be calculated from <em>data_pos</em> and <em>linesToCheck</em>, but
+they are still options for the rare cases the default calculation is incorrect. Defaults
+to None.</p></li>
+<li><p><strong>dataStep</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a>) – Used to override the value the function will calculate.
+They are used in this manner with slicing [Offset : : Step]. They should not be used in most
+cases, as the appropriate values will be calculated from <em>data_pos</em> and <em>linesToCheck</em>, but
+they are still options for the rare cases the default calculation is incorrect. Defaults
+to None.</p></li>
+<li><p><strong>lineOffset</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a>) – Used to override the value the function will calculate.
+They are used in this manner with slicing [Offset : : Step]. They should not be used in most
+cases, as the appropriate values will be calculated from <em>data_pos</em> and <em>linesToCheck</em>, but
+they are still options for the rare cases the default calculation is incorrect. Defaults
+to None.</p></li>
+<li><p><strong>lineStep</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a>) – Used to override the value the function will calculate.
+They are used in this manner with slicing [Offset : : Step]. They should not be used in most
+cases, as the appropriate values will be calculated from <em>data_pos</em> and <em>linesToCheck</em>, but
+they are still options for the rare cases the default calculation is incorrect. Defaults
+to None.</p></li>
+<li><p><strong>dataGroup</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – Must be one of ‘line’, ‘multiline’, ‘alldata’, or ‘subline’. Indicates the region
+of the keyword associated with the reference (i.e. if the reference is deleted, how much of the
+keyword block must be deleted to still have a valid keyword).
+‘line’ corresponds to the entire data line.
+‘multiline’ corresponds to multiple keyword lines as indicated by <em>linesToCheck</em>.
+‘alldata’ corresponds to the entirety of <a class="reference internal" href="../../inpKeyword/index.html#inpKeyword.inpKeyword.data" title="inpKeyword.inpKeyword.data"><code class="xref py py-attr docutils literal notranslate"><span class="pre">data</span></code></a>.
+‘subline’ corresponds to a region of the dataline as indicated by <em>data_pos</em>.
+Defaults to ‘line’.</p></li>
+<li><p><strong>kwBlocks</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a>) – Each item in <em>kwBlocks</em> must be an <a class="reference internal" href="../../inpKeyword/index.html#module-inpKeyword" title="inpKeyword"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpKeyword</span></code></a>. Defaults to None. One of
+kwBlocks or kwNames must be specified.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="inpRW._inpFind.Find._findIncludeFileNames">
+<span class="sig-name descname"><span class="pre">_findIncludeFileNames</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#inpRW._inpFind.Find._findIncludeFileNames" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finds all child input file names in <a class="reference internal" href="../index.html#inpRW.inpRW.keywords" title="inpRW.inpRW.keywords"><code class="xref py py-attr docutils literal notranslate"><span class="pre">keywords</span></code></a>.</p>
+<p>This function will search for *INCLUDE, *MANIFEST, and any keywords in <a class="reference internal" href="../../config/index.html#config._dataKWs" title="config._dataKWs"><code class="xref py py-attr docutils literal notranslate"><span class="pre">_dataKWs</span></code></a> that
+have the “input” <a class="reference internal" href="../../inpKeyword/index.html#inpKeyword.inpKeyword.parameter" title="inpKeyword.inpKeyword.parameter"><code class="xref py py-attr docutils literal notranslate"><span class="pre">parameter</span></code></a>. It will populate
+<a class="reference internal" href="../index.html#inpRW.inpRW.includeFileNames" title="inpRW.inpRW.includeFileNames"><code class="xref py py-attr docutils literal notranslate"><span class="pre">includeFileNames</span></code></a> with all file names it finds and <a class="reference internal" href="../index.html#inpRW.inpRW.includeBlockPaths" title="inpRW.inpRW.includeBlockPaths"><code class="xref py py-attr docutils literal notranslate"><span class="pre">includeBlockPaths</span></code></a>
+with the <a class="reference internal" href="../../inpKeyword/index.html#inpKeyword.inpKeyword.path" title="inpKeyword.inpKeyword.path"><code class="xref py py-attr docutils literal notranslate"><span class="pre">paths</span></code></a> to the blocks that read from child input files.</p>
+<p>This function is called by <a class="reference internal" href="../index.html#inpRW.inpRW.updateInp" title="inpRW.inpRW.updateInp"><code class="xref py py-func docutils literal notranslate"><span class="pre">updateInp()</span></code></a>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="inpRW._inpFind.Find._findParam">
+<span class="sig-name descname"><span class="pre">_findParam</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">labelD</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameterName</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kwNames</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">excludeParameters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'all'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kwBlocks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#inpRW._inpFind.Find._findParam" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function will look for keyword blocks that reference items in <em>labelD</em>.</p>
+<p>It will search <em>kwBlocks</em>, or it will search the blocks returned by
+<code class="docutils literal notranslate"><span class="pre">`findKeyword(keywordName=kwNames,</span> <span class="pre">parameters=parameterName,</span> <span class="pre">excludeParameters=excludeParameters,</span> <span class="pre">mode=mode,</span> <span class="pre">printOutput=False</span> <span class="pre">`</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>labelD</strong> (<a class="reference internal" href="../../csid/index.html#csid.csid" title="csid.csid"><em>csid</em></a>) – A csid of the form <code class="docutils literal notranslate"><span class="pre">`csid([[name,</span> <span class="pre">[]]</span> <span class="pre">for</span> <span class="pre">name</span> <span class="pre">in</span> <span class="pre">names])`</span></code>. The items in names can be
+<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">integers</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">strings</span></code></a>, but the function might not work properly if
+<em>labelD</em> contains both types.</p></li>
+<li><p><strong>parameterName</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – A string indicating the parameter name for which to search. This should not
+include a value. <em>parameterName</em> will be passed to <em>parameters</em> of <a class="reference internal" href="#inpRW._inpFind.Find.findKeyword" title="inpRW._inpFind.Find.findKeyword"><code class="xref py py-func docutils literal notranslate"><span class="pre">findKeyword()</span></code></a> if
+<em>kwBlocks</em> is not specified. If matching keyword blocks are found, the function will check if the
+value of <code class="docutils literal notranslate"><span class="pre">`block.parameter[parameterName]`</span></code> is in <em>labelD</em>. If so, labelD[parameterName] will
+have [{path to parameter}, {path to block}] appended.</p></li>
+<li><p><strong>kwNames</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a>) – A sequence containing the keyword names in which to search. Will be passed to
+<a class="reference internal" href="#inpRW._inpFind.Find.findKeyword" title="inpRW._inpFind.Find.findKeyword"><code class="xref py py-func docutils literal notranslate"><span class="pre">findKeyword()</span></code></a>. Defaults to None. Must be specified if <em>kwBlocks</em> is omitted.</p></li>
+<li><p><strong>excludeParameters</strong> – See <a class="reference internal" href="#inpRW._inpFind.Find.findKeyword" title="inpRW._inpFind.Find.findKeyword"><code class="xref py py-func docutils literal notranslate"><span class="pre">findKeyword()</span></code></a>. Defaults to None.</p></li>
+<li><p><strong>mode</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – See <a class="reference internal" href="#inpRW._inpFind.Find.findKeyword" title="inpRW._inpFind.Find.findKeyword"><code class="xref py py-func docutils literal notranslate"><span class="pre">findKeyword()</span></code></a>. Defaults to ‘all’.</p></li>
+<li><p><strong>kwBlocks</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a>) – Each item in <em>kwBlocks</em> must be an <a class="reference internal" href="../../inpKeyword/index.html#module-inpKeyword" title="inpKeyword"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpKeyword</span></code></a>. Defaults to None. Must be
+specified if <em>kwNames</em> is omitted.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="inpRW._inpFind.Find._getLastBlockPath">
+<span class="sig-name descname"><span class="pre">_getLastBlockPath</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_block</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#inpRW._inpFind.Find._getLastBlockPath" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets <a class="reference internal" href="../index.html#inpRW.inpRW._lbp" title="inpRW.inpRW._lbp"><code class="xref py py-attr docutils literal notranslate"><span class="pre">_lbp</span></code></a> to the path of the last block in the input file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>_block</strong> (<a class="reference internal" href="../../inpKeyword/index.html#inpKeyword.inpKeyword" title="inpKeyword.inpKeyword"><em>inpKeyword</em></a>) – Only meant to be used when this function calls itself to handle blocks with <a class="reference internal" href="../../inpKeyword/index.html#inpKeyword.inpKeyword.suboptions" title="inpKeyword.inpKeyword.suboptions"><code class="xref py py-attr docutils literal notranslate"><span class="pre">suboptions</span></code></a>.</p>
+</dd>
+</dl>
+<p>This function is called by <a class="reference internal" href="../index.html#inpRW.inpRW.updateInp" title="inpRW.inpRW.updateInp"><code class="xref py py-func docutils literal notranslate"><span class="pre">updateInp()</span></code></a>.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../inpRW_toc.html">
+              <img class="logo" src="../../../_static/3DS_SIMULIA_Logotype_RGB_BlueSteel.png" alt="Logo", style="border-radius:5px"/>
+            </a></p>
+  <div>
+    <h3><a href="../../../inpRW_toc.html">Local Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW._inpFind</span></code></a><ul>
+<li><a class="reference internal" href="#module-inpRW._inpFind">Module Contents</a><ul>
+<li><a class="reference internal" href="#inpRW._inpFind.Find"><code class="docutils literal notranslate"><span class="pre">Find</span></code></a><ul>
+<li><a class="reference internal" href="#inpRW._inpFind.Find.findItemReferences"><code class="docutils literal notranslate"><span class="pre">Find.findItemReferences()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpFind.Find.findKeyword"><code class="docutils literal notranslate"><span class="pre">Find.findKeyword()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpFind.Find.findKeywordsIgnoreParam"><code class="docutils literal notranslate"><span class="pre">Find.findKeywordsIgnoreParam()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpFind.Find.findStepLocations"><code class="docutils literal notranslate"><span class="pre">Find.findStepLocations()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpFind.Find.findValidParentKW"><code class="docutils literal notranslate"><span class="pre">Find.findValidParentKW()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpFind.Find.getParentBlock"><code class="docutils literal notranslate"><span class="pre">Find.getParentBlock()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpFind.Find._findActiveSystem"><code class="docutils literal notranslate"><span class="pre">Find._findActiveSystem()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpFind.Find.findCloseNodes"><code class="docutils literal notranslate"><span class="pre">Find.findCloseNodes()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpFind.Find._findData"><code class="docutils literal notranslate"><span class="pre">Find._findData()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpFind.Find._findIncludeFileNames"><code class="docutils literal notranslate"><span class="pre">Find._findIncludeFileNames()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpFind.Find._findParam"><code class="docutils literal notranslate"><span class="pre">Find._findParam()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpFind.Find._getLastBlockPath"><code class="docutils literal notranslate"><span class="pre">Find._getLastBlockPath()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  </div>
+<h3><a href="../../../inpRW_toc.html">Global Table of Contents</a></h3>
+<p class="caption" role="heading"><span class="caption-text">User Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/Introduction.html">inpRW Utility Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/Project-Background.html">Project Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/Installation-and-Usage.html">Installation and Usage Instructions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/Tests.html">inpRW Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/Tests.html#running-inprw-tests">Running inpRW Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/inpKeyword-Basics.html">inpKeyword Basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/Strings_Integers_and_Decimals.html">Strings, Integers, and Decimals</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/Important-inpRW-Attributes.html">Important <code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW</span></code> Attributes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/Miscellaneous-Usage-hints.html">Miscellaneous Usage Hints</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/Example-Scenarios.html">Example Scenarios</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/glossary.html">Glossary</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW</span></code></a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../_inpR/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW._inpR</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_inpW/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW._inpW</span></code></a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW._inpFind</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_inpFindRefs/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW._inpFindRefs</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_inpMod/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW._inpMod</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_importedModules/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW._importedModules</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_inpCustom/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW._inpCustom</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../centroid/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">centroid</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../config/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">config</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../config_re/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">config_re</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../csid/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">csid</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../eval2/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">eval2</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../elType/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">elType</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../inpDecimal/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpDecimal</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../inpInt/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpInt</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../inpKeyword/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpKeyword</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../inpKeywordHelper/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpKeywordHelper</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../inpKeywordSequence/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpKeywordSequence</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../inpRWErrors/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRWErrors</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../inpString/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpString</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../mesh/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">mesh</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../misc_functions/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">misc_functions</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../NoneSort/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">NoneSort</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../printer/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">printer</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../repr2/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">repr2</span></code></a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Update Notes</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../Update-Notes/index.html">Update Notes</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Legal Notices and Usage Disclaimer</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../legal_notices/Legal_Notices_and_Usage_Disclaimer.html">Legal Notices and Usage Disclaimer</a></li>
+</ul>
+
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="../_inpW/index.html"
+                          title="previous chapter"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW._inpW</span></code></a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="../_inpFindRefs/index.html"
+                          title="next chapter"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW._inpFindRefs</span></code></a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../../_sources/autoapi/inpRW/_inpFind/index.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>  
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../_inpFindRefs/index.html" title="inpRW._inpFindRefs"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../_inpW/index.html" title="inpRW._inpW"
+             >previous</a> |</li>
+          <li><img src="../../../_static/icon-116-3dx-apps.svg" alt="python logo" style="vertical-align: middle; margin-top: -1px"/></li>
+          <li><a href="inpRW_toc.html"></a> &#187;</li>
+          <li class="switchers">
+            <div class="language_switcher_placeholder"></div>
+            <div class="version_switcher_placeholder"></div>
+          </li>
+          <li>
+              
+              <a href="../../../inpRW_toc.html">inpRW 2023.10.6 documentation</a> &#187;
+              
+          </li>
+          <li class="nav-item nav-item-1"><a href="../index.html" ><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW</span></code></a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href=""><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW._inpFind</span></code></a></li>
+                <li class="right">
+                    
+
+    <div class="inline-search" role="search">
+        <form class="inline-search" action="../../../search.html" method="get">
+          <input placeholder="Quick search" aria-label="Quick search" type="text" name="q" />
+          <input type="submit" value="Go" />
+          <input type="hidden" name="check_keywords" value="yes" />
+          <input type="hidden" name="area" value="default" />
+        </form>
+    </div>
+                     |
+                </li>
+            
+      </ul>
+    </div>  
+    <div class="footer">
+    &copy; Copyright 2023, Dassault Systèmes Simulia Corp.
+     <a href="../../../_static/legal_notices.pdf" >inpRW Legal Notices</a>.<br />
+     <a href="../../../_static/Read_Disclaimer_First.txt" >inpRW Usage Disclaimer</a>.<br />
+    Last updated on Nov 21, 2023.
+    <a href="https://r1132100503382-eu1-3dswym.3dexperience.3ds.com/#community:39/post:nE1VLzylQoKgfG2wekOpFg">Found a bug</a>?
+    </div>
+
+  </body>
+</html>

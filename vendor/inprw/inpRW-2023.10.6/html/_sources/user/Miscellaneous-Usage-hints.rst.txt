@@ -1,0 +1,89 @@
+Miscellaneous Usage Hints
+=========================
+
+:mod:`inpRW` is merely a Python utility composed of the main module (:mod:`inpRW` and the _inp\* modules) and supporting modules and functions. 
+It does nothing by itself. The user will always need to write at least a small script to perform the actual operations. Here is a simple example 
+script that will parse an :term:`input file`, add a \*CONTROLS keyword block before the \*END STEP keyword block of the first general step, and 
+write out the new :term:`input file`::
+
+    import inpRW
+    import inpKeyword
+    from misc_functions import rsl
+    from sys import argv
+
+    newKwText = '''*CONTROLS, parameter=field
+    ,,,1.0'''
+
+    jobName = argv[-1]
+    inp = inpRW.inpRW(jobName, organize=True, preserveSpacing=True, useDecimal=True, parseSubFiles=True, jobSuffix='_NEW.inp')
+    inp.parse()
+    newKw = inpKeyword.inpKeyword(inputString=newKwText, **inp.inpKeywordArgs)
+
+    #this will search for the first general step in the model
+    stepblock = [step[1] for step in inp.steps.values() if rsl(step[1].suboptions[0].name) in inp._generalSteps and not 'perturbation' in step[1].suboptions[0].parameter][0]
+
+    endstep1path = inp.findKeyword('endstep', parentBlock=stepblock)[0].path #this is a case- and space-insensitive search, it will always insert the new keyword block before the *end step keyword block of stepblock
+    inp.insertKeyword(newKw, path=endstep1path)
+    inp.writeInp()
+
+:mod:`inpRW` is intended to contain all the functions necessary to parse the entire :term:`input file` and write out a new :term:`input file` 
+from the parsed structure. Any :term:`input files <input file>` that cannot be parsed are either due to a bug and should be reported, or are 
+cases not encountered yet. Initial support prioritizes input files that **3D**\ EXPERIENCE can produce, so some keywords are not yet supported.
+For example, keywords like \*PART, \*ASSEMBLY, and \*NGEN are not fully supported yet, and there will likely be odd behavior when trying
+to access the information stored in these keyword blocks or input files containing them.
+
+:mod:`inpRW` also contains several functions for finding data in the :term:`input file`, and some functions for making 
+modifications to the data in the input file. The functions for modifying data were included because they were seen as tasks that many users 
+would want to perform. They will not be sufficient for many projects; users will need to create their own functions to modify the data in the input file.
+
+:mod:`inpRW` works mainly on the text of the :term:`input file`. It has almost no other information available to it, except keyword groupings 
+and element type information. Therefore, it cares very little what is actually in the input file, nor what you write into it. Thus, it is 
+perfectly possible to use this tool to create an input file that will not pass an Abaqus datacheck, as this tool does absolutely no logical 
+checking itself. It is up to the user to use the functions in this utility to produce a working Abaqus input file.
+
+Even though :mod:`inpRW` mostly does not care what information is in the :term:`input file`, some pieces of :mod:`inpRW` look for specific 
+:term:`keywords <keyword>` or :term:`parameters[2] <parameter>`. Those sections of the tool expect the :term:`keyword` or :term:`parameter[2] <parameter>`
+to be fully spelled out, which is not a requirement of the Abaqus solver. Thus, :mod:`inpRW` will likely fail on input files that do not fully
+spell out :term:`keywords <keyword>` or :term:`parameters[2] <parameter>`, although many functions might still work. This limitation might be
+addressed in future versions of :mod:`inpRW`.
+
+The first step to using :mod:`inpRW` effectively is to know the content of the :term:`input file`. This means writing out an input file before 
+writing the script. The user should have some idea of the content of the input file to guide development of a script to modify that input file.
+
+Calling :class:`inpRW` with ``organize=True`` will provide the greatest functionality. Functional :term:`keyword blocks <keyword block>` will automatically be grouped 
+together as :term:`parent blocks <parent block>` and :term:`suboptions <suboption>`. Thus, it is possible to search for \*PLASTIC and retrieve 
+the entire \*MATERIAL block with all its sub-blocks, or it is possible to search for \*BOUNDARY in a particular \*STEP. These actions would 
+be much more difficult and computationally expensive if dealing with a flat input file structure. Here are the commands for the two examples 
+described above::
+
+    matblock = inp.getParentBlock(inp.findKeyword('plastic')[0], parentKW='material')
+    #inp.findKeyword will return a list of all keyword blocks that match the search criteria; hence the [0] to get just the 0th result.
+    
+    step = inp.steps['step-1']
+    boundaryblock = inp.findKeyword('boundary', parentBlock=step)[0]
+
+:func:`~inpRW._inpFind.Find.findKeyword` is an extremely powerful tool for finding :term:`keywords <keyword>` in the :attr:`~inpRW.inpRW.keywords`.
+The user can use this function to search for :term:`keywords <keyword>` using any or all of *keywordName*, *parameters*, and *data*, and the search 
+can also be performed on only the :attr:`.suboptions` of a :term:`parent block`. This function will return a list of all :class:`inpKeyword` objects 
+that match the search criteria. The returned :class:`inpKeyword` objects can be used in other functions, as shown in the previous section.
+
+:mod:`inpRW` parses information from the :term:`input file` and stores that information (and optionally formatting) in the original form. Thus, 
+spacing and capitalization can be preserved exactly. However, Python itself is case-sensitive and space-sensitive. :mod:`inpRW` solves this problem 
+in two ways. First, all data that would be stored in a dictionary should instead be stored in a :class:`csid`. Every dictionary a scripter creates that 
+will be part of an :class:`inpKeyword` should instead be a :class:`csid`. Second, the :func:`.rsl` function takes a string as input and returns 
+an all lowercase string which has had all spaces removed. This function is used throughout :mod:`inpRW` whenever a string needs to be compared to 
+another string. Consider the following example::
+
+    from misc_functions import rsl
+    a = 'element set 1'
+    b = '"ELEMENT SET 1"'
+    
+    if rsl(a) in rsl(b):
+        print('yes')
+
+
+In the example above, "a" represents the string for which the user would like to search, and "b" represents the actual value of an element set name 
+in the :term:`input file`. By comparing the :func:`.rsl` results for each item, the user does not need to know the exact formatting of "b" in order 
+to match it. Also, this example does not change the formatting of "b", so it can be written back to the :term:`input file` with the original formatting.
+
+Users and authors of :mod:`inpRW` should use :class:`csid` and :func:`.rsl` extensively, as they are great productivity boosters.

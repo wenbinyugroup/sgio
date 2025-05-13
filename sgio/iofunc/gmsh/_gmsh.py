@@ -16,10 +16,15 @@ def read_buffer(file, format_version="4.1", **kwargs):
 
 
 def write_buffer(
-    file, mesh, format_version="4.1", float_fmt=".16e",
-    binary=False, sgdim=3, **kwargs):
-    logger.debug('writing gmsh buffer...')
+    file, mesh, format_version, float_fmt, sgdim,
+    mesh_only, binary,
+    **kwargs):
+    """
+    """
     logger.debug(locals())
+
+    if format_version == "":
+        format_version = "4.1"
 
     if format_version == "2.2":
         _gmsh22.write_buffer(file, mesh, float_fmt=float_fmt, binary=binary)
@@ -31,4 +36,4 @@ def write_buffer(
         mesh.point_data['gmsh:dim_tags'] = np.array([[sgdim, 1] for i in range(len(mesh.points))])
         # mesh.cell_data['gmsh:geometrical'] = np.array([[i,] for i in range(len(mesh.cells))])
         mesh.cell_data['gmsh:geometrical'] = [[1,],] * len(mesh.cells)
-        _gmsh41.write_buffer(file, mesh, float_fmt=float_fmt, binary=binary)
+        _gmsh41.write_buffer(file, mesh, float_fmt, mesh_only, binary)

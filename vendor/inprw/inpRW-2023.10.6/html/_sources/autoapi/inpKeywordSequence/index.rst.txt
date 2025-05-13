@@ -1,0 +1,13 @@
+:py:mod:`inpKeywordSequence`
+============================
+
+.. py:module:: inpKeywordSequence
+
+
+Module Contents
+---------------
+
+.. autoclass:: inpKeywordSequence
+   :members:
+   :private-members:
+   :show-inheritance:

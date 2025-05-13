@@ -1,0 +1,98 @@
+inpRW Tests
+===========
+
+inpRW has an in-progress test suite. This can be downloaded from `the inpRW Files page <https://r1132100503382-eu1-3dswym.3dexperience.3ds.com/#community:39/post:Eikusg7KSIalgJTqMm8kIQ>`_ of the SIMULIA Community. The test suite utilizes the :mod:`unittest` 
+and :mod:`doctest` functionality built in to Python. The :mod:`doctest` examples which have been completed are
+written in the documentation strings of the corresponding function. These are actually designed to be run using
+the :mod:`unittest` framework. test_all.bat and test_all.sh will run all the tests on Windows and Linux, respectively.
+
+:mod:`inpRW` has been developed on a Windows 10 machine, using Python 3.7, numpy 1.21.6, and scipy 1.7.3. The following configurations have been able to run the test_suite for inpRW:
+
+.. table:: Tested platforms
+    :widths: auto
+
+    ===============================  ==============  ==============  =============
+    Operating System                 Python Version  Numpy Version   Scipy Version
+    ===============================  ==============  ==============  =============
+    Windows 10                       3.7.9           1.21.5          1.7.3
+    Windows 10                       3.9.10          1.26.0          1.11.3
+    Windows 10                       3.10.0          1.26.0          1.11.3
+    Windows 10                       3.11.6          1.26.0          1.11.3
+    Windows 10                       3.12.0*         1.26.0          1.11.3
+    Arch Linux, lts kernel 6.1.62-1  3.7.17          1.21.6          1.7.3
+    Arch Linux, lts kernel 6.1.62-1  3.8.18          1.24.4          1.10.1
+    Arch Linux, lts kernel 6.1.62-1  3.9.18          1.24.4          1.10.1
+    Arch Linux, lts kernel 6.1.62-1  3.10.13         1.26.2          1.11.4
+    Arch Linux, lts kernel 6.1.62-1  3.11.5          1.26.2          1.11.4
+    Arch Linux, lts kernel 6.1.62-1  3.12.0          1.26.2          1.11.4
+    ===============================  ==============  ==============  =============
+
+
+:mod:`inpRW` is expected to work on 
+any OS and with newer versions of Python, numpy, and scipy, so please report any problems.
+
+\* The inpRW test suite reports SyntaxWarnings for "invalid escape sequences". These do not appear to be causing a problem,
+but I have not yet investigated why they are arising.
+
+Running inpRW Tests
+===================
+
+It is a good idea to run the inpRW test suite to verify it is configured properly on your system. This can be useful when
+you first install inpRW, and also if you make any changes to inpRW (for example, you should run the test suite to make sure your changes
+had no unintended consequences). While the test suite is yet incomplete, it still tests a good deal of inpRW, especially
+the most basic features like importing the module, parsing some input files, etc.
+
+To run the inpRW test suite, you should first extract the test suite from inpRW_tests.zip. Next, you need to modify test_all.bat 
+or test_all.sh from the extracted test suite. The INPRW_TEST variable needs to point to the Python interpreter you would like to 
+use for the tests. This interpreter should be able to import inpRW. If you are running on Linux, make sure the shell scripts are 
+executable.
+
+Once you've specified the INPRW_TEST environment variable in test_all, you can simply call test_all.bat (or test_all.sh) to run
+all of the existing tests. Of course, you can also see the commands used to the tests in this file, so using one of these files is not required.
+
+The test suite also includes the files test_all_multi_py.bat and test_all_multi_py.sh. These files are designed to call the test 
+suite on all Python interpreters in a given folder. These are primarily used to test inpRW prior to shipping the code, but they
+might be useful to others if they need to test inpRW against multiple versions of Python. If you wish to use these scripts, you'll 
+need to create a folder of .bat or .sh files which point to the Python interpreters to test, and modify test_all_multi_py.* to point
+to this folder. 
+
+Here's an example .bat file which prints the Python, numpy, and scipy versions before calling the Python interpreter with the specified arguments::
+
+    @echo off
+    setlocal
+    set TMPRELPATH=%~dp0..\py37\Scripts\
+    pushd %TMPRELPATH%
+    set TMPABSPATH=%CD%\python.exe
+    popd
+    echo.
+    echo ==================== venv info ====================
+    echo Running %TMPABSPATH%
+    call %TMPABSPATH% -VV
+    echo numpy
+    call %TMPABSPATH% -m pip show numpy | grep -E "Version:"
+    echo scipy
+    call %TMPABSPATH% -m pip show scipy | grep -E "Version:"
+    echo ===================================================
+    echo.
+
+    set PYTHONPATH=%~dp0..\..\..\src
+    call %TMPABSPATH% %*
+    endlocal
+
+Here's an example .sh file which accomplishes the same task::
+
+    #!/bin/sh
+
+    PY=/home/erik/inpRW_test/inpRW_tests/venv/py37/bin/python
+    echo
+    echo ==================== venv info ====================
+    echo Running $PY
+    $PY -VV
+    echo numpy
+    $PY -m pip show numpy | grep -E "Version:"
+    echo scipy
+    $PY -m pip show scipy | grep -E "Version:"
+    echo ===================================================
+    echo
+    
+    $PY "$@"

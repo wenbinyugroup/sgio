@@ -334,7 +334,7 @@ def _write_nodes(
         nid = i + 1
         f.write(sfi.format(nid))  # node id
 
-        # print(ncoord)
+        # logger.debug(ncoord)
 
         if sgdim == 1:
             if model_space == 'x':

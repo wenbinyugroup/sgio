@@ -1,0 +1,11 @@
+:py:mod:`inpRWErrors`
+=========================
+
+Module Contents
+---------------
+
+.. automodule:: inpRWErrors
+   :members:
+   :private-members:
+   :special-members:
+   :show-inheritance:

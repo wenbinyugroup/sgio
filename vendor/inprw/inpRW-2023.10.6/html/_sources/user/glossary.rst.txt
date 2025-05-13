@@ -1,0 +1,118 @@
+Glossary
+=================================
+
+.. glossary::
+   
+   **3D**\ Experience
+        Dassault Systèmes' **3D**\ Experience Platform has apps from every Dassault Systèmes brand. These apps (which focus on
+        different domains) all access a common database. For example, CAD (CATIA) and simulation (SIMULIA) apps access and enhance
+        the same product, which enables collaboration and lifecycle management.
+        
+        For the purposes of :mod:`inpRW`, :term:`3DExperience` provides a :term:`pre-processor` that can generate an
+        :term:`Abaqus` :term:`input file`.  
+   
+   Abaqus
+        Dassault Systèmes' primary Finite Element Analysis product suite. It's primary use is nonlinear structural simulations.
+        Abaqus is composed of several products, as described `here <https://help.3ds.com/2022/English/DSSIMULIA_Established/SIMACAEMODRefMap/simamod-c-general.htm?contextscope=all&id=e1e63b8a29bb49079df257896d8f8375>`_.
+        As :mod:`inpRW` is focused on the Abaqus :term:`input file`, this documentation will primarily use :term:`Abaqus` to refer to the Abaqus solvers.
+   
+   data
+        Can refer to the :attr:`~inpKeyword.inpKeyword.data` attribute of :class:`inpKeyword`, or it can
+        just mean "information" in general. If the term is not linked to :attr:`~inpKeyword.inpKeyword.data`,
+        it is most likely used in a general term and does not have a specific meaning.
+        
+   data item
+        One item from a :term:`dataline`. See :ref:`user/inpKeyword-Basics:Abaqus Keyword Block Terminology` for a diagram.
+        
+   dataline
+        One line from the data of a :term:`keyword block[1] <keyword block>`. See :ref:`user/inpKeyword-Basics:Abaqus Keyword Block Terminology` for a diagram. 
+
+   inpParser
+        The module for parsing Abaqus input files that is included with Abaqus 
+        Python. Details on limitations of inpParser here: :ref:`user/Project-Background:inpParser Module`.
+        `inpParser Documentation <https://help.3ds.com/2022/English/DSSIMULIA_Established/SIMACAEKERRefMap/simaker-m-InpPyc-sb.htm?contextscope=all&id=3c9b700b41b3417c9e9f0756df5acf2a>`_.    
+   
+   input file
+        A text file with the ".inp" extension. The input file defines the :term:`Abaqus` simulation. This includes information like nodes, elements, sets,
+        surfaces, contact definitions, boundary conditions, loading, and many other options.
+        
+   job
+        An :term:`Abaqus` simulation. The details of the :term:`job` are determined by the :term:`input file`.        
+   
+   keyword
+        A keyword is the name that starts an :term:`Abaqus` :term:`keyword block`. It is preceded by "*" and is separated from
+        the :term:`parameters[2] <parameter>` by a comma. A keyword can be more than one word. Please see the
+        `Abaqus Keywords Guide <https://help.3ds.com/2022/English/DSSIMULIA_Established/SIMACAEKEYRefMap/simakey-c-ov.htm?contextscope=all&id=38209adfa4364bc6ab0bb6e8eb323815>`_
+        for the list of valid :term:`Abaqus` keywords.
+        
+   keyword block
+   block
+        1. A section of an :term:`Abaqus` :term:`input file` consisting of a :term:`keyword line` and 0 or more :term:`datalines <dataline>`.
+
+        2. An :class:`inpKeyword` instance that was parsed from a :term:`keyword block[1] <keyword block>` of an :term:`Abaqus`
+           :term:`input file`.
+
+   Keyword Edit
+        Keyword Edit is a function of :term:`3DExperience` simulation scenario apps (like Mechanical Scenario Creation)
+        that allows users to make to changes to the :term:`Abaqus` :term:`input file` that :term:`3DExperience` writes
+        before the :term:`job` is submitted. This can use an .xml file, or a Python script.
+        
+        `Keyword Edit Documentation <https://help.3ds.com/2022x/english/dsdoc/SimMecsUserMap/mpm-m-KeywordEditor-sb.htm?contextscope=onpremise&id=7413dad30e474a2f8301946ecaf99b32>`_.
+   
+   keyword line
+        A line in the input file starting with a :term:`keyword` and also containing :term:`parameters[2] <parameter>`. A :term:`keyword line` can be
+        continued on subsequent lines if the :term:`keyword` and :term:`parameters[2] <parameter>` will not fit on one line. If a :term:`keyword line`
+        ends with a comma, :term:`Abaqus` will continue reading :term:`parameters[2] <parameter>` from the next line.
+        
+        See :ref:`user/inpKeyword-Basics:Abaqus Keyword Block Terminology` for a diagram. 
+   
+   parameter
+        1. Input to a Python function.
+        
+        2. An Abaqus keyword parameter.
+        
+        3. The :attr:`.parameter` attribute of an :class:`inpKeyword` object, which holds
+           the parsed Abaqus parameters for a keyword block.
+           
+        4. An Abaqus keyword. See `*PARAMETER <https://help.3ds.com/2022/English/DSSIMULIA_Established/SIMACAEKEYRefMap/simakey-r-parameter.htm?contextscope=all&id=3cf3531520de403db654aed9f17731c3>`_.
+   
+   parent block
+        A :term:`keyword block` that hosts one or more :term:`subblock` in its :attr:`.suboptions` attribute. \*MATERIAL
+        is an example of an :term:`Abaqus` :term:`keyword block` that can be a :term:`parent block`.
+               
+   pip
+        pip is the package installer for Python. `pip documentation <https://pip.pypa.io/en/stable/>`_.
+        
+   positionl
+        positionl stands for position list. It is a list of integers and sequences that represent the path to the object.
+        The format is [keyword, [suboption0, suboption1, ...], [dataline, datapos]]. 
+        
+   pre-processor
+        A GUI tool for generating an :term:`Abaqus` :term:`input file`. Two examples are Abaqus/CAE and the SIMULIA apps
+        in **3D**\ Experience. Pre-processors are necessary to create meshes, surfaces, and sets on complex geometry, and
+        should be designed to write valid :term:`input files <input file>`. There is no pre-processor that can write
+        every keyword the :term:`Abaqus` solvers support, though, so editing the :term:`input file` through means such
+        as :mod:`inpRW` is sometimes necessary or convenient. 
+    
+   suboption
+   subblock
+   subkeyword
+        A :term:`keyword block` that is a child to a :term:`parent block`. A \*PLASTIC :term:`keyword block` is a
+        valid :term:`subblock` for \*MATERIAL.
+   
+   user script
+        A Python script written by an end-user which imports functionality from :mod:`inpRW` to accomplish a certain task. 
+        As :mod:`inpRW` is merely a collection of useful classes, functions, etc., a user script will always be needed to 
+        utilize the built-in functionality of :mod:`inpRW` and complete the tasks required for the user's workflow.
+   
+
+   
+
+   
+
+   
+
+
+        
+
+   

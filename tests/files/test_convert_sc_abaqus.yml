@@ -5,6 +5,7 @@
   version_out: '2.1'
   sgdim: 3
   model: 'sd1'
+  solver: 'swiftcomp'
 - fn_in: 'abaqus/sg33_udfrp.inp'
   ff_in: 'abaqus'
   fn_out: 'sg33_udfrp_sc21.sg'
@@ -12,6 +13,7 @@
   version_out: '2.1'
   sgdim: 3
   model: 'sd1'
+  solver: 'swiftcomp'
 - fn_in: 'abaqus/sg33_inclusion_ellipsoid_meshsize01.inp'
   ff_in: 'abaqus'
   fn_out: 'sg33_inclusion_ellipsoid_meshsize01_sc21.sg'
@@ -19,3 +21,4 @@
   version_out: '2.1'
   sgdim: 3
   model: 'sd1'
+  solver: 'swiftcomp'
