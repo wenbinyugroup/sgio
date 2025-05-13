@@ -1,0 +1,15 @@
+:py:mod:`inpString`
+===================
+
+.. py:module:: inpString
+
+
+Module Contents
+---------------
+
+.. autoclass:: inpString
+   :members:
+   :private-members:
+   :special-members:
+   :show-inheritance:
+   

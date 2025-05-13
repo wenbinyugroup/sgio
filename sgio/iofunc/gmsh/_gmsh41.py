@@ -29,7 +29,7 @@ c_int = np.dtype("i")
 c_size_t = np.dtype("P")
 c_double = np.dtype("d")
 
-def write_buffer(file, mesh, float_fmt=".16e", binary=True, **kwargs):
+def write_buffer(file, mesh, float_fmt, mesh_only, binary, **kwargs):
     """Writes msh files, cf.
     <http://gmsh.info/doc/texinfo/gmsh.html#MSH-file-format>.
     """
@@ -71,14 +71,17 @@ def write_buffer(file, mesh, float_fmt=".16e", binary=True, **kwargs):
     if mesh.field_data:
         _write_physical_names(file, mesh.field_data)
 
-    # _write_entities(
-    #     file, mesh.cells, tag_data, mesh.cell_sets, mesh.point_data, binary
-    # )
+    if not mesh_only:
+        _write_entities(
+            file, mesh.cells, tag_data, mesh.cell_sets, mesh.point_data, binary
+        )
+
     _write_nodes(file, mesh.points, mesh.cells, mesh.point_data, float_fmt, binary)
     _write_elements(file, mesh.cells, tag_data, binary)
     if mesh.gmsh_periodic is not None:
         _write_periodic(file, mesh.gmsh_periodic, float_fmt, binary)
 
+    # if not mesh_only:
     for name, dat in point_data.items():
         _write_data(file, "NodeData", name, dat, binary)
     cell_data_raw = raw_from_cell_data(cell_data)
@@ -344,7 +347,7 @@ def _write_nodes(fh, points, cells, point_data, float_fmt, binary):
             )
 
         dim = cells[0].dim
-        tag = 0
+        tag = 1
         node_dim_tags = np.array([[dim, tag]])
         # All nodes map to the (single) dimension-entity object
         reverse_index_map = np.full(n, 0, dtype=int)
@@ -464,7 +467,7 @@ def _write_elements(fh, cells, tag_data, binary: bool) -> None:
             if "gmsh:geometrical" in tag_data:
                 entity_tag = tag_data["gmsh:geometrical"][ci][0]
             else:
-                entity_tag = 0
+                entity_tag = 1
 
             cell_type = _meshio_to_gmsh_type[cell_block.type]
             n = len(cell_block.data)

@@ -29,11 +29,11 @@ def getModelDim(model:str) -> int:
     """
 
     mdim = 0
-    if model[:2].lower() == 'sd':
+    if model.strip().lower()[:2] == 'sd':
         mdim = 3
-    elif model[:2].lower() == 'pl':
+    elif model.strip().lower()[:2] == 'pl':
         mdim = 2
-    elif model[:2].lower() == 'bm':
+    elif model.strip().lower()[:2] == 'bm':
         mdim = 1
 
     return mdim

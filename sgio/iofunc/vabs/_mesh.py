@@ -3,6 +3,8 @@ I/O for VABS format
 """
 from __future__ import annotations
 
+import logging
+
 import numpy as np
 from meshio._files import is_buffer
 
@@ -14,6 +16,8 @@ from sgio.iofunc._meshio import (
     _read_nodes,
     _write_nodes,
 )
+
+logger = logging.getLogger(__name__)
 
 vabs_to_meshio_type = {
     3: 'triangle',
@@ -35,7 +39,7 @@ vabs_to_meshio_type = {
 
 
 
-def read_buffer(f, sgdim:int, nnode:int, nelem:int, **kwargs):
+def read_buffer(f, sgdim:int, nnode:int, nelem:int, format_flag, **kwargs):
     """
     """
     # Initialize the optional data fields
@@ -59,7 +63,8 @@ def read_buffer(f, sgdim:int, nnode:int, nelem:int, **kwargs):
     cell_data['element_id'] = elem_ids
 
     # Read local coordinate system for sectional properties
-    cell_prop_id, cell_csys = _read_property_id_ref_csys(f, nelem, cells, elem_id_to_cell_id)
+    cell_prop_id, cell_csys = _read_property_id_ref_csys(
+        f, nelem, cells, elem_id_to_cell_id, format_flag)
     cell_data['property_id'] = cell_prop_id
     cell_data['property_ref_csys'] = cell_csys
 
@@ -139,8 +144,28 @@ def _read_elements(f, nelem:int, point_ids):
 
 
 
-def _read_property_id_ref_csys(file, nelem, cells, elem_id_to_cell_id):
-    """
+def _read_property_id_ref_csys(file, nelem, cells, elem_id_to_cell_id, format_flag):
+    """Read the data block of element property id and reference csys.
+
+    Parameters
+    ----------
+    file : file
+        The file to read from.
+    nelem : int
+        The number of elements.
+    cells : list
+        The list of cells.
+    elem_id_to_cell_id : dict
+        The dictionary of element id to cell id.
+    format_flag : int
+        The format flag. 0 for old format, 1 for new format.
+
+    Returns
+    -------
+    cell_prop_id : list
+        The list of property ids.
+    cell_csys : list
+        The list of reference csys.
     """
 
     cell_prop_id = []
@@ -350,7 +375,7 @@ def _write_property_id_ref_csys(
                     # _vx2 = np.array([1, 0, 0])
 
                     _vy2 = np.array(_csys[:3])
-                    # print(f'_vy2 = {_vy2}')
+                    # logger.debug(f'_vy2 = {_vy2}')
 
                     # Method 1
                     # _cos_theta_1 = np.dot(_vx2, _vy2) / (np.linalg.norm(_vx2) * np.linalg.norm(_vy2))

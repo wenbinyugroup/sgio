@@ -11,6 +11,7 @@ import sgio.utils.execu as sue
 # import msgpi.utils as utils
 import sgio.utils as sutl
 # import sgio._global as GLOBAL
+from .model.general import getModelDim
 
 logger = logging.getLogger(__name__)
 
@@ -56,6 +57,9 @@ def run(
             runVABS(solver, input_name, analysis, scrnout, timeout)
 
         elif solver.lower().startswith('s'):
+            if isinstance(smdim, str):
+                smdim = getModelDim(smdim)
+
             runSwiftComp(
                 solver, input_name, analysis, smdim,
                 aperiodic, output_gmsh_format, reduced_integration,

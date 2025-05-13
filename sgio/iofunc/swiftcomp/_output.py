@@ -797,7 +797,8 @@ def _readOutputCauchyContinuumModel(file):
             _2a13 = float(line.split('=')[-1])
         elif '2alpha12' in line:
             _2a12 = float(line.split('=')[-1])
-            mp.cte = [_a11, _a22, _a33, _2a23, _2a13, _2a12]
+            _cte = [_a11, _a22, _a33, _2a23, _2a13, _2a12]
+            mp.set('cte', _cte)
 
         elif 'Dthetatheta' in line:
             mp.d_thetatheta = float(line.split('=')[-1])
@@ -806,7 +807,8 @@ def _readOutputCauchyContinuumModel(file):
             _t1 = 0
             _tm = 1
             _t = _t1 + _tm
-            mp.specific_heat = mp.d_thetatheta - _t * mp.f_eff
+            _specific_heat = mp.d_thetatheta - _t * mp.f_eff
+            mp.set('specific_heat', _specific_heat)
 
     try:
         ln = keywordsIndex['stff']

@@ -1,0 +1,50 @@
+:py:mod:`inpRW`
+===============
+
+.. py:module:: inpRW
+
+
+
+Package Contents
+----------------
+
+Classes
+~~~~~~~
+
+   .. autoclass:: inpRW
+       :show-inheritance:
+       
+       .. automethod:: __init__
+       
+       .. automethod:: parse
+       
+       .. automethod:: printDocs
+       
+       .. automethod:: updateInp
+
+       .. automethod:: __repr__
+
+       .. automethod:: __str__
+
+       .. include:: ../../../../public_attr.txt
+   
+       .. include:: ../../../../private_attr.txt
+   
+   
+Submodules
+----------
+
+All of the functions in the submodules will be accessible directly through the :class:`inpRW` instance. For example, :func:`~inpRW._inpR.Read.createPathFromSequence`
+can be accessed via ``inp.createPathFromSequence`` instead of ``inp._inpR.Read.createPathFromSequence``. The submodules are merely for organizational purposes.
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+
+   _inpR/index.rst
+   _inpW/index.rst
+   _inpFind/index.rst
+   _inpFindRefs/index.rst
+   _inpMod/index.rst
+   _importedModules/index.rst
+   _inpCustom/index.rst

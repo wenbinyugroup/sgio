@@ -1,0 +1,605 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>inpKeywordSequence &#8212; inpRW 2023.10.6 documentation</title><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/pydoctheme.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles.css" />
+    
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
+    
+    <script src="../../_static/sidebar.js"></script>
+    
+    <link rel="shortcut icon" href="../../_static/3DS_SIMULIA_Blue_Icon_32.png"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="inpRWErrors" href="../inpRWErrors/index.html" />
+    <link rel="prev" title="inpKeywordHelper" href="../inpKeywordHelper/index.html" /><link rel="shortcut icon" type="image/png" href="../../_static/icon-116-3dx-apps.svg" />
+            <script type="text/javascript" src="../../_static/copybutton.js"></script>
+            <script type="text/javascript" src="../../_static/menu.js"></script> 
+  </head>
+<body>
+<div class="mobile-nav">
+    <input type="checkbox" id="menuToggler" class="toggler__input" aria-controls="navigation"
+           aria-pressed="false" aria-expanded="false" role="button" aria-label="Menu" />
+    <label for="menuToggler" class="toggler__label">
+        <span></span>
+    </label>
+    <nav class="nav-content" role="navigation">
+         <a href="inpRW_toc.html" class="nav-logo">
+             <img src="../../_static/icon-116-3dx-apps.svg" alt="Logo"/>
+         </a>
+        <div class="version_switcher_placeholder"></div>
+        <form role="search" class="search" action="../../search.html" method="get">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" class="search-icon">
+                <path fill-rule="nonzero"
+                        d="M15.5 14h-.79l-.28-.27a6.5 6.5 0 001.48-5.34c-.47-2.78-2.79-5-5.59-5.34a6.505 6.505 0 00-7.27 7.27c.34 2.8 2.56 5.12 5.34 5.59a6.5 6.5 0 005.34-1.48l.27.28v.79l4.25 4.25c.41.41 1.08.41 1.49 0 .41-.41.41-1.08 0-1.49L15.5 14zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" fill="#444"></path>
+            </svg>
+            <input type="text" name="q" aria-label="Quick search"/>
+            <input type="submit" value="Go"/>
+        </form>
+    </nav>
+    <div class="menu-wrapper">
+        <nav class="menu" role="navigation" aria-label="main navigation">
+            <div class="language_switcher_placeholder"></div>
+            <p class="logo">
+                <a href="../../index.html">
+                <img class="logo" src="../../_static/3DS_SIMULIA_Logotype_RGB_BlueSteel.png" alt="Logo" style="border-radius:5px"/>
+                </a>
+            </p>
+  <div>
+    <h3><a href="../../inpRW_toc.html">Local Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpKeywordSequence</span></code></a><ul>
+<li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
+<li><a class="reference internal" href="#inpKeywordSequence.inpKeywordSequence"><code class="docutils literal notranslate"><span class="pre">inpKeywordSequence</span></code></a><ul>
+<li><a class="reference internal" href="#inpKeywordSequence.inpKeywordSequence.__init__"><code class="docutils literal notranslate"><span class="pre">inpKeywordSequence.__init__()</span></code></a></li>
+<li><a class="reference internal" href="#inpKeywordSequence.inpKeywordSequence.parentBlock"><code class="docutils literal notranslate"><span class="pre">inpKeywordSequence.parentBlock</span></code></a></li>
+<li><a class="reference internal" href="#inpKeywordSequence.inpKeywordSequence.printSubBlocks"><code class="docutils literal notranslate"><span class="pre">inpKeywordSequence.printSubBlocks</span></code></a></li>
+<li><a class="reference internal" href="#inpKeywordSequence.inpKeywordSequence._nd"><code class="docutils literal notranslate"><span class="pre">inpKeywordSequence._nd</span></code></a></li>
+<li><a class="reference internal" href="#inpKeywordSequence.inpKeywordSequence._ed"><code class="docutils literal notranslate"><span class="pre">inpKeywordSequence._ed</span></code></a></li>
+<li><a class="reference internal" href="#inpKeywordSequence.inpKeywordSequence._pd"><code class="docutils literal notranslate"><span class="pre">inpKeywordSequence._pd</span></code></a></li>
+<li><a class="reference internal" href="#inpKeywordSequence.inpKeywordSequence._namedRefs"><code class="docutils literal notranslate"><span class="pre">inpKeywordSequence._namedRefs</span></code></a></li>
+<li><a class="reference internal" href="#inpKeywordSequence.inpKeywordSequence._delayedPlaceBlocks"><code class="docutils literal notranslate"><span class="pre">inpKeywordSequence._delayedPlaceBlocks</span></code></a></li>
+<li><a class="reference internal" href="#inpKeywordSequence.inpKeywordSequence._grandchildBlocks"><code class="docutils literal notranslate"><span class="pre">inpKeywordSequence._grandchildBlocks</span></code></a></li>
+<li><a class="reference internal" href="#inpKeywordSequence.inpKeywordSequence.append"><code class="docutils literal notranslate"><span class="pre">inpKeywordSequence.append()</span></code></a></li>
+<li><a class="reference internal" href="#inpKeywordSequence.inpKeywordSequence.extend"><code class="docutils literal notranslate"><span class="pre">inpKeywordSequence.extend()</span></code></a></li>
+<li><a class="reference internal" href="#inpKeywordSequence.inpKeywordSequence.insert"><code class="docutils literal notranslate"><span class="pre">inpKeywordSequence.insert()</span></code></a></li>
+<li><a class="reference internal" href="#inpKeywordSequence.inpKeywordSequence.mergeSuboptionsGlobalData"><code class="docutils literal notranslate"><span class="pre">inpKeywordSequence.mergeSuboptionsGlobalData()</span></code></a></li>
+<li><a class="reference internal" href="#inpKeywordSequence.inpKeywordSequence._placeInpItemsToUpdate"><code class="docutils literal notranslate"><span class="pre">inpKeywordSequence._placeInpItemsToUpdate()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  </div>
+<h3><a href="../../inpRW_toc.html">Global Table of Contents</a></h3>
+<p class="caption" role="heading"><span class="caption-text">User Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Introduction.html">inpRW Utility Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Project-Background.html">Project Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Installation-and-Usage.html">Installation and Usage Instructions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Tests.html">inpRW Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Tests.html#running-inprw-tests">Running inpRW Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/inpKeyword-Basics.html">inpKeyword Basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Strings_Integers_and_Decimals.html">Strings, Integers, and Decimals</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Important-inpRW-Attributes.html">Important <code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW</span></code> Attributes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Miscellaneous-Usage-hints.html">Miscellaneous Usage Hints</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Example-Scenarios.html">Example Scenarios</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/glossary.html">Glossary</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../inpRW/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../centroid/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">centroid</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../config/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">config</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../config_re/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">config_re</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../csid/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">csid</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../eval2/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">eval2</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../elType/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">elType</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inpDecimal/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpDecimal</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inpInt/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpInt</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inpKeyword/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpKeyword</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inpKeywordHelper/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpKeywordHelper</span></code></a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpKeywordSequence</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inpRWErrors/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRWErrors</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inpString/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpString</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../mesh/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">mesh</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../misc_functions/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">misc_functions</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../NoneSort/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">NoneSort</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../printer/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">printer</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../repr2/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">repr2</span></code></a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Update Notes</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Update-Notes/index.html">Update Notes</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Legal Notices and Usage Disclaimer</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../legal_notices/Legal_Notices_and_Usage_Disclaimer.html">Legal Notices and Usage Disclaimer</a></li>
+</ul>
+
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="../inpKeywordHelper/index.html"
+                          title="previous chapter"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpKeywordHelper</span></code></a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="../inpRWErrors/index.html"
+                          title="next chapter"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRWErrors</span></code></a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/autoapi/inpKeywordSequence/index.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </nav>
+    </div>
+</div>
+  
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../inpRWErrors/index.html" title="inpRWErrors"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../inpKeywordHelper/index.html" title="inpKeywordHelper"
+             accesskey="P">previous</a> |</li>
+          <li><img src="../../_static/icon-116-3dx-apps.svg" alt="python logo" style="vertical-align: middle; margin-top: -1px"/></li>
+          <li><a href="inpRW_toc.html"></a> &#187;</li>
+          <li class="switchers">
+            <div class="language_switcher_placeholder"></div>
+            <div class="version_switcher_placeholder"></div>
+          </li>
+          <li>
+              
+              <a href="../../inpRW_toc.html">inpRW 2023.10.6 documentation</a> &#187;
+              
+          </li>
+        <li class="nav-item nav-item-this"><a href=""><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpKeywordSequence</span></code></a></li>
+                <li class="right">
+                    
+
+    <div class="inline-search" role="search">
+        <form class="inline-search" action="../../search.html" method="get">
+          <input placeholder="Quick search" aria-label="Quick search" type="text" name="q" />
+          <input type="submit" value="Go" />
+          <input type="hidden" name="check_keywords" value="yes" />
+          <input type="hidden" name="area" value="default" />
+        </form>
+    </div>
+                     |
+                </li>
+            
+      </ul>
+    </div>    
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="module-inpKeywordSequence">
+<span id="inpkeywordsequence"></span><h1><a class="reference internal" href="#module-inpKeywordSequence" title="inpKeywordSequence"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpKeywordSequence</span></code></a><a class="headerlink" href="#module-inpKeywordSequence" title="Permalink to this heading">¶</a></h1>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Permalink to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="inpKeywordSequence.inpKeywordSequence">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">inpKeywordSequence.</span></span><span class="sig-name descname"><span class="pre">inpKeywordSequence</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iterable</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parentBlock</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#inpKeywordSequence.inpKeywordSequence" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a></p>
+<p>An <a class="reference internal" href="#module-inpKeywordSequence" title="inpKeywordSequence"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpKeywordSequence</span></code></a> inherits from <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>, but it has some additional enhancements to make it
+more useful to <a class="reference internal" href="../inpRW/index.html#module-inpRW" title="inpRW"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW</span></code></a>. Mainly, an <a class="reference internal" href="#module-inpKeywordSequence" title="inpKeywordSequence"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpKeywordSequence</span></code></a> automatically builds a reference to certain
+important information from each <a class="reference internal" href="../inpKeyword/index.html#inpKeyword.inpKeyword" title="inpKeyword.inpKeyword"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpKeyword</span></code></a> instance placed into the <a class="reference internal" href="#module-inpKeywordSequence" title="inpKeywordSequence"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpKeywordSequence</span></code></a>,
+and it has a a function which the main <a class="reference internal" href="../inpRW/index.html#inpRW.inpRW" title="inpRW.inpRW"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpRW</span></code></a> instance can call to retrieve this information from
+the main <a class="reference internal" href="#module-inpKeywordSequence" title="inpKeywordSequence"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpKeywordSequence</span></code></a>, and all its children recursively. String formatting has also been modified
+to be more suited to this application.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="inpKeywordSequence.inpKeywordSequence.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iterable</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parentBlock</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#inpKeywordSequence.inpKeywordSequence.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>This class creates a blank <a class="reference internal" href="#module-inpKeywordSequence" title="inpKeywordSequence"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpKeywordSequence</span></code></a> object, which inherits from the list type. It’s main purpose
+is to hold <a class="reference internal" href="../inpKeyword/index.html#inpKeyword.inpKeyword" title="inpKeyword.inpKeyword"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpKeyword</span></code></a> objects, and it provides convenient methods for gathering important
+information from certain keyword blocks and making it available to the <a class="reference internal" href="../inpRW/index.html#inpRW.inpRW" title="inpRW.inpRW"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpRW</span></code></a> instance.</p>
+<p>Creating a string representation of this class will create a useful summary of the keyword lines for each block,
+along with the <a class="reference internal" href="../inpKeyword/index.html#inpKeyword.inpKeyword.path" title="inpKeyword.inpKeyword.path"><code class="xref py py-attr docutils literal notranslate"><span class="pre">path</span></code></a> to the block, and the same information for the <a class="reference internal" href="../inpKeyword/index.html#inpKeyword.inpKeyword.suboptions" title="inpKeyword.inpKeyword.suboptions"><code class="xref py py-attr docutils literal notranslate"><span class="pre">suboptions</span></code></a>
+of each block if <a class="reference internal" href="#inpKeywordSequence.inpKeywordSequence.printSubBlocks" title="inpKeywordSequence.inpKeywordSequence.printSubBlocks"><code class="xref py py-attr docutils literal notranslate"><span class="pre">printSubBlocks</span></code></a> = True.</p>
+<p>For most users, the details of this class can be ignored. Simply create <a class="reference internal" href="../inpKeyword/index.html#inpKeyword.inpKeyword" title="inpKeyword.inpKeyword"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpKeyword</span></code></a> objects
+using one of the recommended options, and add the keyword blocks to the appropriate location.</p>
+<p>In particular, this class has the following attributes which hold information needed by <a class="reference internal" href="../inpRW/index.html#inpRW.inpRW" title="inpRW.inpRW"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpRW</span></code></a>:
+<a class="reference internal" href="#inpKeywordSequence.inpKeywordSequence._nd" title="inpKeywordSequence.inpKeywordSequence._nd"><code class="xref py py-attr docutils literal notranslate"><span class="pre">_nd</span></code></a>, <a class="reference internal" href="#inpKeywordSequence.inpKeywordSequence._ed" title="inpKeywordSequence.inpKeywordSequence._ed"><code class="xref py py-attr docutils literal notranslate"><span class="pre">_ed</span></code></a>, <a class="reference internal" href="#inpKeywordSequence.inpKeywordSequence._pd" title="inpKeywordSequence.inpKeywordSequence._pd"><code class="xref py py-attr docutils literal notranslate"><span class="pre">_pd</span></code></a>, <a class="reference internal" href="#inpKeywordSequence.inpKeywordSequence._namedRefs" title="inpKeywordSequence.inpKeywordSequence._namedRefs"><code class="xref py py-attr docutils literal notranslate"><span class="pre">_namedRefs</span></code></a>, and <a class="reference internal" href="#inpKeywordSequence.inpKeywordSequence._delayedPlaceBlocks" title="inpKeywordSequence.inpKeywordSequence._delayedPlaceBlocks"><code class="xref py py-attr docutils literal notranslate"><span class="pre">_delayedPlaceBlocks</span></code></a>. The first four items
+are created when instancing particular keyword blocks and stored in <a class="reference internal" href="../inpKeyword/index.html#inpKeyword.inpKeyword._inpItemsToUpdate" title="inpKeyword.inpKeyword._inpItemsToUpdate"><code class="xref py py-attr docutils literal notranslate"><span class="pre">_inpItemsToUpdate</span></code></a>,
+and will be automatically inserted into the <a class="reference internal" href="#module-inpKeywordSequence" title="inpKeywordSequence"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpKeywordSequence</span></code></a> if <a class="reference internal" href="../inpRW/index.html#inpRW.inpRW" title="inpRW.inpRW"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpRW</span></code></a> is on the correct
+insertion loop (specified by <a class="reference internal" href="../config/index.html#config._keywordsDelayPlacingData" title="config._keywordsDelayPlacingData"><code class="xref py py-attr docutils literal notranslate"><span class="pre">_keywordsDelayPlacingData</span></code></a>) when the keyword block is added to the
+<a class="reference internal" href="#module-inpKeywordSequence" title="inpKeywordSequence"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpKeywordSequence</span></code></a>.</p>
+<p>This class is also setup to pull these attributes from the same attributes from child <a class="reference internal" href="#module-inpKeywordSequence" title="inpKeywordSequence"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpKeywordSequences</span></code></a>
+via <a class="reference internal" href="#inpKeywordSequence.inpKeywordSequence.mergeSuboptionsGlobalData" title="inpKeywordSequence.inpKeywordSequence.mergeSuboptionsGlobalData"><code class="xref py py-func docutils literal notranslate"><span class="pre">mergeSuboptionsGlobalData()</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>iterable</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a>) – A sequence of <a class="reference internal" href="../inpKeyword/index.html#module-inpKeyword" title="inpKeyword"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpKeyword</span></code></a> blocks with which to pre-populate the <a class="reference internal" href="#module-inpKeywordSequence" title="inpKeywordSequence"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpKeywordSequence</span></code></a>.
+Defaults to []</p></li>
+<li><p><strong>parentBlock</strong> (<a class="reference internal" href="../inpKeyword/index.html#inpKeyword.inpKeyword" title="inpKeyword.inpKeyword"><em>inpKeyword</em></a>) – If the <a class="reference internal" href="#module-inpKeywordSequence" title="inpKeywordSequence"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpKeywordSequence</span></code></a> instance is the <a class="reference internal" href="../inpKeyword/index.html#inpKeyword.inpKeyword.suboptions" title="inpKeyword.inpKeyword.suboptions"><code class="xref py py-attr docutils literal notranslate"><span class="pre">suboptions</span></code></a>
+attribute of a <a class="reference internal" href="../inpKeyword/index.html#module-inpKeyword" title="inpKeyword"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpKeyword</span></code></a> block, <em>parentBlock</em> should be set to this <a class="reference internal" href="../inpKeyword/index.html#module-inpKeyword" title="inpKeyword"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpKeyword</span></code></a> block.
+This is currently referenced only to report the path to access the :class:~inpKeywordSequence` instance.
+Defaults to None.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="inpKeywordSequence.inpKeywordSequence.parentBlock">
+<span class="sig-name descname"><span class="pre">parentBlock</span></span><a class="headerlink" href="#inpKeywordSequence.inpKeywordSequence.parentBlock" title="Permalink to this definition">¶</a></dt>
+<dd><p>This will be None if the <a class="reference internal" href="#module-inpKeywordSequence" title="inpKeywordSequence"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpKeywordSequence</span></code></a> is the <a class="reference internal" href="../inpRW/index.html#inpRW.inpRW.keywords" title="inpRW.inpRW.keywords"><code class="xref py py-attr docutils literal notranslate"><span class="pre">keywords</span></code></a> attribute, else it will refer to the <a class="reference internal" href="../inpKeyword/index.html#inpKeyword.inpKeyword" title="inpKeyword.inpKeyword"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpKeyword</span></code></a> block for which this item is the <a class="reference internal" href="../inpKeyword/index.html#inpKeyword.inpKeyword.suboptions" title="inpKeyword.inpKeyword.suboptions"><code class="xref py py-attr docutils literal notranslate"><span class="pre">suboptions</span></code></a> attribute.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../inpKeyword/index.html#inpKeyword.inpKeyword" title="inpKeyword.inpKeyword">inpKeyword</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="inpKeywordSequence.inpKeywordSequence.printSubBlocks">
+<span class="sig-name descname"><span class="pre">printSubBlocks</span></span><a class="headerlink" href="#inpKeywordSequence.inpKeywordSequence.printSubBlocks" title="Permalink to this definition">¶</a></dt>
+<dd><p>If False, generating a string of this <a class="reference internal" href="#module-inpKeywordSequence" title="inpKeywordSequence"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpKeywordSequence</span></code></a> will generate a string for each block in this sequence, along with the <a class="reference internal" href="../inpKeyword/index.html#inpKeyword.inpKeyword.path" title="inpKeyword.inpKeyword.path"><code class="xref py py-attr docutils literal notranslate"><span class="pre">path</span></code></a> to each block. If True, the <a class="reference internal" href="../inpKeyword/index.html#inpKeyword.inpKeyword.suboptions" title="inpKeyword.inpKeyword.suboptions"><code class="xref py py-attr docutils literal notranslate"><span class="pre">suboptions</span></code></a> for each block will also be fully expanded and represented.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="inpKeywordSequence.inpKeywordSequence._nd">
+<span class="sig-name descname"><span class="pre">_nd</span></span><a class="headerlink" href="#inpKeywordSequence.inpKeywordSequence._nd" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stores the nodal data for all keyword blocks in this <a class="reference internal" href="#module-inpKeywordSequence" title="inpKeywordSequence"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpKeywordSequence</span></code></a>, including that in the <a class="reference internal" href="../inpKeyword/index.html#inpKeyword.inpKeyword.suboptions" title="inpKeyword.inpKeyword.suboptions"><code class="xref py py-attr docutils literal notranslate"><span class="pre">suboptions</span></code></a> of blocks in this sequence. The user should interact with <a class="reference internal" href="../inpRW/index.html#inpRW.inpRW.nd" title="inpRW.inpRW.nd"><code class="xref py py-attr docutils literal notranslate"><span class="pre">nd</span></code></a>, which this attribute will eventually feed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../mesh/index.html#mesh.TotalMesh" title="mesh.TotalMesh">TotalMesh</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="inpKeywordSequence.inpKeywordSequence._ed">
+<span class="sig-name descname"><span class="pre">_ed</span></span><a class="headerlink" href="#inpKeywordSequence.inpKeywordSequence._ed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stores the element data for all keyword blocks in this <a class="reference internal" href="#module-inpKeywordSequence" title="inpKeywordSequence"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpKeywordSequence</span></code></a>, including that in the <a class="reference internal" href="../inpKeyword/index.html#inpKeyword.inpKeyword.suboptions" title="inpKeyword.inpKeyword.suboptions"><code class="xref py py-attr docutils literal notranslate"><span class="pre">suboptions</span></code></a> of blocks in this sequence. The user should interact with <a class="reference internal" href="../inpRW/index.html#inpRW.inpRW.ed" title="inpRW.inpRW.ed"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ed</span></code></a>, which this attribute will eventually feed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../mesh/index.html#mesh.TotalMesh" title="mesh.TotalMesh">TotalMesh</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="inpKeywordSequence.inpKeywordSequence._pd">
+<span class="sig-name descname"><span class="pre">_pd</span></span><a class="headerlink" href="#inpKeywordSequence.inpKeywordSequence._pd" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stores the *PARAMETER data for all keyword blocks in this <a class="reference internal" href="#module-inpKeywordSequence" title="inpKeywordSequence"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpKeywordSequence</span></code></a>, including that in the <a class="reference internal" href="../inpKeyword/index.html#inpKeyword.inpKeyword.suboptions" title="inpKeyword.inpKeyword.suboptions"><code class="xref py py-attr docutils literal notranslate"><span class="pre">suboptions</span></code></a> of blocks in this sequence. The user should interact with <a class="reference internal" href="../inpRW/index.html#inpRW.inpRW.pd" title="inpRW.inpRW.pd"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pd</span></code></a>, which this attribute will eventually feed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../csid/index.html#csid.csid" title="csid.csid">csid</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="inpKeywordSequence.inpKeywordSequence._namedRefs">
+<span class="sig-name descname"><span class="pre">_namedRefs</span></span><a class="headerlink" href="#inpKeywordSequence.inpKeywordSequence._namedRefs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stores the named reference definitions for all keyword blocks in this <a class="reference internal" href="#module-inpKeywordSequence" title="inpKeywordSequence"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpKeywordSequence</span></code></a>, including that in the <a class="reference internal" href="../inpKeyword/index.html#inpKeyword.inpKeyword.suboptions" title="inpKeyword.inpKeyword.suboptions"><code class="xref py py-attr docutils literal notranslate"><span class="pre">suboptions</span></code></a> of blocks in this sequence. The user should interact with <a class="reference internal" href="../inpRW/index.html#inpRW.inpRW.namedRefs" title="inpRW.inpRW.namedRefs"><code class="xref py py-attr docutils literal notranslate"><span class="pre">namedRefs</span></code></a>, which this attribute will eventually feed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../csid/index.html#csid.csid" title="csid.csid">csid</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="inpKeywordSequence.inpKeywordSequence._delayedPlaceBlocks">
+<span class="sig-name descname"><span class="pre">_delayedPlaceBlocks</span></span><a class="headerlink" href="#inpKeywordSequence.inpKeywordSequence._delayedPlaceBlocks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Contains the loop number on which specific information from keyword blocks should be placed, along with a list of all effected keyword blocks for that loop.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../csid/index.html#csid.csid" title="csid.csid">csid</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="inpKeywordSequence.inpKeywordSequence._grandchildBlocks">
+<span class="sig-name descname"><span class="pre">_grandchildBlocks</span></span><a class="headerlink" href="#inpKeywordSequence.inpKeywordSequence._grandchildBlocks" title="Permalink to this definition">¶</a></dt>
+<dd><p>contains the number of suboptions keyword blocks in each child block with suboptions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)">list</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="inpKeywordSequence.inpKeywordSequence.append">
+<span class="sig-name descname"><span class="pre">append</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">place</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#inpKeywordSequence.inpKeywordSequence.append" title="Permalink to this definition">¶</a></dt>
+<dd><p>Appends <em>x</em> to the end of the <a class="reference internal" href="#module-inpKeywordSequence" title="inpKeywordSequence"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpKeywordSequence</span></code></a>.</p>
+<p>If <em>place</em> = True, will call <a class="reference internal" href="#inpKeywordSequence.inpKeywordSequence._placeInpItemsToUpdate" title="inpKeywordSequence.inpKeywordSequence._placeInpItemsToUpdate"><code class="xref py py-func docutils literal notranslate"><span class="pre">self._placeInpItemsToUpdate(x)</span></code></a> before running
+list.append. If <em>place</em> = False, <em>x</em> will be appended to <a class="reference internal" href="../inpRW/index.html#inpRW.inpRW._delayedPlaceBlocks" title="inpRW.inpRW._delayedPlaceBlocks"><code class="xref py py-attr docutils literal notranslate"><span class="pre">self.parentInp._delayedPlaceBlocks[loop]</span></code></a>,
+and it will also be inserted into the <a class="reference internal" href="#module-inpKeywordSequence" title="inpKeywordSequence"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpKeywordSequence</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<a class="reference internal" href="../inpKeyword/index.html#inpKeyword.inpKeyword" title="inpKeyword.inpKeyword"><em>inpKeyword</em></a>) – The <a class="reference internal" href="../inpKeyword/index.html#module-inpKeyword" title="inpKeyword"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpKeyword</span></code></a> instance to append.</p></li>
+<li><p><strong>place</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><em>bool</em></a>) – If True, call <a class="reference internal" href="#inpKeywordSequence.inpKeywordSequence._placeInpItemsToUpdate" title="inpKeywordSequence.inpKeywordSequence._placeInpItemsToUpdate"><code class="xref py py-func docutils literal notranslate"><span class="pre">_placeInpItemsToUpdate()</span></code></a> before appending <em>x</em>. Defaults to True.</p></li>
+<li><p><strong>loop</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a>) – If <em>place</em> is False, <em>loop</em> must be specified. <em>x</em> will be appended to
+<a class="reference internal" href="../inpRW/index.html#inpRW.inpRW._delayedPlaceBlocks" title="inpRW.inpRW._delayedPlaceBlocks"><code class="xref py py-attr docutils literal notranslate"><span class="pre">self.parentInp._delayedPlaceBlocks[loop]</span></code></a>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="inpKeywordSequence.inpKeywordSequence.extend">
+<span class="sig-name descname"><span class="pre">extend</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iterable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">place</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#inpKeywordSequence.inpKeywordSequence.extend" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extends the <a class="reference internal" href="#module-inpKeywordSequence" title="inpKeywordSequence"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpKeywordSequence</span></code></a> by appending all the items from <em>iterable</em>.</p>
+<p>If <em>place</em> = True, will call <a class="reference internal" href="#inpKeywordSequence.inpKeywordSequence._placeInpItemsToUpdate" title="inpKeywordSequence.inpKeywordSequence._placeInpItemsToUpdate"><code class="xref py py-func docutils literal notranslate"><span class="pre">self._placeInpItemsToUpdate(x)</span> <span class="pre">for</span> <span class="pre">x</span> <span class="pre">in</span> <span class="pre">iterable</span></code></a> before running
+list.extend. If <em>place</em> = False, each item in <em>iterable</em> will be appended to <a class="reference internal" href="../inpRW/index.html#inpRW.inpRW._delayedPlaceBlocks" title="inpRW.inpRW._delayedPlaceBlocks"><code class="xref py py-attr docutils literal notranslate"><span class="pre">self.parentInp._delayedPlaceBlocks[loop]</span></code></a>,
+and they will also be inserted into the <a class="reference internal" href="#module-inpKeywordSequence" title="inpKeywordSequence"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpKeywordSequence</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>iterable</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a>) – A sequence of <a class="reference internal" href="../inpKeyword/index.html#module-inpKeyword" title="inpKeyword"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpKeyword</span></code></a> instances with which to extend the <a class="reference internal" href="#module-inpKeywordSequence" title="inpKeywordSequence"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpKeywordSequence</span></code></a>.</p></li>
+<li><p><strong>place</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><em>bool</em></a>) – If True, call <a class="reference internal" href="#inpKeywordSequence.inpKeywordSequence._placeInpItemsToUpdate" title="inpKeywordSequence.inpKeywordSequence._placeInpItemsToUpdate"><code class="xref py py-func docutils literal notranslate"><span class="pre">_placeInpItemsToUpdate()</span></code></a> before inserting iterable. Defaults to True.</p></li>
+<li><p><strong>loop</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a>) – If <em>place</em> is False, <em>loop</em> must be specified. Each item in <em>iterable</em> will be appended to
+<a class="reference internal" href="../inpRW/index.html#inpRW.inpRW._delayedPlaceBlocks" title="inpRW.inpRW._delayedPlaceBlocks"><code class="xref py py-attr docutils literal notranslate"><span class="pre">self.parentInp._delayedPlaceBlocks[loop]</span></code></a>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="inpKeywordSequence.inpKeywordSequence.insert">
+<span class="sig-name descname"><span class="pre">insert</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">place</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#inpKeywordSequence.inpKeywordSequence.insert" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inserts <em>x</em> into the <a class="reference internal" href="#module-inpKeywordSequence" title="inpKeywordSequence"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpKeywordSequence</span></code></a> at position <em>i</em>.</p>
+<p>If <em>place</em> = True, will call <a class="reference internal" href="#inpKeywordSequence.inpKeywordSequence._placeInpItemsToUpdate" title="inpKeywordSequence.inpKeywordSequence._placeInpItemsToUpdate"><code class="xref py py-func docutils literal notranslate"><span class="pre">self._placeInpItemsToUpdate(x)</span></code></a> before running
+list.insert. If <em>place</em> = False, <em>x</em> will be appended to <a class="reference internal" href="../inpRW/index.html#inpRW.inpRW._delayedPlaceBlocks" title="inpRW.inpRW._delayedPlaceBlocks"><code class="xref py py-attr docutils literal notranslate"><span class="pre">self.parentInp._delayedPlaceBlocks[loop]</span></code></a>,
+and it will also be inserted into the <a class="reference internal" href="#module-inpKeywordSequence" title="inpKeywordSequence"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpKeywordSequence</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>i</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a>) – The index of the element before which to insert.</p></li>
+<li><p><strong>x</strong> (<a class="reference internal" href="../inpKeyword/index.html#inpKeyword.inpKeyword" title="inpKeyword.inpKeyword"><em>inpKeyword</em></a>) – The <a class="reference internal" href="../inpKeyword/index.html#module-inpKeyword" title="inpKeyword"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpKeyword</span></code></a> instance to insert.</p></li>
+<li><p><strong>place</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><em>bool</em></a>) – If True, call <a class="reference internal" href="#inpKeywordSequence.inpKeywordSequence._placeInpItemsToUpdate" title="inpKeywordSequence.inpKeywordSequence._placeInpItemsToUpdate"><code class="xref py py-func docutils literal notranslate"><span class="pre">_placeInpItemsToUpdate()</span></code></a> before inserting <em>x</em>. Defaults to True.</p></li>
+<li><p><strong>loop</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a>) – If <em>place</em> is False, <em>loop</em> must be specified. <em>x</em> will be appended to
+<a class="reference internal" href="../inpRW/index.html#inpRW.inpRW._delayedPlaceBlocks" title="inpRW.inpRW._delayedPlaceBlocks"><code class="xref py py-attr docutils literal notranslate"><span class="pre">self.parentInp._delayedPlaceBlocks[loop]</span></code></a>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="inpKeywordSequence.inpKeywordSequence.mergeSuboptionsGlobalData">
+<span class="sig-name descname"><span class="pre">mergeSuboptionsGlobalData</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#inpKeywordSequence.inpKeywordSequence.mergeSuboptionsGlobalData" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function will add the contents of <a class="reference internal" href="#inpKeywordSequence.inpKeywordSequence._nd" title="inpKeywordSequence.inpKeywordSequence._nd"><code class="xref py py-attr docutils literal notranslate"><span class="pre">_nd</span></code></a>, <a class="reference internal" href="#inpKeywordSequence.inpKeywordSequence._ed" title="inpKeywordSequence.inpKeywordSequence._ed"><code class="xref py py-attr docutils literal notranslate"><span class="pre">_ed</span></code></a>, <a class="reference internal" href="#inpKeywordSequence.inpKeywordSequence._pd" title="inpKeywordSequence.inpKeywordSequence._pd"><code class="xref py py-attr docutils literal notranslate"><span class="pre">_pd</span></code></a>, <a class="reference internal" href="#inpKeywordSequence.inpKeywordSequence._namedRefs" title="inpKeywordSequence.inpKeywordSequence._namedRefs"><code class="xref py py-attr docutils literal notranslate"><span class="pre">_namedRefs</span></code></a>,
+and <a class="reference internal" href="#inpKeywordSequence.inpKeywordSequence._delayedPlaceBlocks" title="inpKeywordSequence.inpKeywordSequence._delayedPlaceBlocks"><code class="xref py py-attr docutils literal notranslate"><span class="pre">_delayedPlaceBlocks</span></code></a> from the <a class="reference internal" href="../inpKeyword/index.html#inpKeyword.inpKeyword.suboptions" title="inpKeyword.inpKeyword.suboptions"><code class="xref py py-attr docutils literal notranslate"><span class="pre">suboptions</span></code></a> of every block in
+the <a class="reference internal" href="#module-inpKeywordSequence" title="inpKeywordSequence"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpKeywordSequence</span></code></a> recursively.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="inpKeywordSequence.inpKeywordSequence._placeInpItemsToUpdate">
+<span class="sig-name descname"><span class="pre">_placeInpItemsToUpdate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">block</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#inpKeywordSequence.inpKeywordSequence._placeInpItemsToUpdate" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function will place all items from <a class="reference internal" href="../inpKeyword/index.html#inpKeyword.inpKeyword._inpItemsToUpdate" title="inpKeyword.inpKeyword._inpItemsToUpdate"><code class="xref py py-attr docutils literal notranslate"><span class="pre">block._inpItemsToUpdate</span></code></a> into
+the appropriate attribute of the <a class="reference internal" href="#module-inpKeywordSequence" title="inpKeywordSequence"><code class="xref py py-class docutils literal notranslate"><span class="pre">inpKeywordSequence</span></code></a>.</p>
+<p>This currently will place data into :attr:_namedRefs`, :attr:_ed`, :attr:_nd`,
+and :attr:_pd`.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>block</strong> (<a class="reference internal" href="../inpKeyword/index.html#inpKeyword.inpKeyword" title="inpKeyword.inpKeyword"><em>inpKeyword</em></a>) – </p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../inpRW_toc.html">
+              <img class="logo" src="../../_static/3DS_SIMULIA_Logotype_RGB_BlueSteel.png" alt="Logo", style="border-radius:5px"/>
+            </a></p>
+  <div>
+    <h3><a href="../../inpRW_toc.html">Local Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpKeywordSequence</span></code></a><ul>
+<li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
+<li><a class="reference internal" href="#inpKeywordSequence.inpKeywordSequence"><code class="docutils literal notranslate"><span class="pre">inpKeywordSequence</span></code></a><ul>
+<li><a class="reference internal" href="#inpKeywordSequence.inpKeywordSequence.__init__"><code class="docutils literal notranslate"><span class="pre">inpKeywordSequence.__init__()</span></code></a></li>
+<li><a class="reference internal" href="#inpKeywordSequence.inpKeywordSequence.parentBlock"><code class="docutils literal notranslate"><span class="pre">inpKeywordSequence.parentBlock</span></code></a></li>
+<li><a class="reference internal" href="#inpKeywordSequence.inpKeywordSequence.printSubBlocks"><code class="docutils literal notranslate"><span class="pre">inpKeywordSequence.printSubBlocks</span></code></a></li>
+<li><a class="reference internal" href="#inpKeywordSequence.inpKeywordSequence._nd"><code class="docutils literal notranslate"><span class="pre">inpKeywordSequence._nd</span></code></a></li>
+<li><a class="reference internal" href="#inpKeywordSequence.inpKeywordSequence._ed"><code class="docutils literal notranslate"><span class="pre">inpKeywordSequence._ed</span></code></a></li>
+<li><a class="reference internal" href="#inpKeywordSequence.inpKeywordSequence._pd"><code class="docutils literal notranslate"><span class="pre">inpKeywordSequence._pd</span></code></a></li>
+<li><a class="reference internal" href="#inpKeywordSequence.inpKeywordSequence._namedRefs"><code class="docutils literal notranslate"><span class="pre">inpKeywordSequence._namedRefs</span></code></a></li>
+<li><a class="reference internal" href="#inpKeywordSequence.inpKeywordSequence._delayedPlaceBlocks"><code class="docutils literal notranslate"><span class="pre">inpKeywordSequence._delayedPlaceBlocks</span></code></a></li>
+<li><a class="reference internal" href="#inpKeywordSequence.inpKeywordSequence._grandchildBlocks"><code class="docutils literal notranslate"><span class="pre">inpKeywordSequence._grandchildBlocks</span></code></a></li>
+<li><a class="reference internal" href="#inpKeywordSequence.inpKeywordSequence.append"><code class="docutils literal notranslate"><span class="pre">inpKeywordSequence.append()</span></code></a></li>
+<li><a class="reference internal" href="#inpKeywordSequence.inpKeywordSequence.extend"><code class="docutils literal notranslate"><span class="pre">inpKeywordSequence.extend()</span></code></a></li>
+<li><a class="reference internal" href="#inpKeywordSequence.inpKeywordSequence.insert"><code class="docutils literal notranslate"><span class="pre">inpKeywordSequence.insert()</span></code></a></li>
+<li><a class="reference internal" href="#inpKeywordSequence.inpKeywordSequence.mergeSuboptionsGlobalData"><code class="docutils literal notranslate"><span class="pre">inpKeywordSequence.mergeSuboptionsGlobalData()</span></code></a></li>
+<li><a class="reference internal" href="#inpKeywordSequence.inpKeywordSequence._placeInpItemsToUpdate"><code class="docutils literal notranslate"><span class="pre">inpKeywordSequence._placeInpItemsToUpdate()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  </div>
+<h3><a href="../../inpRW_toc.html">Global Table of Contents</a></h3>
+<p class="caption" role="heading"><span class="caption-text">User Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Introduction.html">inpRW Utility Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Project-Background.html">Project Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Installation-and-Usage.html">Installation and Usage Instructions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Tests.html">inpRW Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Tests.html#running-inprw-tests">Running inpRW Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/inpKeyword-Basics.html">inpKeyword Basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Strings_Integers_and_Decimals.html">Strings, Integers, and Decimals</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Important-inpRW-Attributes.html">Important <code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW</span></code> Attributes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Miscellaneous-Usage-hints.html">Miscellaneous Usage Hints</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/Example-Scenarios.html">Example Scenarios</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user/glossary.html">Glossary</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../inpRW/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../centroid/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">centroid</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../config/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">config</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../config_re/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">config_re</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../csid/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">csid</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../eval2/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">eval2</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../elType/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">elType</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inpDecimal/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpDecimal</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inpInt/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpInt</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inpKeyword/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpKeyword</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inpKeywordHelper/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpKeywordHelper</span></code></a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpKeywordSequence</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inpRWErrors/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRWErrors</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../inpString/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpString</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../mesh/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">mesh</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../misc_functions/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">misc_functions</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../NoneSort/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">NoneSort</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../printer/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">printer</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../repr2/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">repr2</span></code></a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Update Notes</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Update-Notes/index.html">Update Notes</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Legal Notices and Usage Disclaimer</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../legal_notices/Legal_Notices_and_Usage_Disclaimer.html">Legal Notices and Usage Disclaimer</a></li>
+</ul>
+
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="../inpKeywordHelper/index.html"
+                          title="previous chapter"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpKeywordHelper</span></code></a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="../inpRWErrors/index.html"
+                          title="next chapter"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRWErrors</span></code></a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/autoapi/inpKeywordSequence/index.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>  
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../inpRWErrors/index.html" title="inpRWErrors"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../inpKeywordHelper/index.html" title="inpKeywordHelper"
+             >previous</a> |</li>
+          <li><img src="../../_static/icon-116-3dx-apps.svg" alt="python logo" style="vertical-align: middle; margin-top: -1px"/></li>
+          <li><a href="inpRW_toc.html"></a> &#187;</li>
+          <li class="switchers">
+            <div class="language_switcher_placeholder"></div>
+            <div class="version_switcher_placeholder"></div>
+          </li>
+          <li>
+              
+              <a href="../../inpRW_toc.html">inpRW 2023.10.6 documentation</a> &#187;
+              
+          </li>
+        <li class="nav-item nav-item-this"><a href=""><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpKeywordSequence</span></code></a></li>
+                <li class="right">
+                    
+
+    <div class="inline-search" role="search">
+        <form class="inline-search" action="../../search.html" method="get">
+          <input placeholder="Quick search" aria-label="Quick search" type="text" name="q" />
+          <input type="submit" value="Go" />
+          <input type="hidden" name="check_keywords" value="yes" />
+          <input type="hidden" name="area" value="default" />
+        </form>
+    </div>
+                     |
+                </li>
+            
+      </ul>
+    </div>  
+    <div class="footer">
+    &copy; Copyright 2023, Dassault Systèmes Simulia Corp.
+     <a href="../../_static/legal_notices.pdf" >inpRW Legal Notices</a>.<br />
+     <a href="../../_static/Read_Disclaimer_First.txt" >inpRW Usage Disclaimer</a>.<br />
+    Last updated on Nov 21, 2023.
+    <a href="https://r1132100503382-eu1-3dswym.3dexperience.3ds.com/#community:39/post:nE1VLzylQoKgfG2wekOpFg">Found a bug</a>?
+    </div>
+
+  </body>
+</html>

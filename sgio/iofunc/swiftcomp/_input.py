@@ -107,7 +107,7 @@ def _readMaterialRotationCombinations(file, ncomb):
 
 
 
-def _readMaterials(file, nmate:int):
+def _readMaterials(file, nmate:int, physics:int):
     """
     """
 
@@ -126,7 +126,7 @@ def _readMaterials(file, nmate:int):
         # Read material id, isotropy
         mate_id, isotropy, ntemp = list(map(int, line))
 
-        material = _readMaterial(file, isotropy, ntemp)
+        material = _readMaterial(file, isotropy, ntemp, physics)
 
         materials[mate_id] = material
 
@@ -137,7 +137,7 @@ def _readMaterials(file, nmate:int):
 
 
 
-def _readMaterial(file, isotropy:int, ntemp:int=1):
+def _readMaterial(file, isotropy:int, ntemp:int=1, physics:int=0):
     """
     """
 
@@ -167,6 +167,10 @@ def _readMaterial(file, isotropy:int, ntemp:int=1):
         mp.set('density', density)
 
         # Read thermal properties
+        if physics in [1, 4, 6]:
+            cte, specific_heat = _readThermalProperty(file, isotropy)
+            mp.set('cte', cte)
+            mp.set('specific_heat', specific_heat)
 
         temp_counter += 1
 
@@ -195,6 +199,31 @@ def _readElasticProperty(file, isotropy:int):
         constants.extend(list(map(float, line.split())))
 
     return constants
+
+
+
+
+def _readThermalProperty(file, isotropy:int):
+    """
+    """
+    cte = []
+    specific_heat = 0
+
+    line = sutl.readNextNonEmptyLine(file)
+    line = list(map(float, line.split()))
+
+    if isotropy == 0:
+        cte = line[:1]
+        specific_heat = line[1]
+    elif isotropy == 1:
+        cte = line[:3]
+        specific_heat = line[3]
+    elif isotropy == 2:
+        cte = line[:6]
+        specific_heat = line[6]
+
+    return cte, specific_heat
+
 
 
 
@@ -417,8 +446,10 @@ def _writeMaterial(
         elif anisotropy == 2:
             for i in range(6):
                 for j in range(i, 6):
-                    sutl.writeFormatFloats(
-                        file, material.get(f'c{i+1}{j+1}'), sff, newline=False)
+                    _v = material.get(f'c{i+1}{j+1}')
+                    file.write(f'{_v:{sff}}')
+                    # sutl.writeFormatFloats(
+                    #     file, material.get(f'c{i+1}{j+1}'), sff, newline=False)
                 file.write('\n')
 
         if physics in [1, 4, 6]:

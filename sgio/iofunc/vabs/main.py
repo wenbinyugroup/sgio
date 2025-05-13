@@ -30,7 +30,7 @@ from sgio.core.sg import StructureGene
 logger = logging.getLogger(__name__)
 
 
-def read_buffer(f, file_format:str, format_version:str, model:int|str):
+def read_buffer(f, format_version:str):
     """
     """
     sg = StructureGene()
@@ -38,22 +38,13 @@ def read_buffer(f, file_format:str, format_version:str, model:int|str):
 
     smdim = 1
 
-    # if isinstance(model, int):
-    #     smdim = model
-    # elif isinstance(model, str):
-    #     if model.upper()[:2] == 'SD':
-    #         smdim = 3
-    #     elif model.upper()[:2] == 'PL':
-    #         smdim = 2
-    #     elif model.upper()[:2] == 'BM':
-    #         smdim = 1
-
     sg.smdim = smdim
     # print(f'smdim: {smdim}')
 
     # Read head
-    configs = _readHeader(f, file_format, format_version, smdim)
+    configs = _readHeader(f)
     # print(f'configs: {configs}')
+    format_flag = configs['format']
     sg.sgdim = configs['sgdim']
     sg.physics = configs['physics']
     sg.do_dampling = configs.get('do_damping', 0)
@@ -65,15 +56,13 @@ def read_buffer(f, file_format:str, format_version:str, model:int|str):
     init_curvs = configs.get('curvature', [0.0, 0.0, 0.0])
     sg.initial_twist = init_curvs[0]
     sg.initial_curvature = init_curvs[1:]
-        # elif smdim == 2:
-        #     sg.initial_curvature = configs.get('curvature', [0.0, 0.0])
+
 
     nnode = configs['num_nodes']
     nelem = configs['num_elements']
 
     # Read mesh
-    sg.mesh = _readMesh(f, file_format, sg.sgdim, nnode, nelem, _use_elem_local_orient)
-    # sg.mesh = read_sgmesh_buffer(f, file_format, sg.sgdim, nnode, nelem, _use_elem_local_orient)
+    sg.mesh = _readMesh(f, sg.sgdim, nnode, nelem, format_flag)
 
     # Read material in-plane angle combinations
     nma_comb = configs['num_mat_angle3_comb']
@@ -81,7 +70,7 @@ def read_buffer(f, file_format:str, format_version:str, model:int|str):
 
     # Read materials
     nmate = configs['num_materials']
-    sg.materials = _readMaterials(f, file_format, nmate)
+    sg.materials = _readMaterials(f, nmate)
 
     # print(f'sg.model: {sg.model}')
 

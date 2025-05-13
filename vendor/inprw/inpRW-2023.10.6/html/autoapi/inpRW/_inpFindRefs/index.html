@@ -1,0 +1,1160 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>inpRW._inpFindRefs &#8212; inpRW 2023.10.6 documentation</title><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/pydoctheme.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles.css" />
+    
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/sphinx_highlight.js"></script>
+    
+    <script src="../../../_static/sidebar.js"></script>
+    
+    <link rel="shortcut icon" href="../../../_static/3DS_SIMULIA_Blue_Icon_32.png"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="inpRW._inpMod" href="../_inpMod/index.html" />
+    <link rel="prev" title="inpRW._inpFind" href="../_inpFind/index.html" /><link rel="shortcut icon" type="image/png" href="../../../_static/icon-116-3dx-apps.svg" />
+            <script type="text/javascript" src="../../../_static/copybutton.js"></script>
+            <script type="text/javascript" src="../../../_static/menu.js"></script> 
+  </head>
+<body>
+<div class="mobile-nav">
+    <input type="checkbox" id="menuToggler" class="toggler__input" aria-controls="navigation"
+           aria-pressed="false" aria-expanded="false" role="button" aria-label="Menu" />
+    <label for="menuToggler" class="toggler__label">
+        <span></span>
+    </label>
+    <nav class="nav-content" role="navigation">
+         <a href="inpRW_toc.html" class="nav-logo">
+             <img src="../../../_static/icon-116-3dx-apps.svg" alt="Logo"/>
+         </a>
+        <div class="version_switcher_placeholder"></div>
+        <form role="search" class="search" action="../../../search.html" method="get">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" class="search-icon">
+                <path fill-rule="nonzero"
+                        d="M15.5 14h-.79l-.28-.27a6.5 6.5 0 001.48-5.34c-.47-2.78-2.79-5-5.59-5.34a6.505 6.505 0 00-7.27 7.27c.34 2.8 2.56 5.12 5.34 5.59a6.5 6.5 0 005.34-1.48l.27.28v.79l4.25 4.25c.41.41 1.08.41 1.49 0 .41-.41.41-1.08 0-1.49L15.5 14zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" fill="#444"></path>
+            </svg>
+            <input type="text" name="q" aria-label="Quick search"/>
+            <input type="submit" value="Go"/>
+        </form>
+    </nav>
+    <div class="menu-wrapper">
+        <nav class="menu" role="navigation" aria-label="main navigation">
+            <div class="language_switcher_placeholder"></div>
+            <p class="logo">
+                <a href="../../../index.html">
+                <img class="logo" src="../../../_static/3DS_SIMULIA_Logotype_RGB_BlueSteel.png" alt="Logo" style="border-radius:5px"/>
+                </a>
+            </p>
+  <div>
+    <h3><a href="../../../inpRW_toc.html">Local Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW._inpFindRefs</span></code></a><ul>
+<li><a class="reference internal" href="#module-inpRW._inpFindRefs">Module Contents</a><ul>
+<li><a class="reference internal" href="#inpRW._inpFindRefs.FindRefs"><code class="docutils literal notranslate"><span class="pre">FindRefs</span></code></a><ul>
+<li><a class="reference internal" href="#inpRW._inpFindRefs.FindRefs.findAdaptivemeshcontrolsRefs"><code class="docutils literal notranslate"><span class="pre">FindRefs.findAdaptivemeshcontrolsRefs()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpFindRefs.FindRefs.findClearanceRefs"><code class="docutils literal notranslate"><span class="pre">FindRefs.findClearanceRefs()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpFindRefs.FindRefs.findConnectorbehaviorRefs"><code class="docutils literal notranslate"><span class="pre">FindRefs.findConnectorbehaviorRefs()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpFindRefs.FindRefs.findContactclearanceRefs"><code class="docutils literal notranslate"><span class="pre">FindRefs.findContactclearanceRefs()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpFindRefs.FindRefs.findContactinitializationdataRefs"><code class="docutils literal notranslate"><span class="pre">FindRefs.findContactinitializationdataRefs()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpFindRefs.FindRefs.findContactpairRefs"><code class="docutils literal notranslate"><span class="pre">FindRefs.findContactpairRefs()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpFindRefs.FindRefs.findDistributionRefs"><code class="docutils literal notranslate"><span class="pre">FindRefs.findDistributionRefs()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpFindRefs.FindRefs.findDistributiontableRefs"><code class="docutils literal notranslate"><span class="pre">FindRefs.findDistributiontableRefs()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpFindRefs.FindRefs.findElementprogressiveactivationRefs"><code class="docutils literal notranslate"><span class="pre">FindRefs.findElementprogressiveactivationRefs()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpFindRefs.FindRefs.findElementRefs"><code class="docutils literal notranslate"><span class="pre">FindRefs.findElementRefs()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpFindRefs.FindRefs.findEnrichmentRefs"><code class="docutils literal notranslate"><span class="pre">FindRefs.findEnrichmentRefs()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpFindRefs.FindRefs.findFastenerpropertyRefs"><code class="docutils literal notranslate"><span class="pre">FindRefs.findFastenerpropertyRefs()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpFindRefs.FindRefs.findFieldmappercontrolsRefs"><code class="docutils literal notranslate"><span class="pre">FindRefs.findFieldmappercontrolsRefs()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpFindRefs.FindRefs.findFluidbehaviorRefs"><code class="docutils literal notranslate"><span class="pre">FindRefs.findFluidbehaviorRefs()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpFindRefs.FindRefs.findGasketbehaviorRefs"><code class="docutils literal notranslate"><span class="pre">FindRefs.findGasketbehaviorRefs()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpFindRefs.FindRefs.findImpedancepropertyRefs"><code class="docutils literal notranslate"><span class="pre">FindRefs.findImpedancepropertyRefs()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpFindRefs.FindRefs.findIncidentwaveinteractionpropertyRefs"><code class="docutils literal notranslate"><span class="pre">FindRefs.findIncidentwaveinteractionpropertyRefs()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpFindRefs.FindRefs.findIncidentwavepropertyRefs"><code class="docutils literal notranslate"><span class="pre">FindRefs.findIncidentwavepropertyRefs()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpFindRefs.FindRefs.findIntegratedoutputsectionRefs"><code class="docutils literal notranslate"><span class="pre">FindRefs.findIntegratedoutputsectionRefs()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpFindRefs.FindRefs.findNodeRefs"><code class="docutils literal notranslate"><span class="pre">FindRefs.findNodeRefs()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpFindRefs.FindRefs.findOrientationRefs"><code class="docutils literal notranslate"><span class="pre">FindRefs.findOrientationRefs()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpFindRefs.FindRefs.findPeriodicmediaRefs"><code class="docutils literal notranslate"><span class="pre">FindRefs.findPeriodicmediaRefs()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpFindRefs.FindRefs.findRebarlayerRefs"><code class="docutils literal notranslate"><span class="pre">FindRefs.findRebarlayerRefs()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpFindRefs.FindRefs.findRebarRefs"><code class="docutils literal notranslate"><span class="pre">FindRefs.findRebarRefs()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpFindRefs.FindRefs.findRigidbodyRefs"><code class="docutils literal notranslate"><span class="pre">FindRefs.findRigidbodyRefs()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpFindRefs.FindRefs.findSectioncontrolsRefs"><code class="docutils literal notranslate"><span class="pre">FindRefs.findSectioncontrolsRefs()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpFindRefs.FindRefs.findSubstructureloadcaseRefs"><code class="docutils literal notranslate"><span class="pre">FindRefs.findSubstructureloadcaseRefs()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpFindRefs.FindRefs.findSurfaceRefs"><code class="docutils literal notranslate"><span class="pre">FindRefs.findSurfaceRefs()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpFindRefs.FindRefs.findSurfaceinteractionRefs"><code class="docutils literal notranslate"><span class="pre">FindRefs.findSurfaceinteractionRefs()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpFindRefs.FindRefs.findSurfacepropertyRefs"><code class="docutils literal notranslate"><span class="pre">FindRefs.findSurfacepropertyRefs()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpFindRefs.FindRefs.findSurfacesmoothingRefs"><code class="docutils literal notranslate"><span class="pre">FindRefs.findSurfacesmoothingRefs()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpFindRefs.FindRefs.findTracerparticleRefs"><code class="docutils literal notranslate"><span class="pre">FindRefs.findTracerparticleRefs()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  </div>
+<h3><a href="../../../inpRW_toc.html">Global Table of Contents</a></h3>
+<p class="caption" role="heading"><span class="caption-text">User Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/Introduction.html">inpRW Utility Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/Project-Background.html">Project Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/Installation-and-Usage.html">Installation and Usage Instructions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/Tests.html">inpRW Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/Tests.html#running-inprw-tests">Running inpRW Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/inpKeyword-Basics.html">inpKeyword Basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/Strings_Integers_and_Decimals.html">Strings, Integers, and Decimals</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/Important-inpRW-Attributes.html">Important <code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW</span></code> Attributes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/Miscellaneous-Usage-hints.html">Miscellaneous Usage Hints</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/Example-Scenarios.html">Example Scenarios</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/glossary.html">Glossary</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW</span></code></a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../_inpR/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW._inpR</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_inpW/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW._inpW</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_inpFind/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW._inpFind</span></code></a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW._inpFindRefs</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_inpMod/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW._inpMod</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_importedModules/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW._importedModules</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_inpCustom/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW._inpCustom</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../centroid/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">centroid</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../config/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">config</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../config_re/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">config_re</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../csid/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">csid</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../eval2/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">eval2</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../elType/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">elType</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../inpDecimal/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpDecimal</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../inpInt/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpInt</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../inpKeyword/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpKeyword</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../inpKeywordHelper/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpKeywordHelper</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../inpKeywordSequence/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpKeywordSequence</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../inpRWErrors/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRWErrors</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../inpString/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpString</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../mesh/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">mesh</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../misc_functions/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">misc_functions</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../NoneSort/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">NoneSort</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../printer/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">printer</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../repr2/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">repr2</span></code></a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Update Notes</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../Update-Notes/index.html">Update Notes</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Legal Notices and Usage Disclaimer</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../legal_notices/Legal_Notices_and_Usage_Disclaimer.html">Legal Notices and Usage Disclaimer</a></li>
+</ul>
+
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="../_inpFind/index.html"
+                          title="previous chapter"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW._inpFind</span></code></a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="../_inpMod/index.html"
+                          title="next chapter"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW._inpMod</span></code></a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../../_sources/autoapi/inpRW/_inpFindRefs/index.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </nav>
+    </div>
+</div>
+  
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../_inpMod/index.html" title="inpRW._inpMod"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../_inpFind/index.html" title="inpRW._inpFind"
+             accesskey="P">previous</a> |</li>
+          <li><img src="../../../_static/icon-116-3dx-apps.svg" alt="python logo" style="vertical-align: middle; margin-top: -1px"/></li>
+          <li><a href="inpRW_toc.html"></a> &#187;</li>
+          <li class="switchers">
+            <div class="language_switcher_placeholder"></div>
+            <div class="version_switcher_placeholder"></div>
+          </li>
+          <li>
+              
+              <a href="../../../inpRW_toc.html">inpRW 2023.10.6 documentation</a> &#187;
+              
+          </li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW</span></code></a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href=""><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW._inpFindRefs</span></code></a></li>
+                <li class="right">
+                    
+
+    <div class="inline-search" role="search">
+        <form class="inline-search" action="../../../search.html" method="get">
+          <input placeholder="Quick search" aria-label="Quick search" type="text" name="q" />
+          <input type="submit" value="Go" />
+          <input type="hidden" name="check_keywords" value="yes" />
+          <input type="hidden" name="area" value="default" />
+        </form>
+    </div>
+                     |
+                </li>
+            
+      </ul>
+    </div>    
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="inprw-inpfindrefs">
+<h1><a class="reference internal" href="#module-inpRW._inpFindRefs" title="inpRW._inpFindRefs"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW._inpFindRefs</span></code></a><a class="headerlink" href="#inprw-inpfindrefs" title="Permalink to this heading">¶</a></h1>
+<section id="module-inpRW._inpFindRefs">
+<span id="module-contents"></span><h2>Module Contents<a class="headerlink" href="#module-inpRW._inpFindRefs" title="Permalink to this heading">¶</a></h2>
+<p>This module contains functions for finding references to given names or labels in the input file.</p>
+<p>The functions here are not really meant to be used by the end-user; the designed entry point is through
+<a class="reference internal" href="../_inpFind/index.html#inpRW._inpFind.Find.findItemReferences" title="inpRW._inpFind.Find.findItemReferences"><code class="xref py py-func docutils literal notranslate"><span class="pre">findItemReferences()</span></code></a>. All of the functions in this module are named like the following:
+“find[Abaquskeywordname]Refs”. [Abaquskeywordname] should be an Abaqus keyword name, with the first word capitalized,
+no spaces, and all other words lower case. For example, if you wish to find references to a specific *CONNECTOR BEHAVIOR,
+you would use findConnectorbehaviorRefs. Using  <a class="reference internal" href="../_inpFind/index.html#inpRW._inpFind.Find.findItemReferences" title="inpRW._inpFind.Find.findItemReferences"><code class="xref py py-func docutils literal notranslate"><span class="pre">findItemReferences()</span></code></a> will automatically format
+the provided keyword name.</p>
+<p>These functions are currently somewhat slow. The problem is that they need to search every location in the input file which
+could reference the desired items. The performance of these functions depends on the number of locations to check far
+more than the number of items for which to search. For this reason, users should formulate their code so that these functions
+are called as few times as possible. For example, if the user wishes to search for references to nodes 1-5, they should not call
+<a class="reference internal" href="#inpRW._inpFindRefs.FindRefs.findNodeRefs" title="inpRW._inpFindRefs.FindRefs.findNodeRefs"><code class="xref py py-func docutils literal notranslate"><span class="pre">findNodeRefs()</span></code></a> 5 times, once for each node label. Rather, they should pass in a sequence
+or set of node labels. The function will check every possible location if the item in each location is in the input sequence.</p>
+<p>There are likely errors in these functions, as they are not fully tested and the Abaqus Keywords Guide is not always clear.
+This class is also not yet complete; the initial focus was on items that can reference node or elements. Please report any
+problems or new references that need to be addressed to <a class="reference external" href="mailto:erik&#46;kane&#37;&#52;&#48;3ds&#46;com">erik<span>&#46;</span>kane<span>&#64;</span>3ds<span>&#46;</span>com</a>.</p>
+<p>These functions work (at least, once all the bugs are found), but they are slow. They will hopefully be eliminated in
+the future and replaced with an approach that can track references to specific items instead of needing to search for them.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="inpRW._inpFindRefs.FindRefs">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">inpRW._inpFindRefs.</span></span><span class="sig-name descname"><span class="pre">FindRefs</span></span><a class="headerlink" href="#inpRW._inpFindRefs.FindRefs" title="Permalink to this definition">¶</a></dt>
+<dd><p>The <a class="reference internal" href="#inpRW._inpFindRefs.FindRefs" title="inpRW._inpFindRefs.FindRefs"><code class="xref py py-class docutils literal notranslate"><span class="pre">FindRefs</span></code></a> class contains functions that find references to specific named entities
+in the parsed input file structure. For example, <a class="reference internal" href="#inpRW._inpFindRefs.FindRefs.findNodeRefs" title="inpRW._inpFindRefs.FindRefs.findNodeRefs"><code class="xref py py-func docutils literal notranslate"><span class="pre">inp.findNodeRefs([1,2,3])</span></code></a>
+will find every location in the parsed input file structure which references node labels 1, 2, and 3.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="inpRW._inpFindRefs.FindRefs.findAdaptivemeshcontrolsRefs">
+<span class="sig-name descname"><span class="pre">findAdaptivemeshcontrolsRefs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">names</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#inpRW._inpFindRefs.FindRefs.findAdaptivemeshcontrolsRefs" title="Permalink to this definition">¶</a></dt>
+<dd><p>findAdaptiveMeshControlsRefs(names)</p>
+<p>This function searches for keywords that can reference *ADAPTIVE MESH CONTROLS.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>names</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a>) – A sequence of *ADAPTIVE MESH CONTROLS names.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>Uses names as the keys, each value will be a list containing the exact location which references</dt><dd><p>the name and the region of the keyword effected by this reference.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../../csid/index.html#csid.csid" title="csid.csid">csid</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="inpRW._inpFindRefs.FindRefs.findClearanceRefs">
+<span class="sig-name descname"><span class="pre">findClearanceRefs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">names</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#inpRW._inpFindRefs.FindRefs.findClearanceRefs" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function searches for keywords that can reference *CLEARANCE.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>names</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a>) – A sequence of *CLEARANCE names.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>Uses names as the keys, each value will be a list containing the exact location which references</dt><dd><p>the name and the region of the keyword effected by this reference.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../../csid/index.html#csid.csid" title="csid.csid">csid</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="inpRW._inpFindRefs.FindRefs.findConnectorbehaviorRefs">
+<span class="sig-name descname"><span class="pre">findConnectorbehaviorRefs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">names</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#inpRW._inpFindRefs.FindRefs.findConnectorbehaviorRefs" title="Permalink to this definition">¶</a></dt>
+<dd><p>findConnectorBehaviorRefs(names)</p>
+<p>This function searches for keywords that can reference *CONNECTOR BEHAVIOR.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>names</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a>) – A sequence of *CONNECTOR BEHAVIOR names.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>Uses names as the keys, each value will be a list containing the exact location which references</dt><dd><p>the name and the region of the keyword effected by this reference.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../../csid/index.html#csid.csid" title="csid.csid">csid</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="inpRW._inpFindRefs.FindRefs.findContactclearanceRefs">
+<span class="sig-name descname"><span class="pre">findContactclearanceRefs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">names</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#inpRW._inpFindRefs.FindRefs.findContactclearanceRefs" title="Permalink to this definition">¶</a></dt>
+<dd><p>findContactClearanceRefs(names)</p>
+<p>This function searches for keywords that can reference *CONTACT CLEARANCE.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>names</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a>) – A sequence of *CONTACT CLEARANCE names.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>Uses names as the keys, each value will be a list containing the exact location which references</dt><dd><p>the name and the region of the keyword effected by this reference.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../../csid/index.html#csid.csid" title="csid.csid">csid</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="inpRW._inpFindRefs.FindRefs.findContactinitializationdataRefs">
+<span class="sig-name descname"><span class="pre">findContactinitializationdataRefs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">names</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#inpRW._inpFindRefs.FindRefs.findContactinitializationdataRefs" title="Permalink to this definition">¶</a></dt>
+<dd><p>findContactInitializationRefs(names)</p>
+<p>This function searches for keywords that can reference *CONTACT INITIALIZATION DATA.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>names</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a>) – A sequence of *CONTACT INITIALIZATION DATA names.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>Uses names as the keys, each value will be a list containing the exact location which references</dt><dd><p>the name and the region of the keyword effected by this reference.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../../csid/index.html#csid.csid" title="csid.csid">csid</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="inpRW._inpFindRefs.FindRefs.findContactpairRefs">
+<span class="sig-name descname"><span class="pre">findContactpairRefs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">names</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#inpRW._inpFindRefs.FindRefs.findContactpairRefs" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function searches for keywords that can reference the CPSET parameter of *CONTACT PAIR.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>names</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a>) – A sequence of CPSET names.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>Uses names as the keys, each value will be a list containing the exact location which references</dt><dd><p>the name and the region of the keyword effected by this reference.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../../csid/index.html#csid.csid" title="csid.csid">csid</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="inpRW._inpFindRefs.FindRefs.findDistributionRefs">
+<span class="sig-name descname"><span class="pre">findDistributionRefs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">names</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#inpRW._inpFindRefs.FindRefs.findDistributionRefs" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function searches for keywords that can reference *DISTRIBUTION.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>names</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a>) – A sequence of *DISTRIBUTION names.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>Uses names as the keys, each value will be a list containing the exact location which references</dt><dd><p>the name and the region of the keyword effected by this reference.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../../csid/index.html#csid.csid" title="csid.csid">csid</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="inpRW._inpFindRefs.FindRefs.findDistributiontableRefs">
+<span class="sig-name descname"><span class="pre">findDistributiontableRefs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">names</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#inpRW._inpFindRefs.FindRefs.findDistributiontableRefs" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function searches for keywords that can reference *DISTRIBUTION TABLE.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>names</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a>) – A sequence of *DISTRIBUTION TABLE names.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>Uses names as the keys, each value will be a list containing the exact location which references</dt><dd><p>the name and the region of the keyword effected by this reference.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../../csid/index.html#csid.csid" title="csid.csid">csid</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="inpRW._inpFindRefs.FindRefs.findElementprogressiveactivationRefs">
+<span class="sig-name descname"><span class="pre">findElementprogressiveactivationRefs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">names</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#inpRW._inpFindRefs.FindRefs.findElementprogressiveactivationRefs" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function searches for keywords that can reference *ELEMENT PROGRESSIVE ACTIVATION.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>names</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a>) – A sequence of *ELEMENT PROGRESSIVE ACTIVATION names.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>Uses names as the keys, each value will be a list containing the exact location which references</dt><dd><p>the name and the region of the keyword effected by this reference.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../../csid/index.html#csid.csid" title="csid.csid">csid</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="inpRW._inpFindRefs.FindRefs.findElementRefs">
+<span class="sig-name descname"><span class="pre">findElementRefs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">elements</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'labels'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#inpRW._inpFindRefs.FindRefs.findElementRefs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finds all references in the input file to each element in elements.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>elements</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a>) – A sequence of element labels or element set names (if <em>mode</em> == ‘set’).</p></li>
+<li><p><strong>mode</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – Indicates which type of items for which the function searches. Valid choices:
+‘labels’: indicates the function will search for element labels (default)
+‘set’: indicates the function will search for element set names.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>Uses names as the keys, each value will be a list containing the exact location which references</dt><dd><p>the name and the region of the keyword effected by this reference.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../../csid/index.html#csid.csid" title="csid.csid">csid</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="inpRW._inpFindRefs.FindRefs.findEnrichmentRefs">
+<span class="sig-name descname"><span class="pre">findEnrichmentRefs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">names</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#inpRW._inpFindRefs.FindRefs.findEnrichmentRefs" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function searches for keywords that can reference *ENRICHMENT.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>names</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a>) – A sequence of *ENRICHMENT names.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>Uses names as the keys, each value will be a list containing the exact location which references</dt><dd><p>the name and the region of the keyword effected by this reference.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../../csid/index.html#csid.csid" title="csid.csid">csid</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="inpRW._inpFindRefs.FindRefs.findFastenerpropertyRefs">
+<span class="sig-name descname"><span class="pre">findFastenerpropertyRefs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">names</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#inpRW._inpFindRefs.FindRefs.findFastenerpropertyRefs" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function searches for keywords that can reference *FASTENER PROPERTY.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>names</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a>) – A sequence of *FASTENER PROPERTY names.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>Uses names as the keys, each value will be a list containing the exact location which references</dt><dd><p>the name and the region of the keyword effected by this reference.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../../csid/index.html#csid.csid" title="csid.csid">csid</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="inpRW._inpFindRefs.FindRefs.findFieldmappercontrolsRefs">
+<span class="sig-name descname"><span class="pre">findFieldmappercontrolsRefs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">names</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#inpRW._inpFindRefs.FindRefs.findFieldmappercontrolsRefs" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function searches for keywords that can reference *FIELD MAPPER CONTROLS.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>names</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a>) – A sequence of *FIELD MAPPER CONTROLS names.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>Uses names as the keys, each value will be a list containing the exact location which references</dt><dd><p>the name and the region of the keyword effected by this reference.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../../csid/index.html#csid.csid" title="csid.csid">csid</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="inpRW._inpFindRefs.FindRefs.findFluidbehaviorRefs">
+<span class="sig-name descname"><span class="pre">findFluidbehaviorRefs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">names</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#inpRW._inpFindRefs.FindRefs.findFluidbehaviorRefs" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function searches for keywords that can reference *FLUID BEHAVIOR.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>names</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a>) – A sequence of *FLUID BEHAVIOR names.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>Uses names as the keys, each value will be a list containing the exact location which references</dt><dd><p>the name and the region of the keyword effected by this reference.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../../csid/index.html#csid.csid" title="csid.csid">csid</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="inpRW._inpFindRefs.FindRefs.findGasketbehaviorRefs">
+<span class="sig-name descname"><span class="pre">findGasketbehaviorRefs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">names</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#inpRW._inpFindRefs.FindRefs.findGasketbehaviorRefs" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function searches for keywords that can reference *GASKET BEHAVIOR.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>names</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a>) – A sequence of *GASKET BEHAVIOR names.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>Uses names as the keys, each value will be a list containing the exact location which references</dt><dd><p>the name and the region of the keyword effected by this reference.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../../csid/index.html#csid.csid" title="csid.csid">csid</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="inpRW._inpFindRefs.FindRefs.findImpedancepropertyRefs">
+<span class="sig-name descname"><span class="pre">findImpedancepropertyRefs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">names</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#inpRW._inpFindRefs.FindRefs.findImpedancepropertyRefs" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function searches for keywords that can reference *IMPEDANCE PROPERTY.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>names</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a>) – A sequence of *IMPEDANCE PROPERTY names.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>Uses names as the keys, each value will be a list containing the exact location which references</dt><dd><p>the name and the region of the keyword effected by this reference.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../../csid/index.html#csid.csid" title="csid.csid">csid</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="inpRW._inpFindRefs.FindRefs.findIncidentwaveinteractionpropertyRefs">
+<span class="sig-name descname"><span class="pre">findIncidentwaveinteractionpropertyRefs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">names</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#inpRW._inpFindRefs.FindRefs.findIncidentwaveinteractionpropertyRefs" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function searches for keywords that can reference *INCIDENT WAVE INTERACTION PROPERTY.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>names</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a>) – A sequence of *INCIDENT WAVE INTERACTION PROPERTY names.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>Uses names as the keys, each value will be a list containing the exact location which references</dt><dd><p>the name and the region of the keyword effected by this reference.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../../csid/index.html#csid.csid" title="csid.csid">csid</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="inpRW._inpFindRefs.FindRefs.findIncidentwavepropertyRefs">
+<span class="sig-name descname"><span class="pre">findIncidentwavepropertyRefs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">names</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#inpRW._inpFindRefs.FindRefs.findIncidentwavepropertyRefs" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function searches for keywords that can reference *INCIDENT WAVE PROPERTY.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>names</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a>) – A sequence of *INCIDENT WAVE PROPERTY names.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>Uses names as the keys, each value will be a list containing the exact location which references</dt><dd><p>the name and the region of the keyword effected by this reference.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../../csid/index.html#csid.csid" title="csid.csid">csid</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="inpRW._inpFindRefs.FindRefs.findIntegratedoutputsectionRefs">
+<span class="sig-name descname"><span class="pre">findIntegratedoutputsectionRefs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">names</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#inpRW._inpFindRefs.FindRefs.findIntegratedoutputsectionRefs" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function searches for keywords that can reference *INTEGRATED OUTPUT SECTION.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>names</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a>) – A sequence of *INTEGRATED OUTPUT SECTION names.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>Uses names as the keys, each value will be a list containing the exact location which references</dt><dd><p>the name and the region of the keyword effected by this reference.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../../csid/index.html#csid.csid" title="csid.csid">csid</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="inpRW._inpFindRefs.FindRefs.findNodeRefs">
+<span class="sig-name descname"><span class="pre">findNodeRefs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nodes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'labels'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#inpRW._inpFindRefs.FindRefs.findNodeRefs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finds all references in the input file to each node in nodes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>nodes</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a>) – A sequence of node labels or node set names (if <em>mode</em> == ‘set’).</p></li>
+<li><p><strong>mode</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – Indicates which type of items for which the function searches. Valid choices:
+‘labels’: indicates the function will search for node labels (default)
+‘set’: indicates the function will search for node set names.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>Uses names as the keys, each value will be a list containing the exact location which references</dt><dd><p>the name and the region of the keyword effected by this reference.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../../csid/index.html#csid.csid" title="csid.csid">csid</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="inpRW._inpFindRefs.FindRefs.findOrientationRefs">
+<span class="sig-name descname"><span class="pre">findOrientationRefs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">names</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#inpRW._inpFindRefs.FindRefs.findOrientationRefs" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function searches for keywords that can reference *ORIENTATION.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>names</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a>) – A sequence of *ORIENTATION names.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>Uses names as the keys, each value will be a list containing the exact location which references</dt><dd><p>the name and the region of the keyword effected by this reference.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../../csid/index.html#csid.csid" title="csid.csid">csid</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="inpRW._inpFindRefs.FindRefs.findPeriodicmediaRefs">
+<span class="sig-name descname"><span class="pre">findPeriodicmediaRefs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">names</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#inpRW._inpFindRefs.FindRefs.findPeriodicmediaRefs" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function searches for keywords that can reference *PERIODIC MEDIA.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>names</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a>) – A sequence of *PERIODIC MEDIA names.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>Uses names as the keys, each value will be a list containing the exact location which references</dt><dd><p>the name and the region of the keyword effected by this reference.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../../csid/index.html#csid.csid" title="csid.csid">csid</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="inpRW._inpFindRefs.FindRefs.findRebarlayerRefs">
+<span class="sig-name descname"><span class="pre">findRebarlayerRefs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">names</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#inpRW._inpFindRefs.FindRefs.findRebarlayerRefs" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function searches for keywords that can reference *REBAR LAYER.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>names</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a>) – A sequence of *REBAR LAYER names.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>Uses names as the keys, each value will be a list containing the exact location which references</dt><dd><p>the name and the region of the keyword effected by this reference.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../../csid/index.html#csid.csid" title="csid.csid">csid</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="inpRW._inpFindRefs.FindRefs.findRebarRefs">
+<span class="sig-name descname"><span class="pre">findRebarRefs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">names</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#inpRW._inpFindRefs.FindRefs.findRebarRefs" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function searches for keywords that can reference *REBAR.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>names</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a>) – A sequence of *REBAR names.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>Uses names as the keys, each value will be a list containing the exact location which references</dt><dd><p>the name and the region of the keyword effected by this reference.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../../csid/index.html#csid.csid" title="csid.csid">csid</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="inpRW._inpFindRefs.FindRefs.findRigidbodyRefs">
+<span class="sig-name descname"><span class="pre">findRigidbodyRefs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">names</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#inpRW._inpFindRefs.FindRefs.findRigidbodyRefs" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function searches for keywords that can reference *RIGID BODY.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>names</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a>) – A sequence of *RIGID BODY names.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>Uses names as the keys, each value will be a list containing the exact location which references</dt><dd><p>the name and the region of the keyword effected by this reference.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../../csid/index.html#csid.csid" title="csid.csid">csid</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="inpRW._inpFindRefs.FindRefs.findSectioncontrolsRefs">
+<span class="sig-name descname"><span class="pre">findSectioncontrolsRefs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">names</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#inpRW._inpFindRefs.FindRefs.findSectioncontrolsRefs" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function searches for keywords that can reference *SECTION CONTROLS.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>names</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a>) – A sequence of *SECTION CONTROLS names.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>Uses names as the keys, each value will be a list containing the exact location which references</dt><dd><p>the name and the region of the keyword effected by this reference.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../../csid/index.html#csid.csid" title="csid.csid">csid</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="inpRW._inpFindRefs.FindRefs.findSubstructureloadcaseRefs">
+<span class="sig-name descname"><span class="pre">findSubstructureloadcaseRefs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">names</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#inpRW._inpFindRefs.FindRefs.findSubstructureloadcaseRefs" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function searches for keywords that can reference *SUBSTRUCTURE LOADCASE.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>names</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a>) – A sequence of *SUBSTRUCTURE LOADCASE names.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>Uses names as the keys, each value will be a list containing the exact location which references</dt><dd><p>the name and the region of the keyword effected by this reference.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../../csid/index.html#csid.csid" title="csid.csid">csid</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="inpRW._inpFindRefs.FindRefs.findSurfaceRefs">
+<span class="sig-name descname"><span class="pre">findSurfaceRefs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">names</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#inpRW._inpFindRefs.FindRefs.findSurfaceRefs" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function searches for keywords that can reference *SURFACE.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>names</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a>) – A sequence of *SURFACE names.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>Uses names as the keys, each value will be a list containing the exact location which references</dt><dd><p>the name and the region of the keyword effected by this reference.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../../csid/index.html#csid.csid" title="csid.csid">csid</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="inpRW._inpFindRefs.FindRefs.findSurfaceinteractionRefs">
+<span class="sig-name descname"><span class="pre">findSurfaceinteractionRefs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">names</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#inpRW._inpFindRefs.FindRefs.findSurfaceinteractionRefs" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function searches for keywords that can reference *SURFACE INTERACTION.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>names</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a>) – A sequence of *SURFACE INTERACTION names.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>Uses names as the keys, each value will be a list containing the exact location which references</dt><dd><p>the name and the region of the keyword effected by this reference.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../../csid/index.html#csid.csid" title="csid.csid">csid</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="inpRW._inpFindRefs.FindRefs.findSurfacepropertyRefs">
+<span class="sig-name descname"><span class="pre">findSurfacepropertyRefs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">names</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#inpRW._inpFindRefs.FindRefs.findSurfacepropertyRefs" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function searches for keywords that can reference *SURFACE PROPERTY.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>names</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a>) – A sequence of *SURFACE PROPERTY names.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>Uses names as the keys, each value will be a list containing the exact location which references</dt><dd><p>the name and the region of the keyword effected by this reference.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../../csid/index.html#csid.csid" title="csid.csid">csid</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="inpRW._inpFindRefs.FindRefs.findSurfacesmoothingRefs">
+<span class="sig-name descname"><span class="pre">findSurfacesmoothingRefs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">names</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#inpRW._inpFindRefs.FindRefs.findSurfacesmoothingRefs" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function searches for keywords that can reference *SURFACE SMOOTHING.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>names</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a>) – A sequence of *SURFACE SMOOTHING names.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>Uses names as the keys, each value will be a list containing the exact location which references</dt><dd><p>the name and the region of the keyword effected by this reference.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../../csid/index.html#csid.csid" title="csid.csid">csid</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="inpRW._inpFindRefs.FindRefs.findTracerparticleRefs">
+<span class="sig-name descname"><span class="pre">findTracerparticleRefs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">names</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#inpRW._inpFindRefs.FindRefs.findTracerparticleRefs" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function searches for keywords that can reference *TRACER PARTICLE.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>names</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a>) – A sequence of *TRACER PARTICLE names.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>Uses names as the keys, each value will be a list containing the exact location which references</dt><dd><p>the name and the region of the keyword effected by this reference.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../../csid/index.html#csid.csid" title="csid.csid">csid</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../inpRW_toc.html">
+              <img class="logo" src="../../../_static/3DS_SIMULIA_Logotype_RGB_BlueSteel.png" alt="Logo", style="border-radius:5px"/>
+            </a></p>
+  <div>
+    <h3><a href="../../../inpRW_toc.html">Local Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW._inpFindRefs</span></code></a><ul>
+<li><a class="reference internal" href="#module-inpRW._inpFindRefs">Module Contents</a><ul>
+<li><a class="reference internal" href="#inpRW._inpFindRefs.FindRefs"><code class="docutils literal notranslate"><span class="pre">FindRefs</span></code></a><ul>
+<li><a class="reference internal" href="#inpRW._inpFindRefs.FindRefs.findAdaptivemeshcontrolsRefs"><code class="docutils literal notranslate"><span class="pre">FindRefs.findAdaptivemeshcontrolsRefs()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpFindRefs.FindRefs.findClearanceRefs"><code class="docutils literal notranslate"><span class="pre">FindRefs.findClearanceRefs()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpFindRefs.FindRefs.findConnectorbehaviorRefs"><code class="docutils literal notranslate"><span class="pre">FindRefs.findConnectorbehaviorRefs()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpFindRefs.FindRefs.findContactclearanceRefs"><code class="docutils literal notranslate"><span class="pre">FindRefs.findContactclearanceRefs()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpFindRefs.FindRefs.findContactinitializationdataRefs"><code class="docutils literal notranslate"><span class="pre">FindRefs.findContactinitializationdataRefs()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpFindRefs.FindRefs.findContactpairRefs"><code class="docutils literal notranslate"><span class="pre">FindRefs.findContactpairRefs()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpFindRefs.FindRefs.findDistributionRefs"><code class="docutils literal notranslate"><span class="pre">FindRefs.findDistributionRefs()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpFindRefs.FindRefs.findDistributiontableRefs"><code class="docutils literal notranslate"><span class="pre">FindRefs.findDistributiontableRefs()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpFindRefs.FindRefs.findElementprogressiveactivationRefs"><code class="docutils literal notranslate"><span class="pre">FindRefs.findElementprogressiveactivationRefs()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpFindRefs.FindRefs.findElementRefs"><code class="docutils literal notranslate"><span class="pre">FindRefs.findElementRefs()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpFindRefs.FindRefs.findEnrichmentRefs"><code class="docutils literal notranslate"><span class="pre">FindRefs.findEnrichmentRefs()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpFindRefs.FindRefs.findFastenerpropertyRefs"><code class="docutils literal notranslate"><span class="pre">FindRefs.findFastenerpropertyRefs()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpFindRefs.FindRefs.findFieldmappercontrolsRefs"><code class="docutils literal notranslate"><span class="pre">FindRefs.findFieldmappercontrolsRefs()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpFindRefs.FindRefs.findFluidbehaviorRefs"><code class="docutils literal notranslate"><span class="pre">FindRefs.findFluidbehaviorRefs()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpFindRefs.FindRefs.findGasketbehaviorRefs"><code class="docutils literal notranslate"><span class="pre">FindRefs.findGasketbehaviorRefs()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpFindRefs.FindRefs.findImpedancepropertyRefs"><code class="docutils literal notranslate"><span class="pre">FindRefs.findImpedancepropertyRefs()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpFindRefs.FindRefs.findIncidentwaveinteractionpropertyRefs"><code class="docutils literal notranslate"><span class="pre">FindRefs.findIncidentwaveinteractionpropertyRefs()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpFindRefs.FindRefs.findIncidentwavepropertyRefs"><code class="docutils literal notranslate"><span class="pre">FindRefs.findIncidentwavepropertyRefs()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpFindRefs.FindRefs.findIntegratedoutputsectionRefs"><code class="docutils literal notranslate"><span class="pre">FindRefs.findIntegratedoutputsectionRefs()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpFindRefs.FindRefs.findNodeRefs"><code class="docutils literal notranslate"><span class="pre">FindRefs.findNodeRefs()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpFindRefs.FindRefs.findOrientationRefs"><code class="docutils literal notranslate"><span class="pre">FindRefs.findOrientationRefs()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpFindRefs.FindRefs.findPeriodicmediaRefs"><code class="docutils literal notranslate"><span class="pre">FindRefs.findPeriodicmediaRefs()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpFindRefs.FindRefs.findRebarlayerRefs"><code class="docutils literal notranslate"><span class="pre">FindRefs.findRebarlayerRefs()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpFindRefs.FindRefs.findRebarRefs"><code class="docutils literal notranslate"><span class="pre">FindRefs.findRebarRefs()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpFindRefs.FindRefs.findRigidbodyRefs"><code class="docutils literal notranslate"><span class="pre">FindRefs.findRigidbodyRefs()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpFindRefs.FindRefs.findSectioncontrolsRefs"><code class="docutils literal notranslate"><span class="pre">FindRefs.findSectioncontrolsRefs()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpFindRefs.FindRefs.findSubstructureloadcaseRefs"><code class="docutils literal notranslate"><span class="pre">FindRefs.findSubstructureloadcaseRefs()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpFindRefs.FindRefs.findSurfaceRefs"><code class="docutils literal notranslate"><span class="pre">FindRefs.findSurfaceRefs()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpFindRefs.FindRefs.findSurfaceinteractionRefs"><code class="docutils literal notranslate"><span class="pre">FindRefs.findSurfaceinteractionRefs()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpFindRefs.FindRefs.findSurfacepropertyRefs"><code class="docutils literal notranslate"><span class="pre">FindRefs.findSurfacepropertyRefs()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpFindRefs.FindRefs.findSurfacesmoothingRefs"><code class="docutils literal notranslate"><span class="pre">FindRefs.findSurfacesmoothingRefs()</span></code></a></li>
+<li><a class="reference internal" href="#inpRW._inpFindRefs.FindRefs.findTracerparticleRefs"><code class="docutils literal notranslate"><span class="pre">FindRefs.findTracerparticleRefs()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  </div>
+<h3><a href="../../../inpRW_toc.html">Global Table of Contents</a></h3>
+<p class="caption" role="heading"><span class="caption-text">User Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/Introduction.html">inpRW Utility Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/Project-Background.html">Project Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/Installation-and-Usage.html">Installation and Usage Instructions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/Tests.html">inpRW Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/Tests.html#running-inprw-tests">Running inpRW Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/inpKeyword-Basics.html">inpKeyword Basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/Strings_Integers_and_Decimals.html">Strings, Integers, and Decimals</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/Important-inpRW-Attributes.html">Important <code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW</span></code> Attributes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/Miscellaneous-Usage-hints.html">Miscellaneous Usage Hints</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/Example-Scenarios.html">Example Scenarios</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user/glossary.html">Glossary</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW</span></code></a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../_inpR/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW._inpR</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_inpW/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW._inpW</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_inpFind/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW._inpFind</span></code></a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW._inpFindRefs</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_inpMod/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW._inpMod</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_importedModules/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW._importedModules</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_inpCustom/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW._inpCustom</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../centroid/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">centroid</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../config/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">config</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../config_re/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">config_re</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../csid/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">csid</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../eval2/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">eval2</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../elType/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">elType</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../inpDecimal/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpDecimal</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../inpInt/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpInt</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../inpKeyword/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpKeyword</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../inpKeywordHelper/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpKeywordHelper</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../inpKeywordSequence/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpKeywordSequence</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../inpRWErrors/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRWErrors</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../inpString/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpString</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../mesh/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">mesh</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../misc_functions/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">misc_functions</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../NoneSort/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">NoneSort</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../printer/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">printer</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../repr2/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">repr2</span></code></a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Update Notes</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../Update-Notes/index.html">Update Notes</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Legal Notices and Usage Disclaimer</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../legal_notices/Legal_Notices_and_Usage_Disclaimer.html">Legal Notices and Usage Disclaimer</a></li>
+</ul>
+
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="../_inpFind/index.html"
+                          title="previous chapter"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW._inpFind</span></code></a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="../_inpMod/index.html"
+                          title="next chapter"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW._inpMod</span></code></a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../../_sources/autoapi/inpRW/_inpFindRefs/index.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>  
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../_inpMod/index.html" title="inpRW._inpMod"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../_inpFind/index.html" title="inpRW._inpFind"
+             >previous</a> |</li>
+          <li><img src="../../../_static/icon-116-3dx-apps.svg" alt="python logo" style="vertical-align: middle; margin-top: -1px"/></li>
+          <li><a href="inpRW_toc.html"></a> &#187;</li>
+          <li class="switchers">
+            <div class="language_switcher_placeholder"></div>
+            <div class="version_switcher_placeholder"></div>
+          </li>
+          <li>
+              
+              <a href="../../../inpRW_toc.html">inpRW 2023.10.6 documentation</a> &#187;
+              
+          </li>
+          <li class="nav-item nav-item-1"><a href="../index.html" ><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW</span></code></a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href=""><code class="xref py py-mod docutils literal notranslate"><span class="pre">inpRW._inpFindRefs</span></code></a></li>
+                <li class="right">
+                    
+
+    <div class="inline-search" role="search">
+        <form class="inline-search" action="../../../search.html" method="get">
+          <input placeholder="Quick search" aria-label="Quick search" type="text" name="q" />
+          <input type="submit" value="Go" />
+          <input type="hidden" name="check_keywords" value="yes" />
+          <input type="hidden" name="area" value="default" />
+        </form>
+    </div>
+                     |
+                </li>
+            
+      </ul>
+    </div>  
+    <div class="footer">
+    &copy; Copyright 2023, Dassault Systèmes Simulia Corp.
+     <a href="../../../_static/legal_notices.pdf" >inpRW Legal Notices</a>.<br />
+     <a href="../../../_static/Read_Disclaimer_First.txt" >inpRW Usage Disclaimer</a>.<br />
+    Last updated on Nov 21, 2023.
+    <a href="https://r1132100503382-eu1-3dswym.3dexperience.3ds.com/#community:39/post:nE1VLzylQoKgfG2wekOpFg">Found a bug</a>?
+    </div>
+
+  </body>
+</html>

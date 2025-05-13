@@ -220,7 +220,7 @@ def addCellDictDataToMesh(name:str|list, dict_data:dict[int, list], mesh:SGMesh)
 
         for _i, _name in enumerate(name):
             _data = _cell_data_all[_i]
-            mesh.cell_data[_name] = np.array(_data)
+            mesh.cell_data[_name] = _data
 
     return
 
@@ -334,7 +334,7 @@ def _write_nodes(
         nid = i + 1
         f.write(sfi.format(nid))  # node id
 
-        # print(ncoord)
+        # logger.debug(ncoord)
 
         if sgdim == 1:
             if model_space == 'x':
