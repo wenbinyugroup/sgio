@@ -15,5 +15,6 @@ Guide
     io_state
     convert
     abaqus_cs
+    plot.md
 
 ..    guide/convert

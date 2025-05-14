@@ -14,7 +14,9 @@ This file contains the local strains and stresses of each element of the cross-s
     :language: text
     :lines: 1-10
 
-To read the data, we need to read the cross-sectional data using :func:`sgio.read` and then read the local state fields using :func:`sgio.readOutputState`.
+To read the data, we need to first read the cross-sectional data using :func:`sgio.read`.
+Then read the local state fields using :func:`sgio.readOutputState`.
+The returned object is a list of N :class:`sgio.model.StateCase` objects corresponding to N load cases.
 
 ..  literalinclude:: ../../../examples/read_vabs_output_d.py
     :language: python

@@ -3,23 +3,22 @@ import sgio
 
 # Read the mesh
 sg = sgio.read(
-    fn="files/cs_box_t_vabs41.sg",
+    filename="files/cs_box_t_vabs41.sg",
     file_format='vabs',
-    model_type='bm2'
 )
 
 # Read the output state
-state_case = sgio.readOutputState(
-    fn="files/cs_box_t_vabs41.sg",
+state_cases = sgio.readOutputState(
+    filename="files/cs_box_t_vabs41.sg",
     file_format='vabs',
     analysis='d',
-    model_type='bm2',
-    ext='ele',
+    extension='ele',
     sg=sg,
-    tool_ver='4.1'
+    tool_version='4.1'
 )
 
 # [step2]
+state_case = state_cases[0]
 # Add the local state to the mesh
 sgio.addCellDictDataToMesh(
     dict_data=state_case.getState('esm').data,
@@ -36,5 +35,4 @@ sgio.write(
     sg=sg,
     fn="files/cs_box_t_vabs41_local.msh",
     file_format='gmsh',
-    mesh_only=True
 )

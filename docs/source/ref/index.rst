@@ -9,3 +9,4 @@ Reference
     sg
     model/index
     io
+    plot

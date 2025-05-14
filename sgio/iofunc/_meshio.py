@@ -196,7 +196,7 @@ def addCellDictDataToMesh(name:str|list, dict_data:dict[int, list], mesh:SGMesh)
 
             _cell_data.append(_typei_data)
 
-        mesh.cell_data[name] = np.array(_cell_data)
+        mesh.cell_data[name] = _cell_data
 
 
     elif isinstance(name, list):

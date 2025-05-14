@@ -35,13 +35,13 @@ release = __version__
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
+    'myst_parser',
+    'sphinx_immaterial',
     'sphinx.ext.autodoc',
     'sphinx.ext.autosummary',
+    "sphinx.ext.githubpages",
     'sphinx.ext.mathjax',
     'sphinx.ext.napoleon',
-    'myst_parser',
-    "sphinx.ext.githubpages",
-    'sphinx_immaterial',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -53,6 +53,18 @@ extensions = [
 exclude_patterns = []
 
 root_doc = 'index'
+
+source_suffix = {
+    '.rst': 'restructuredtext',
+    '.md': 'markdown',
+}
+
+numfig = True
+numfig_format = {
+    'figure': 'Figure %s',
+    'table': 'Table %s',
+    'code-block': 'Listing %s',
+    'section': 'Section'}
 
 # -- Options for HTML output -------------------------------------------------
 

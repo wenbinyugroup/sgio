@@ -211,36 +211,56 @@ def readOutputState(
                 )
 
         elif file_format.lower().startswith("v"):
+            if num_elements == 0:
+                num_elements = sg.nelems
+
             with open(f"{filename}.fi", "r") as file:
-                try:
-                    fi, sr, eids_sr_min = _vabs.read_output_buffer(
-                        file, analysis, sg, tool_version=tool_version,
-                        num_cases=num_cases, num_elements=num_elements, **kwargs
+
+                for i_case in range(num_cases):
+                    print(f'i_case: {i_case}')
+
+                    state_case = state_cases[i_case]
+
+                    try:
+                        # fi, sr, eids_sr_min = _vabs.read_output_buffer(
+                        #     file, analysis, sg, tool_version=tool_version,
+                        #     num_cases=num_cases, num_elements=num_elements, **kwargs
+                        # )
+                        if float(tool_version) > 4:
+                            line = file.readline()  # skip the first line
+                            while line.strip() == '':
+                                line = file.readline()
+                            print(f'line: {line}')
+                        fi, sr, eids_sr_min = _vabs._readOutputFailureIndexCase(
+                            file, num_elements
+                        )
+
+                    except Exception as e:
+                        logger.error(f"Error: {e}")
+                        return None
+
+                    if fi is None or sr is None:
+                        logger.error("Error: No data read")
+                        return None
+
+                    state_case.addState(
+                        name="fi", state=sgmodel.State(
+                            name="fi", data=fi, label=["fi"], location="element"
+                        )
                     )
-                except Exception as e:
-                    logger.error(f"Error: {e}")
-                    return None
-            if fi is None or sr is None:
-                logger.error("Error: No data read")
-                return None
-            state_case.addState(
-                name="fi", state=sgmodel.State(
-                    name="fi", data=fi, label=["fi"], location="element"
-                )
-            )
-            state_case.addState(
-                name="sr", state=sgmodel.State(
-                    name="sr", data=sr, label=["sr"], location="element"
-                )
-            )
-            sr_min = {}
-            for eid in eids_sr_min:
-                sr_min[eid] = sr[eid]
-            state_case.addState(
-                name="sr_min", state=sgmodel.State(
-                    name="sr_min", data=sr_min, label=["sr_min"], location="element"
-                )
-            )
+                    state_case.addState(
+                        name="sr", state=sgmodel.State(
+                            name="sr", data=sr, label=["sr"], location="element"
+                        )
+                    )
+                    sr_min = {}
+                    for eid in eids_sr_min:
+                        sr_min[eid] = sr[eid]
+                    state_case.addState(
+                        name="sr_min", state=sgmodel.State(
+                            name="sr_min", data=sr_min, label=["sr_min"], location="element"
+                        )
+                    )
 
     elif analysis == "d" or analysis == "l":
         # Read dehomogenization output
