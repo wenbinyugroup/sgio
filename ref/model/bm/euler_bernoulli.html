@@ -1,0 +1,1787 @@
+
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      <link rel="icon" href="">
+    
+    
+      
+        <title>Euler-Bernoulli Beam Model - sgio 0.2.10 documentation</title>
+      
+    
+    
+      
+        
+        
+          
+          
+          <meta name="theme-color" content="#ef5552">
+        
+      
+      
+
+    
+    
+    
+      
+        
+        
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+        <link rel="stylesheet" type="text/css" href="../../../_static/sphinx_immaterial_theme.c5589c0bd87d933a4.min.css?v=eeeb54bc" />
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="red" data-md-color-accent="">
+  
+    
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#sgio.model.EulerBernoulliBeamModel" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../../index.html" title="sgio 0.2.10 documentation" class="md-header__button md-logo" aria-label="sgio 0.2.10 documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            sgio 0.2.10 documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Euler-Bernoulli Beam Model
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/wenbinyugroup/sgio" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    sgio
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../../index.html" title="sgio 0.2.10 documentation" class="md-nav__button md-logo" aria-label="sgio 0.2.10 documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+    </a>
+    sgio 0.2.10 documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/wenbinyugroup/sgio" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    sgio
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guide/index.html" class="md-nav__link">
+        <span class="md-ellipsis">Guide</span>
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../examples/index.html" class="md-nav__link">
+        <span class="md-ellipsis">Examples</span>
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" checked>
+      
+      
+      
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../index.html"><span class="md-ellipsis">Reference</span></a>
+          
+            <label for="__nav_3">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="Reference" data-md-level="1">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          <span class="md-ellipsis">Reference</span>
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../sg.html" class="md-nav__link">
+        <span class="md-ellipsis">Structure Gene</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_2" type="checkbox" id="__nav_3_2" checked>
+      
+      
+      
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../index.html"><span class="md-ellipsis">Model</span></a>
+          
+            <label for="__nav_3_2">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="Model" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_2">
+          <span class="md-nav__icon md-icon"></span>
+          <span class="md-ellipsis">Model</span>
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sd/index.html" class="md-nav__link">
+        <span class="md-ellipsis">Solid</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pl/index.html" class="md-nav__link">
+        <span class="md-ellipsis">Plate and Shell</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_2_3" type="checkbox" id="__nav_3_2_3" checked>
+      
+      
+      
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="index.html"><span class="md-ellipsis">Beam</span></a>
+          
+            <label for="__nav_3_2_3">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="Beam" data-md-level="3">
+        <label class="md-nav__title" for="__nav_3_2_3">
+          <span class="md-nav__icon md-icon"></span>
+          <span class="md-ellipsis">Beam</span>
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+    
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          <span class="md-ellipsis">Euler-<wbr>Bernoulli Beam Model</span>
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="#" class="md-nav__link md-nav__link--active">
+        <span class="md-ellipsis">Euler-<wbr>Bernoulli Beam Model</span>
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#sgio.model.EulerBernoulliBeamModel" class="md-nav__link">
+    <span aria-label="Python class" class="objinfo-icon objinfo-icon__data" title="Python class">C</span><span title="sgio.model.EulerBernoulliBeamModel (Python class) — Euler-Bernoulli Beam Model" class="md-ellipsis">sgio.<wbr>model.<wbr>Euler<wbr>Bernoulli<wbr>Beam<wbr>Model</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="sgio.model.EulerBernoulliBeamModel">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sgio.model.EulerBernoulliBeamModel.get" class="md-nav__link">
+    <span aria-label="Python method" class="objinfo-icon objinfo-icon__procedure" title="Python method">M</span><span title="sgio.model.EulerBernoulliBeamModel.get (Python method) — Get beam properties using specific names." class="md-ellipsis">get</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="get">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sgio.model.EulerBernoulliBeamModel.get-parameters" class="md-nav__link">
+    <span class="md-ellipsis">Parameters</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Parameters">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sgio.model.EulerBernoulliBeamModel.get.name" class="md-nav__link">
+    <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span><span title="sgio.model.EulerBernoulliBeamModel.get.name (Python parameter) — Name(s) of the property that will be returned." class="md-ellipsis">name</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sgio.model.EulerBernoulliBeamModel.get-returns" class="md-nav__link">
+    <span class="md-ellipsis">Returns</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sgio.model.EulerBernoulliBeamModel.get-return-type" class="md-nav__link">
+    <span class="md-ellipsis">Return type</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sgio.model.EulerBernoulliBeamModel.getAll" class="md-nav__link">
+    <span aria-label="Python method" class="objinfo-icon objinfo-icon__procedure" title="Python method">M</span><span title="sgio.model.EulerBernoulliBeamModel.getAll (Python method) — Get all beam properties." class="md-ellipsis">get<wbr>All</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="getAll">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sgio.model.EulerBernoulliBeamModel.getAll-returns" class="md-nav__link">
+    <span class="md-ellipsis">Returns</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sgio.model.EulerBernoulliBeamModel.getAll-return-type" class="md-nav__link">
+    <span class="md-ellipsis">Return type</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sgio.model.EulerBernoulliBeamModel.cmpl" class="md-nav__link">
+    <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span><span title="sgio.model.EulerBernoulliBeamModel.cmpl (Python attribute) — list of lists of floats: Classical compliance matrix (1-extension; 2-twist; 3,4-bending)" class="md-ellipsis">cmpl</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sgio.model.EulerBernoulliBeamModel.ea" class="md-nav__link">
+    <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span><span title="sgio.model.EulerBernoulliBeamModel.ea (Python attribute) — Extension stiffness EA" class="md-ellipsis">ea</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ea">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sgio.model.EulerBernoulliBeamModel.ea-type" class="md-nav__link">
+    <span class="md-ellipsis">Type</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sgio.model.EulerBernoulliBeamModel.ei22" class="md-nav__link">
+    <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span><span title="sgio.model.EulerBernoulliBeamModel.ei22 (Python attribute) — Principal bending stiffness EI22" class="md-ellipsis">ei22</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ei22">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sgio.model.EulerBernoulliBeamModel.ei22-type" class="md-nav__link">
+    <span class="md-ellipsis">Type</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sgio.model.EulerBernoulliBeamModel.ei33" class="md-nav__link">
+    <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span><span title="sgio.model.EulerBernoulliBeamModel.ei33 (Python attribute) — Principal bending stiffness EI33" class="md-ellipsis">ei33</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ei33">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sgio.model.EulerBernoulliBeamModel.ei33-type" class="md-nav__link">
+    <span class="md-ellipsis">Type</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sgio.model.EulerBernoulliBeamModel.gj" class="md-nav__link">
+    <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span><span title="sgio.model.EulerBernoulliBeamModel.gj (Python attribute) — Torsional stiffness GJ" class="md-ellipsis">gj</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="gj">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sgio.model.EulerBernoulliBeamModel.gj-type" class="md-nav__link">
+    <span class="md-ellipsis">Type</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sgio.model.EulerBernoulliBeamModel.i11" class="md-nav__link">
+    <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span><span title="sgio.model.EulerBernoulliBeamModel.i11 (Python attribute) — Mass moments of inertia i11" class="md-ellipsis">i11</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="i11">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sgio.model.EulerBernoulliBeamModel.i11-type" class="md-nav__link">
+    <span class="md-ellipsis">Type</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sgio.model.EulerBernoulliBeamModel.i22" class="md-nav__link">
+    <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span><span title="sgio.model.EulerBernoulliBeamModel.i22 (Python attribute) — Principal mass moments of inertia i22" class="md-ellipsis">i22</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="i22">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sgio.model.EulerBernoulliBeamModel.i22-type" class="md-nav__link">
+    <span class="md-ellipsis">Type</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sgio.model.EulerBernoulliBeamModel.i33" class="md-nav__link">
+    <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span><span title="sgio.model.EulerBernoulliBeamModel.i33 (Python attribute) — Principle mass moments of inertia i33" class="md-ellipsis">i33</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="i33">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sgio.model.EulerBernoulliBeamModel.i33-type" class="md-nav__link">
+    <span class="md-ellipsis">Type</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sgio.model.EulerBernoulliBeamModel.mass" class="md-nav__link">
+    <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span><span title="sgio.model.EulerBernoulliBeamModel.mass (Python attribute) — list of list of floats: The 6x6 mass matrix" class="md-ellipsis">mass</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sgio.model.EulerBernoulliBeamModel.mass_mc" class="md-nav__link">
+    <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span><span title="sgio.model.EulerBernoulliBeamModel.mass_mc (Python attribute) — list of lists of floats: The 6x6 mass matrix at the mass center" class="md-ellipsis">mass_<wbr>mc</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sgio.model.EulerBernoulliBeamModel.mu" class="md-nav__link">
+    <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span><span title="sgio.model.EulerBernoulliBeamModel.mu (Python attribute) — Mass per unit span" class="md-ellipsis">mu</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="mu">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sgio.model.EulerBernoulliBeamModel.mu-type" class="md-nav__link">
+    <span class="md-ellipsis">Type</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sgio.model.EulerBernoulliBeamModel.phi_pba" class="md-nav__link">
+    <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span><span title="sgio.model.EulerBernoulliBeamModel.phi_pba (Python attribute) — Principle bending axes rotation angle in degree" class="md-ellipsis">phi_<wbr>pba</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="phi_pba">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sgio.model.EulerBernoulliBeamModel.phi_pba-type" class="md-nav__link">
+    <span class="md-ellipsis">Type</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sgio.model.EulerBernoulliBeamModel.phi_pia" class="md-nav__link">
+    <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span><span title="sgio.model.EulerBernoulliBeamModel.phi_pia (Python attribute) — Principal inertial axes rotation angle in degree" class="md-ellipsis">phi_<wbr>pia</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="phi_pia">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sgio.model.EulerBernoulliBeamModel.phi_pia-type" class="md-nav__link">
+    <span class="md-ellipsis">Type</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sgio.model.EulerBernoulliBeamModel.rg" class="md-nav__link">
+    <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span><span title="sgio.model.EulerBernoulliBeamModel.rg (Python attribute) — mass-weighted radius of gyration" class="md-ellipsis">rg</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="rg">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sgio.model.EulerBernoulliBeamModel.rg-type" class="md-nav__link">
+    <span class="md-ellipsis">Type</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sgio.model.EulerBernoulliBeamModel.stff" class="md-nav__link">
+    <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span><span title="sgio.model.EulerBernoulliBeamModel.stff (Python attribute) — list of lists of floats: Classical stiffness matrix (1-extension; 2-twist; 3,4-bending)" class="md-ellipsis">stff</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sgio.model.EulerBernoulliBeamModel.xm2" class="md-nav__link">
+    <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span><span title="sgio.model.EulerBernoulliBeamModel.xm2 (Python attribute) — Mass center location in x2 direction" class="md-ellipsis">xm2</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="xm2">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sgio.model.EulerBernoulliBeamModel.xm2-type" class="md-nav__link">
+    <span class="md-ellipsis">Type</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sgio.model.EulerBernoulliBeamModel.xm3" class="md-nav__link">
+    <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span><span title="sgio.model.EulerBernoulliBeamModel.xm3 (Python attribute) — Mass center location in x3 direction" class="md-ellipsis">xm3</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="xm3">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sgio.model.EulerBernoulliBeamModel.xm3-type" class="md-nav__link">
+    <span class="md-ellipsis">Type</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sgio.model.EulerBernoulliBeamModel.xt2" class="md-nav__link">
+    <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span><span title="sgio.model.EulerBernoulliBeamModel.xt2 (Python attribute) — Tension center location in x2 direction" class="md-ellipsis">xt2</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="xt2">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sgio.model.EulerBernoulliBeamModel.xt2-type" class="md-nav__link">
+    <span class="md-ellipsis">Type</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sgio.model.EulerBernoulliBeamModel.xt3" class="md-nav__link">
+    <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span><span title="sgio.model.EulerBernoulliBeamModel.xt3 (Python attribute) — Tension center location in x3 direction" class="md-ellipsis">xt3</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="xt3">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sgio.model.EulerBernoulliBeamModel.xt3-type" class="md-nav__link">
+    <span class="md-ellipsis">Type</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="timoshenko.html" class="md-nav__link">
+        <span class="md-ellipsis">Timoshenko Beam Model</span>
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../state.html" class="md-nav__link">
+        <span class="md-ellipsis">State Class</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../statecase.html" class="md-nav__link">
+        <span class="md-ellipsis">State Case Class</span>
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../io.html" class="md-nav__link">
+        <span class="md-ellipsis">I/O Functions</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../plot.html" class="md-nav__link">
+        <span class="md-ellipsis">Plot Functions</span>
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary">
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#sgio.model.EulerBernoulliBeamModel" class="md-nav__link">
+    <span aria-label="Python class" class="objinfo-icon objinfo-icon__data" title="Python class">C</span><span title="sgio.model.EulerBernoulliBeamModel (Python class) — Euler-Bernoulli Beam Model" class="md-ellipsis">sgio.<wbr>model.<wbr>Euler<wbr>Bernoulli<wbr>Beam<wbr>Model</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="sgio.model.EulerBernoulliBeamModel">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sgio.model.EulerBernoulliBeamModel.get" class="md-nav__link">
+    <span aria-label="Python method" class="objinfo-icon objinfo-icon__procedure" title="Python method">M</span><span title="sgio.model.EulerBernoulliBeamModel.get (Python method) — Get beam properties using specific names." class="md-ellipsis">get</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="get">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sgio.model.EulerBernoulliBeamModel.get-parameters" class="md-nav__link">
+    <span class="md-ellipsis">Parameters</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Parameters">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sgio.model.EulerBernoulliBeamModel.get.name" class="md-nav__link">
+    <span aria-label="Python parameter" class="objinfo-icon objinfo-icon__sub-data" title="Python parameter">p</span><span title="sgio.model.EulerBernoulliBeamModel.get.name (Python parameter) — Name(s) of the property that will be returned." class="md-ellipsis">name</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sgio.model.EulerBernoulliBeamModel.get-returns" class="md-nav__link">
+    <span class="md-ellipsis">Returns</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sgio.model.EulerBernoulliBeamModel.get-return-type" class="md-nav__link">
+    <span class="md-ellipsis">Return type</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sgio.model.EulerBernoulliBeamModel.getAll" class="md-nav__link">
+    <span aria-label="Python method" class="objinfo-icon objinfo-icon__procedure" title="Python method">M</span><span title="sgio.model.EulerBernoulliBeamModel.getAll (Python method) — Get all beam properties." class="md-ellipsis">get<wbr>All</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="getAll">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sgio.model.EulerBernoulliBeamModel.getAll-returns" class="md-nav__link">
+    <span class="md-ellipsis">Returns</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sgio.model.EulerBernoulliBeamModel.getAll-return-type" class="md-nav__link">
+    <span class="md-ellipsis">Return type</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sgio.model.EulerBernoulliBeamModel.cmpl" class="md-nav__link">
+    <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span><span title="sgio.model.EulerBernoulliBeamModel.cmpl (Python attribute) — list of lists of floats: Classical compliance matrix (1-extension; 2-twist; 3,4-bending)" class="md-ellipsis">cmpl</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sgio.model.EulerBernoulliBeamModel.ea" class="md-nav__link">
+    <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span><span title="sgio.model.EulerBernoulliBeamModel.ea (Python attribute) — Extension stiffness EA" class="md-ellipsis">ea</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ea">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sgio.model.EulerBernoulliBeamModel.ea-type" class="md-nav__link">
+    <span class="md-ellipsis">Type</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sgio.model.EulerBernoulliBeamModel.ei22" class="md-nav__link">
+    <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span><span title="sgio.model.EulerBernoulliBeamModel.ei22 (Python attribute) — Principal bending stiffness EI22" class="md-ellipsis">ei22</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ei22">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sgio.model.EulerBernoulliBeamModel.ei22-type" class="md-nav__link">
+    <span class="md-ellipsis">Type</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sgio.model.EulerBernoulliBeamModel.ei33" class="md-nav__link">
+    <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span><span title="sgio.model.EulerBernoulliBeamModel.ei33 (Python attribute) — Principal bending stiffness EI33" class="md-ellipsis">ei33</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ei33">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sgio.model.EulerBernoulliBeamModel.ei33-type" class="md-nav__link">
+    <span class="md-ellipsis">Type</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sgio.model.EulerBernoulliBeamModel.gj" class="md-nav__link">
+    <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span><span title="sgio.model.EulerBernoulliBeamModel.gj (Python attribute) — Torsional stiffness GJ" class="md-ellipsis">gj</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="gj">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sgio.model.EulerBernoulliBeamModel.gj-type" class="md-nav__link">
+    <span class="md-ellipsis">Type</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sgio.model.EulerBernoulliBeamModel.i11" class="md-nav__link">
+    <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span><span title="sgio.model.EulerBernoulliBeamModel.i11 (Python attribute) — Mass moments of inertia i11" class="md-ellipsis">i11</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="i11">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sgio.model.EulerBernoulliBeamModel.i11-type" class="md-nav__link">
+    <span class="md-ellipsis">Type</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sgio.model.EulerBernoulliBeamModel.i22" class="md-nav__link">
+    <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span><span title="sgio.model.EulerBernoulliBeamModel.i22 (Python attribute) — Principal mass moments of inertia i22" class="md-ellipsis">i22</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="i22">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sgio.model.EulerBernoulliBeamModel.i22-type" class="md-nav__link">
+    <span class="md-ellipsis">Type</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sgio.model.EulerBernoulliBeamModel.i33" class="md-nav__link">
+    <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span><span title="sgio.model.EulerBernoulliBeamModel.i33 (Python attribute) — Principle mass moments of inertia i33" class="md-ellipsis">i33</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="i33">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sgio.model.EulerBernoulliBeamModel.i33-type" class="md-nav__link">
+    <span class="md-ellipsis">Type</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sgio.model.EulerBernoulliBeamModel.mass" class="md-nav__link">
+    <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span><span title="sgio.model.EulerBernoulliBeamModel.mass (Python attribute) — list of list of floats: The 6x6 mass matrix" class="md-ellipsis">mass</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sgio.model.EulerBernoulliBeamModel.mass_mc" class="md-nav__link">
+    <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span><span title="sgio.model.EulerBernoulliBeamModel.mass_mc (Python attribute) — list of lists of floats: The 6x6 mass matrix at the mass center" class="md-ellipsis">mass_<wbr>mc</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sgio.model.EulerBernoulliBeamModel.mu" class="md-nav__link">
+    <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span><span title="sgio.model.EulerBernoulliBeamModel.mu (Python attribute) — Mass per unit span" class="md-ellipsis">mu</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="mu">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sgio.model.EulerBernoulliBeamModel.mu-type" class="md-nav__link">
+    <span class="md-ellipsis">Type</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sgio.model.EulerBernoulliBeamModel.phi_pba" class="md-nav__link">
+    <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span><span title="sgio.model.EulerBernoulliBeamModel.phi_pba (Python attribute) — Principle bending axes rotation angle in degree" class="md-ellipsis">phi_<wbr>pba</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="phi_pba">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sgio.model.EulerBernoulliBeamModel.phi_pba-type" class="md-nav__link">
+    <span class="md-ellipsis">Type</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sgio.model.EulerBernoulliBeamModel.phi_pia" class="md-nav__link">
+    <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span><span title="sgio.model.EulerBernoulliBeamModel.phi_pia (Python attribute) — Principal inertial axes rotation angle in degree" class="md-ellipsis">phi_<wbr>pia</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="phi_pia">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sgio.model.EulerBernoulliBeamModel.phi_pia-type" class="md-nav__link">
+    <span class="md-ellipsis">Type</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sgio.model.EulerBernoulliBeamModel.rg" class="md-nav__link">
+    <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span><span title="sgio.model.EulerBernoulliBeamModel.rg (Python attribute) — mass-weighted radius of gyration" class="md-ellipsis">rg</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="rg">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sgio.model.EulerBernoulliBeamModel.rg-type" class="md-nav__link">
+    <span class="md-ellipsis">Type</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sgio.model.EulerBernoulliBeamModel.stff" class="md-nav__link">
+    <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span><span title="sgio.model.EulerBernoulliBeamModel.stff (Python attribute) — list of lists of floats: Classical stiffness matrix (1-extension; 2-twist; 3,4-bending)" class="md-ellipsis">stff</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sgio.model.EulerBernoulliBeamModel.xm2" class="md-nav__link">
+    <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span><span title="sgio.model.EulerBernoulliBeamModel.xm2 (Python attribute) — Mass center location in x2 direction" class="md-ellipsis">xm2</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="xm2">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sgio.model.EulerBernoulliBeamModel.xm2-type" class="md-nav__link">
+    <span class="md-ellipsis">Type</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sgio.model.EulerBernoulliBeamModel.xm3" class="md-nav__link">
+    <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span><span title="sgio.model.EulerBernoulliBeamModel.xm3 (Python attribute) — Mass center location in x3 direction" class="md-ellipsis">xm3</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="xm3">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sgio.model.EulerBernoulliBeamModel.xm3-type" class="md-nav__link">
+    <span class="md-ellipsis">Type</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sgio.model.EulerBernoulliBeamModel.xt2" class="md-nav__link">
+    <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span><span title="sgio.model.EulerBernoulliBeamModel.xt2 (Python attribute) — Tension center location in x2 direction" class="md-ellipsis">xt2</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="xt2">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sgio.model.EulerBernoulliBeamModel.xt2-type" class="md-nav__link">
+    <span class="md-ellipsis">Type</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sgio.model.EulerBernoulliBeamModel.xt3" class="md-nav__link">
+    <span aria-label="Python attribute" class="objinfo-icon objinfo-icon__alias" title="Python attribute">A</span><span title="sgio.model.EulerBernoulliBeamModel.xt3 (Python attribute) — Tension center location in x3 direction" class="md-ellipsis">xt3</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="xt3">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sgio.model.EulerBernoulliBeamModel.xt3-type" class="md-nav__link">
+    <span class="md-ellipsis">Type</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset" role="main">
+                  
+
+
+<h1 id="euler-bernoulli-beam-model">Euler-Bernoulli Beam Model<a class="headerlink" href="#euler-bernoulli-beam-model" title="Link to this heading">¶</a></h1>
+<dl class="py class objdesc">
+<dt class="sig sig-object highlight py" id="sgio.model.EulerBernoulliBeamModel">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">sgio.model.</span></span><span class="sig-name descname"><span class="pre">EulerBernoulliBeamModel</span></span><a class="headerlink" href="#sgio.model.EulerBernoulliBeamModel" title="Link to this definition">¶</a></dt>
+<dd><p>Euler-Bernoulli Beam Model</p>
+<dl class="py method objdesc">
+<dt class="sig sig-object highlight py" id="sgio.model.EulerBernoulliBeamModel.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><span class="sig-param-decl"><em class="sig-param"><a class="n reference internal" href="#sgio.model.EulerBernoulliBeamModel.get.name" title="sgio.model.EulerBernoulliBeamModel.get.name (Python parameter) — Name(s) of the property that will be returned."><span class="n"><span class="pre">name</span></span></a></em></span><span class="sig-paren">)</span><a class="headerlink" href="#sgio.model.EulerBernoulliBeamModel.get" title="Link to this definition">¶</a></dt>
+<dd><p>Get beam properties using specific names.</p>
+<dl class="field-list simple">
+<dt class="field-odd" id="sgio.model.EulerBernoulliBeamModel.get-parameters">Parameters<span class="colon">:</span><a class="headerlink" href="#sgio.model.EulerBernoulliBeamModel.get-parameters" title="Permalink to this headline">¶</a></dt>
+<dd class="field-odd"><dl class="simple api-field highlight">
+<dt id="sgio.model.EulerBernoulliBeamModel.get.name"><span class="sig-name descname">name</span><span class="p"> : </span><span class="desctype"><span class="desctype">str or list of str</span></span><a class="headerlink" href="#sgio.model.EulerBernoulliBeamModel.get.name" title="Permalink to this definition">¶</a></dt><dd><p>Name(s) of the property that will be returned.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even" id="sgio.model.EulerBernoulliBeamModel.get-returns">Returns<span class="colon">:</span><a class="headerlink" href="#sgio.model.EulerBernoulliBeamModel.get-returns" title="Permalink to this headline">¶</a></dt>
+<dd class="field-even"><p>Value(s) of the specified beam property.</p>
+</dd>
+<dt class="field-odd" id="sgio.model.EulerBernoulliBeamModel.get-return-type">Return type<span class="colon">:</span><a class="headerlink" href="#sgio.model.EulerBernoulliBeamModel.get-return-type" title="Permalink to this headline">¶</a></dt>
+<dd class="field-odd"><p>float or list of float</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<table class="docutils data align-default" id="id1">
+<caption><span class="caption-number">Table 2 </span><span class="caption-text">Inertial properties</span><a class="headerlink" href="#id1" title="Link to this table">¶</a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">msij</span></code> (<code class="docutils literal notranslate"><span class="pre">i</span></code>, <code class="docutils literal notranslate"><span class="pre">j</span></code> = 1 to 6)</p></td>
+<td><p>Entry (i, j) of the 6x6 mass matrix at the origin</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">mu</span></code></p></td>
+<td><p>Mass per unit length</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">mmoi1</span></code> | <code class="docutils literal notranslate"><span class="pre">mmoi2</span></code> | <code class="docutils literal notranslate"><span class="pre">mmoi3</span></code></p></td>
+<td><p>Mass moment of inertia about x1/x2/x3 axis</p></td>
+</tr>
+</tbody>
+</table>
+<table class="docutils data align-default" id="id2">
+<caption><span class="caption-number">Table 3 </span><span class="caption-text">Stiffness properties</span><a class="headerlink" href="#id2" title="Link to this table">¶</a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">stfij</span></code> (<code class="docutils literal notranslate"><span class="pre">i</span></code>, <code class="docutils literal notranslate"><span class="pre">j</span></code> = 1 to 6)</p></td>
+<td><p>Entry (i, j) of the 4x4 classical stiffness matrix</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">cmpij</span></code> (<code class="docutils literal notranslate"><span class="pre">i</span></code>, <code class="docutils literal notranslate"><span class="pre">j</span></code> = 1 to 6)</p></td>
+<td><p>Entry (i, j) of the 4x4 classical compliance matrix</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">ea</span></code></p></td>
+<td><p>Axial stiffness of the model</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">gj</span></code></p></td>
+<td><p>Torsional stiffness of the model</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">ei22</span></code> | <code class="docutils literal notranslate"><span class="pre">eiyy</span></code></p></td>
+<td><p>Bending stiffness around x2 (flapwise) of the model</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">ei33</span></code> | <code class="docutils literal notranslate"><span class="pre">eizz</span></code></p></td>
+<td><p>Bending stiffness around x3 (chordwise or lead-lag) of the model</p></td>
+</tr>
+</tbody>
+</table>
+<table class="docutils data align-default" id="id3">
+<caption><span class="caption-number">Table 4 </span><span class="caption-text">Center offsets</span><a class="headerlink" href="#id3" title="Link to this table">¶</a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">mcy</span></code> | <code class="docutils literal notranslate"><span class="pre">mc2</span></code></p></td>
+<td><p>y (or x2) component of the mass center</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">mcz</span></code> | <code class="docutils literal notranslate"><span class="pre">mc3</span></code></p></td>
+<td><p>z (or x3) component of the mass center</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">tcy</span></code> | <code class="docutils literal notranslate"><span class="pre">tc2</span></code></p></td>
+<td><p>y (or x2) component of the tension center</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">tcz</span></code> | <code class="docutils literal notranslate"><span class="pre">tc3</span></code></p></td>
+<td><p>z (or x3) component of the tension center</p></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="py method objdesc">
+<dt class="sig sig-object highlight py" id="sgio.model.EulerBernoulliBeamModel.getAll">
+<span class="sig-name descname"><span class="pre">getAll</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#sgio.model.EulerBernoulliBeamModel.getAll" title="Link to this definition">¶</a></dt>
+<dd><p>Get all beam properties.</p>
+<dl class="field-list simple">
+<dt class="field-odd" id="sgio.model.EulerBernoulliBeamModel.getAll-returns">Returns<span class="colon">:</span><a class="headerlink" href="#sgio.model.EulerBernoulliBeamModel.getAll-returns" title="Permalink to this headline">¶</a></dt>
+<dd class="field-odd"><p>A Dictionary of all beam properties.</p>
+</dd>
+<dt class="field-even" id="sgio.model.EulerBernoulliBeamModel.getAll-return-type">Return type<span class="colon">:</span><a class="headerlink" href="#sgio.model.EulerBernoulliBeamModel.getAll-return-type" title="Permalink to this headline">¶</a></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Names are</p>
+<ul class="simple">
+<li><p>mu, mmoi1, mmoi2, mmoi3</p></li>
+<li><p>ea, ga22, ga33, gj, ei22, ei33</p></li>
+<li><p>mc2, mc3, tc2, tc3</p></li>
+<li><p>stfij, cmpij</p></li>
+</ul>
+</dd></dl>
+
+<dl class="py attribute objdesc">
+<dt class="sig sig-object highlight py" id="sgio.model.EulerBernoulliBeamModel.cmpl">
+<span class="sig-name descname"><span class="pre">cmpl</span></span><a class="headerlink" href="#sgio.model.EulerBernoulliBeamModel.cmpl" title="Link to this definition">¶</a></dt>
+<dd><p>list of lists of floats:
+Classical compliance matrix (1-extension; 2-twist; 3,4-bending)</p>
+</dd></dl>
+
+<dl class="py attribute objdesc">
+<dt class="sig sig-object highlight py" id="sgio.model.EulerBernoulliBeamModel.ea">
+<span class="sig-name descname"><span class="pre">ea</span></span><a class="headerlink" href="#sgio.model.EulerBernoulliBeamModel.ea" title="Link to this definition">¶</a></dt>
+<dd><p>Extension stiffness EA</p>
+<dl class="field-list simple">
+<dt class="field-odd" id="sgio.model.EulerBernoulliBeamModel.ea-type">Type<span class="colon">:</span><a class="headerlink" href="#sgio.model.EulerBernoulliBeamModel.ea-type" title="Permalink to this headline">¶</a></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute objdesc">
+<dt class="sig sig-object highlight py" id="sgio.model.EulerBernoulliBeamModel.ei22">
+<span class="sig-name descname"><span class="pre">ei22</span></span><a class="headerlink" href="#sgio.model.EulerBernoulliBeamModel.ei22" title="Link to this definition">¶</a></dt>
+<dd><p>Principal bending stiffness EI22</p>
+<dl class="field-list simple">
+<dt class="field-odd" id="sgio.model.EulerBernoulliBeamModel.ei22-type">Type<span class="colon">:</span><a class="headerlink" href="#sgio.model.EulerBernoulliBeamModel.ei22-type" title="Permalink to this headline">¶</a></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute objdesc">
+<dt class="sig sig-object highlight py" id="sgio.model.EulerBernoulliBeamModel.ei33">
+<span class="sig-name descname"><span class="pre">ei33</span></span><a class="headerlink" href="#sgio.model.EulerBernoulliBeamModel.ei33" title="Link to this definition">¶</a></dt>
+<dd><p>Principal bending stiffness EI33</p>
+<dl class="field-list simple">
+<dt class="field-odd" id="sgio.model.EulerBernoulliBeamModel.ei33-type">Type<span class="colon">:</span><a class="headerlink" href="#sgio.model.EulerBernoulliBeamModel.ei33-type" title="Permalink to this headline">¶</a></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute objdesc">
+<dt class="sig sig-object highlight py" id="sgio.model.EulerBernoulliBeamModel.gj">
+<span class="sig-name descname"><span class="pre">gj</span></span><a class="headerlink" href="#sgio.model.EulerBernoulliBeamModel.gj" title="Link to this definition">¶</a></dt>
+<dd><p>Torsional stiffness GJ</p>
+<dl class="field-list simple">
+<dt class="field-odd" id="sgio.model.EulerBernoulliBeamModel.gj-type">Type<span class="colon">:</span><a class="headerlink" href="#sgio.model.EulerBernoulliBeamModel.gj-type" title="Permalink to this headline">¶</a></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute objdesc">
+<dt class="sig sig-object highlight py" id="sgio.model.EulerBernoulliBeamModel.i11">
+<span class="sig-name descname"><span class="pre">i11</span></span><a class="headerlink" href="#sgio.model.EulerBernoulliBeamModel.i11" title="Link to this definition">¶</a></dt>
+<dd><p>Mass moments of inertia i11</p>
+<dl class="field-list simple">
+<dt class="field-odd" id="sgio.model.EulerBernoulliBeamModel.i11-type">Type<span class="colon">:</span><a class="headerlink" href="#sgio.model.EulerBernoulliBeamModel.i11-type" title="Permalink to this headline">¶</a></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute objdesc">
+<dt class="sig sig-object highlight py" id="sgio.model.EulerBernoulliBeamModel.i22">
+<span class="sig-name descname"><span class="pre">i22</span></span><a class="headerlink" href="#sgio.model.EulerBernoulliBeamModel.i22" title="Link to this definition">¶</a></dt>
+<dd><p>Principal mass moments of inertia i22</p>
+<dl class="field-list simple">
+<dt class="field-odd" id="sgio.model.EulerBernoulliBeamModel.i22-type">Type<span class="colon">:</span><a class="headerlink" href="#sgio.model.EulerBernoulliBeamModel.i22-type" title="Permalink to this headline">¶</a></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute objdesc">
+<dt class="sig sig-object highlight py" id="sgio.model.EulerBernoulliBeamModel.i33">
+<span class="sig-name descname"><span class="pre">i33</span></span><a class="headerlink" href="#sgio.model.EulerBernoulliBeamModel.i33" title="Link to this definition">¶</a></dt>
+<dd><p>Principle mass moments of inertia i33</p>
+<dl class="field-list simple">
+<dt class="field-odd" id="sgio.model.EulerBernoulliBeamModel.i33-type">Type<span class="colon">:</span><a class="headerlink" href="#sgio.model.EulerBernoulliBeamModel.i33-type" title="Permalink to this headline">¶</a></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute objdesc">
+<dt class="sig sig-object highlight py" id="sgio.model.EulerBernoulliBeamModel.mass">
+<span class="sig-name descname"><span class="pre">mass</span></span><a class="headerlink" href="#sgio.model.EulerBernoulliBeamModel.mass" title="Link to this definition">¶</a></dt>
+<dd><p>list of list of floats:
+The 6x6 mass matrix</p>
+</dd></dl>
+
+<dl class="py attribute objdesc">
+<dt class="sig sig-object highlight py" id="sgio.model.EulerBernoulliBeamModel.mass_mc">
+<span class="sig-name descname"><span class="pre">mass_mc</span></span><a class="headerlink" href="#sgio.model.EulerBernoulliBeamModel.mass_mc" title="Link to this definition">¶</a></dt>
+<dd><p>list of lists of floats:
+The 6x6 mass matrix at the mass center</p>
+</dd></dl>
+
+<dl class="py attribute objdesc">
+<dt class="sig sig-object highlight py" id="sgio.model.EulerBernoulliBeamModel.mu">
+<span class="sig-name descname"><span class="pre">mu</span></span><a class="headerlink" href="#sgio.model.EulerBernoulliBeamModel.mu" title="Link to this definition">¶</a></dt>
+<dd><p>Mass per unit span</p>
+<dl class="field-list simple">
+<dt class="field-odd" id="sgio.model.EulerBernoulliBeamModel.mu-type">Type<span class="colon">:</span><a class="headerlink" href="#sgio.model.EulerBernoulliBeamModel.mu-type" title="Permalink to this headline">¶</a></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute objdesc">
+<dt class="sig sig-object highlight py" id="sgio.model.EulerBernoulliBeamModel.phi_pba">
+<span class="sig-name descname"><span class="pre">phi_pba</span></span><a class="headerlink" href="#sgio.model.EulerBernoulliBeamModel.phi_pba" title="Link to this definition">¶</a></dt>
+<dd><p>Principle bending axes rotation angle in degree</p>
+<dl class="field-list simple">
+<dt class="field-odd" id="sgio.model.EulerBernoulliBeamModel.phi_pba-type">Type<span class="colon">:</span><a class="headerlink" href="#sgio.model.EulerBernoulliBeamModel.phi_pba-type" title="Permalink to this headline">¶</a></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute objdesc">
+<dt class="sig sig-object highlight py" id="sgio.model.EulerBernoulliBeamModel.phi_pia">
+<span class="sig-name descname"><span class="pre">phi_pia</span></span><a class="headerlink" href="#sgio.model.EulerBernoulliBeamModel.phi_pia" title="Link to this definition">¶</a></dt>
+<dd><p>Principal inertial axes rotation angle in degree</p>
+<dl class="field-list simple">
+<dt class="field-odd" id="sgio.model.EulerBernoulliBeamModel.phi_pia-type">Type<span class="colon">:</span><a class="headerlink" href="#sgio.model.EulerBernoulliBeamModel.phi_pia-type" title="Permalink to this headline">¶</a></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute objdesc">
+<dt class="sig sig-object highlight py" id="sgio.model.EulerBernoulliBeamModel.rg">
+<span class="sig-name descname"><span class="pre">rg</span></span><a class="headerlink" href="#sgio.model.EulerBernoulliBeamModel.rg" title="Link to this definition">¶</a></dt>
+<dd><p>mass-weighted radius of gyration</p>
+<dl class="field-list simple">
+<dt class="field-odd" id="sgio.model.EulerBernoulliBeamModel.rg-type">Type<span class="colon">:</span><a class="headerlink" href="#sgio.model.EulerBernoulliBeamModel.rg-type" title="Permalink to this headline">¶</a></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute objdesc">
+<dt class="sig sig-object highlight py" id="sgio.model.EulerBernoulliBeamModel.stff">
+<span class="sig-name descname"><span class="pre">stff</span></span><a class="headerlink" href="#sgio.model.EulerBernoulliBeamModel.stff" title="Link to this definition">¶</a></dt>
+<dd><p>list of lists of floats:
+Classical stiffness matrix (1-extension; 2-twist; 3,4-bending)</p>
+</dd></dl>
+
+<dl class="py attribute objdesc">
+<dt class="sig sig-object highlight py" id="sgio.model.EulerBernoulliBeamModel.xm2">
+<span class="sig-name descname"><span class="pre">xm2</span></span><a class="headerlink" href="#sgio.model.EulerBernoulliBeamModel.xm2" title="Link to this definition">¶</a></dt>
+<dd><p>Mass center location in x2 direction</p>
+<dl class="field-list simple">
+<dt class="field-odd" id="sgio.model.EulerBernoulliBeamModel.xm2-type">Type<span class="colon">:</span><a class="headerlink" href="#sgio.model.EulerBernoulliBeamModel.xm2-type" title="Permalink to this headline">¶</a></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute objdesc">
+<dt class="sig sig-object highlight py" id="sgio.model.EulerBernoulliBeamModel.xm3">
+<span class="sig-name descname"><span class="pre">xm3</span></span><a class="headerlink" href="#sgio.model.EulerBernoulliBeamModel.xm3" title="Link to this definition">¶</a></dt>
+<dd><p>Mass center location in x3 direction</p>
+<dl class="field-list simple">
+<dt class="field-odd" id="sgio.model.EulerBernoulliBeamModel.xm3-type">Type<span class="colon">:</span><a class="headerlink" href="#sgio.model.EulerBernoulliBeamModel.xm3-type" title="Permalink to this headline">¶</a></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute objdesc">
+<dt class="sig sig-object highlight py" id="sgio.model.EulerBernoulliBeamModel.xt2">
+<span class="sig-name descname"><span class="pre">xt2</span></span><a class="headerlink" href="#sgio.model.EulerBernoulliBeamModel.xt2" title="Link to this definition">¶</a></dt>
+<dd><p>Tension center location in x2 direction</p>
+<dl class="field-list simple">
+<dt class="field-odd" id="sgio.model.EulerBernoulliBeamModel.xt2-type">Type<span class="colon">:</span><a class="headerlink" href="#sgio.model.EulerBernoulliBeamModel.xt2-type" title="Permalink to this headline">¶</a></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute objdesc">
+<dt class="sig sig-object highlight py" id="sgio.model.EulerBernoulliBeamModel.xt3">
+<span class="sig-name descname"><span class="pre">xt3</span></span><a class="headerlink" href="#sgio.model.EulerBernoulliBeamModel.xt3" title="Link to this definition">¶</a></dt>
+<dd><p>Tension center location in x3 direction</p>
+<dl class="field-list simple">
+<dt class="field-odd" id="sgio.model.EulerBernoulliBeamModel.xt3-type">Type<span class="colon">:</span><a class="headerlink" href="#sgio.model.EulerBernoulliBeamModel.xt3-type" title="Permalink to this headline">¶</a></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+    <nav class="md-footer__inner md-grid" aria-label="Footer" >
+      
+        
+        <a href="index.html" class="md-footer__link md-footer__link--prev" aria-label="Previous: Beam" rel="prev">
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+          </div>
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              Beam
+            </div>
+          </div>
+        </a>
+      
+      
+        
+        <a href="timoshenko.html" class="md-footer__link md-footer__link--next" aria-label="Next: Timoshenko Beam Model" rel="next">
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              Timoshenko Beam Model
+            </div>
+          </div>
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
+          </div>
+        </a>
+      
+    </nav>
+  
+  
+  
+  <div class="md-footer-meta md-typeset">
+    
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-footer-copyright__highlight">
+        &#169; Copyright 2023, su tian.
+        
+    </div>
+  
+    Created using
+    <a href="https://www.sphinx-doc.org/" target="_blank" rel="noopener">Sphinx</a>
+    7.4.7.
+     and
+    <a href="https://github.com/jbms/sphinx-immaterial/" target="_blank" rel="noopener">Sphinx-Immaterial</a>
+  
+</div>
+      
+    </div>
+    
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "../../..", "features": [], "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
+    
+      
+        <script src="../../../_static/sphinx_immaterial_theme.f9d9eeeb247ace16c.min.js?v=8ec58cb5"></script>
+    
+  </body>
+</html>
