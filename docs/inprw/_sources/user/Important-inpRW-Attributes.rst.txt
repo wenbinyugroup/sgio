@@ -1,0 +1,86 @@
+Important :mod:`inpRW` Attributes
+=================================
+
+Since :mod:`inpRW` is a large project, here is a summary of the key attributes with which a user might wish to interact.
+
+:attr:`~inpRW.inpRW.keywords`
+-----------------------------
+
+:attr:`~inpRW.inpRW.keywords` is the :class:`inpKeywordSequence` that contains the parsed :term:`keyword blocks <keyword block>`.
+This is the most important attribute of :mod:`inpRW`, as all of the information from the input file is stored here.
+
+:attr:`~inpRW.inpRW.kwg`
+------------------------
+
+Short for keyword group. :attr:`~inpRW.inpRW.kwg` is a :class:`csid` that uses the keyword names in the input file as keys. 
+The value for a given key is a :class:`set` containing all keyword blocks with that name. For example, ``inp.kwg['STEP']`` will 
+contain all the \*STEP keyword blocks. Since a :class:`set` is naturally unsorted, use :func:`~inpRW._inpR.Read.sortKWs`
+if you need the keywords in their original order.
+
+:attr:`~inpRW.inpRW.steps`
+--------------------------
+
+:attr:`~inpRW.inpRW.steps` is a :class:`csid` with the step names as the key, and the corresponding step keyword block as 
+the value. If the NAME :term:`parameter[2] <parameter>` is not specified for a keyword block, an integer
+corresponding to the steps index in kwg['STEP'] is used as the key.
+
+:attr:`~inpRW.inpRW.step_paths`
+-------------------------------
+
+:attr:`~inpRW.inpRW.step_paths` is a list that contains the path to each \*STEP keyword block in their proper order.
+
+:attr:`~inpRW.inpRW.nd`
+-----------------------
+
+:attr:`~inpRW.inpRW.nd` is a :class:`~mesh.TotalMesh` instance, which behaves similarly to a dictionary. It directly references
+every node in the input file. The keys to :attr:`~inpRW.inpRW.nd` are node labels, and the values are :class:`~mesh.Node` instances.
+
+:attr:`~inpRW.inpRW.ed`
+-----------------------
+
+:attr:`~inpRW.inpRW.ed` is a :class:`~mesh.TotalMesh` instance, which behaves similarly to a dictionary. It directly references
+every element in the input file. The keys to :attr:`~inpRW.inpRW.ed` are element labels, and the values are :class:`~mesh.Element` instances.
+
+:attr:`~inpRW.inpRW.inpName`
+----------------------------
+
+:attr:`~inpRW.inpRW.inpName` is a string that corresponds to the name of the :term:`input file` (including the extension, 
+but not the full path to the file).
+
+:attr:`~inpRW.inpRW.inputFolder`
+--------------------------------
+
+:attr:`~inpRW.inpRW.inputFolder` is a string that represents the path to the :term:`input file`. The value will be parsed 
+from the *inpName* :term:`parameter[1] <parameter>` of :class:`inpRW` when instancing :class:`inpRW` if 
+*inpName* includes the full path. If *inpName* does not contain the path, :attr:`~inpRW.inpRW.inputFolder` will be a blank string. 
+:attr:`~inpRW.inpRW.inputFolder` will be prepended to :attr:`~inpRW.inpRW.inpName` when reading files with :mod:`inpRW`.
+
+:attr:`~inpRW.inpRW.outputFolder`
+---------------------------------
+
+:attr:`~inpRW.inpRW.outputFolder` is a string that represents the path to which new :term:`input files <input file>` will 
+be written. The value will be parsed from the *inpName* :term:`parameter[1] <parameter>` of :class:`inpRW` when instancing 
+:class:`inpRW` if *inpName* includes the full path. If *inpName* does not contain the path, :attr:`~inpRW.inpRW.outputFolder` 
+will be a blank string. :attr:`~inpRW.inpRW.outputFolder` can of course be manually set prior to writing out new input files. 
+:attr:`~inpRW.inpRW.outputFolder` will be prepended to :attr:`~inpRW.inpRW.inpName` when writing new files. 
+
+:attr:`~inpRW.inpRW.jobSuffix`
+------------------------------
+
+:attr:`~inpRW.inpRW.jobSuffix` is a string that will be appended to :attr:`~inpRW.inpRW.inpName` (without the file extension)
+when writing out an :term:`input file` or any reference to a new :term:`input file`. If the *jobSuffix* :term:`parameter [1] <parameter>`
+is not specified when instancing :class:`inpRW`, it will default to '_NEW.inp'. If using :term:`Keyword Edit` with 
+**3D**\ EXPERIENCE, :attr:`~inpRW.inpRW.jobSuffix` should be set to '_NEW.inp'.
+
+:attr:`~inpRW.inpRW.includeFileNames`
+-------------------------------------
+
+:attr:`~inpRW.inpRW.includeFileNames` is a list which contains the names of all :term:`input files <input file>` read in by 
+the parent :term:`input file`. This will cover \*INCLUDE, \*MANIFEST, and any keyword that reads its data from another 
+:term:`input file`.
+
+:attr:`~inpRW.inpRW.includeBlockPaths`
+--------------------------------------
+
+:attr:`~inpRW.inpRW.includeBlockPaths` is a list that contains the :attr:`.path` to each block in :attr:`~inpRW.inpRW.keywords` 
+that reads from a secondary :term:`input file`.

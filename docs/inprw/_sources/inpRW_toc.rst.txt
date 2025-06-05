@@ -1,0 +1,59 @@
+
+inpRW
+=================================
+
+.. toctree::
+   :titlesonly:
+   :caption: User Documentation
+   :name: User Documentation
+   
+   /user/Introduction
+   /user/Project-Background
+   /user/Installation-and-Usage
+   /user/Tests
+   /user/inpKeyword-Basics
+   /user/Strings_Integers_and_Decimals
+   /user/Important-inpRW-Attributes
+   /user/Miscellaneous-Usage-hints
+   /user/Example-Scenarios
+   /user/glossary
+   
+   
+.. toctree::
+   :titlesonly:
+   :caption: API Reference
+   :name: API Reference
+
+   /autoapi/inpRW/index
+   /autoapi/centroid/index
+   /autoapi/config/index
+   /autoapi/config_re/index
+   /autoapi/csid/index
+   /autoapi/eval2/index
+   /autoapi/elType/index
+   /autoapi/inpDecimal/index
+   /autoapi/inpInt/index
+   /autoapi/inpKeyword/index
+   /autoapi/inpKeywordHelper/index
+   /autoapi/inpKeywordSequence/index
+   /autoapi/inpRWErrors/index
+   /autoapi/inpString/index
+   /autoapi/mesh/index
+   /autoapi/misc_functions/index
+   /autoapi/NoneSort/index
+   /autoapi/printer/index
+   /autoapi/repr2/index
+   
+.. toctree::
+   :titlesonly:
+   :caption: Update Notes
+   :name: Update Notes
+
+   /Update-Notes/index
+
+.. toctree::
+   :titlesonly:
+   :caption: Legal Notices and Usage Disclaimer
+   :name: Legal Notices and Usage Disclaimer
+
+   /legal_notices/Legal_Notices_and_Usage_Disclaimer

@@ -68,9 +68,9 @@ python -m sgio convert cross-section.inp cross-section.sg -ff abaqus -tf vabs -m
 #### Complete Options
 
 ```text
-usage: sgio [-h] {build,b,convert,c} ...
+usage: sgio [-h] [-v] {build,b,convert,c} ...
 
-CS/SG I/O functions
+I/O library for VABS (cross-section) and SwiftComp (structural gene)
 
 positional arguments:
   {build,b,convert,c}  sub-command help
@@ -79,12 +79,18 @@ positional arguments:
 
 optional arguments:
   -h, --help           show this help message and exit
+  -v, --version        Show version number and exit
 ```
 
 ##### Convert SG Data
 
 ```text
-usage: sgio convert [-h] [-ff FROM_FORMAT] [-tf TO_FORMAT] [-d SGDIM] [-m MODEL] [-mo] from to
+usage: sgio convert [-h] [--loglevelcmd {debug,info,warning,error,critical}]
+                    [--loglevelfile {debug,info,warning,error,critical}] [--logfile LOGFILE]      
+                    [-ff FROM_FORMAT] [-ffv FROM_FORMAT_VERSION] [-tf TO_FORMAT]
+                    [-tfv TO_FORMAT_VERSION] [-d {1,2,3}] [-ms {x,y,z,xy,yz,zx}] [-mry {x,y,z}]   
+                    [-m {sd1,pl1,pl2,bm1,bm2}] [-mo] [-re]
+                    from to
 
 positional arguments:
   from                  CS/SG file to be read from
@@ -92,15 +98,30 @@ positional arguments:
 
 optional arguments:
   -h, --help            show this help message and exit
+  --loglevelcmd {debug,info,warning,error,critical}
+                        Command line logging level
+  --loglevelfile {debug,info,warning,error,critical}
+                        File logging level
+  --logfile LOGFILE     Logging file name
   -ff FROM_FORMAT, --from-format FROM_FORMAT
                         CS/SG file format to be read from
+  -ffv FROM_FORMAT_VERSION, --from-format-version FROM_FORMAT_VERSION
+                        CS/SG file format version to be read from
   -tf TO_FORMAT, --to-format TO_FORMAT
                         CS/SG file format to be written to
-  -d SGDIM, --sgdim SGDIM
+  -tfv TO_FORMAT_VERSION, --to-format-version TO_FORMAT_VERSION
+                        CS/SG file format version to be written to
+  -d {1,2,3}, --sgdim {1,2,3}
                         SG dimension (SwiftComp only)
-  -m MODEL, --model MODEL
+  -ms {x,y,z,xy,yz,zx}, --model-space {x,y,z,xy,yz,zx}
+                        Model space
+  -mry {x,y,z}, --material-ref-y {x,y,z}
+                        Axis used as the material reference y-axis
+  -m {sd1,pl1,pl2,bm1,bm2}, --model {sd1,pl1,pl2,bm1,bm2}
                         CS/SG model
   -mo, --mesh-only      Mesh only conversion
+  -re, --renumber-elements
+                        Renumber elements
 ```
 
 Check out the example `examples/convert_cs_from_abaqus_to_vabs` for more details.

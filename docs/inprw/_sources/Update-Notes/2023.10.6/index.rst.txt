@@ -1,0 +1,236 @@
+2023.10.6
+=================================
+
+This update corrects problems with sub-input files, variable node elements, leading comments, and it adds more tests.
+
+A summary of the major changes follows. Please note that there will be some breaking changes to the API. I have done my best to document all such changes in these notes, so it is imperative that you read these before updating and trying to run an existing script. I will try to minimize API changes in the future, but the performance and robustness of inpRW will trump API stability concerns for the near future. 
+
+The major features of this update are the following:
+
+    * Improved handling of all multi-input file jobs (for example, \*INCLUDE, \*MANIFEST, INPUT parameter of multiple keywords).
+        * Added :attr:`~inpKeyword.inpKeyword._subinps` attribute to :class:`~.inpKeyword.inpKeyword` class; this is used only for \*INCLUDE and \*MANIFEST blocks 
+          and should contain only :class:`~inpRW.inpRW` instances.
+        * :class:`~inpRW.inpRW` formerly created sub-instances of the :class:`~inpRW.inpRW` class, but used the :attr:`~inpRW.inpRW.keywords` attribute of the 
+          parent instance for the child. 
+        * When parsing sub-input files (\*MANIFEST, \*INCLUDE), a new :class:`~inpRW.inpRW` instance is created for the sub-file, and that instance is placed in 
+          the parent block's :attr:`~inpKeyword.inpKeyword._subinps`, and the sub-inpRW instance's :attr:`~inpRW.inpRW.keywords` attribute is added to the parent 
+          block's suboptions attribute.
+    * The :attr:`~config._elementTypeDictionary` is more useful and more accurate. Each entry is now a new :class:`~elType.elType` class instead of a dictionary. 
+      * inpRW should now accurately understand all element types except for submodel or user elements. Variable node elements were a particular problem before.
+    * Removed function inpKeyword.inpKeyword._getElementNodeNum() and replaced it with :meth:`inpKeyword.findElementNodeNum`.
+    * Better handling of leading comments (i.e. comment lines before the first keyword block). Previous releases would have difficulties in some cases.
+    * Corrected a bug related to parsing \*REBAR LAYER keywords.
+    * Additional tests added for inpRW functionality.
+    * Addressed an error when the string 'INF' would be converted to a :class:`~decimal.Decimal` instance instead of treated as a string.
+    * Added :func:`~inpRW.inpRW.__repr__` and :func:`~inpRW.inpRW.__str__` functions to the :class:`~inpRW.inpRW` class so they produce useful information.
+    * Renamed install.bat to install_to_3DEXPERIENCE.bat to clarify its purpose.
+    * Corrected several bugs related to string productions, which affected the accuracy of input file writing.
+    * Corrected a bug where elements from multiple \*ELEMENT keyword blocks would override the elements attribute of shared node instances.
+    * Removed python3_inpRW.bat and python3_inpRW.sh from the test suite. test_all.bat and test_all.sh instead set the INPRW_TEST environment variable
+      which point to the desired Python interpreter, and the tests have been rewritten to use INPRW_TEST.
+    * Expanded the documentation on :doc:`Installation and Usage Instructions </user/Installation-and-Usage>`. The different options for installing 
+      inpRW should be more clear. 
+      There is also a new section called :ref:`Using inpRW with Keyword Edit in 3DEXPERIENCE <Using-inpRW-with-Keyword-Edit-in-3DEXPERIENCE>`, which 
+      includes a video showing how to install :mod:`inpRW` to **3D**\ EXPERIENCE and call :mod:`inpRW` from a Keyword Edit script.
+
+
+Unless otherwise noted, if a term can refer to a module name or a class name, I am using it to refer to the class name. Thus, inpKeyword is short-hand for 
+inpKeyword.inpKeyword in these update notes.
+
+Performance Improvements:
+---------------------------------------------------------------------------------------
+
+    N/A
+    
+Modified signatures:
+---------------------------------------------------------------------------------------
+
+    * :func:`inpKeyword.inpKeyword.__str__`
+        Added *includeSubData=True* parameter
+
+Modified Modules:
+----------------------------------------------------------------------------------------
+
+    This is a summary of all the modules which have seen some code change. The details are in later sections of this document.
+
+    * :mod:`inpRW._inpR`
+    * :mod:`inpRW._inpW`
+    * :mod:`inpRW`
+    * :mod:`csid`
+    * :mod:`eval2`
+    * :mod:`inpDecimal`
+    * :mod:`inpKeyword`
+    * :mod:`inpRWErrors`
+    * :mod:`mesh`
+    * :mod:`config`
+    * :mod:`config_re`
+    * :mod:`elType`
+
+Modified Classes:
+----------------------------------------------------------------------------------------
+    
+    This is a summary of all the classes which have seen some code change. The details are in later sections of this document.
+
+    * :class:`inpRW._inpR.Read`
+    * :class:`inpRW._inpW.Write`
+    * :class:`inpRW.inpRW`
+    * :class:`csid.csid`
+    * :class:`csid.csiKeyString`
+    * :class:`eval2.eval2`
+    * :class:`inpDecimal.inpDecimal`
+    * :class:`inpKeyword`
+    * :exc:`inpRWErrors.ElementIncorrectNodeNumError`
+    * :class:`mesh.Element`
+    * :class:`mesh.TotalNodeMesh`
+
+Modified Functions:
+----------------------------------------------------------------------------------------
+
+    * :func:`inpRW._inpR.Read._readInclude`
+        Improves handling of reading sub-files of \*INCLUDE.
+        Removes leading and trailing whitespace from sub-file name when opening.
+    * :func:`inpRW._inpR.Read._readManifest`
+        Improves handling of reading sub-files of \*MANIFEST.
+    * :func:`inpRW._inpR.Read._splitKeywords`
+        More accurately identifies comments prior to the first keyword block by using the pattern from 
+        :func:`~inpRW._inpR.Read._getLeadingCommentsPattern`.
+    * :func:`inpRW._inpW.Write.writeBlocks`
+        Accounts for changes to sub-input file data storage.
+    * :func:`inpRW._inpW.Write.writeInp`
+        No longer sets :attr:`~inpRW.inpRW._firstItem` to ``False`` after writing leading comments.
+    * :func:`inpRW.inpRW.__init__`
+        The outputFolder of a sub-instance of :class:`~inpRW.inpRW` will first try to be read from the *inpName* passed to the sub-instance, 
+        otherwise it will use :attr:`_parentINP.outputFolder<inpRW.inpRW.outputFolder>`.
+        Sub-instances of :class:`~inpRW.inpRW` now use their own :class:`~inpKeywordSequence.inpKeywordSequence` for :attr:`~inpRW.inpRW.keywords` 
+        instead of directly sharing the :attr:`_parentINP's<inpRW.inpRW._parentINP>` keywords attribute. The 
+        :attr:`sub-inpKeywordSequence's<inpKeywordSequence.inpKeywordSequence>` contents will still be propagated to the parent :class:`~inpRW.inpRW`
+        instance internally.
+    * :func:`inpRW.inpRW.parse`
+        Changes to account for new code to identify leading comments.
+    * :func:`csid.csid.__str__`
+        String keys and/or values will now include quote symbols around them.
+    * :func:`csid.csiKeyString.__eq__`
+        Will now automatically convert the *other* key to a :class:`~csid.csiKeyString` if it is not already.
+    * :func:`eval2.eval2`
+        Catch :exc:`~inpRWErrors.DecimalInfError` and convert the text 'INF' to an :class:`~inpString.inpString` instead of an 
+        :class:`inpDecimal.inpDecimal`.
+    * :func:`inpDecimal.inpDecimal.__new__`
+        Raises a :exc:`~inpRWErrors.DecimalInfError` if 'INF' (not case-sensitive) is in *inputStr*.
+        This addresses a niche bug and should not affect most users.
+    * :func:`inpKeyword.inpKeyword.parseKWData`
+        Improved handling of keywords with subdata (i.e. those with the INPUT parameter).
+    * :func:`inpKeyword.inpKeyword._formatDataLabelDict`
+        Improved handling of comments for \*ELEMENT keyword blocks, specifically those with element definitions spanning more than 1 dataline.
+    * :func:`inpKeyword.inpKeyword._parseData`
+        Corrected incorrect function call to ``_parseRebarLayer()`` with the correct call to :func:`~inpKeyword.inpKeyword._parseDataRebarLayer`.
+    * :func:`inpKeyword.inpKeyword._parseDataElement`
+        Modifications to correct inaccurate handling of multi-line and/or variable node element definitions.
+    * :func:`inpKeyword.inpKeyword._parseDataRebarLayer`
+        Removed some old code which was causing an error.
+    * :func:`inpKeyword.inpKeyword._parseInputString`
+        Moved call of :func:`~inpKeyword.inpKeyword._setMiscInpKeywordAttrs` from :func:`~inpKeyword.inpKeyword._parseKWLine` to this function.
+        Corrects rare problem with important parameters for a keyword block not being on the first keyword line. For example, an error would
+        be raised if the NSET parameter of an \*NSET keyword block was not on the first keyword line.
+    * :func:`inpKeyword.inpKeyword._parseKWLine`
+        Moved call of :func:`~inpKeyword.inpKeyword._setMiscInpKeywordAttrs` to :func:`~inpKeyword.inpKeyword._parseInputString` from this function.
+    * :func:`inpKeyword.inpKeyword.__str__`
+        Added *includeSubData* parameter (default to ``True``). This will not be used by end-users in most cases. Setting this parameter to ``False``
+        allows :mod:`inpRW` to omit writing sub data to the main input file. The default behavior is identical to the previous release.
+    * :func:`inpRWErrors.ElementIncorrectNodeNumError.__str__`
+        New options to account for new *nodeNum* data types (i.e. :class:`set` or :class:`int`).
+    * :func:`mesh.Element.__init__`
+        Updated to account for changes to :attr:`~config._elementTypeDictionary`.
+    * :func:`mesh.Element.checkNumberNodes`
+        Updated to account for changes to :attr:`~config._elementTypeDictionary`.
+    * :func:`mesh.Element.__str__`
+        Corrected a problem with string production for multi-line elements.
+    * :func:`mesh.TotalNodeMesh.setNodesConnectedElements`
+        Corrected a bug which overrode the elements connected to a node if the node was connected to different elements defined in multiple
+        \*ELEMENT keyword blocks.
+    
+Modified Attributes:
+----------------------------------------------------------------------------------------
+
+    * :attr:`config._elementTypeDictionary`
+        The value for each element is now the new :class:`~elType.elType` class instead of a :class:`~csid.csid`. :mod:`inpRW` has been updated 
+        to account for this change, but any user scripts which directly accessed this dictionary will need to be updated to account for the new structure.
+        This dictionary should include more information about each element type, (description, valid solver, and number of nodes),
+        and it identifies variable node elements (they use :attr:`~elType.elType.numNodesSet` instead of :attr:`~elType.elType.numNodesSet`).
+
+New Functions:
+----------------------------------------------------------------------------------------
+
+    * :func:`inpRW._inpR.Read._getLeadingCommentsPattern`
+        Finds the location where the first keyword block begins and returns a regular expression pattern to identify that location.
+    * :func:`inpRW.inpRW.__repr__`
+        Produces a useful string representation of an :class:`~inpRW.inpRW` instance.
+    * :func:`inpRW.inpRW.__str__`
+        Produces a string which helps identify the input file which corresponds to this :class:`inpRW.inpRW` instance.
+    * :func:`inpKeyword.findElementNodeNum`
+        Replaces and simplifies ``inpKeyword.inpKeyword._getElementNodeNum()``.
+        With the exception of user elements, sub-structure elements, and variable number elements, all Abaqus elements have a static
+        number of nodes which can define them. Thus, this function simply performs a dictionary lookup in most cases.
+        For variable node elements, this function looks up the valid number of nodes to define the element. Then, it keeps
+        reading data lines until it finds a line which does not end with a comma. If the number of nodes is in the set of
+        valid node numbers for the element type, this function returns an integer. If the number of nodes is not in the set,
+        an :exc:`~inpRWErrors.ElementIncorrectNodeNumError` is raised.
+        For undefined element type labels, this function will read datalines until it finds one which does not end with a comma.
+        It will return the number of nodes it thinks the element has. For accurate results with user or sub-structure elements, the 
+        user should add an entry to :attr:`inp._elementTypeDictionary<config._elementTypeDictionary>` before calling :func:`inp.parse<inpRW.inpRW.parse>`.
+            
+New Attributes:
+----------------------------------------------------------------------------------------
+
+    * :attr:`inpKeyword.inpKeyword._subinps`
+        Contains sub :class:`~inpRW.inpRW` instances for \*INCLUDE and \*MANIFEST blocks.
+    * :attr:`config_re.re25`
+        Used to find leading comments prior to first keyword.
+    * :attr:`config_re.re26`
+        Used to check if an element definition has been completed.
+        
+New Modules:
+----------------------------------------------------------------------------------------
+
+    * :mod:`elType`
+        Provides the :class:`~elType.elType` class.
+    * paramTypes
+        Internal only module, not yet shipped with :mod:`inpRW`. The handling of \*PARAMETER definition and references needs to be improved,
+        and this module is the foundation of that future work.
+
+New Classes:
+----------------------------------------------------------------------------------------
+
+    * :class:`elType.elType`
+        Stores information about an Abaqus element type. Used for each entry in :attr:`~config._elementTypeDictionary` instead of sub 
+        :class:`~csid.csid` instances.
+        Includes the element description from the Abaqus documentation, the valid solver(s), and the number of nodes needed to define the element.
+    * :exc:`inpRWErrors.DecimalInfError`
+        This exception is raised by :func:`inpDecimal.inpDecimal.__new__` if the input string is 'INF'. It is meant to handle a very niche error.
+
+Removed:
+----------------------------------------------------------------------------------------
+
+    * ``inpKeyword.inpKeyword._getElementNodeNum()``
+        Replaced with :func:`inpKeyword.findElementNodeNum`.
+    * Removed python3_inpRW.bat and python3_inpRW.sh from the test suite.
+
+Automated Tests:
+----------------------------------------------------------------------------------------
+
+    Added automated tests to the following items:
+        * :mod:`elType` module: 
+            all class functions
+        * :mod:`inpKeyword` module:
+            * :func:`~inpKeyword.findElementNodeNum`
+            * :func:`~inpKeyword.inpKeyword.printKWandSuboptions`
+            * :func:`~inpKeyword.inpKeyword.writeKWandSuboptions`
+            * :func:`~inpKeyword.inpKeyword._formatDataOutput`
+            * :func:`~inpKeyword.inpKeyword._formatDataLabelDict`
+        * test_Example_Scenarios
+          This test runs the example script from :doc:`Example Scenarios </user/Example-Scenarios>` page of the documentation.
+    
+    
+Misc:
+----------------------------------------------------------------------------------------
+    
+    N/A

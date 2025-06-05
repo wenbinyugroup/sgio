@@ -1,0 +1,10 @@
+:py:mod:`inpRW._inpCustom`
+==========================
+
+Module Contents
+---------------
+
+.. automodule:: inpRW._inpCustom
+   :members:
+   :private-members:
+
