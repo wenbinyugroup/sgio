@@ -9,5 +9,5 @@ Abaqus inp file: :download:`sg33_cube.inp <../files/sg33_cube.inp>`
 
 ..  code-block::
 
-    sgio convert sg33_cube.inp sg33_cube.sg -ff abaqus -tf swiftcomp
+    sgio convert sg33_cube.inp sg33_cube.sg -ff abaqus -tf swiftcomp -tfv 2.1 -m sd1
 

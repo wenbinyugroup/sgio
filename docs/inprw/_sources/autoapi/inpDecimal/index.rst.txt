@@ -1,0 +1,16 @@
+:py:mod:`inpDecimal`
+====================
+
+.. py:module:: inpDecimal
+
+
+Module Contents
+---------------
+
+.. autoclass:: inpDecimal
+   :members:
+   :private-members:
+   :special-members:
+   :show-inheritance:
+
+      

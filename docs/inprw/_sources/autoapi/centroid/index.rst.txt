@@ -1,0 +1,11 @@
+:py:mod:`centroid`
+==================
+
+Module Contents
+---------------
+
+.. automodule:: centroid
+   :members:
+   :private-members:
+
+

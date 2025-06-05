@@ -1,0 +1,36 @@
+Strings, Integers, and Decimals
+===============================
+
+One option with :mod:`inpRW` is the *preserveSpacing* parameter. If this is True, :mod:`inpRW` will track every space character,
+and the exact formatting of every number for every piece of data parsed from the input file. 
+
+Since a :class:`float` cannot accurately represent numbers with decimal points (`reference <https://docs.python.org/3/tutorial/floatingpoint.html>`_), 
+:mod:`inpRW` has a parameter (*useDecimal*) to convert all numbers that would be evaluated to :class:`float` to :class:`~decimal.Decimal` instead.
+Setting *useDecimal* to False will treat numbers as :class:`float`; this will result in faster performance, but some formatting and value 
+precision will be lost. If *useDecimal* = True, :mod:`inpRW` will use :class:`floats <float>` in one location: :attr:`~inpRW.inpRW.pd`. [#f1]_ 
+
+However, using :class:`~decimal.Decimal` is not enough by itself to exactly reproduce an input file. Converting a string into
+its underlying data type will naturally lose spaces and exact formatting of the original number, so inpRW uses a custom :func:`eval`
+function (:func:`~eval2.eval2`), and 3 new classes: :class:`inpDecimal`, :class:`inpInt`, and :class:`inpString`. These
+functions track the exact spacing and number formatting in the original item and store that information in the :attr:`~inpDecimal.inpDecimal._formatStr`
+and :attr:`~inpDecimal.inpDecimal._formatExp` attributes of the new items. These classes inherit from :class:`~decimal.Decimal`, :class:`int`, and
+:class:`str`, and should support all the same operations as their base classes. Please see those class definitions for more details.
+
+Creating an instance of :class:`inpRW` with *preserveSpacing = False, useDecimal = True* will not preserve the exact spacing, and will instead create
+:class:`~decimal.Decimal`, :class:`int`, and :class:`str` items. Using *preserveSpacing = False, useDecimal = False* will use :class:`float`,
+:class:`int`, and :class:`str` items. Using *preserveSpacing = True, useDecimal = True* will preserve the exact spacing and use :class:`inpDecimal`,
+:class:`inpInt`, and :class:`inpString`.
+
+Throughout this documentation (and particularly the :ref:`API Reference` section), there will be references to :class:`str`,
+:class:`int`, and :class:`~decimal.Decimal`. In almost all cases, these classes can be used interchangeably with the *inp\** variant.
+
+.. rubric:: Footnotes
+
+.. [#f1] 
+   
+   There is no way to avoid this, as the data in a \*PARAMETER keyword block is meant to be run as Python code, there is no 
+   good way to evaluate the Python commands while turning :class:`floats <float>` into :class:`Decimals <decimal.Decimal>`, and even 
+   if we did so mathematical operations on those values would differ slightly from the Abaqus job. Calling :func:`~inpRW._inpR.Read._subParam`
+   will automatically convert any :class:`float` to a :class:`~decimal.Decimal`, although a :class:`~decimal.Decimal` of a :class:`float`
+   of a :class:`str` will not be as precise as a :class:`~decimal.Decimal` of a :class:`str`.
+

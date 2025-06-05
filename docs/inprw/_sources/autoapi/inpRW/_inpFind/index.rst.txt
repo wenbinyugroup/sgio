@@ -1,0 +1,9 @@
+:py:mod:`inpRW._inpFind`
+========================
+
+Module Contents
+---------------
+
+.. automodule:: inpRW._inpFind
+   :members:
+   :private-members:

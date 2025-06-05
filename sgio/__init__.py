@@ -47,6 +47,8 @@ from .utils import (
     plot_sg_2d,
 )
 
+from ._vendors import inprw
+
 __all__ = [
     "configure_logging",
     "read",

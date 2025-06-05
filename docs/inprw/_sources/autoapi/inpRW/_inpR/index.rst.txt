@@ -1,0 +1,9 @@
+:mod:`inpRW._inpR`
+==================
+
+Module Contents
+---------------
+
+.. automodule:: inpRW._inpR
+   :members:
+   :private-members:

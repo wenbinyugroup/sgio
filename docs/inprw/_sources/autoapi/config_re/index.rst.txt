@@ -1,0 +1,9 @@
+:py:mod:`config_re`
+====================
+
+Module Contents
+---------------
+
+.. automodule:: config_re
+   :members:
+   :private-members:
