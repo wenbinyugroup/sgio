@@ -482,6 +482,7 @@ def write(
     sg:StructureGene, fn:str, file_format:str,
     format_version:str='', analysis:str='h', sg_format:int=1,
     model_space:str='', prop_ref_y:str='x',
+    renumber_nodes:bool=False, renumber_elements:bool=False,
     macro_responses:list[sgmodel.StateCase]=[], model_type:str='SD1',
     load_type:int=0, sfi:str='8d', sff:str='20.12e', mesh_only:bool=False,
     binary:bool=False
@@ -570,6 +571,8 @@ def write(
                 analysis=analysis, sg_format=sg_format,
                 macro_responses=macro_responses, model=model_type,
                 model_space=model_space, prop_ref_y=prop_ref_y,
+                renumber_nodes=renumber_nodes,
+                renumber_elements=renumber_elements,
                 sfi=sfi, sff=sff, version=format_version,
                 mesh_only=mesh_only
             )
@@ -617,6 +620,7 @@ def convert(
     str_format_int: str = '8d',
     str_format_float: str = '20.12e',
     mesh_only: bool = False,
+    renum_node: bool = False,
     renum_elem: bool = False
 ) -> StructureGene:
     """Convert the Structure Gene data file format.
@@ -702,6 +706,8 @@ def convert(
         sg_format=vabs_format_version,
         model_space=model_space,
         prop_ref_y=prop_ref_y,
+        renumber_nodes=renum_node,
+        renumber_elements=renum_elem,
         model_type=model_type,
         sfi=str_format_int,
         sff=str_format_float,
