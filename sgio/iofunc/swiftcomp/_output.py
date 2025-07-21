@@ -847,6 +847,71 @@ def _readOutputCauchyContinuumModel(file):
 
 
 
+def _read_output_node_strain_stress_case_global_gmsh(file, nelem):
+    """Read SC output strains and stressed on element nodes.
+
+    Parameters
+    ----------
+    file:
+        File object of the output file.
+    nelem: int
+        Number of elements.
+
+    Returns
+    -------
+    dict[str, dict[int, list[float]]]:
+        Nodal 3D strains and stresses of all elements in the global coordinate system.
+        Structure:
+
+        ..  code-block::
+        
+            {
+                'e11': {
+                    eid_1: [e11_n1, e11_n2, ...],
+                    eid_2: [e11_n1, e11_n2, ...],
+                    ...
+                },
+                'e22': {
+                    eid_1: [e22_n1, e22_n2, ...],
+                    eid_2: [e22_n1, e22_n2, ...],
+                    ...
+                },
+                ...
+            }
+
+    """
+
+    output = {}
+
+    components = [
+        'e11', 'e22', 'e33', '2e23', '2e13', '2e12',
+        's11', 's22', 's33', 's23', 's13', 's12',
+    ]
+
+    for comp in components:
+        output[comp] = {}
+
+        i = 0
+        while i < nelem:
+            line = file.readline().strip()
+            if line == '':
+                continue
+
+            line = line.split()
+            _eid = int(line[0])
+            _nvals = int(line[1])
+
+            _vals = list(map(float, line[2:]))
+
+            output[comp][_eid] = _vals
+
+            i += 1
+
+    return output
+
+
+
+
 
 def _readOutputFailureIndex(file):
     """

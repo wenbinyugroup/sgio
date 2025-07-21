@@ -23,6 +23,7 @@ from ._input import (
 from ._output import (
     _readOutputH,
     _readOutputFailureIndex,
+    _read_output_node_strain_stress_case_global_gmsh,
     )
 
 
@@ -100,17 +101,54 @@ def read_input_buffer(file, format_version:str, model:int|str):
 # Read output
 # -----------
 def read_output_buffer(
-    file, analysis=0, model_type=None,
-    # sg:StructureGene=None,
+    file, analysis:int|str, model_type:str,
+    sg:StructureGene, extension:str, nelem:int,
+    lfmt:int,
     **kwargs
     ):
+    """Read SwiftComp output file buffer.
+
+    Parameters
+    ----------
+    file: file
+        File object of the output file.
+    analysis: int or str
+        Analysis type.
+    model_type: str
+        Model type.
+    sg: StructureGene
+        StructureGene object.
+    extension: str
+        File extension of the output file.
+    nelem: int
+        Number of elements.
+    lfmt: int
+        Format of the output file. Choose one from
+        * 0 - Native format
+        * 1 - Gmsh format
+
+    Returns
+    -------
+    various
+        Different analyses return different types of results.
+    """
     # print('reading output buffer...')
 
     if analysis == 0 or analysis == 'h' or analysis == '':
         return _readOutputH(file, model_type=model_type, **kwargs)
 
     elif analysis == 1 or analysis == 2 or analysis == 'dl' or analysis == 'd' or analysis == 'l':
-        pass
+        if extension == 'u':
+            pass
+        else:
+            if nelem == 0:
+                nelem = sg.nelems
+
+            if extension == 'sn':
+                if lfmt == 0:
+                    pass
+                elif lfmt == 1:
+                    return _read_output_node_strain_stress_case_global_gmsh(file, nelem)
 
     elif analysis == 'f' or analysis == 3:
         # return readSCOutFailure(file, analysis)
