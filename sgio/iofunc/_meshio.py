@@ -319,10 +319,28 @@ def _meshio_to_sg_order(cell_type:str, idx:ArrayLike):
 
 
 def _write_nodes(
-    f, points, sgdim, model_space='',
+    f, points, sgdim, node_id=[], model_space='',
+    renumber_nodes:bool=False,
     int_fmt:str='8d', float_fmt:str='20.9e'
     ):
-    """
+    """Write nodes to file.
+
+    Parameters:
+    -----------
+    f:
+        File object.
+    points:
+        Array of points.
+    sgdim:
+        Spatial dimension.
+    node_ids:
+        List of node ids. If not provided, the node ids will be generated automatically.
+    model_space:
+        Model space. If not provided, the model space will be generated automatically.
+    int_fmt:
+        Format for integer.
+    float_fmt:
+        Format for float.
     """
     sfi = '{:' + int_fmt + '}'
     sff = ''.join(['{:' + float_fmt + '}', ]*sgdim)
@@ -331,7 +349,13 @@ def _write_nodes(
     # print(sff)
 
     for i, ncoord in enumerate(points):
-        nid = i + 1
+        if renumber_nodes:
+            nid = i + 1
+        else:
+            if len(node_id) > 0:
+                nid = node_id[i]
+            else:
+                nid = i + 1
         f.write(sfi.format(nid))  # node id
 
         # logger.debug(ncoord)
@@ -372,10 +396,33 @@ def _write_nodes(
 
 
 
-def _meshio_to_sg_order(cell_type:str, idx:ArrayLike):
+def _meshio_to_sg_order(
+    cell_type:str, idx:ArrayLike,
+    node_id=[], renumber_nodes:bool=False
+    ):
+    """Convert meshio cell ordering to SG ordering.
+
+    Parameters:
+    -----------
+    cell_type:
+        Cell type.
+    idx: np.ndarray (n_cells, n_elem_nodes)
+        2D array of cell connectivity (original node ids).
+    node_id: np.ndarray (n_nodes,)
+        Array of original node ids.
+    renumber_nodes:
+        Whether to renumber nodes.
+
+    Returns:
+    --------
+    idx_sg: np.ndarray (n_cells, n_elem_nodes_sg)
+        Array of cell connectivity in SG ordering.
     """
-    """
-    idx_sg = np.asarray(idx) + 1
+    idx_sg = np.asarray(idx)
+    if renumber_nodes:
+        idx_map = {v:i+1 for i, v in enumerate(node_id)}
+        idx_sg = np.vectorize(idx_map.get)(idx_sg)
+    # idx_sg = np.asarray(idx) + 1
 
     idx_to_insert = None
     if cell_type == 'triangle6':

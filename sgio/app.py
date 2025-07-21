@@ -105,6 +105,10 @@ def cli(*args):
         help='Mesh only conversion'
     )
     parser.add_argument(
+        '-rn', '--renumber-nodes', action='store_true',
+        help='Renumber nodes'
+    )
+    parser.add_argument(
         '-re', '--renumber-elements', action='store_true',
         help='Renumber elements'
     )
@@ -148,5 +152,6 @@ def main(
             prop_ref_y=kwargs['material_ref_y'],
             model_type=kwargs['model'],
             mesh_only=kwargs['mesh_only'],
+            renum_node=kwargs['renumber_nodes'],
             renum_elem=kwargs['renumber_elements'],
         )

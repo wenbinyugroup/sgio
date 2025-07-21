@@ -91,3 +91,27 @@ def _write_data(fh, tag, name, data, binary):
                 fh.write(fmt.format(k + 1, *[float(i) for i in x]))
         fh.write(f"$End{tag}\n")
 
+
+
+def write_element_node_data(file, name, data):
+    file.write(f"$ElementNodeData\n")
+
+    file.write(f"{1}\n")  # 1 string tag
+    file.write(f'"{name}"\n')
+
+    file.write(f"{1}\n")  # 1 real tag
+    file.write(f"{0.0}\n")
+
+    file.write(f"{3}\n")  # 3 integer tags
+    file.write(f"{0}\n")  # time step
+    file.write(f"{1}\n")  # number of components
+    file.write(f"{len(data)}\n")  # num data items
+
+    for _eid, _nvals in data.items():
+        file.write(f'{_eid} {len(_nvals)}')
+        for _v in _nvals:
+            file.write(f'  {_v}')
+        file.write('\n')
+
+    file.write(f"$EndElementNodeData\n")
+

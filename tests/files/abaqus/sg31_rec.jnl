@@ -1,0 +1,72 @@
+# -*- coding: mbcs -*-
+from part import *
+from material import *
+from section import *
+from assembly import *
+from step import *
+from interaction import *
+from load import *
+from mesh import *
+from optimization import *
+from job import *
+from sketch import *
+from visualization import *
+from connectorBehavior import *
+mdb.ModelFromInputFile(inputFileName=
+    'C:/Users/tian50/work/dev/sgio/tests/files/abaqus/sg31_rec.inp', name=
+    'sg31_rec')
+mdb.models['sg31_rec'].parts['PART-1'].MaterialOrientation(
+    additionalRotationField='', additionalRotationType=ROTATION_ANGLE, angle=
+    45.0, axis=AXIS_3, flipNormalDirection=False, flipPrimaryDirection=False, 
+    normalAxisDefinition=VECTOR, normalAxisDirection=AXIS_3, normalAxisVector=(
+    0.0, 0.0, 1.0), orientationType=DISCRETE, primaryAxisDefinition=VECTOR, 
+    primaryAxisDirection=AXIS_1, primaryAxisVector=(1.0, 0.0, 0.0), region=
+    Region(
+    elements=mdb.models['sg31_rec'].parts['PART-1'].elements.getSequenceFromMask(
+    mask=('[#ffffffff:12 #ffff ]', ), )), stackDirection=STACK_3)
+mdb.models['sg31_rec'].parts['PART-1'].materialOrientations[0].suppress()
+# Save by tian50 on 2025_06_06-18.00.14; build 2023 2022_09_28-14.11.55 183150
+from part import *
+from material import *
+from section import *
+from assembly import *
+from step import *
+from interaction import *
+from load import *
+from mesh import *
+from optimization import *
+from job import *
+from sketch import *
+from visualization import *
+from connectorBehavior import *
+mdb.models['sg31_rec'].rootAssembly.regenerate()
+mdb.Job(atTime=None, contactPrint=OFF, description='', echoPrint=OFF, 
+    explicitPrecision=SINGLE, getMemoryFromAnalysis=True, historyPrint=OFF, 
+    memory=90, memoryUnits=PERCENTAGE, model='sg31_rec', modelPrint=OFF, 
+    multiprocessingMode=DEFAULT, name='sg31_rec_ori_discrete', 
+    nodalOutputPrecision=SINGLE, numCpus=1, numGPUs=0, numThreadsPerMpiProcess=
+    1, queue=None, resultsFormat=ODB, scratch='', type=ANALYSIS, 
+    userSubroutine='', waitHours=0, waitMinutes=0)
+mdb.models['sg31_rec'].parts['PART-1'].materialOrientations[1].suppress()
+mdb.models['sg31_rec'].parts['PART-1'].sectionAssignments[0].suppress()
+mdb.models['sg31_rec'].parts['PART-1'].CompositeLayup(description='', 
+    elementType=SOLID, name='CompositeLayup-1', symmetric=False, 
+    thicknessAssignment=FROM_SECTION)
+mdb.models['sg31_rec'].parts['PART-1'].compositeLayups['CompositeLayup-1'].CompositePly(
+    additionalRotationField='', additionalRotationType=ROTATION_NONE, angle=0.0
+    , axis=AXIS_3, material='MATERIAL-2', numIntPoints=1, orientationType=
+    SPECIFY_ORIENT, orientationValue=45.0, plyName='Ply-1', region=Region(
+    elements=mdb.models['sg31_rec'].parts['PART-1'].elements.getSequenceFromMask(
+    mask=('[#ffffffff:12 #ffff ]', ), )), suppressed=False, thickness=1.0, 
+    thicknessType=SPECIFY_THICKNESS)
+mdb.models['sg31_rec'].parts['PART-1'].compositeLayups['CompositeLayup-1'].ReferenceOrientation(
+    additionalRotationField='', additionalRotationType=ROTATION_NONE, angle=0.0
+    , axis=AXIS_3, flipNormalDirection=False, flipPrimaryDirection=False, 
+    localCsys=None, normalAxisDefinition=VECTOR, normalAxisDirection=AXIS_3, 
+    normalAxisVector=(0.0, 0.0, 1.0), orientationType=DISCRETE, 
+    primaryAxisDefinition=VECTOR, primaryAxisDirection=AXIS_1, 
+    primaryAxisVector=(1.0, 0.0, 0.0), stackDirection=STACK_3)
+mdb.models['sg31_rec'].rootAssembly.regenerate()
+mdb.jobs.changeKey(fromName='sg31_rec_ori_discrete', toName='sg31_rec_mod')
+# Save by tian50 on 2025_06_06-18.05.29; build 2023 2022_09_28-14.11.55 183150
+# Save by tian50 on 2025_06_06-18.16.52; build 2023 2022_09_28-14.11.55 183150

@@ -168,10 +168,18 @@ def process_mesh(inprw:inpRW):
     """
 
     points = []
+    node_ids = []
+    nid2pid = {}
     for _nid, _node in inprw.nd.items():
         # points.append([x._evalDecimal for x in _node.data[1:]])
         points.append(list(map(float, _node.data[1:])))
+        node_ids.append(_nid)
+        nid2pid[_nid] = len(points) - 1
     points = np.asarray(points)
+
+    point_data = {
+        'node_id': node_ids,
+    }
 
     # Process cells
     cells = []
@@ -225,7 +233,9 @@ def process_mesh(inprw:inpRW):
 
         elems = _elem_block.data
         for _eid, _elem in elems.items():
-            _nids = [i - 1 for i in _elem.data[1:]]  # Convert to 0-based
+            _nids = list(map(int, _elem.data[1:]))  # Keep the original node IDs
+            # _nids = [i - 1 for i in _elem.data[1:]]  # Convert to 0-based
+            # _nids = [nid2pid[i] for i in _elem.data[1:]]
             cells[cell_block_i][1].append(_nids)
             cell_elem_ids[meshio_type].append(_eid)  # Store the original element id
             eid2cid[_eid] = (cell_block_i, len(cells[cell_block_i][1]) - 1)  # Store the mapping from original element id to cell block index and cell index
@@ -451,6 +461,7 @@ def process_mesh(inprw:inpRW):
     mesh = Mesh(
         points=points,
         cells=cells,
+        point_data=point_data,
         cell_sets=cell_sets,
         cell_data=cell_data,
     )

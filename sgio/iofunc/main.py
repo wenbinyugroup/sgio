@@ -152,7 +152,7 @@ def readOutputModel(
 def readOutputState(
     filename:str, file_format:str, analysis:str, model_type:str="",
     extension:str="ele", sg:StructureGene=None, tool_version:str="",
-    num_cases:int=1, num_elements:int=0, **kwargs
+    num_cases:int=1, num_elements:int=0, output_format:int=0, **kwargs
     ):
     """Read SG dehomogenization or failure analysis output.
 
@@ -191,6 +191,13 @@ def readOutputState(
         Version of the tool
     num_cases : int
         Number of load cases
+    num_elements : int
+        Number of elements
+    output_format : int
+        Format of the output file. Choose one from
+
+        * 0 - Native format
+        * 1 - Gmsh format
 
     Returns
     -------
@@ -265,7 +272,48 @@ def readOutputState(
     elif analysis == "d" or analysis == "l":
         # Read dehomogenization output
         if file_format.lower().startswith("s"):
-            pass
+            if not isinstance(extension, list):
+                extension = [extension,]
+            extension = [e.lower() for e in extension]
+
+            # Displacement
+            # todo
+
+            # Element node strain and stress
+            if 'sn' in extension:
+
+                if num_elements == 0:
+                    num_elements = sg.nelems
+
+                with open(f"{filename}.sn", "r") as file:
+                    for i_case in range(num_cases):
+
+                        print(f'i_case: {i_case}')
+
+                        state_case = state_cases[i_case]
+
+                        try:
+                            output = _swiftcomp._read_output_node_strain_stress_case_global_gmsh(
+                                file, num_elements
+                            )
+                        except Exception as e:
+                            logger.error(f"Error: {e}")
+                            return None
+
+                        if output is None:
+                            logger.error("Error: No data read")
+                            return None
+
+                        for _comp, _data in output.items():
+                            state_case.addState(
+                                name=_comp,
+                                state=sgmodel.State(
+                                    name=_comp,
+                                    data=_data,
+                                    label=[_comp,],
+                                    location='element_node'
+                                )
+                            )
 
         elif file_format.lower().startswith("v"):
             if not isinstance(extension, list):
@@ -482,6 +530,7 @@ def write(
     sg:StructureGene, fn:str, file_format:str,
     format_version:str='', analysis:str='h', sg_format:int=1,
     model_space:str='', prop_ref_y:str='x',
+    renumber_nodes:bool=False, renumber_elements:bool=False,
     macro_responses:list[sgmodel.StateCase]=[], model_type:str='SD1',
     load_type:int=0, sfi:str='8d', sff:str='20.12e', mesh_only:bool=False,
     binary:bool=False
@@ -570,6 +619,8 @@ def write(
                 analysis=analysis, sg_format=sg_format,
                 macro_responses=macro_responses, model=model_type,
                 model_space=model_space, prop_ref_y=prop_ref_y,
+                renumber_nodes=renumber_nodes,
+                renumber_elements=renumber_elements,
                 sfi=sfi, sff=sff, version=format_version,
                 mesh_only=mesh_only
             )
@@ -617,6 +668,7 @@ def convert(
     str_format_int: str = '8d',
     str_format_float: str = '20.12e',
     mesh_only: bool = False,
+    renum_node: bool = False,
     renum_elem: bool = False
 ) -> StructureGene:
     """Convert the Structure Gene data file format.
@@ -702,6 +754,8 @@ def convert(
         sg_format=vabs_format_version,
         model_space=model_space,
         prop_ref_y=prop_ref_y,
+        renumber_nodes=renum_node,
+        renumber_elements=renum_elem,
         model_type=model_type,
         sfi=str_format_int,
         sff=str_format_float,

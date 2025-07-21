@@ -68,7 +68,8 @@ def read_buffer(f, sgdim:int, nnode:int, nelem:int, read_local_frame):
     if read_local_frame:
         # Read local coordinate system for sectional properties
         cell_csys = _read_property_ref_csys(f, nelem, cells, cell_ids)
-        cell_data['property_ref_csys'] = np.asarray(cell_csys)
+        print(cell_csys)
+        cell_data['property_ref_csys'] = cell_csys
 
     return SGMesh(
         points,
@@ -84,13 +85,16 @@ def read_buffer(f, sgdim:int, nnode:int, nelem:int, read_local_frame):
 
 
 def _read_elements(f, nelem:int, point_ids):
+
+    # print(point_ids)
+
     cells = []
     cell_type_to_index = {}
     prop_ids = {}  # property id for each element; will update cell_data (swiftcomp)
     cell_ids = {}
     counter = 0
     while counter < nelem:
-        line = f.readline().strip()
+        line = f.readline().split('#')[0].strip()
         if line == "": continue
 
         line = line.split()
@@ -98,6 +102,7 @@ def _read_elements(f, nelem:int, point_ids):
         #     cell_id, node_ids = line[0], line[1:]
         # elif file_format.lower().startswith('s'):
         cell_id, prop_id, node_ids = line[0], line[1], line[2:]
+        # print(f'cell_id = {cell_id}')
 
         # Check element type
         cell_type = ''
@@ -133,10 +138,13 @@ def _read_elements(f, nelem:int, point_ids):
             # cell_ids[cell_type] = {}
             prop_ids[cell_type] = []
 
-        cells[cell_type_to_index[cell_type]][1].append([point_ids[_i] for _i in node_ids])
+        # print(node_ids)
+        _point_ids = [point_ids[_i] for _i in node_ids]
+        # print(_point_ids)
+        cells[cell_type_to_index[cell_type]][1].append(_point_ids)
         cell_ids[int(cell_id)] = (
             cell_type_to_index[cell_type],
-            len(cells[cell_type_to_index[cell_type]][1])-1
+            len(cells[cell_type_to_index[cell_type]][1]) - 1
         )
         # if file_format.lower().startswith('s'):
         prop_ids[cell_type].append(int(prop_id))

@@ -103,8 +103,10 @@ def check_isolated_nodes(mesh: Union[SGMesh, Mesh]):
         ...
     ]
     """
+    # print(f'len(mesh.points): {len(mesh.points)}')
     nodes_in_cells = []
     node_cell_ids = [[] for _ in mesh.points]
+    # print(f'len(node_cell_ids): {len(node_cell_ids)}')
     for _cb_id, _cb in enumerate(mesh.cells):
         for _ci, _nis in enumerate(_cb.data):
             for _ni in _nis:
@@ -122,7 +124,9 @@ def check_isolated_nodes(mesh: Union[SGMesh, Mesh]):
     return node_cell_ids, nodes_in_cells
 
 
-
+# def renumber_nodes(mesh: Union[SGMesh, Mesh]):
+#     """
+#     """
 
 
 def renumber_elements(mesh: Union[SGMesh, Mesh]):

@@ -214,12 +214,14 @@ def _read_property_id_ref_csys(file, nelem, cells, elem_id_to_cell_id, format_fl
 
 def write(
     filename, mesh, sgdim, model_space='', prop_ref_y='x',
+    renumber_nodes=False, renumber_elements=False,
     int_fmt='8d', float_fmt="20.9e"):
     """
     """
     if is_buffer(filename, 'w'):
         write_buffer(
             filename, mesh, sgdim, model_space=model_space, prop_ref_y=prop_ref_y,
+            renumber_nodes=renumber_nodes, renumber_elements=renumber_elements,
             int_fmt=int_fmt, float_fmt=float_fmt)
     else:
         with open(filename, 'at') as file:
@@ -231,17 +233,31 @@ def write(
 
 def write_buffer(
     file, mesh, sgdim, model_space='', prop_ref_y='x',
+    renumber_nodes=False, renumber_elements=False,
     int_fmt='8d', float_fmt="20.9e"
     ):
+    """
+    """
+
+    # _node_id = []
+    # if renumber_nodes:
+    _node_id = mesh.point_data.get('node_id', [])
+    # print(f'_node_id = {_node_id}')
 
     _write_nodes(
-        file, mesh.points, sgdim, model_space=model_space,
+        file, mesh.points, sgdim, node_id=_node_id,
+        renumber_nodes=renumber_nodes,
+        model_space=model_space,
         int_fmt=int_fmt, float_fmt=float_fmt
     )
 
     if not 'element_id' in mesh.cell_data.keys():
         mesh.cell_data['element_id'] = []
-    _write_elements(file, mesh.cells, mesh.cell_data['element_id'], int_fmt)
+    _write_elements(
+        file, mesh.cells, mesh.cell_data['element_id'], _node_id,
+        renumber_nodes=renumber_nodes,
+        int_fmt=int_fmt
+        )
 
     try:
         if prop_ref_y == 'x':
@@ -270,7 +286,10 @@ def write_buffer(
 
 
 
-def _write_elements(f, cells, elem_id, int_fmt:str='8d'):
+def _write_elements(
+    f, cells, elem_id, node_id, renumber_nodes=False,
+    int_fmt:str='8d'
+    ):
     """
     """
     if len(elem_id) == 0:
@@ -279,12 +298,20 @@ def _write_elements(f, cells, elem_id, int_fmt:str='8d'):
         generate_eid = False
     # elem_ids = []
 
+    # if len(node_id) > 0:
+    #     _node_id = node_id.tolist()
+
     sfi = '{:' + int_fmt + '}'
 
     consecutive_index = 0
     for k, cell_block in enumerate(cells):
         cell_type = cell_block.type
-        node_idcs = _meshio_to_sg_order(cell_type, cell_block.data)
+        node_idcs = _meshio_to_sg_order(
+            cell_type, cell_block.data,
+            node_id=node_id, renumber_nodes=renumber_nodes)
+
+        # print(f'cell_block.data = {cell_block.data}')
+        # print(f'node_idcs = {node_idcs}')
 
         # _cid_to_eid = []
         if generate_eid:
@@ -300,6 +327,15 @@ def _write_elements(f, cells, elem_id, int_fmt:str='8d'):
 
             _nums = [_eid, ]  # Element id
 
+            # if renumber_nodes:
+            #     # Get the index of node id in node_id
+            #     # print(f'c = {c.tolist()}')
+            #     logger.debug(f'c = {c.tolist()}')
+            #     _nids = [_node_id.index(_i) + 1 for _i in c.tolist() if _i != 0]
+            #     # print(f'_nids = {_nids}')
+            #     logger.debug(f'_nids = {_nids}')
+            #     _nums.extend(_nids)
+            # else:
             _nums.extend(c.tolist())  # Node ids
 
             # Write the numbers

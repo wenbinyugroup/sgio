@@ -2,7 +2,7 @@
 #
 # Abaqus/CAE Release 2023 replay file
 # Internal Version: 2022_09_28-14.11.55 183150
-# Run by tian50 on Tue Apr  8 13:15:09 2025
+# Run by tian50 on Thu Jun  5 15:08:28 2025
 #
 
 # from driverUtils import executeOnCaeGraphicsStartup
@@ -10,8 +10,8 @@
 #: Executing "onCaeGraphicsStartup()" in the site directory ...
 from abaqus import *
 from abaqusConstants import *
-session.Viewport(name='Viewport: 1', origin=(0.0, 0.0), width=307.691131591797, 
-    height=197.607406616211)
+session.Viewport(name='Viewport: 1', origin=(0.0, 0.0), width=312.906219482422, 
+    height=208.296295166016)
 session.viewports['Viewport: 1'].makeCurrent()
 session.viewports['Viewport: 1'].maximize()
 from caeModules import *

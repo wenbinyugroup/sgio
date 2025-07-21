@@ -1,4 +1,4 @@
-[19:01:33] INFO     num_cases: 3                                                          test_io_vabs_out_state_f.py:42
+[19:19:40] INFO     num_cases: 3                                                          test_io_vabs_out_state_f.py:42
            INFO     Reading file...                                                                           main.py:67
            INFO     [state case                                                           test_io_vabs_out_state_f.py:51
                     case:                                                                                               
@@ -67,4 +67,4 @@
            INFO     state case 1                                                          test_io_vabs_out_state_f.py:55
            INFO     state case 2                                                          test_io_vabs_out_state_f.py:55
            INFO     state case 3                                                          test_io_vabs_out_state_f.py:55
-           INFO     Writing file...                                                                          main.py:534
+           INFO     Writing file...                                                                          main.py:583

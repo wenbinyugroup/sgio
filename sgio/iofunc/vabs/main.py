@@ -193,6 +193,7 @@ def read_output_buffer(
 def write_buffer(
     sg:StructureGene, file, analysis='h', sg_fmt:int=1, model=0,
     model_space='', prop_ref_y='x',
+    renumber_nodes=False, renumber_elements=False,
     macro_responses:list[smdl.StateCase]=[],
     sfi:str='8d', sff:str='20.12e', version=None,
     **kwargs
@@ -238,6 +239,8 @@ def write_buffer(
             sg, file, analysis,
             timoshenko_flag, vlasov_flag, trapeze_flag, thermal_flag,
             model_space=model_space, prop_ref_y=prop_ref_y,
+            renumber_nodes=renumber_nodes,
+            renumber_elements=renumber_elements,
             sg_fmt=sg_fmt,
             sfi=sfi, sff=sff, version=version)
 
@@ -266,6 +269,7 @@ def writeInputBuffer(
     sg, file, analysis,
     timoshenko_flag, vlasov_flag, trapeze_flag, thermal_flag,
     model_space='', prop_ref_y='x',
+    renumber_nodes=False, renumber_elements=False,
     sg_fmt:int=1,
     sfi:str='8d', sff:str='20.12e', version=None):
     """
@@ -316,6 +320,8 @@ def writeInputBuffer(
     _writeMesh(
         sg.mesh, file,
         model_space=model_space, prop_ref_y=prop_ref_y,
+        renumber_nodes=renumber_nodes,
+        renumber_elements=renumber_elements,
         int_fmt=sfi, float_fmt=sff)
 
     # if not mesh_only:

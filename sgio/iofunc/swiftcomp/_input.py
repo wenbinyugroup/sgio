@@ -19,6 +19,7 @@ def _readHeader(file, format_version:str, smdim:int):
     """
 
     logger.debug('reading header...')
+    logger.debug(f'local variables:\n{sutl.convertToPrettyString(locals())}')
 
     configs = {}
 
@@ -117,9 +118,9 @@ def _readMaterials(file, nmate:int, physics:int):
 
     counter = 0
     while counter < nmate:
-        line = file.readline().strip()
+        line = file.readline().split('#')[0].strip()
         while line == '':
-            line = file.readline().strip()
+            line = file.readline().split('#')[0].strip()
 
         line = line.split()
 
