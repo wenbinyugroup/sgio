@@ -847,6 +847,46 @@ def _readOutputCauchyContinuumModel(file):
 
 
 
+# ====================================================================
+# Read output state
+
+
+def _read_output_node_disp_case(file, nnode):
+    """Read SwiftComp output displacement on nodes.
+
+    Parameters
+    ----------
+    file:
+        File object of the output file.
+    nnode: int
+        Number of nodes.
+
+    Returns
+    -------
+    dict[int, list[float]]:
+        Displacement of all nodes.
+    """
+    output = {}
+
+    i = 0
+    while i < nnode:
+        line = file.readline().strip()
+        if line == '':
+            continue
+
+        line = line.split()
+        _nid = int(line[0])
+        _disp = list(map(float, line[1:4]))
+
+        output[_nid] = _disp
+
+        i += 1
+
+    return output
+
+
+
+
 def _read_output_node_strain_stress_case_global_gmsh(file, nelem):
     """Read SC output strains and stressed on element nodes.
 

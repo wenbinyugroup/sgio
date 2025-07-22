@@ -68,7 +68,7 @@ def read_buffer(f, sgdim:int, nnode:int, nelem:int, read_local_frame):
     if read_local_frame:
         # Read local coordinate system for sectional properties
         cell_csys = _read_property_ref_csys(f, nelem, cells, cell_ids)
-        print(cell_csys)
+        # print(cell_csys)
         cell_data['property_ref_csys'] = cell_csys
 
     return SGMesh(
@@ -186,7 +186,7 @@ def _read_property_ref_csys(file, nelem, cells, cell_ids):
 
         if cell_block_id > len(cell_csys) - 1:
             _ncell = len(cells[cell_block_id][1])
-            print('_ncell =', _ncell)
+            # print('_ncell =', _ncell)
             cell_csys.append(np.zeros((_ncell, 9)))
 
         # print(cell_csys[cell_block_id][cell_id])
