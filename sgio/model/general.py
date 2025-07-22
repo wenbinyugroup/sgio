@@ -92,7 +92,7 @@ class State():
         label : list of str
             The labels associated with the state.
         location : str
-            The location type of the state, either 'node' or 'element'.
+            The location type of the state, either 'node', 'element', or 'element_node.
         """
 
         self.name:str = name
