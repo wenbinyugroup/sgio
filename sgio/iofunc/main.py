@@ -224,7 +224,7 @@ def readOutputState(
             with open(f"{filename}.fi", "r") as file:
 
                 for i_case in range(num_cases):
-                    print(f'i_case: {i_case}')
+                    # print(f'i_case: {i_case}')
 
                     state_case = state_cases[i_case]
 
@@ -277,7 +277,34 @@ def readOutputState(
             extension = [e.lower() for e in extension]
 
             # Displacement
-            # todo
+            if 'u' in extension:
+                if num_elements == 0:
+                    num_elements = sg.nelems
+                u = None
+
+                logger.info(f'reading displacement... {filename}.u')
+                with open(f"{filename}.u", "r") as file:
+                    for i_case in range(num_cases):
+
+                        # print(f'i_case: {i_case}')
+
+                        state_case = state_cases[i_case]
+
+                        try:
+                            u = _swiftcomp._read_output_node_disp_case(file, sg.nnodes)
+                        except Exception as e:
+                            logger.error(f"Error: {e}")
+                            return None
+
+                        if u is None:
+                            logger.error("Error: No data read")
+                            return None
+
+                        state_case.addState(
+                            name="u", state=sgmodel.State(
+                                name="u", data=u, label=["u1", "u2", "u3"], location="node"
+                            )
+                        )
 
             # Element node strain and stress
             if 'sn' in extension:
@@ -285,10 +312,11 @@ def readOutputState(
                 if num_elements == 0:
                     num_elements = sg.nelems
 
+                logger.info(f'reading element node strain and stress... {filename}.sn')
                 with open(f"{filename}.sn", "r") as file:
                     for i_case in range(num_cases):
 
-                        print(f'i_case: {i_case}')
+                        # print(f'i_case: {i_case}')
 
                         state_case = state_cases[i_case]
 
@@ -315,6 +343,42 @@ def readOutputState(
                                 )
                             )
 
+            if 'snm' in extension:
+                
+                if num_elements == 0:
+                    num_elements = sg.nelems
+
+                logger.info(f'reading element node strain and stress in material c/s... {filename}.snm')
+                with open(f"{filename}.snm", "r") as file:
+                    for i_case in range(num_cases):
+
+                        # print(f'i_case: {i_case}')
+
+                        state_case = state_cases[i_case]
+
+                        try:
+                            output = _swiftcomp._read_output_node_strain_stress_case_global_gmsh(
+                                file, num_elements
+                            )
+                        except Exception as e:
+                            logger.error(f"Error: {e}")
+                            return None
+
+                        if output is None:
+                            logger.error("Error: No data read")
+                            return None
+
+                        for _comp, _data in output.items():
+                            state_case.addState(
+                                name=f'{_comp}m',
+                                state=sgmodel.State(
+                                    name=f'{_comp}m',
+                                    data=_data,
+                                    label=[f'{_comp}m',],
+                                    location='element_node'
+                                )
+                            )
+
         elif file_format.lower().startswith("v"):
             if not isinstance(extension, list):
                 extension = [extension,]
@@ -322,21 +386,31 @@ def readOutputState(
 
             # Displacement
             if "u" in extension:
+                if num_elements == 0:
+                    num_elements = sg.nelems
                 u = None
                 with open(f"{filename}.U", "r") as file:
-                    try:
-                        u = _vabs.read_output_buffer(file, analysis, extension="u", **kwargs)
-                    except Exception as e:
-                        logger.error(f"Error: {e}")
-                        return None
-                if u is None:
-                    logger.error("Error: No data read")
-                    return None
-                state_case.addState(
-                    name="u", state=sgmodel.State(
-                        name="u", data=u, label=["u1", "u2", "u3"], location="node"
-                    )
-                )
+                    for i_case in range(num_cases):
+
+                        # print(f'i_case: {i_case}')
+
+                        state_case = state_cases[i_case]
+
+                        try:
+                            u = _vabs.read_output_buffer(file, analysis, extension="u", **kwargs)
+                        except Exception as e:
+                            logger.error(f"Error: {e}")
+                            return None
+
+                        if u is None:
+                            logger.error("Error: No data read")
+                            return None
+
+                        state_case.addState(
+                            name="u", state=sgmodel.State(
+                                name="u", data=u, label=["u1", "u2", "u3"], location="node"
+                            )
+                        )
 
             # Element strain and stress
             if "ele" in extension:
@@ -347,7 +421,7 @@ def readOutputState(
                 with open(f"{filename}.ELE", "r") as file:
                     for i_case in range(num_cases):
 
-                        print(f'i_case: {i_case}')
+                        # print(f'i_case: {i_case}')
 
                         state_case = state_cases[i_case]
 
