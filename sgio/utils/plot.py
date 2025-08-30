@@ -167,6 +167,7 @@ def plot_2d_mesh(
 def plot_sg_2d(
     sg, model, ax,
     ec_mesh='0.5', fc_mesh='0.9', lw_mesh=0.2,
+    legend_kwards={},
     **kwargs):
     """
     Plot a 2D structure gene.
@@ -234,12 +235,18 @@ def plot_sg_2d(
 
 
     # Add a legend
-    ax.legend(
-        handlers, labels,
-        ncols=5,
-        bbox_to_anchor=(0.5, 1),
-        loc='lower center',
-    )
+    if legend_kwards:
+        ax.legend(
+            handlers, labels,
+            **legend_kwards
+        )
+    else:
+        ax.legend(
+            handlers, labels,
+            ncols=5,
+            bbox_to_anchor=(0.5, 1),
+            loc='lower center',
+        )
 
 
 

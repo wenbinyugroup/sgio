@@ -81,6 +81,11 @@ def cli(*args):
         '-tfv', '--to-format-version', type=str,
         help='CS/SG file format version to be written to')
     parser.add_argument(
+        '-a', '--analysis', type=case_insensitive_string, default='h',
+        choices=['h', 'd', 'fi'],
+        help='Analysis type'
+    )
+    parser.add_argument(
         '-d', '--sgdim', type=int, default=2,
         choices=[1, 2, 3],
         help='SG dimension (SwiftComp only)'
@@ -147,6 +152,7 @@ def main(
             file_format_out=kwargs['to_format'],
             file_version_in=kwargs['from_format_version'],
             file_version_out=kwargs['to_format_version'],
+            analysis=kwargs['analysis'],
             sgdim=kwargs['sgdim'],
             model_space=kwargs['model_space'],
             prop_ref_y=kwargs['material_ref_y'],

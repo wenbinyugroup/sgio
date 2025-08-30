@@ -28,11 +28,44 @@ Online [documentation](https://wenbinyugroup.github.io/sgio/)
 
 ## Installation
 
+### Option 1: Install via pip (Recommended)
+
 ```shell
 pip install sgio
 ```
 
-### Manual Installation
+### Option 2: Standalone Executable (No Python Required)
+
+Download and use the pre-built standalone executable that requires no Python installation:
+
+1. Download the latest executable from the releases page
+2. Run directly from command line:
+   ```shell
+   # Windows
+   sgio.exe --help
+
+   # Linux/macOS
+   ./sgio --help
+   ```
+
+### Option 3: Build Your Own Executable
+
+Build a standalone executable from source:
+
+```shell
+# Windows
+build_executable.bat
+
+# Linux/macOS
+./build_executable.sh
+
+# Or manually
+python build_executable.py
+```
+
+See [BUILD_EXECUTABLE.md](BUILD_EXECUTABLE.md) for detailed instructions.
+
+### Option 4: Manual Installation
 
 1. [Download](https://github.com/wenbinyugroup/sgio) the package.
 2. Install dependencies:

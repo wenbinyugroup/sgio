@@ -29,11 +29,18 @@ license = "MIT"
 license-files = ["LICEN[CS]E*"]
 
 [project.optional-dependencies]
+dev = [
+    "pytest",
+    "pyinstaller",  # For building executables
+]
 all = [
     "h5py",
     "netCDF4",
     "pytest",
 ]
+
+[project.scripts]
+sgio = "sgio.__main__:main"
 
 [project.urls]
 Homepage = "https://github.com/wenbinyugroup/sgio"
@@ -51,12 +58,9 @@ only-include = [
     "README.md",
     "pyproject.toml",
 ]
-# exclude = [
-#   ".github",
-#   "docs",
-#   "examples",
-#   "tests",
-#   "/.gitignore",
-#   "build_and_publish.bat",
-#   "requirements.txt",
-# ]
+
+[tool.uv]
+dev-dependencies = [
+    "pytest>=6.0",
+    "pyinstaller>=5.0",
+]
