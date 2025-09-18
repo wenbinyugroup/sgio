@@ -14,6 +14,7 @@ from ._exceptions import (
 
 from .core import (
     StructureGene,
+    SGMesh,
     check_isolated_nodes,
     renumber_elements,
     )
@@ -50,7 +51,11 @@ from .utils import (
 from ._vendors import inprw
 
 __all__ = [
+    # Version
+    "__version__",
+    # Configuration and logging
     "configure_logging",
+    # I/O functions
     "read",
     "readOutput",
     "readOutputModel",
@@ -58,11 +63,26 @@ __all__ = [
     "write",
     "convert",
     "readLoadCsv",
-    'run',
-    'buildSG1D',
-    'combineSG'
+    "addCellDictDataToMesh",
+    "addPointDictDataToMesh",
+    # Execution
+    "run",
+    # Core functions and classes
+    "buildSG1D",
+    "combineSG",
     "SGMesh",
-    'StructureGene',
+    "StructureGene",
+    "check_isolated_nodes",
+    "renumber_elements",
+    # Utility functions
+    "plot_sg_2d",
+    # Model classes from .model import *
+    "CauchyContinuumModel",
+    "KirchhoffLovePlateShellModel",
+    "ReissnerMindlinPlateShellModel",
+    "EulerBernoulliBeamModel",
+    "TimoshenkoBeamModel",
+    # Exception classes
     "SwiftCompLicenseError",
     "VABSLicenseError",
     "SwiftCompIOError",
