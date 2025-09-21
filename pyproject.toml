@@ -18,6 +18,7 @@ dependencies = [
     # "numpy>=2",
     # "rich",
     "matplotlib",
+    "pydantic>=2.0",
     "pyyaml",
     "scipy",
 ]

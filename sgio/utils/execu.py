@@ -27,6 +27,8 @@ logger = logging.getLogger(__name__)
 
 def run(cmd, timeout, max_try=3, **kwargs):
 
+    # print(f'locals: {locals()}')
+
     # Handle batch scripts on Windows
     if isinstance(cmd, (list, tuple)) and len(cmd) > 0:
         cmd_name = cmd[0].lower()
@@ -43,7 +45,10 @@ def run(cmd, timeout, max_try=3, **kwargs):
     try:
         out = sbp.run(
             cmd,
-            capture_output=True, timeout=timeout, encoding='UTF-8'
+            capture_output=True,
+            text=True,
+            timeout=timeout,
+            check=True
         )
 
         # print(out.stdout)
@@ -56,6 +61,8 @@ def run(cmd, timeout, max_try=3, **kwargs):
 
         if cmd_name.lower().startswith(MSG_COMMANDS):
             message = getScVabsMessage(cmd[0], out.stdout)
+
+            logger.debug(f'message:\n{message}')
 
             # Success
             if ('finished successfully' in message[-2]) or ('finished successfully' in message[-1]):
@@ -87,6 +94,10 @@ def run(cmd, timeout, max_try=3, **kwargs):
                     raise SwiftCompError(err_message)
                 elif cmd[0].lower().startswith('v'):
                     raise VABSError(err_message)
+
+    except sbp.CalledProcessError as e:
+        logger.error(f"Command failed: {e.returncode}")
+        logger.error(f"stderr: {e.stderr}")
 
     except sbp.TimeoutExpired as e:
 

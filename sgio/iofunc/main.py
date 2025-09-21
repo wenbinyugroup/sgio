@@ -133,7 +133,7 @@ def readOutputModel(
         with open(filename, "r") as file:
             if file_format.lower().startswith("s"):
                 model = _swiftcomp.read_output_buffer(
-                    file, analysis="h", model_type=model_type, **kwargs
+                    file, analysis="h", model_type=model_type, sg=sg, **kwargs
                 )
             elif file_format.lower().startswith("v"):
                 model = _vabs.read_output_buffer(

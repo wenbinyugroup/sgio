@@ -254,7 +254,9 @@ def _write_elements(f, cells, cell_prop_ids, int_fmt:str='8d'):
     consecutive_index = 0
     for k, cell_block in enumerate(cells):
         cell_type = cell_block.type
+        # print(f'cell_block.data = {cell_block.data}')
         node_idcs = _meshio_to_sg_order(cell_type, cell_block.data)
+        # print(f'node_idcs = {node_idcs}')
 
         _cid_to_eid = []
 
