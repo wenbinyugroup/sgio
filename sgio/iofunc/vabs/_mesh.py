@@ -236,7 +236,33 @@ def write_buffer(
     renumber_nodes=False, renumber_elements=False,
     int_fmt='8d', float_fmt="20.9e"
     ):
-    """
+    """Write mesh data to VABS format buffer.
+
+    Parameters
+    ----------
+    file : file
+        The file buffer to write to.
+    mesh : SGMesh
+        The mesh object containing points, cells, and associated data.
+    sgdim : int
+        The spatial dimension of the structural gene (2 or 3).
+    model_space : str, optional
+        The model coordinate space ('xy', 'yz', 'zx'), by default ''.
+    prop_ref_y : str, optional
+        Reference axis for property coordinate system ('x', 'y', 'z'), by default 'x'.
+    renumber_nodes : bool, optional
+        Whether to renumber nodes, by default False.
+    renumber_elements : bool, optional
+        Whether to renumber elements, by default False.
+    int_fmt : str, optional
+        Format string for integer output, by default '8d'.
+    float_fmt : str, optional
+        Format string for float output, by default "20.9e".
+
+    Returns
+    -------
+    None
+        Writes mesh data directly to the file buffer.
     """
 
     # _node_id = []
@@ -290,7 +316,27 @@ def _write_elements(
     f, cells, elem_id, node_id, renumber_nodes=False,
     int_fmt:str='8d'
     ):
-    """
+    """Write element connectivity data to VABS format file.
+
+    Parameters
+    ----------
+    f : file
+        The file object to write to.
+    cells : list
+        List of cell blocks containing element connectivity data.
+    elem_id : list
+        List of element IDs for each cell block. If empty, IDs are auto-generated.
+    node_id : list
+        List of node IDs for renumbering (currently unused).
+    renumber_nodes : bool, optional
+        Whether to renumber nodes (currently unused), by default False.
+    int_fmt : str, optional
+        Format string for integer output, by default '8d'.
+
+    Returns
+    -------
+    None
+        Modifies elem_id list in-place if auto-generating element IDs.
     """
     if len(elem_id) == 0:
         generate_eid = True

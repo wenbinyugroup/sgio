@@ -58,8 +58,10 @@ sg = sgio.buildSG1D(
 
 # sg.summary()
 print(sg)
+print(sg.mesh.points)
+print(sg.mesh.cells[0].data)
 
 fn_sg = '{}.sg'.format(sg_name)
-sgio.write(sg, fn_sg, 'sc', format_version=version)
+sgio.write(sg, fn_sg, 'sc', format_version=version, model_space='z')
 
 

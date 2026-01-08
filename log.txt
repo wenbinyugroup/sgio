@@ -1,0 +1,16 @@
+[17:58:21] INFO     Converting                                                                     test_io_vabs_in.py:81
+                    C:\Users\tian50\work\dev\sgio\tests\files\vabs\version_4_1\3cells.sg to                             
+                    C:\Users\tian50\AppData\Local\Temp\pytest-of-tian50\pytest-6\vabs_conversion_o                      
+                    utput0\3cells.sg...                                                                                 
+           INFO     Converting file format...                                                                main.py:799
+           INFO     Reading file...                                                                           main.py:67
+           INFO     Writing file...                                                                          main.py:657
+           INFO     File format converted.                                                                   main.py:838
+           INFO     Converting                                                                    test_io_vabs_in.py:112
+                    C:\Users\tian50\work\dev\sgio\tests\files\vabs\version_4_1\3cells.sg to                             
+                    C:\Users\tian50\AppData\Local\Temp\pytest-of-tian50\pytest-6\vabs_conversion_                       
+                    output0\0_3cells.sg...                                                                              
+           INFO     Converting file format...                                                                main.py:799
+           INFO     Reading file...                                                                           main.py:67
+           INFO     Writing file...                                                                          main.py:657
+           INFO     File format converted.                                                                   main.py:838

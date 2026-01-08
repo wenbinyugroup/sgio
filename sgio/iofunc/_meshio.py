@@ -281,35 +281,35 @@ def _sg_to_meshio_order(cell_type: str, idx: ArrayLike) -> np.ndarray:
 
 
 
-def _meshio_to_sg_order(cell_type:str, idx:ArrayLike):
-    idx_sg = np.asarray(idx) + 1
+# def _meshio_to_sg_order(cell_type:str, idx:ArrayLike):
+#     idx_sg = np.asarray(idx) + 1
 
-    idx_to_insert = None
-    if cell_type == 'triangle6':
-        idx_to_insert = 3
-    elif cell_type == 'tetra10':
-        idx_to_insert = 4
-    elif cell_type == 'wedge15':
-        idx_to_insert = 6
+#     idx_to_insert = None
+#     if cell_type == 'triangle6':
+#         idx_to_insert = 3
+#     elif cell_type == 'tetra10':
+#         idx_to_insert = 4
+#     elif cell_type == 'wedge15':
+#         idx_to_insert = 6
 
-    max_nodes = idx_sg.shape[1]
-    if cell_type.startswith('line'):
-        max_nodes = 5
-    elif cell_type.startswith('triangle') or cell_type.startswith('quad'):
-        max_nodes = 9
-    elif cell_type.startswith('tetra') or cell_type.startswith('wedge') or cell_type.startswith('hexahedron'):
-        max_nodes = 20
+#     max_nodes = idx_sg.shape[1]
+#     if cell_type.startswith('line'):
+#         max_nodes = 5
+#     elif cell_type.startswith('triangle') or cell_type.startswith('quad'):
+#         max_nodes = 9
+#     elif cell_type.startswith('tetra') or cell_type.startswith('wedge') or cell_type.startswith('hexahedron'):
+#         max_nodes = 20
 
-    # Insert 0 for some types of cells
-    if idx_to_insert:
-        idx_sg = np.insert(idx_sg, idx_to_insert, 0, axis=1)
+#     # Insert 0 for some types of cells
+#     if idx_to_insert:
+#         idx_sg = np.insert(idx_sg, idx_to_insert, 0, axis=1)
 
-    # Fill the remaining location with 0s
-    pad_width = max_nodes - idx_sg.shape[1]
-    # logger.debug('pad width = {}'.format(pad_width))
-    idx_sg = np.pad(idx_sg, ((0, 0), (0, pad_width)), 'constant', constant_values=0)
+#     # Fill the remaining location with 0s
+#     pad_width = max_nodes - idx_sg.shape[1]
+#     # logger.debug('pad width = {}'.format(pad_width))
+#     idx_sg = np.pad(idx_sg, ((0, 0), (0, pad_width)), 'constant', constant_values=0)
 
-    return idx_sg
+#     return idx_sg
 
 
 
@@ -398,7 +398,7 @@ def _write_nodes(
 
 def _meshio_to_sg_order(
     cell_type:str, idx:ArrayLike,
-    node_id=[], renumber_nodes:bool=False
+    node_id=[], renumber_nodes:bool=True
     ):
     """Convert meshio cell ordering to SG ordering.
 
@@ -418,11 +418,14 @@ def _meshio_to_sg_order(
     idx_sg: np.ndarray (n_cells, n_elem_nodes_sg)
         Array of cell connectivity in SG ordering.
     """
+    print(f'{renumber_nodes = }')
     idx_sg = np.asarray(idx)
     if renumber_nodes:
-        idx_map = {v:i+1 for i, v in enumerate(node_id)}
-        idx_sg = np.vectorize(idx_map.get)(idx_sg)
-    # idx_sg = np.asarray(idx) + 1
+        if len(node_id) == 0:
+            idx_sg = np.asarray(idx) + 1
+        else:
+            idx_map = {v: i+1 for i, v in enumerate(node_id)}
+            idx_sg = np.vectorize(idx_map.get)(idx_sg)
 
     idx_to_insert = None
     if cell_type == 'triangle6':

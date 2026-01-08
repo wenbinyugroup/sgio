@@ -186,6 +186,7 @@ def read_output_buffer(
 def write_buffer(
     sg:StructureGene, file, analysis='h', model='sd1',
     model_space='xy', prop_ref_y='x',
+    renumber_nodes=False, renumber_elements=False,
     macro_responses:list[smdl.StateCase]=[],
     load_type=0,
     sfi:str='8d', sff:str='20.12e', version=None
@@ -211,7 +212,9 @@ def write_buffer(
 
     if analysis == 'h':
         writeInputBuffer(
-            sg, file, analysis, sg.physics, model_space,
+            sg, file, analysis, sg.physics,
+            model_space, prop_ref_y,
+            renumber_nodes, renumber_elements,
             sfi, sff, version)
 
     elif (analysis == 'd') or (analysis == 'l') or (analysis.startswith('f')):
