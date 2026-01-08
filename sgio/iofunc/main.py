@@ -680,6 +680,8 @@ def write(
                 analysis=analysis, model=model_type,
                 macro_responses=macro_responses,
                 model_space=model_space, prop_ref_y=prop_ref_y,
+                renumber_nodes=renumber_nodes,
+                renumber_elements=renumber_elements,
                 load_type=load_type,
                 sfi=sfi, sff=sff, version=format_version
             )

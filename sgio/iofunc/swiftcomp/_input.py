@@ -248,7 +248,9 @@ def _readThermalProperty(file, isotropy:int):
 
 
 def writeInputBuffer(
-    sg, file, analysis, physics, model_space,
+    sg, file, analysis, physics,
+    model_space, prop_ref_y,
+    renumber_nodes=False, renumber_elements=False,
     sfi:str='8d', sff:str='20.12e', version=None):
     """
     """
@@ -271,6 +273,9 @@ def writeInputBuffer(
         file=file,
         sgdim=sg.sgdim,
         model_space=model_space,
+        prop_ref_y=prop_ref_y,
+        renumber_nodes=renumber_nodes,
+        renumber_elements=renumber_elements,
         int_fmt=sfi, float_fmt=sff
         )
 
@@ -359,13 +364,19 @@ def writeInputBufferGlobal(
 
 
 
-def _writeMesh(mesh, file, sgdim, model_space, int_fmt, float_fmt):
+def _writeMesh(
+    mesh, file, sgdim, model_space, prop_ref_y='x',
+    renumber_nodes=False, renumber_elements=False,
+    int_fmt='8d', float_fmt='20.12e'
+    ):
     """
     """
     logger.debug('writing mesh...')
 
     write_buffer(
-        file, mesh, sgdim=sgdim, model_space=model_space,
+        file, mesh, sgdim=sgdim,
+        model_space=model_space, prop_ref_y=prop_ref_y,
+        renumber_nodes=renumber_nodes, renumber_elements=renumber_elements,
         int_fmt=int_fmt, float_fmt=float_fmt)
 
     return

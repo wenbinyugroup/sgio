@@ -418,6 +418,7 @@ def _meshio_to_sg_order(
     idx_sg: np.ndarray (n_cells, n_elem_nodes_sg)
         Array of cell connectivity in SG ordering.
     """
+    print(f'{renumber_nodes = }')
     idx_sg = np.asarray(idx)
     if renumber_nodes:
         if len(node_id) == 0:
