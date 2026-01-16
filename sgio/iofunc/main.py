@@ -3,6 +3,7 @@ from __future__ import annotations
 import csv
 import logging
 import meshio
+from meshio import Mesh
 
 
 import sgio._global as GLOBAL
@@ -21,6 +22,95 @@ from sgio.utils import (
 )
 
 logger = logging.getLogger(__name__)
+
+
+def _mesh_to_sg(mesh: Mesh, sgdim: int = 3, model_type: str = 'SD1') -> StructureGene:
+    """Convert a meshio Mesh object to a StructureGene object.
+
+    Parameters
+    ----------
+    mesh : meshio.Mesh
+        The mesh object to convert.
+    sgdim : int
+        Dimension of the structure gene geometry.
+    model_type : str
+        Type of the macro structural model.
+
+    Returns
+    -------
+    StructureGene
+        The structure gene object.
+    """
+    import numpy as np
+
+    sg = StructureGene()
+    sg.sgdim = sgdim
+
+    if isinstance(model_type, int):
+        smdim = model_type
+        _submodel = model_type
+    elif isinstance(model_type, str):
+        if model_type.upper()[:2] == 'SD':
+            smdim = 3
+        elif model_type.upper()[:2] == 'PL':
+            smdim = 2
+        elif model_type.upper()[:2] == 'BM':
+            smdim = 1
+        else:
+            smdim = 3
+        try:
+            _submodel = int(model_type[2]) - 1
+        except (IndexError, ValueError):
+            _submodel = 0
+    else:
+        smdim = 3
+        _submodel = 0
+
+    sg.smdim = smdim
+    sg.model = _submodel
+    sg.mesh = mesh
+
+    # Ensure element_id cell_data exists (generate if missing)
+    if 'element_id' not in mesh.cell_data:
+        element_id = []
+        elem_idx = 0
+        for cell_block in mesh.cells:
+            block_ids = list(range(elem_idx + 1, elem_idx + 1 + len(cell_block.data)))
+            element_id.append(np.array(block_ids, dtype=int))
+            elem_idx += len(cell_block.data)
+        mesh.cell_data['element_id'] = element_id
+
+    # Ensure property_id cell_data exists (use gmsh:physical or gmsh:geometrical if available)
+    if 'property_id' not in mesh.cell_data:
+        if 'gmsh:physical' in mesh.cell_data:
+            mesh.cell_data['property_id'] = [
+                np.array(arr, dtype=int) for arr in mesh.cell_data['gmsh:physical']
+            ]
+        elif 'gmsh:geometrical' in mesh.cell_data:
+            mesh.cell_data['property_id'] = [
+                np.array(arr, dtype=int) for arr in mesh.cell_data['gmsh:geometrical']
+            ]
+        else:
+            # Default property_id to 1
+            property_id = []
+            for cell_block in mesh.cells:
+                property_id.append(np.ones(len(cell_block.data), dtype=int))
+            mesh.cell_data['property_id'] = property_id
+
+    # Process property_id from cell_data
+    if 'property_id' in mesh.cell_data:
+        # Create mocombos from unique property_ids
+        property_ids = set()
+        for prop_block in mesh.cell_data['property_id']:
+            for prop_id in prop_block:
+                if prop_id is not None:
+                    property_ids.add(int(prop_id))
+
+        for prop_id in property_ids:
+            if prop_id not in sg.mocombos:
+                sg.mocombos[prop_id] = [prop_id, 0.0]  # [material_id, angle]
+
+    return sg
 
 
 
@@ -84,6 +174,10 @@ def read(
         sg = _abaqus.read(
             filename, sgdim=sgdim, model=model_type
         )
+    elif file_format == 'gmsh':
+        with open(filename, 'rb') as file:
+            mesh = _gmsh.read_buffer(file, format_version=format_version)
+        sg = _mesh_to_sg(mesh, sgdim=sgdim, model_type=model_type)
     else:
         raise ValueError(f"Unknown file format: {file_format}")
 
@@ -342,6 +436,14 @@ def readOutputState(
                                     location='element_node'
                                 )
                             )
+
+                        # state_case.addState(
+                        #     name="ee", state=sgmodel.State(
+                        #         name="ee", data=ee,
+                        #         label=["e11", "e22", "e33", "2e23", "2e13", "2e12"],
+                        #         location="element_node"
+                        #     )
+                        # )
 
             if 'snm' in extension:
                 

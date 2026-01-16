@@ -55,8 +55,11 @@ def read_buffer(f, sgdim:int, nnode:int, nelem:int, read_local_frame):
     points, point_ids, line = _read_nodes(f, nnode, sgdim)
 
     # Read elements
-    cells, prop_ids, cell_ids, line = _read_elements(f, nelem, point_ids)
+    cells, elem_ids, prop_ids, cell_ids, line = _read_elements(f, nelem, point_ids)
     # print(cells)
+
+    # Set element_id cell data
+    cell_data['element_id'] = elem_ids
 
     _cd = []
     for _cb in cells:
@@ -90,6 +93,7 @@ def _read_elements(f, nelem:int, point_ids):
 
     cells = []
     cell_type_to_index = {}
+    elem_ids = []  # Element id in the original file; Same shape as cells
     prop_ids = {}  # property id for each element; will update cell_data (swiftcomp)
     cell_ids = {}
     counter = 0
@@ -101,8 +105,9 @@ def _read_elements(f, nelem:int, point_ids):
         # if file_format.lower().startswith('v'):
         #     cell_id, node_ids = line[0], line[1:]
         # elif file_format.lower().startswith('s'):
-        cell_id, prop_id, node_ids = line[0], line[1], line[2:]
-        # print(f'cell_id = {cell_id}')
+        elem_id, prop_id, node_ids = line[0], line[1], line[2:]
+        elem_id = int(elem_id)
+        # print(f'elem_id = {elem_id}')
 
         # Check element type
         cell_type = ''
@@ -134,17 +139,20 @@ def _read_elements(f, nelem:int, point_ids):
         if not cell_type in cell_type_to_index.keys():
             # cells[cell_type] = []
             cells.append([cell_type, []])
+            elem_ids.append([])
             cell_type_to_index[cell_type] = len(cells) - 1
             # cell_ids[cell_type] = {}
             prop_ids[cell_type] = []
 
+        cell_type_id = cell_type_to_index[cell_type]
         # print(node_ids)
         _point_ids = [point_ids[_i] for _i in node_ids]
         # print(_point_ids)
-        cells[cell_type_to_index[cell_type]][1].append(_point_ids)
-        cell_ids[int(cell_id)] = (
-            cell_type_to_index[cell_type],
-            len(cells[cell_type_to_index[cell_type]][1]) - 1
+        cells[cell_type_id][1].append(_point_ids)
+        elem_ids[cell_type_id].append(elem_id)
+        cell_ids[elem_id] = (
+            cell_type_id,
+            len(cells[cell_type_id][1]) - 1
         )
         # if file_format.lower().startswith('s'):
         prop_ids[cell_type].append(int(prop_id))
@@ -154,7 +162,7 @@ def _read_elements(f, nelem:int, point_ids):
     for _i in range(len(cells)):
         cells[_i] = tuple(cells[_i])
 
-    return cells, prop_ids, cell_ids, line
+    return cells, elem_ids, prop_ids, cell_ids, line
 
 
 

@@ -1,8 +1,10 @@
 from __future__ import annotations
 
 import logging
+from functools import partial
 
 import numpy as np
+from meshio import CellBlock, Mesh
 
 
 from ._common import (
@@ -16,11 +18,14 @@ from ._common import (
     _read_physical_names,
     _write_data,
     _write_physical_names,
+    num_nodes_per_cell,
+    cell_data_from_raw,
 )
 from sgio.iofunc._meshio import (
     warn,
     raw_from_cell_data,
-    WriteError
+    WriteError,
+    ReadError,
 )
 
 logger = logging.getLogger(__name__)
@@ -28,6 +33,268 @@ logger = logging.getLogger(__name__)
 c_int = np.dtype("i")
 c_size_t = np.dtype("P")
 c_double = np.dtype("d")
+
+
+def _size_type(data_size):
+    return np.dtype(f"u{data_size}")
+
+
+# ====================================================================
+# Readers
+# ====================================================================
+
+def read_buffer(f, is_ascii: bool, data_size):
+    """Read gmsh 4.1 format mesh from buffer.
+
+    The format is specified at
+    <http://gmsh.info/doc/texinfo/gmsh.html#MSH-file-format>.
+    """
+    # Initialize the optional data fields
+    points = []
+    cells = None
+    field_data = {}
+    cell_data_raw = {}
+    cell_tags = {}
+    point_data = {}
+    physical_tags = None
+    bounding_entities = None
+    cell_sets = {}
+    periodic = None
+
+    while True:
+        # fast-forward over blank lines
+        line, is_eof = _fast_forward_over_blank_lines(f)
+        if is_eof:
+            break
+
+        if line[0] != "$":
+            raise ReadError(f"Unexpected line {repr(line)}")
+
+        environ = line[1:].strip()
+
+        if environ == "PhysicalNames":
+            _read_physical_names(f, field_data)
+        elif environ == "Entities":
+            # Read physical tags and information on bounding entities.
+            physical_tags, bounding_entities = _read_entities(f, is_ascii, data_size)
+        elif environ == "Nodes":
+            points, point_tags, point_entities = _read_nodes(f, is_ascii, data_size)
+        elif environ == "Elements":
+            cells, cell_tags, cell_sets = _read_elements(
+                f,
+                point_tags,
+                physical_tags,
+                bounding_entities,
+                is_ascii,
+                data_size,
+                field_data,
+            )
+        elif environ == "Periodic":
+            periodic = _read_periodic(f, is_ascii, data_size)
+        elif environ == "NodeData":
+            _read_data(f, "NodeData", point_data, data_size, is_ascii)
+        elif environ == "ElementData":
+            _read_data(f, "ElementData", cell_data_raw, data_size, is_ascii)
+        else:
+            # Skip unrecognized sections
+            _fast_forward_to_end_block(f, environ)
+
+    if cells is None:
+        raise ReadError("$Element section not found.")
+
+    cell_data = cell_data_from_raw(cells, cell_data_raw)
+    cell_data.update(cell_tags)
+
+    # Add node entity information to the point data
+    point_data.update({"gmsh:dim_tags": point_entities})
+
+    return Mesh(
+        points,
+        cells,
+        point_data=point_data,
+        cell_data=cell_data,
+        field_data=field_data,
+        cell_sets=cell_sets,
+        gmsh_periodic=periodic,
+    )
+
+
+def _read_entities(f, is_ascii: bool, data_size):
+    """Read the entity section.
+
+    Return physical tags of the entities, and (for entities of dimension > 0)
+    the bounding entities.
+    """
+    fromfile = partial(np.fromfile, sep=" " if is_ascii else "")
+    c_size_t = _size_type(data_size)
+    physical_tags = ({}, {}, {}, {})
+    bounding_entities = ({}, {}, {}, {})
+    number = fromfile(f, c_size_t, 4)  # dims 0, 1, 2, 3
+
+    for d, n in enumerate(number):
+        for _ in range(n):
+            (tag,) = fromfile(f, c_int, 1)
+            fromfile(f, c_double, 3 if d == 0 else 6)  # discard bounding-box
+            (num_physicals,) = fromfile(f, c_size_t, 1)
+            physical_tags[d][tag] = list(fromfile(f, c_int, num_physicals))
+            if d > 0:
+                # Number of bounding entities
+                num_BREP_ = fromfile(f, c_size_t, 1)[0]
+                # Store bounding entities
+                bounding_entities[d][tag] = fromfile(f, c_int, num_BREP_)
+
+    _fast_forward_to_end_block(f, "Entities")
+    return physical_tags, bounding_entities
+
+
+def _read_nodes(f, is_ascii: bool, data_size):
+    """Read node data: Node coordinates and tags.
+
+    Also find the entities of the nodes, and store this as point_data.
+    Note that entity tags are 1-offset within each dimension, thus it is
+    necessary to keep track of both tag and dimension of the entity.
+    """
+    fromfile = partial(np.fromfile, sep=" " if is_ascii else "")
+    c_size_t = _size_type(data_size)
+
+    # numEntityBlocks numNodes minNodeTag maxNodeTag (all size_t)
+    num_entity_blocks, total_num_nodes, _, _ = fromfile(f, c_size_t, 4)
+
+    points = np.empty((total_num_nodes, 3), dtype=float)
+    tags = np.empty(total_num_nodes, dtype=int)
+    dim_tags = np.empty((total_num_nodes, 2), dtype=int)
+
+    idx = 0
+    for _ in range(num_entity_blocks):
+        # entityDim(int) entityTag(int) parametric(int) numNodes(size_t)
+        dim, entity_tag, parametric = fromfile(f, c_int, 3)
+        if parametric != 0:
+            raise ReadError("parametric nodes not implemented")
+        num_nodes = int(fromfile(f, c_size_t, 1)[0])
+
+        ixx = slice(idx, idx + num_nodes)
+        tags[ixx] = fromfile(f, c_size_t, num_nodes) - 1
+
+        # x(double) y(double) z(double) (* numNodes)
+        points[ixx] = fromfile(f, c_double, num_nodes * 3).reshape((num_nodes, 3))
+
+        # Entity tag and entity dimension of the nodes
+        dim_tags[ixx, 0] = dim
+        dim_tags[ixx, 1] = entity_tag
+        idx += num_nodes
+
+    _fast_forward_to_end_block(f, "Nodes")
+    return points, tags, dim_tags
+
+
+def _read_elements(
+    f, point_tags, physical_tags, bounding_entities, is_ascii, data_size, field_data
+):
+    """Read element data from gmsh 4.1 file."""
+    fromfile = partial(np.fromfile, sep=" " if is_ascii else "")
+    c_size_t = _size_type(data_size)
+
+    # numEntityBlocks numElements minElementTag maxElementTag (all size_t)
+    num_entity_blocks, _, _, _ = fromfile(f, c_size_t, 4)
+
+    data = []
+    cell_data = {}
+    cell_sets = {k: [None] * num_entity_blocks for k in field_data.keys()}
+
+    for k in range(num_entity_blocks):
+        # entityDim(int) entityTag(int) elementType(int) numElements(size_t)
+        dim, tag, type_ele = fromfile(f, c_int, 3)
+        (num_ele,) = fromfile(f, c_size_t, 1)
+        for physical_name, cell_set in cell_sets.items():
+            cell_set[k] = np.arange(
+                num_ele
+                if (
+                    physical_tags
+                    and field_data[physical_name][1] == dim
+                    and field_data[physical_name][0] in physical_tags[dim][tag]
+                )
+                else 0,
+                dtype=type(num_ele),
+            )
+        tpe = _gmsh_to_meshio_type[type_ele]
+        num_nodes_per_ele = num_nodes_per_cell[tpe]
+        d = fromfile(f, c_size_t, int(num_ele * (1 + num_nodes_per_ele))).reshape(
+            (num_ele, -1)
+        )
+
+        # Find physical tag, if defined; else it is None.
+        pt = None if not physical_tags else physical_tags[dim][tag]
+        # Bounding entities (of lower dimension) if defined.
+        if dim > 0 and bounding_entities:
+            be = bounding_entities[dim][tag]
+        else:
+            be = None
+        data.append((pt, be, tag, tpe, d))
+
+    _fast_forward_to_end_block(f, "Elements")
+
+    # Inverse point tags
+    inv_tags = np.full(np.max(point_tags) + 1, -1, dtype=int)
+    inv_tags[point_tags] = np.arange(len(point_tags))
+
+    # Note that the first column in the data array is the element tag; discard it.
+    # Ensure integer types for node indices
+    data = [
+        (physical_tag, bound_entity, geom_tag, tpe,
+         inv_tags[(d[:, 1:].astype(int) - 1)])
+        for physical_tag, bound_entity, geom_tag, tpe, d in data
+    ]
+
+    cells = []
+    for physical_tag, bound_entity, geom_tag, key, values in data:
+        # Ensure the cell data is integer type
+        cells.append(CellBlock(key, _gmsh_to_meshio_order(key, values.astype(int))))
+        if physical_tag:
+            if "gmsh:physical" not in cell_data:
+                cell_data["gmsh:physical"] = []
+            cell_data["gmsh:physical"].append(
+                np.full(len(values), physical_tag[0], int)
+            )
+        if "gmsh:geometrical" not in cell_data:
+            cell_data["gmsh:geometrical"] = []
+        cell_data["gmsh:geometrical"].append(np.full(len(values), geom_tag, int))
+
+        # The bounding entities is stored in the cell_sets.
+        if bounding_entities:
+            if "gmsh:bounding_entities" not in cell_sets:
+                cell_sets["gmsh:bounding_entities"] = []
+            cell_sets["gmsh:bounding_entities"].append(bound_entity)
+
+    return cells, cell_data, cell_sets
+
+
+def _read_periodic(f, is_ascii, data_size):
+    """Read periodic information from gmsh 4.1 file."""
+    fromfile = partial(np.fromfile, sep=" " if is_ascii else "")
+    c_size_t = _size_type(data_size)
+    periodic = []
+    # numPeriodicLinks(size_t)
+    num_periodic = int(fromfile(f, c_size_t, 1)[0])
+    for _ in range(num_periodic):
+        # entityDim(int) entityTag(int) entityTagMaster(int)
+        edim, stag, mtag = fromfile(f, c_int, 3)
+        # numAffine(size_t) value(double) ...
+        num_affine = int(fromfile(f, c_size_t, 1)[0])
+        affine = fromfile(f, c_double, num_affine)
+        # numCorrespondingNodes(size_t)
+        num_nodes = int(fromfile(f, c_size_t, 1)[0])
+        # nodeTag(size_t) nodeTagMaster(size_t) ...
+        slave_master = fromfile(f, c_size_t, num_nodes * 2).reshape(-1, 2)
+        slave_master = slave_master - 1  # Subtract one, Python is 0-based
+        periodic.append([edim, (stag, mtag), affine, slave_master])
+
+    _fast_forward_to_end_block(f, "Periodic")
+    return periodic
+
+
+# ====================================================================
+# Writers
+# ====================================================================
 
 def write_buffer(file, mesh, float_fmt, mesh_only, binary, **kwargs):
     """Writes msh files, cf.

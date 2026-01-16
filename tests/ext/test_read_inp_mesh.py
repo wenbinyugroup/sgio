@@ -1,3 +1,4 @@
+from pathlib import Path
 import numpy as np
 from sgio import inprw
 
@@ -70,16 +71,21 @@ def read_inp_mesh(filename):
     }
 
 # Example usage
-mesh_data = read_inp_mesh('../files/abaqus/sg2_i_simple_eo1.inp')
-# print(mesh_data)
+if __name__ == '__main__':
+    # Resolve path relative to this test file
+    test_dir = Path(__file__).parent.parent
+    fn = test_dir / 'files' / 'abaqus' / 'sg2_i_simple_eo1.inp'
 
-# Access the data
-points = mesh_data['points']
-cells = mesh_data['cells']
-element_sets = mesh_data['cell_sets']
+    mesh_data = read_inp_mesh(str(fn))
+    # print(mesh_data)
 
-# Print some information
-print(f"Number of nodes: {len(points)}")
-print(f"Number of element types: {len(cells)}")
-for cell_type, connectivity in cells:
-    print(f"Element type {cell_type}: {len(connectivity)} elements")
+    # Access the data
+    points = mesh_data['points']
+    cells = mesh_data['cells']
+    element_sets = mesh_data['cell_sets']
+
+    # Print some information
+    print(f"Number of nodes: {len(points)}")
+    print(f"Number of element types: {len(cells)}")
+    for cell_type, connectivity in cells:
+        print(f"Element type {cell_type}: {len(connectivity)} elements")

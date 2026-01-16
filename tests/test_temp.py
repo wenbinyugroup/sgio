@@ -1,3 +1,4 @@
+from pathlib import Path
 from sgio import (
     read,
     readOutputState,
@@ -10,7 +11,9 @@ from sgio.iofunc.gmsh import write_element_node_data
 
 configure_logging(fout_level='debug')
 
-fn_in = 'files/swiftcomp/sg31t_hex20_sc21.sg'
+# Resolve path relative to this test file
+test_dir = Path(__file__).parent
+fn_in = test_dir / 'files' / 'swiftcomp' / 'sg31t_hex20_sc21.sg'
 ff_in = 'sc'
 # sgdim = _case['sgdim']
 # model_type = _case['model_type']
@@ -20,7 +23,7 @@ ff_in = 'sc'
 
 # Read the cross-section model
 sg = read(
-    fn_in,
+    str(fn_in),
     ff_in,
     sgdim=3,
     model_type='bm2'
@@ -28,7 +31,7 @@ sg = read(
 
 # Read the output state
 state_cases = readOutputState(
-    fn_in,
+    str(fn_in),
     ff_in,
     'd',
     extension='sn',
@@ -57,15 +60,15 @@ logger.info(f'{len(state_cases)} state cases')
 #     addCellDictDataToMesh(_name, state_case.getState('esm').data, sg.mesh)
 
 # if 'fn_out' in _case.keys():
-fn_out = '_temp/sg31t_hex20_sc21.msh'
+fn_out = test_dir / '_temp' / 'sg31t_hex20_sc21.msh'
 ff_out = 'gmsh'
 format_version = '4.1'
 
 # Write the mesh to a file
-write(sg, fn_out, ff_out, format_version=format_version)
+write(sg, str(fn_out), ff_out, format_version=format_version)
 
 
-with open(fn_out, 'a') as file:
+with open(str(fn_out), 'a') as file:
 
     for j, state_case in enumerate(state_cases):
         for _name, _state in state_case.states.items():

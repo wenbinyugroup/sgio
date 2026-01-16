@@ -5,6 +5,14 @@ build*/
 .pytest_cache/
 *.egg-info/
 dist/
+.agents-memory/
+
+.venv/Lib/
+.venv/Scripts/
+.venv/share/
+.venv/.gitignore
+.venv/CASHDIR.TAG
+.venv/pyvenv.cfg
 
 *.pyc
 *.exe

@@ -14,6 +14,10 @@ from meshio.gmsh.common import (
     _read_physical_names,
     _write_physical_names,
 )
+from meshio._common import (
+    num_nodes_per_cell,
+    cell_data_from_raw,
+)
 
 from sgio.iofunc._meshio import (
     WriteError

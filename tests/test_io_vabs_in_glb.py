@@ -1,14 +1,15 @@
 import sys
-from msgd.model.io import readLoadCsv
+from sgio.iofunc import readLoadCsv
 
+# Wrap in main to prevent execution during test collection
+if __name__ == '__main__':
+    fn = sys.argv[1]
+    smdim = int(sys.argv[2])
+    model = int(sys.argv[3])
 
-fn = sys.argv[1]
-smdim = int(sys.argv[2])
-model = int(sys.argv[3])
+    rcases = readLoadCsv(fn, smdim, model)
 
-rcases = readLoadCsv(fn, smdim, model)
-
-print(rcases)
+    print(rcases)
 
 
 
