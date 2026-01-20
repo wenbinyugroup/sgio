@@ -3,6 +3,6 @@
 @REM - hatchling
 @REM - twine
 
-python -m build
-twine upload dist/*
-@REM twine upload --repository testpypi dist/*
+.venv\Scripts\python.exe -m build
+.venv\Scripts\twine.exe upload dist/*
+@REM .venv\Scripts\twine.exe upload --repository testpypi dist/*
