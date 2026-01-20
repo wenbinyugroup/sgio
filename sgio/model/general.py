@@ -68,17 +68,17 @@ class State():
         For field data::
 
             data = {
-                1: [],  # Point data for note/element 1
-                2: [],  # Point data for note/element 2
+                1: [],  # Point data for node/element 1
+                2: [],  # Point data for node/element 2
                 ...
             }
     label : list of str
         The labels associated with the state.
     location : str
-        The location type of the state, either 'node' or 'element'.
+        The location type of the state, either 'node', 'element', or 'element_node'.
     """
     def __init__(
-        self, name='', data={}, label=[],
+        self, name='', data=None, label=None,
         location=''):
         """Construct a State object.
 
@@ -86,19 +86,21 @@ class State():
         ----------
         name : str
             The name of the state.
-        data : list or dict
+        data : list or dict, optional
             The data associated with the state.
             It can be a list for point data or a dictionary for field data.
-        label : list of str
+            Default is None, which initializes as an empty dict.
+        label : list of str, optional
             The labels associated with the state.
+            Default is None, which initializes as an empty list.
         location : str
             The location type of the state, either 'node', 'element', or 'element_node.
         """
 
         self.name:str = name
-        self.label:list[str] = label
+        self.label:list[str] = label if label is not None else []
         self.location:str = location
-        self.data:list|dict = data
+        self.data:list|dict = data if data is not None else {}
 
     def __repr__(self):
         _str = [
@@ -166,12 +168,21 @@ class State():
         Parameters
         ----------
         locs : list
-            List of note/element IDs.
+            List of node/element IDs.
 
         Returns
         -------
-        State
+        State or None
             A copy of the State object with the data at the given locations.
+            Returns None if no data is found at the specified locations.
+
+        Notes
+        -----
+        Callers should check for None before using the returned value:
+
+            state = my_state.at([1, 2, 3])
+            if state is not None:
+                # use state
         """
         _data = []
 
@@ -190,7 +201,6 @@ class State():
                         _data[_i] = self.data[_i]
                     except KeyError:
                         pass
-                # data = dict([(i, self.data[i]) for i in locs])
 
         if len(_data) == 0:
             return None
@@ -208,8 +218,8 @@ class State():
 class StateCase():
     """
     """
-    def __init__(self, case:dict={}, states:dict={}):
-        self._case:dict = case
+    def __init__(self, case:dict=None, states:dict=None):
+        self._case:dict = case if case is not None else {}
         """
         {
             'tag1': value1,
@@ -218,7 +228,7 @@ class StateCase():
         }
         """
 
-        self._states:dict = states
+        self._states:dict = states if states is not None else {}
         """
         {
             'name': State,
@@ -241,10 +251,24 @@ class StateCase():
 
         Returns
         -------
-        State
-            State object.
+        State or None
+            State object if found, None otherwise.
+
+        Notes
+        -----
+        This method returns None if the state is not found, consistent with
+        the property methods (displacement, rotation, load, distributed_load).
+
+        Examples
+        --------
+        >>> state = state_case.getState('displacement')
+        >>> if state is not None:
+        ...     # use state
         """
-        return self._states[name]
+        try:
+            return self._states[name]
+        except KeyError:
+            return None
 
     @property
     def displacement(self):
@@ -316,7 +340,7 @@ class StateCase():
         data=None, entity_id=None, loc_type=''
         ):
         """Add a state to the StateCase object.
-        
+
         Parameters
         ----------
         name : str
@@ -330,29 +354,29 @@ class StateCase():
         loc_type : str, optional
             Location type. Default is ''.
         """
-        if not name in self._states.keys():
+        # If a complete State object is provided, use it directly
+        if state is not None:
+            self._states[name] = state
+            return
+
+        # Ensure the state exists before modifying it
+        if name not in self._states:
             self._states[name] = State(
                 name=name,
-                data={},
+                data=None,
                 location=loc_type
-                )
+            )
 
-        if not state is None:
-            self._states[name] = state
-
-        elif not entity_id is None:
+        # Add data to existing state
+        if entity_id is not None:
             self._states[name].addData(
                 data=data, loc=entity_id
             )
-            # self._states[name].data[entity_id] = value
-
-        else:
+        elif data is not None:
             if isinstance(data, list):
                 self._states[name].data = data
             elif isinstance(data, dict):
                 self._states[name].data.update(data)
-
-        # print(f'added state {self._states[name]}')
 
     def at(self, locs:Iterable, state_name=None):
         """
@@ -382,8 +406,8 @@ class StateCase():
 
         for _name in _state_names:
             _state = self.states[_name].at(locs)
-            if not _state is None:
-                states[_name] = self.states[_name].at(locs)
+            if _state is not None:
+                states[_name] = _state
 
         if len(states) == 0:
             return None
