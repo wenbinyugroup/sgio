@@ -10,7 +10,7 @@ from sgio.iofunc import readLoadCsv
 
 @pytest.mark.io
 @pytest.mark.vabs
-def test_read_load_csv_bm2(legacy_files_dir):
+def test_read_load_csv_bm2(test_data_dir):
     """Test reading load CSV file for BM2 (Timoshenko beam) model.
 
     This test verifies:
@@ -19,7 +19,7 @@ def test_read_load_csv_bm2(legacy_files_dir):
     3. Response data structure is correct
     4. Load values are extracted correctly
     """
-    fn = legacy_files_dir / 'sg_bm2_load_cases.csv'
+    fn = test_data_dir / 'sg_bm2_load_cases.csv'
 
     if not fn.exists():
         pytest.skip(f"Test file not found: {fn}")
@@ -37,7 +37,7 @@ def test_read_load_csv_bm2(legacy_files_dir):
 
 @pytest.mark.io
 @pytest.mark.vabs
-def test_read_load_csv_response_structure(legacy_files_dir):
+def test_read_load_csv_response_structure(test_data_dir):
     """Test the structure of response cases from CSV.
 
     This test verifies:
@@ -46,7 +46,7 @@ def test_read_load_csv_response_structure(legacy_files_dir):
     3. Each response has displacement data
     4. Each response has directional cosine (rotation) data
     """
-    fn = legacy_files_dir / 'sg_bm2_load_cases.csv'
+    fn = test_data_dir / 'sg_bm2_load_cases.csv'
     if not fn.exists():
         pytest.skip(f"Test file not found: {fn}")
 
@@ -67,14 +67,14 @@ def test_read_load_csv_response_structure(legacy_files_dir):
 
 @pytest.mark.io
 @pytest.mark.vabs
-def test_read_load_csv_load_values(legacy_files_dir):
+def test_read_load_csv_load_values(test_data_dir):
     """Test that load values are correctly parsed from CSV.
 
     This test verifies:
     1. Load values are numeric
     2. Load values match expected format
     """
-    fn = legacy_files_dir / 'sg_bm2_load_cases.csv'
+    fn = test_data_dir / 'sg_bm2_load_cases.csv'
     if not fn.exists():
         pytest.skip(f"Test file not found: {fn}")
 
@@ -91,14 +91,14 @@ def test_read_load_csv_load_values(legacy_files_dir):
 
 @pytest.mark.io
 @pytest.mark.vabs
-def test_read_load_csv_multiple_cases(legacy_files_dir):
+def test_read_load_csv_multiple_cases(test_data_dir):
     """Test reading CSV with multiple load cases.
 
     This test verifies:
     1. Multiple load cases are read correctly
     2. Each case has unique data
     """
-    fn = legacy_files_dir / 'sg_bm2_load_cases.csv'
+    fn = test_data_dir / 'sg_bm2_load_cases.csv'
     if not fn.exists():
         pytest.skip(f"Test file not found: {fn}")
 

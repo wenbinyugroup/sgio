@@ -16,7 +16,7 @@ def pretty_string(v):
     return Pretty(v).__str__()
 
 
-def configure_logging(cout_level='INFO', fout_level='INFO', filename='log.txt'):
+def configure_logging(cout_level='INFO', fout_level='INFO', filename='sgio.log'):
     """Initialization of a logger.
 
     Parameters
@@ -28,7 +28,7 @@ def configure_logging(cout_level='INFO', fout_level='INFO', filename='log.txt'):
     fout_level : {'DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'}, optional
         Output level of logs to a file, by default 'INFO'
     filename : str, optional
-        Name of the log file, by default 'log.txt'
+        Name of the log file, by default 'sgio.log'
 
     Returns
     -------

@@ -28,6 +28,8 @@ dependencies = [
     "sphinx>=7.4.7",
     "myst-parser>=3.0.1",
     "sphinx-immaterial>=0.12.5",
+    "sphinx-design>=0.6.1",
+    "sphinx-copybutton>=0.5.2",
 ]
 classifiers = [
     "Programming Language :: Python :: 3",

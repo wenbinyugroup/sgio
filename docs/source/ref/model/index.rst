@@ -20,21 +20,3 @@ Model
     state
     statecase
 
-
-.. Beam
-.. ------
-
-.. .. toctree::
-..    :maxdepth: 1
-
-..    bm/euler_bernoulli
-..    bm/timoshenko
-
-.. .. currentmodule:: sgio.model
-
-.. ..  autosummary::
-..     :toctree: _temp
-..     :recursive:
-
-..     EulerBernoulliBeamModel
-..     TimoshenkoBeamModel

@@ -9,7 +9,7 @@ sgio.convert(
     'sg2_airfoil_2.sg',  # Name of the VABS file.
     'abaqus', # Format of the CS data converted from.
     'vabs', # Format of the CS data converted to.
-    model='bm2', # Structural model: Timoshenko.
+    model_type='bm2', # Structural model: Timoshenko.
 )
 
 

@@ -22,8 +22,8 @@ SGIO
     :maxdepth: 2
 
     guide/index
-    ref/index
     examples/index
+    ref/index
 
 
 .. Indices and tables

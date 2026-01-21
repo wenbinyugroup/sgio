@@ -103,7 +103,7 @@ def test_convert_to_vabs_v41(test_data_dir, tmp_path, capsys):
     from various input formats.
     """
     with capsys.disabled():
-        test_case_path = test_data_dir / 'test_convert_vabs_abaqus.yml'
+        test_case_path = test_data_dir / 'yaml' / 'test_convert_vabs_abaqus.yml'
         if not test_case_path.exists():
             legacy_path = Path(__file__).parent.parent / "files" / 'test_convert_vabs_abaqus.yml'
             if legacy_path.exists():
@@ -147,7 +147,7 @@ def test_convert_to_vabs_v41(test_data_dir, tmp_path, capsys):
 def test_convert_to_vabs_v40(test_data_dir, tmp_path, capsys):
     """Test conversion to VABS v4.0 format."""
     with capsys.disabled():
-        test_case_path = test_data_dir / 'test_convert_vabs_abaqus.yml'
+        test_case_path = test_data_dir / 'yaml' / 'test_convert_vabs_abaqus.yml'
         if not test_case_path.exists():
             legacy_path = Path(__file__).parent.parent / "files" / 'test_convert_vabs_abaqus.yml'
             if legacy_path.exists():
@@ -192,7 +192,7 @@ def test_convert_to_vabs_v40(test_data_dir, tmp_path, capsys):
 def test_convert_to_gmsh(test_data_dir, tmp_path, capsys):
     """Test conversion to Gmsh format."""
     with capsys.disabled():
-        test_case_path = test_data_dir / 'test_convert_vabs_gmsh.yml'
+        test_case_path = test_data_dir / 'yaml' / 'test_convert_vabs_gmsh.yml'
         if not test_case_path.exists():
             legacy_path = Path(__file__).parent.parent / "files" / 'test_convert_vabs_gmsh.yml'
             if legacy_path.exists():
@@ -231,7 +231,7 @@ def test_convert_to_gmsh(test_data_dir, tmp_path, capsys):
 def test_convert_to_swiftcomp(test_data_dir, tmp_path, capsys):
     """Test conversion to SwiftComp format."""
     with capsys.disabled():
-        test_case_path = test_data_dir / 'test_convert_sc_abaqus.yml'
+        test_case_path = test_data_dir / 'yaml' / 'test_convert_sc_abaqus.yml'
         if not test_case_path.exists():
             legacy_path = Path(__file__).parent.parent / "files" / 'test_convert_sc_abaqus.yml'
             if legacy_path.exists():

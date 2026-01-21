@@ -12,7 +12,7 @@ import sgio
 @pytest.mark.unit
 @pytest.mark.io
 @pytest.mark.vabs
-def test_combine_sg_basic(legacy_files_dir, tmp_path):
+def test_combine_sg_basic(test_data_dir, tmp_path):
     """Test combining two structure genes.
 
     This test verifies:
@@ -22,8 +22,8 @@ def test_combine_sg_basic(legacy_files_dir, tmp_path):
     4. Combined SG can be written to file
     """
     # Use test files - we'll use the same file twice for simplicity
-    fn_sg1 = legacy_files_dir / 'vabs' / 'version_4_0' / 'sg21t_tri3_vabs40.sg'
-    fn_sg2 = legacy_files_dir / 'vabs' / 'version_4_0' / 'sg21t_tri3_vabs40.sg'
+    fn_sg1 = test_data_dir / 'vabs' / 'version_4_0' / 'sg21t_tri3_vabs40.sg'
+    fn_sg2 = test_data_dir / 'vabs' / 'version_4_0' / 'sg21t_tri3_vabs40.sg'
     
     if not fn_sg1.exists():
         pytest.skip(f"Test file not found: {fn_sg1}")

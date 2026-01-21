@@ -15,7 +15,7 @@ from sgio.utils.plot import plot_sg_2d
 @pytest.mark.visualization
 @pytest.mark.io
 @pytest.mark.vabs
-def test_plot_sg_2d_basic(legacy_files_dir):
+def test_plot_sg_2d_basic(test_data_dir):
     """Test basic 2D structure gene plotting.
 
     This test verifies:
@@ -25,7 +25,7 @@ def test_plot_sg_2d_basic(legacy_files_dir):
     4. Figure and axes are created correctly
     """
     # Use a test file from the test data directory
-    fn = legacy_files_dir / 'vabs' / 'version_4_0' / 'sg21t_tri3_vabs40.sg'
+    fn = test_data_dir / 'vabs' / 'version_4_0' / 'sg21t_tri3_vabs40.sg'
     
     if not fn.exists():
         pytest.skip(f"Test file not found: {fn}")
@@ -64,7 +64,7 @@ def test_plot_sg_2d_basic(legacy_files_dir):
 @pytest.mark.visualization
 @pytest.mark.io
 @pytest.mark.vabs
-def test_plot_sg_2d_with_properties(legacy_files_dir):
+def test_plot_sg_2d_with_properties(test_data_dir):
     """Test 2D plotting with beam properties visualization.
 
     This test verifies:
@@ -72,7 +72,7 @@ def test_plot_sg_2d_with_properties(legacy_files_dir):
     2. Plot includes mass center
     3. Plot includes other beam property features
     """
-    fn = legacy_files_dir / 'vabs' / 'version_4_0' / 'sg21t_tri3_vabs40.sg'
+    fn = test_data_dir / 'vabs' / 'version_4_0' / 'sg21t_tri3_vabs40.sg'
     
     if not fn.exists():
         pytest.skip(f"Test file not found: {fn}")
@@ -127,12 +127,12 @@ def test_plot_sg_2d_error_handling():
 @pytest.mark.visualization
 @pytest.mark.io
 @pytest.mark.vabs
-def test_plot_sg_2d_euler_bernoulli(legacy_files_dir):
+def test_plot_sg_2d_euler_bernoulli(test_data_dir):
     """Test plotting with Euler-Bernoulli beam model.
 
     This test verifies plotting works with BM1 (Euler-Bernoulli) models.
     """
-    fn = legacy_files_dir / 'vabs' / 'version_4_0' / 'sg21eb_tri3_vabs40.sg'
+    fn = test_data_dir / 'vabs' / 'version_4_0' / 'sg21eb_tri3_vabs40.sg'
 
     if not fn.exists():
         pytest.skip(f"Test file not found: {fn}")

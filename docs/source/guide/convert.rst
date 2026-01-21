@@ -1,7 +1,7 @@
-Convert Structure Gene Data
+Convert SG Data
 =============================
 
-One of the main capabilities of SGIO is to convert Structure Gene data between different formats.
+One of the main capabilities of SGIO is to convert SG data between different formats.
 This can be done using the :func:`sgio.convert` function (API) or the ``sgio convert`` command (CLI).
 
 Overview

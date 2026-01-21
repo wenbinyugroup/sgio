@@ -30,7 +30,7 @@ if not output_file.exists():
     model = None
 else:
     # Read VABS output (beam properties)
-    model = sgio.readOutputModel(str(output_file), 'vabs')
+    model = sgio.readOutputModel(str(output_file), 'vabs', model_type='BM1')
 
 # Read VABS input (cross-section mesh)
 cs = sgio.read(str(input_file), 'vabs')

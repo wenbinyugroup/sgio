@@ -31,7 +31,7 @@ def test_vabs_to_gmsh_to_vabs_roundtrip(test_data_dir, temp_dir):
     """
     # Step 1: Convert VABS to Gmsh
     fn_test_cases = 'test_convert_vabs_gmsh.yml'
-    test_case_path = test_data_dir / fn_test_cases
+    test_case_path = test_data_dir / 'yaml' / fn_test_cases
 
     if not test_case_path.exists():
         pytest.skip(f"Test case file not found: {test_case_path}")
@@ -63,7 +63,7 @@ def test_vabs_to_gmsh_to_vabs_roundtrip(test_data_dir, temp_dir):
 
     # Step 2: Convert Gmsh back to VABS
     fn_test_cases = 'test_convert_gmsh_vabs.yml'
-    test_case_path = test_data_dir / fn_test_cases
+    test_case_path = test_data_dir / 'yaml' / fn_test_cases
 
     if not test_case_path.exists():
         pytest.skip(f"Test case file not found: {test_case_path}")
@@ -112,7 +112,7 @@ def test_gmsh_read_basic(test_data_dir, temp_dir):
     """
     # First create a Gmsh file from a VABS file
     fn_test_cases = 'test_convert_vabs_gmsh.yml'
-    test_case_path = test_data_dir / fn_test_cases
+    test_case_path = test_data_dir / 'yaml' / fn_test_cases
 
     if not test_case_path.exists():
         pytest.skip(f"Test case file not found: {test_case_path}")
