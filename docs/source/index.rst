@@ -14,7 +14,7 @@ SGIO
 
 ..  include:: ../../README.md
     :parser: myst_parser.sphinx_
-    :start-line: 2
+..    :start-line: 2
 
 
 ..  toctree::
@@ -22,8 +22,8 @@ SGIO
     :maxdepth: 2
 
     guide/index
-    examples/index
     ref/index
+    examples/index
 
 
 .. Indices and tables

@@ -359,9 +359,6 @@ class State():
     def at(self, locs: Iterable[int]) -> Optional['State']:
         """Get the state data at a list of given locations.
 
-        This method uses NumPy boolean indexing for ~1000x performance improvement
-        over the previous dict-based implementation.
-
         Parameters
         ----------
         locs : Iterable[int]
@@ -379,6 +376,8 @@ class State():
         Notes
         -----
         Callers should check for None before using the returned value:
+
+        ..  code-block::
 
             state = my_state.at([1, 2, 3])
             if state is not None:

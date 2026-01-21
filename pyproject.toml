@@ -25,6 +25,9 @@ dependencies = [
     "hatchling>=1.27.0",
     "twine>=6.2.0",
     "rich>=14.1.0",
+    "sphinx>=7.4.7",
+    "myst-parser>=3.0.1",
+    "sphinx-immaterial>=0.12.5",
 ]
 classifiers = [
     "Programming Language :: Python :: 3",
