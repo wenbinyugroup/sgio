@@ -7,5 +7,5 @@
 
 ## Testing Instructions
 
-- Create test modules and functions in folder @tests.
+- Always create test modules and functions in folder `sgio/tests`.
 - Use `uv run pytest` for all testing operations.

@@ -1,11 +1,20 @@
 from meshio import Mesh, CellBlock
 from typing import Union
+import numpy as np
 
 class SGMesh(Mesh):
     """Extended mesh class that inherits from meshio.Mesh.
-    
+
     This class provides additional functionality and custom format support
     while maintaining compatibility with the original meshio.Mesh class.
+
+    Attributes
+    ----------
+    cell_point_data : dict[str, list[np.ndarray]]
+        Dictionary of element nodal data (data at nodes of each element).
+        Structure: {name: [array_for_cell_block_0, array_for_cell_block_1, ...]}
+        where each array has shape (n_elements, n_nodes_per_element, n_components).
+        This is used for storing element_node data like strain/stress at element nodes.
     """
 
     def __init__(
@@ -18,6 +27,7 @@ class SGMesh(Mesh):
         cell_sets=None,
         gmsh_periodic=None,
         info=None,
+        cell_point_data=None,
         ):
 
         super().__init__(
@@ -30,6 +40,27 @@ class SGMesh(Mesh):
             gmsh_periodic=gmsh_periodic,
             info=info,
         )
+
+        # Initialize cell_point_data (element nodal data)
+        self.cell_point_data = {} if cell_point_data is None else cell_point_data
+
+        # Validate cell_point_data consistency
+        for key, data in self.cell_point_data.items():
+            if len(data) != len(self.cells):
+                raise ValueError(
+                    f"Incompatible cell_point_data '{key}'. "
+                    f"{len(self.cells)} cell blocks, but '{key}' has {len(data)} blocks."
+                )
+
+            for k in range(len(data)):
+                data[k] = np.asarray(data[k])
+                if len(data[k]) != len(self.cells[k]):
+                    raise ValueError(
+                        "Incompatible cell_point_data. "
+                        + f"Cell block {k} ('{self.cells[k].type}') "
+                        + f"has {len(self.cells[k])} elements, but "
+                        + f"corresponding cell_point_data item has {len(data[k])} elements."
+                    )
 
 
     def get_cell_block_by_type(self, cell_type):

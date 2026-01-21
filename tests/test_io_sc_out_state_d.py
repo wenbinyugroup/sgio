@@ -15,11 +15,11 @@ from sgio import (
 
 configure_logging(cout_level='info')
 
-# Component labels in visualization
-name_e = ['e11', '2e12', '2e13', 'e22', '2e23', 'e33']  # Strain in global coordinate
-name_em = ['e11m', '2e12m', '2e13m', 'e22m', '2e23m', 'e33m']  # Strain in material coordinate
-name_s = ['s11', 's12', 's13', 's22', 's23', 's33']  # Stress in global coordinate (SwiftComp doesn't use '2' prefix)
-name_sm = ['s11m', 's12m', 's13m', 's22m', 's23m', 's33m']  # Stress in material coordinate
+# Component labels in visualization (must match the order in State labels)
+name_e = ['e11', 'e22', 'e33', '2e23', '2e13', '2e12']  # Strain in global coordinate
+name_em = ['e11m', 'e22m', 'e33m', '2e23m', '2e13m', '2e12m']  # Strain in material coordinate
+name_s = ['s11', 's22', 's33', 's23', 's13', 's12']  # Stress in global coordinate (SwiftComp doesn't use '2' prefix)
+name_sm = ['s11m', 's22m', 's33m', 's23m', 's13m', 's12m']  # Stress in material coordinate
 
 
 @pytest.fixture(scope="module")
@@ -67,8 +67,8 @@ def test_io_sc_out_state_d(fn_test_cases, test_data_dir, output_dir):
         state_cases = readOutputState(
             fn_in, ff_in, 'd', sg=sg,
             tool_version=version_in, num_cases=num_cases, extension=extension)
-        logger.info(state_cases)
-        logger.info(f'{len(state_cases)} state cases')
+        # logger.info(state_cases)
+        # logger.info(f'{len(state_cases)} state cases')
 
         # Verify state cases were read
         assert len(state_cases) > 0, "No state cases were read"
@@ -76,26 +76,18 @@ def test_io_sc_out_state_d(fn_test_cases, test_data_dir, output_dir):
         # Add data to the mesh
         for j, state_case in enumerate(state_cases):
             logger.info(f'state case {j+1}')
-            for _name in name_e:
-                addCellDictDataToMesh(f'case{j+1}_{_name}', state_case.getState(_name).data, sg.mesh)
-            for _name in name_em:
-                addCellDictDataToMesh(f'case{j+1}_{_name}', state_case.getState(_name).data, sg.mesh)
-            for _name in name_s:
-                addCellDictDataToMesh(f'case{j+1}_{_name}', state_case.getState(_name).data, sg.mesh)
-            for _name in name_sm:
-                addCellDictDataToMesh(f'case{j+1}_{_name}', state_case.getState(_name).data, sg.mesh)
-            # # Element strain in global coordinate
-            # _name = [f'case{j+1}_{name}' for name in name_e]
-            # addCellDictDataToMesh(_name, state_case.getState('ee').data, sg.mesh)
-            # # Element strain in material coordinate
-            # _name = [f'case{j+1}_{name}' for name in name_em]
-            # addCellDictDataToMesh(_name, state_case.getState('eem').data, sg.mesh)
-            # # Element stress in global coordinate
-            # _name = [f'case{j+1}_{name}' for name in name_s]
-            # addCellDictDataToMesh(_name, state_case.getState('es').data, sg.mesh)
-            # # Element stress in material coordinate
-            # _name = [f'case{j+1}_{name}' for name in name_sm]
-            # addCellDictDataToMesh(_name, state_case.getState('esm').data, sg.mesh)
+            # Element strain in global coordinate
+            _name = [f'case{j+1}_{name}' for name in name_e]
+            addCellDictDataToMesh(_name, state_case.getState('e').data, sg.mesh)
+            # Element strain in material coordinate
+            _name = [f'case{j+1}_{name}' for name in name_em]
+            addCellDictDataToMesh(_name, state_case.getState('em').data, sg.mesh)
+            # Element stress in global coordinate
+            _name = [f'case{j+1}_{name}' for name in name_s]
+            addCellDictDataToMesh(_name, state_case.getState('s').data, sg.mesh)
+            # Element stress in material coordinate
+            _name = [f'case{j+1}_{name}' for name in name_sm]
+            addCellDictDataToMesh(_name, state_case.getState('sm').data, sg.mesh)
 
         if 'fn_out' in _case.keys():
             fn_out = str(output_dir / _case["fn_out"])

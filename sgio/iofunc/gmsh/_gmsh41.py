@@ -355,6 +355,10 @@ def write_buffer(file, mesh, float_fmt, mesh_only, binary, **kwargs):
     for name, dat in cell_data_raw.items():
         _write_data(file, "ElementData", name, dat, binary)
 
+    # Write cell_point_data (element nodal data) to ElementNodeData sections
+    if hasattr(mesh, 'cell_point_data') and mesh.cell_point_data:
+        _write_cell_point_data(file, mesh, binary)
+
 
 def _write_entities(fh, cells, tag_data, cell_sets, point_data, binary):
     """Write entity section in a .msh file.
@@ -798,3 +802,129 @@ def _write_periodic(fh, periodic, float_fmt: str, binary: bool) -> None:
     else:
         fh.write("\n")
         fh.write("$EndPeriodic\n")
+
+
+def _write_cell_point_data(fh, mesh, binary: bool) -> None:
+    """Write cell_point_data (element nodal data) to $ElementNodeData sections.
+
+    Parameters
+    ----------
+    fh : file
+        File handle to write to
+    mesh : SGMesh
+        Mesh object containing cell_point_data
+    binary : bool
+        Whether to write in binary mode
+
+    Notes
+    -----
+    The $ElementNodeData format is:
+        $ElementNodeData
+          numStringTags(ASCII int)
+          stringTag(string) ...
+          numRealTags(ASCII int)
+          realTag(ASCII double) ...
+          numIntegerTags(ASCII int)
+          integerTag(ASCII int) ...
+          elementTag(int) numNodesPerElement(int) value(double) ...
+          ...
+        $EndElementNodeData
+
+    The cell_point_data structure is:
+        {name: [array_for_cell_block_0, array_for_cell_block_1, ...]}
+    where each array has shape (n_elements, n_nodes_per_element) for single component
+    or (n_elements, n_nodes_per_element, n_components) for multi-component data.
+    """
+    # Get element IDs from cell_data
+    if 'element_id' not in mesh.cell_data:
+        logger.warning("Cannot write cell_point_data: mesh.cell_data['element_id'] not found")
+        return
+
+    element_ids = mesh.cell_data['element_id']
+
+    # Process each field in cell_point_data
+    for field_name, cell_blocks_data in mesh.cell_point_data.items():
+        # Determine number of components from the data shape
+        first_block_data = cell_blocks_data[0]
+        if len(first_block_data.shape) == 2:
+            # Shape: (n_elements, n_nodes_per_element) - single component
+            num_components = 1
+        elif len(first_block_data.shape) == 3:
+            # Shape: (n_elements, n_nodes_per_element, n_components)
+            num_components = first_block_data.shape[2]
+        else:
+            logger.warning(f"Unexpected shape for cell_point_data '{field_name}': {first_block_data.shape}")
+            continue
+
+        # Count total number of elements across all cell blocks
+        total_elements = sum(len(block_data) for block_data in cell_blocks_data)
+
+        # Write header
+        if binary:
+            fh.write(b"$ElementNodeData\n")
+            # 1 string tag: field name
+            fh.write(f"{1}\n".encode())
+            fh.write(f'"{field_name}"\n'.encode())
+            # 1 real tag: time value
+            fh.write(f"{1}\n".encode())
+            fh.write(f"{0.0}\n".encode())
+            # 3 integer tags: time step, num components, num elements
+            fh.write(f"{3}\n".encode())
+            fh.write(f"{0}\n".encode())  # time step
+            fh.write(f"{num_components}\n".encode())
+            fh.write(f"{total_elements}\n".encode())
+        else:
+            fh.write("$ElementNodeData\n")
+            # 1 string tag: field name
+            fh.write(f"{1}\n")
+            fh.write(f'"{field_name}"\n')
+            # 1 real tag: time value
+            fh.write(f"{1}\n")
+            fh.write(f"{0.0}\n")
+            # 3 integer tags: time step, num components, num elements
+            fh.write(f"{3}\n")
+            fh.write(f"{0}\n")  # time step
+            fh.write(f"{num_components}\n")
+            fh.write(f"{total_elements}\n")
+
+        # Write data for each element across all cell blocks
+        for block_idx, block_data in enumerate(cell_blocks_data):
+            block_element_ids = element_ids[block_idx]
+
+            for elem_idx, elem_data in enumerate(block_data):
+                elem_id = int(block_element_ids[elem_idx])
+
+                # elem_data shape: (n_nodes_per_element,) or (n_nodes_per_element, n_components)
+                if num_components == 1:
+                    # Single component: elem_data is 1D array
+                    num_nodes = len(elem_data)
+                    if binary:
+                        np.array([elem_id], dtype=c_int).tofile(fh)
+                        np.array([num_nodes], dtype=c_int).tofile(fh)
+                        elem_data.astype(c_double).tofile(fh)
+                    else:
+                        fh.write(f"{elem_id} {num_nodes}")
+                        for val in elem_data:
+                            fh.write(f" {float(val)}")
+                        fh.write("\n")
+                else:
+                    # Multi-component: elem_data is 2D array (n_nodes, n_components)
+                    num_nodes = elem_data.shape[0]
+                    if binary:
+                        np.array([elem_id], dtype=c_int).tofile(fh)
+                        np.array([num_nodes], dtype=c_int).tofile(fh)
+                        # Flatten the data: all components for node 1, then node 2, etc.
+                        elem_data.astype(c_double).flatten().tofile(fh)
+                    else:
+                        fh.write(f"{elem_id} {num_nodes}")
+                        for node_vals in elem_data:
+                            for val in node_vals:
+                                fh.write(f" {float(val)}")
+                        fh.write("\n")
+
+        # Write footer
+        if binary:
+            fh.write(b"\n")
+            fh.write(b"$EndElementNodeData\n")
+        else:
+            fh.write("$EndElementNodeData\n")

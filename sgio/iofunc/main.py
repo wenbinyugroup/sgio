@@ -415,27 +415,38 @@ def readOutputState(
                         state_case = state_cases[i_case]
 
                         try:
-                            output = _swiftcomp._read_output_node_strain_stress_case_global_gmsh(
-                                file, num_elements
+                            strains, stresses = _swiftcomp._read_output_node_strain_stress_case_global_gmsh(
+                                file, num_elements, sg
                             )
                         except Exception as e:
                             logger.error(f"Error: {e}")
                             return None
 
-                        if output is None:
+                        if strains is None or stresses is None:
                             logger.error("Error: No data read")
                             return None
 
-                        for _comp, _data in output.items():
-                            state_case.addState(
-                                name=_comp,
-                                state=sgmodel.State(
-                                    name=_comp,
-                                    data=_data,
-                                    label=[_comp,],
-                                    location='element_node'
-                                )
+                        # Add strain state
+                        state_case.addState(
+                            name='e',
+                            state=sgmodel.State(
+                                name='e',
+                                data=strains,
+                                label=['e11', 'e22', 'e33', '2e23', '2e13', '2e12'],
+                                location='element_node'
                             )
+                        )
+
+                        # Add stress state
+                        state_case.addState(
+                            name='s',
+                            state=sgmodel.State(
+                                name='s',
+                                data=stresses,
+                                label=['s11', 's22', 's33', 's23', 's13', 's12'],
+                                location='element_node'
+                            )
+                        )
 
                         # state_case.addState(
                         #     name="ee", state=sgmodel.State(
@@ -459,27 +470,38 @@ def readOutputState(
                         state_case = state_cases[i_case]
 
                         try:
-                            output = _swiftcomp._read_output_node_strain_stress_case_global_gmsh(
-                                file, num_elements
+                            strains, stresses = _swiftcomp._read_output_node_strain_stress_case_global_gmsh(
+                                file, num_elements, sg
                             )
                         except Exception as e:
                             logger.error(f"Error: {e}")
                             return None
 
-                        if output is None:
+                        if strains is None or stresses is None:
                             logger.error("Error: No data read")
                             return None
 
-                        for _comp, _data in output.items():
-                            state_case.addState(
-                                name=f'{_comp}m',
-                                state=sgmodel.State(
-                                    name=f'{_comp}m',
-                                    data=_data,
-                                    label=[f'{_comp}m',],
-                                    location='element_node'
-                                )
+                        # Add strain state in material coordinate system
+                        state_case.addState(
+                            name='em',
+                            state=sgmodel.State(
+                                name='em',
+                                data=strains,
+                                label=['e11m', 'e22m', 'e33m', '2e23m', '2e13m', '2e12m'],
+                                location='element_node'
                             )
+                        )
+
+                        # Add stress state in material coordinate system
+                        state_case.addState(
+                            name='sm',
+                            state=sgmodel.State(
+                                name='sm',
+                                data=stresses,
+                                label=['s11m', 's22m', 's33m', 's23m', 's13m', 's12m'],
+                                location='element_node'
+                            )
+                        )
 
         elif file_format.lower().startswith("v"):
             if not isinstance(extension, list):

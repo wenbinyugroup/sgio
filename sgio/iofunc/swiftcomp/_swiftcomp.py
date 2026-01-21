@@ -148,7 +148,7 @@ def read_output_buffer(
                 if lfmt == 0:
                     pass
                 elif lfmt == 1:
-                    return _read_output_node_strain_stress_case_global_gmsh(file, nelem)
+                    return _read_output_node_strain_stress_case_global_gmsh(file, nelem, sg)
 
     elif analysis == 'f' or analysis == 3:
         # return readSCOutFailure(file, analysis)
