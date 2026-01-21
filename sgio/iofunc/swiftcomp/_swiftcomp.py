@@ -102,8 +102,8 @@ def read_input_buffer(file, format_version:str, model:int|str):
 # -----------
 def read_output_buffer(
     file, analysis:int|str, model_type:str,
-    sg:StructureGene, extension:str, nelem:int,
-    lfmt:int,
+    sg:StructureGene=None, extension:str='', nelem:int=0,
+    lfmt:int=0,
     **kwargs
     ):
     """Read SwiftComp output file buffer.
@@ -116,14 +116,15 @@ def read_output_buffer(
         Analysis type.
     model_type: str
         Model type.
-    sg: StructureGene
-        StructureGene object.
-    extension: str
-        File extension of the output file.
-    nelem: int
-        Number of elements.
-    lfmt: int
-        Format of the output file. Choose one from
+    sg: StructureGene, optional
+        StructureGene object. Default is None.
+    extension: str, optional
+        File extension of the output file. Default is ''.
+    nelem: int, optional
+        Number of elements. Default is 0.
+    lfmt: int, optional
+        Format of the output file. Default is 0 (Native format).
+        Choose one from:
         * 0 - Native format
         * 1 - Gmsh format
 

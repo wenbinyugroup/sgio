@@ -738,7 +738,7 @@ class SectionResponse():
         ]
         """
         list of lists floats: Global rotation matrix.
-        
+
         ..  code-block::
 
             [
@@ -770,6 +770,16 @@ class SectionResponse():
         Euler-Bernoulli beam         ``[F1, M1, M2, M3]``                         ``[e11, k11, k12, k13]``
         Timoshenko beam              ``[F1, F2, F3, M1, M2, M3]``                 ``[e11, g12, g13, k11, k12, k13]``
         ============================ ============================================ ==============================================
+        """
+
+        self.loc:dict = {}
+        """
+        dict: Location data for the section response (e.g., x1 coordinate).
+        """
+
+        self.cond:dict = {}
+        """
+        dict: Condition data for the section response.
         """
 
         self.distr_load = [0, 0, 0, 0, 0, 0]
