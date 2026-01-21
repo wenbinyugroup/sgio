@@ -47,8 +47,10 @@ def test_vabs_output_state_dehomogenization(fn_test_cases, test_data_dir, tmp_pa
         test_data_dir: Fixture providing test data directory
         tmp_path: Pytest fixture for temporary directory
     """
-    # Look for test case file in new fixtures location first, then legacy
-    test_case_path = test_data_dir / fn_test_cases
+    # Look for test case file in yaml subdirectory first, then root fixtures, then legacy
+    test_case_path = test_data_dir / "yaml" / fn_test_cases
+    if not test_case_path.exists():
+        test_case_path = test_data_dir / fn_test_cases
     if not test_case_path.exists():
         # Try legacy location
         legacy_path = Path(__file__).parent.parent.parent / "files" / fn_test_cases
@@ -142,8 +144,10 @@ def test_vabs_output_state_failure(fn_test_cases, test_data_dir, tmp_path):
         test_data_dir: Fixture providing test data directory
         tmp_path: Pytest fixture for temporary directory
     """
-    # Look for test case file
-    test_case_path = test_data_dir / fn_test_cases
+    # Look for test case file in yaml subdirectory first, then root fixtures, then legacy
+    test_case_path = test_data_dir / "yaml" / fn_test_cases
+    if not test_case_path.exists():
+        test_case_path = test_data_dir / fn_test_cases
     if not test_case_path.exists():
         legacy_path = Path(__file__).parent.parent.parent / "files" / fn_test_cases
         if legacy_path.exists():

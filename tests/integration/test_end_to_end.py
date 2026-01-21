@@ -11,7 +11,7 @@ import sgio
 
 @pytest.mark.integration
 @pytest.mark.io
-def test_build_sg_1d_from_yaml(legacy_files_dir, tmp_path):
+def test_build_sg_1d_from_yaml(test_data_dir, legacy_files_dir, tmp_path):
     """Test building a 1D structure gene from YAML input.
 
     This test verifies:
@@ -20,9 +20,11 @@ def test_build_sg_1d_from_yaml(legacy_files_dir, tmp_path):
     3. 1D SG can be built from layup design
     4. SG can be written to SwiftComp format
     """
-    # Use the test YAML file
-    fn = legacy_files_dir / 'sg1.yml'
-    
+    # Use the test YAML file - check yaml subdirectory first
+    fn = test_data_dir / 'yaml' / 'sg1.yml'
+    if not fn.exists():
+        fn = legacy_files_dir / 'sg1.yml'
+
     if not fn.exists():
         pytest.skip(f"Test file not found: {fn}")
     
@@ -84,15 +86,18 @@ def test_build_sg_1d_from_yaml(legacy_files_dir, tmp_path):
 
 @pytest.mark.integration
 @pytest.mark.io
-def test_build_sg_1d_layup_symmetry(legacy_files_dir, tmp_path):
+def test_build_sg_1d_layup_symmetry(test_data_dir, legacy_files_dir, tmp_path):
     """Test building 1D SG with symmetric layup.
 
     This test verifies:
     1. Symmetric layup is correctly expanded
     2. Number of layers is correct after symmetry
     """
-    fn = legacy_files_dir / 'sg1.yml'
-    
+    # Check yaml subdirectory first
+    fn = test_data_dir / 'yaml' / 'sg1.yml'
+    if not fn.exists():
+        fn = legacy_files_dir / 'sg1.yml'
+
     if not fn.exists():
         pytest.skip(f"Test file not found: {fn}")
     
@@ -127,7 +132,7 @@ def test_build_sg_1d_layup_symmetry(legacy_files_dir, tmp_path):
 
 @pytest.mark.integration
 @pytest.mark.io
-def test_build_sg_1d_mesh_generation(legacy_files_dir, tmp_path):
+def test_build_sg_1d_mesh_generation(test_data_dir, legacy_files_dir, tmp_path):
     """Test mesh generation in 1D SG building.
 
     This test verifies:
@@ -135,8 +140,11 @@ def test_build_sg_1d_mesh_generation(legacy_files_dir, tmp_path):
     2. Mesh has correct connectivity
     3. Property IDs are assigned correctly
     """
-    fn = legacy_files_dir / 'sg1.yml'
-    
+    # Check yaml subdirectory first
+    fn = test_data_dir / 'yaml' / 'sg1.yml'
+    if not fn.exists():
+        fn = legacy_files_dir / 'sg1.yml'
+
     if not fn.exists():
         pytest.skip(f"Test file not found: {fn}")
     

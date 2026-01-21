@@ -47,7 +47,10 @@ def test_swiftcomp_output_state_dehomogenization(fn_test_cases, test_data_dir, t
         test_data_dir: Fixture providing test data directory
         temp_dir: Fixture providing temporary output directory
     """
-    test_case_path = test_data_dir / fn_test_cases
+    # Look for test case file in yaml subdirectory first, then root fixtures
+    test_case_path = test_data_dir / "yaml" / fn_test_cases
+    if not test_case_path.exists():
+        test_case_path = test_data_dir / fn_test_cases
 
     if not test_case_path.exists():
         pytest.skip(f"Test case file not found: {test_case_path}")

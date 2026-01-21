@@ -33,8 +33,10 @@ def test_cli_convert(fn_test_cases, test_data_dir, tmp_path, capsys):
     """
     # Disable output capture to allow vendor code to write to stdout
     with capsys.disabled():
-        # Look for test case file in legacy location first, then new fixtures
-        test_case_path = test_data_dir / fn_test_cases
+        # Look for test case file in yaml subdirectory first, then root fixtures, then legacy
+        test_case_path = test_data_dir / "yaml" / fn_test_cases
+        if not test_case_path.exists():
+            test_case_path = test_data_dir / fn_test_cases
         if not test_case_path.exists():
             # Try legacy location
             legacy_path = Path(__file__).parent.parent / "files" / fn_test_cases

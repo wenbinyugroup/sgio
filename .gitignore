@@ -17,6 +17,10 @@ dist/
 *.pyc
 *.exe
 
+# Abaqus files
+*.rpy*
+*.dmp
+
 *.deb
 SCInt
 SCReal

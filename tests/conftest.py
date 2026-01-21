@@ -21,10 +21,17 @@ def test_root_dir():
 @pytest.fixture(scope="session")
 def test_data_dir(test_root_dir):
     """Root directory for test fixtures (input data).
-    
+
     This directory contains all test input files organized by format.
+    For YAML test case files, check the yaml/ subdirectory.
     """
     return test_root_dir / "fixtures"
+
+
+@pytest.fixture(scope="session")
+def yaml_test_dir(test_data_dir):
+    """Directory for YAML test case definition files."""
+    return test_data_dir / "yaml"
 
 
 @pytest.fixture(scope="session")

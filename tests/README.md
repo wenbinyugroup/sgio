@@ -184,15 +184,34 @@ def test_vabs_read(vabs_test_files, temp_dir):
 ## Status
 
 **Current Phase**: Phase 2 Complete ✅
-**Next Phase**: Phase 3 - Additional I/O Test Migrations
+**Next Phase**: Phase 3 - Fill Coverage Gaps
 
 ### Migration Progress
 - ✅ **Phase 1**: Foundation Setup (Complete)
-- ✅ **Phase 2**: Core Test Migration (Complete - 29 tests passing, 2 skipped)
-  - 5 files migrated
-  - 31 tests migrated (29 passing, 2 skipped)
-  - 0 breaking changes
-- ⏳ **Phase 3**: Additional I/O Test Migrations (Pending)
+- ✅ **Phase 2**: Core Test Migration (Complete - 49 tests passing, 11 skipped, 1 failed)
+  - 10 files migrated to new structure
+  - 61 total tests in organized structure
+  - All legacy test files archived in `_archive/`
+  - Test suite reorganized by functionality
+- ⏳ **Phase 3**: Fill Coverage Gaps (Pending)
+  - Need to add missing unit tests for materials, transformations
+  - Need to add validation and error handling tests
+  - Need to migrate test data from `files/` to `fixtures/`
 
-See `tests_plan.md` for detailed roadmap and `phase2_summary.md` for Phase 2 details.
+### Test Summary (as of 2026-01-21)
+- **Total Tests**: 61
+- **Passing**: 49 (80%)
+- **Skipped**: 11 (18%) - mostly due to missing test data in fixtures
+- **Failed**: 1 (2%) - due to missing test data file
+
+### Files Migrated
+1. `test_beam_pydantic.py` → `unit/test_models.py`
+2. `test_cli_convert.py` → `cli/test_cli_convert.py`
+3. `test_convert.py` + `test_convert_to_vabs.py` → `conversion/test_format_conversions.py`
+4. `test_gmsh_read.py` → `file_io/gmsh/test_gmsh_io.py`
+5. `test_io_vabs_in.py` → `file_io/vabs/test_vabs_input.py`
+6. `test_io_vabs_out_state_d.py` + `test_io_vabs_out_state_f.py` → `file_io/vabs/test_vabs_output_state.py`
+7. `test_io_sc_out_state_d.py` + `test_read_output_node_strain_stress.py` → `file_io/swiftcomp/test_sc_output_state.py`
+
+See `tests_plan.md` for detailed roadmap.
 
