@@ -39,7 +39,7 @@ def cli(*args):
         default='info', choices=['debug', 'info', 'warning', 'error', 'critical'])
     logging_args.add_argument(
         '--logfile', help='Logging file name',
-        default='log.txt')
+        default='sgio.log')
 
     sub_parser = root_parser.add_subparsers(
         help='sub-command help'

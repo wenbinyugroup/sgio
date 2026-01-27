@@ -1,0 +1,10 @@
+- fn_in: 'swiftcomp/sg31t_hex20_sc21.sg'
+  ff_in: 'sc'
+  sgdim: 3
+  model_type: 'bm2'
+  version_in: '2.1'
+  num_cases: 1
+  extension: ['sn', 'snm']
+  fn_out: 'sg31t_hex20_sc21_out_d.msh'
+  ff_out: 'gmsh'
+  format_version: '4.1'

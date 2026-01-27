@@ -20,6 +20,11 @@ class EulerBernoulliBeamModel(BaseModel):
     name: str = Field(default='', description="Beam name")
     id: Optional[int] = Field(default=None, description="Beam ID")
 
+    # Geometric properties
+    xg2: Optional[float] = Field(default=None, description="Geometric center location in x2 direction")
+    xg3: Optional[float] = Field(default=None, description="Geometric center location in x3 direction")
+    area: Optional[float] = Field(default=None, ge=0, description="Area of the cross-section")
+
     # Inertial properties
     mass: Optional[List[List[float]]] = Field(
         default=None,

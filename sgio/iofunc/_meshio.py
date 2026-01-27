@@ -167,9 +167,9 @@ def addPointDictDataToMesh(name:str|list, dict_data:dict[int, list], mesh:SGMesh
 
 
 def addCellDictDataToMesh(name:str|list, dict_data:dict[int, list], mesh:SGMesh):
-    """Add cell/element data (dictionary) to cell_data of mesh.
+    """Add cell/element data (dictionary) to cell_data or cell_point_data of mesh.
 
-    The mesh should contain a map between (cell_type, index) and element id.    
+    The mesh should contain a map between (cell_type, index) and element id.
 
     Parameters:
     -----------
@@ -177,12 +177,30 @@ def addCellDictDataToMesh(name:str|list, dict_data:dict[int, list], mesh:SGMesh)
         Name(s) of the cell data. If it is a list, then it should have the same length as data list for each element.
     dict_data:
         Data in the dictionary form {eid: data}.
+        For element data: {eid: [comp1, comp2, ...]}
+        For element_node data: {eid: [[comp1_n1, comp2_n1, ...], [comp1_n2, comp2_n2, ...], ...]}
     mesh:
         Mesh where the cell data will be added.
+
+    Note:
+    -----
+    Element data (flat lists) will be added to mesh.cell_data.
+    Element_node data (nested lists) will be added to mesh.cell_point_data.
 
     """
 
     _cell_data_eid = mesh.cell_data['element_id']
+
+    # Detect if data is element_node data (nested lists) or element data (flat lists)
+    # Check the first element's data structure
+    first_eid = next(iter(dict_data))
+    first_data = dict_data[first_eid]
+    is_element_node_data = isinstance(first_data, list) and len(first_data) > 0 and isinstance(first_data[0], list)
+
+    if is_element_node_data:
+        # Add element_node data to cell_point_data
+        _addCellPointDictDataToMesh(name, dict_data, mesh)
+        return
 
     if isinstance(name, str):
         _cell_data = []
@@ -212,6 +230,8 @@ def addCellDictDataToMesh(name:str|list, dict_data:dict[int, list], mesh:SGMesh)
 
             for _j, _eid in enumerate(_typei_ids):
                 _data_all = dict_data[_eid]
+                # For element data: {eid: [comp1, comp2, ...]}
+                # _data_all is a flat list of components
                 for _k, _data in enumerate(_data_all):
                     _typei_data_all[_k].append(_data)
 
@@ -221,6 +241,68 @@ def addCellDictDataToMesh(name:str|list, dict_data:dict[int, list], mesh:SGMesh)
         for _i, _name in enumerate(name):
             _data = _cell_data_all[_i]
             mesh.cell_data[_name] = _data
+
+    return
+
+
+def _addCellPointDictDataToMesh(name:str|list, dict_data:dict[int, list], mesh:SGMesh):
+    """Add cell point (element nodal) data (dictionary) to cell_point_data of mesh.
+
+    The mesh should contain a map between (cell_type, index) and element id.
+
+    Parameters:
+    -----------
+    name:
+        Name(s) of the cell point data. If it is a list, then it should have the same
+        length as the number of components in the data.
+    dict_data:
+        Data in the dictionary form {eid: [[comp1_n1, comp2_n1, ...], [comp1_n2, comp2_n2, ...], ...]}.
+        Each element has a list of nodes, and each node has a list of component values.
+    mesh:
+        Mesh where the cell point data will be added.
+
+    """
+    import numpy as np
+
+    _cell_data_eid = mesh.cell_data['element_id']
+
+    if isinstance(name, str):
+        # Single component name - store the entire nested structure
+        _cell_point_data = []
+
+        for _i, _typei_ids in enumerate(_cell_data_eid):
+            _typei_data = []
+
+            for _j, _eid in enumerate(_typei_ids):
+                _data = dict_data[_eid]
+                _typei_data.append(_data)
+
+            _cell_point_data.append(np.array(_typei_data))
+
+        mesh.cell_point_data[name] = _cell_point_data
+
+    elif isinstance(name, list):
+        # Multiple component names - transpose the data structure
+        # From: {eid: [[comp1_n1, comp2_n1, ...], [comp1_n2, comp2_n2, ...], ...]}
+        # To: For each component, create: [[[comp_n1_e1, comp_n2_e1, ...], ...], ...]
+
+        ncomps = len(name)
+
+        for comp_idx, comp_name in enumerate(name):
+            _cell_point_data = []
+
+            for _i, _typei_ids in enumerate(_cell_data_eid):
+                _typei_data = []
+
+                for _j, _eid in enumerate(_typei_ids):
+                    _elem_node_data = dict_data[_eid]
+                    # Extract component comp_idx from all nodes of this element
+                    _comp_values = [node_data[comp_idx] for node_data in _elem_node_data]
+                    _typei_data.append(_comp_values)
+
+                _cell_point_data.append(np.array(_typei_data))
+
+            mesh.cell_point_data[comp_name] = _cell_point_data
 
     return
 
@@ -418,7 +500,6 @@ def _meshio_to_sg_order(
     idx_sg: np.ndarray (n_cells, n_elem_nodes_sg)
         Array of cell connectivity in SG ordering.
     """
-    print(f'{renumber_nodes = }')
     idx_sg = np.asarray(idx)
     if renumber_nodes:
         if len(node_id) == 0:

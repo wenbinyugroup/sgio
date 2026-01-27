@@ -369,7 +369,7 @@ def _write_elements(
                 _eid = consecutive_index + i + 1
                 elem_id[k].append(_eid)
             else:
-                _eid = elem_id[k][i]
+                _eid = int(elem_id[k][i])
 
             _nums = [_eid, ]  # Element id
 
@@ -382,7 +382,8 @@ def _write_elements(
             #     logger.debug(f'_nids = {_nids}')
             #     _nums.extend(_nids)
             # else:
-            _nums.extend(c.tolist())  # Node ids
+            # Ensure node ids are integers
+            _nums.extend([int(x) for x in c.tolist()])  # Node ids
 
             # Write the numbers
             fmt = ''.join([sfi,]*len(_nums))
@@ -446,8 +447,9 @@ def _write_property_id_ref_csys(
 
         for j, prop_id in enumerate(block_data):
             # j-th cell/element in the i-th cell/element block
-
-            elem_id = elem_ids[i][j]
+            # Ensure integer types for elem_id and prop_id
+            prop_id = int(prop_id)
+            elem_id = int(elem_ids[i][j])
 
             try:
                 theta_1 = cell_csys[i][j]

@@ -3,6 +3,7 @@ from __future__ import annotations
 import logging
 
 # import sgio._global as GLOBAL
+from sgio.core.sg import StructureGene
 import sgio.utils as sutl
 import sgio.model as smdl
 from sgio._exceptions import OutputFileError
@@ -887,8 +888,16 @@ def _read_output_node_disp_case(file, nnode):
 
 
 
-def _read_output_node_strain_stress_case_global_gmsh(file, nelem):
+def _read_output_node_strain_stress_case_global_gmsh(file, nelem, sg:StructureGene):
     """Read SC output strains and stressed on element nodes.
+
+    The data is arranged in the Gmsh style.
+    - There are 12 blocks:
+        - The first six blocks are for strains.
+        - The last six blocks are for stresses.
+    - For each block:
+        - There are `nelem` lines.
+        - Each line contains the element id, the number of nodes, and the strain/stress values at each node.
 
     Parameters
     ----------
@@ -896,40 +905,55 @@ def _read_output_node_strain_stress_case_global_gmsh(file, nelem):
         File object of the output file.
     nelem: int
         Number of elements.
+    sg: StructureGene
+        StructureGene object.
 
     Returns
     -------
-    dict[str, dict[int, list[float]]]:
-        Nodal 3D strains and stresses of all elements in the global coordinate system.
+    dict[str, list[list[float]]]:
+        Nodal 3D strains of all elements in the global coordinate system.
         Structure:
 
         ..  code-block::
-        
             {
-                'e11': {
-                    eid_1: [e11_n1, e11_n2, ...],
-                    eid_2: [e11_n1, e11_n2, ...],
+                'eid_1': [
+                    [e11_n1, e22_n1, e33_n1, 2e23_n1, 2e13_n1, 2e12_n1],  # Strain at node 1
+                    [e11_n2, e22_n2, e33_n2, 2e23_n2, 2e13_n2, 2e12_n2],  # Strain at node 2
                     ...
-                },
-                'e22': {
-                    eid_1: [e22_n1, e22_n2, ...],
-                    eid_2: [e22_n1, e22_n2, ...],
+                    [e11_nn, e22_nn, e33_nn, 2e23_nn, 2e13_nn, 2e12_nn]  # Strain at node n
+                ],
+                'eid_2': [...],
+                ...
+            }
+    dict[str, list[list[float]]]:
+        Nodal 3D stresses of all elements in the global coordinate system.
+        Structure:
+
+        ..  code-block::
+            {
+                'eid_1': [
+                    [s11_n1, s22_n1, s33_n1, s23_n1, s13_n1, s12_n1],  # Stress at node 1
+                    [s11_n2, s22_n2, s33_n2, s23_n2, s13_n2, s12_n2],  # Stress at node 2
                     ...
-                },
+                    [s11_nn, s22_nn, s33_nn, s23_nn, s13_nn, s12_nn]  # Stress at node n
+                ],
+                'eid_2': [...],
                 ...
             }
 
     """
 
-    output = {}
+    # Temporary storage: component -> element_id -> node values
+    comp_data = {}
 
     components = [
         'e11', 'e22', 'e33', '2e23', '2e13', '2e12',
         's11', 's22', 's33', 's23', 's13', 's12',
     ]
 
+    # Read all 12 blocks (6 strain components + 6 stress components)
     for comp in components:
-        output[comp] = {}
+        comp_data[comp] = {}
 
         i = 0
         while i < nelem:
@@ -943,11 +967,50 @@ def _read_output_node_strain_stress_case_global_gmsh(file, nelem):
 
             _vals = list(map(float, line[2:]))
 
-            output[comp][_eid] = _vals
+            comp_data[comp][_eid] = _vals
 
             i += 1
 
-    return output
+    # Transform data structure from component-based to element-based
+    strains = {}
+    stresses = {}
+
+    # Get all element IDs from the first component
+    element_ids = comp_data['e11'].keys()
+
+    for eid in element_ids:
+        # Get number of nodes for this element
+        nnodes = len(comp_data['e11'][eid])
+
+        # Initialize lists for this element
+        strains[eid] = []
+        stresses[eid] = []
+
+        # For each node, collect all 6 components
+        for node_idx in range(nnodes):
+            # Strain components for this node: [e11, e22, e33, 2e23, 2e13, 2e12]
+            strain_node = [
+                comp_data['e11'][eid][node_idx],
+                comp_data['e22'][eid][node_idx],
+                comp_data['e33'][eid][node_idx],
+                comp_data['2e23'][eid][node_idx],
+                comp_data['2e13'][eid][node_idx],
+                comp_data['2e12'][eid][node_idx],
+            ]
+            strains[eid].append(strain_node)
+
+            # Stress components for this node: [s11, s22, s33, s23, s13, s12]
+            stress_node = [
+                comp_data['s11'][eid][node_idx],
+                comp_data['s22'][eid][node_idx],
+                comp_data['s33'][eid][node_idx],
+                comp_data['s23'][eid][node_idx],
+                comp_data['s13'][eid][node_idx],
+                comp_data['s12'][eid][node_idx],
+            ]
+            stresses[eid].append(stress_node)
+
+    return strains, stresses
 
 
 

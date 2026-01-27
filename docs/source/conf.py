@@ -36,7 +36,9 @@ release = __version__
 # ones.
 extensions = [
     'myst_parser',
-    'sphinx_immaterial',
+    'sphinx_design',
+    'sphinx_copybutton',
+    # 'sphinx_immaterial',
     'sphinx.ext.autodoc',
     'sphinx.ext.autosummary',
     "sphinx.ext.githubpages",
@@ -72,30 +74,31 @@ numfig_format = {
 # a list of builtin themes.
 #
 # html_theme = 'sphinx_book_theme'
-# html_theme = 'pydata_sphinx_theme'
-html_theme = 'sphinx_immaterial'
+html_theme = 'pydata_sphinx_theme'
+# html_theme = 'sphinx_immaterial'  # Temporarily disabled due to compatibility issue
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
+html_title = 'SGIO'
 html_static_path = ['_static']
 
 html_theme_options = {
-    'site_url': 'https://wenbinyugroup.github.io/sgio/',
-    'repo_url': 'https://github.com/wenbinyugroup/sgio',
-    'palette': {
-        'primary': 'red'
-    },
-    # 'logo': {
-    #     'text': 'sgio',
-    # },
-    'show_nav_level': 2,
-    # "path_to_docs": "doc/source",
-    # 'use_edit_page_button': True,
-    # "use_repository_button": True,
-    # "use_issues_button": True,
-    # 'collapse_navigation': True,
-    'navigation_depth': 4,
+#     'site_url': 'https://wenbinyugroup.github.io/sgio/',
+#     'repo_url': 'https://github.com/wenbinyugroup/sgio',
+#     'palette': {
+#         'primary': 'red'
+#     },
+#     # 'logo': {
+#     #     'text': 'sgio',
+#     # },
+#     'show_nav_level': 2,
+#     # "path_to_docs": "doc/source",
+#     # 'use_edit_page_button': True,
+#     # "use_repository_button": True,
+#     # "use_issues_button": True,
+#     # 'collapse_navigation': True,
+#     'navigation_depth': 4,
     "announcement": "Documentation is under construction.",
 }
 
