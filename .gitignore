@@ -51,3 +51,6 @@ tests/*.SM
 tests/*.SN
 tests/*.SMN
 tests/*.ELE
+
+*.rpy*
+ABQ*.dmp
