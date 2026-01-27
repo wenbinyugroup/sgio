@@ -55,7 +55,7 @@ class TsaiWuFailureCriterion:
 
         self.f12 = (- self.f11 - self.f22 + self.f33) / 2
         self.f13 = (- self.f11 + self.f22 - self.f33) / 2
-        self.f23 = (- self.f11 - self.f22 + self.f33) / 2
+        self.f23 = (  self.f11 - self.f22 - self.f33) / 2
         self.f14 = 0
         self.f15 = 0
         self.f16 = 0
