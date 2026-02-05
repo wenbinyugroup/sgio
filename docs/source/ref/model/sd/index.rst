@@ -12,12 +12,6 @@ Solid
 
 .. .. ::
 
-.. ..     sgio.model.solid.CauchyContinuumProperty
-
-
-.. .. ..  autoclass:: CauchyContinuumProperty
-.. ..     :members:
-
 .. ::
 
 ..     sgio.model.solid.CauchyContinuumModel

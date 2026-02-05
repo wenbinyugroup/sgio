@@ -172,20 +172,18 @@ class TsaiWuFailureCriterion:
         # We take the positive root
         discriminant = b**2 - 4*a*c
 
-        # Handle edge cases
-        strength_ratio = np.zeros_like(a)
+        # Handle edge cases - initialize with infinity
+        strength_ratio = np.full_like(a, np.inf)
 
         # For valid discriminant (should always be >= 0 for physical problems)
-        valid = discriminant >= 0
+        valid_discriminant = discriminant >= 0
 
         # Calculate strength ratio using the positive root
-        strength_ratio[valid] = (-b[valid] + np.sqrt(discriminant[valid])) / (2*a[valid])
+        temp_sr = (-b[valid_discriminant] + np.sqrt(discriminant[valid_discriminant])) / (2*a[valid_discriminant])
 
-        # Handle cases where a is very small (nearly zero quadratic term)
-        # In this case, solve linear equation: b·SR - 1 = 0 => SR = 1/b
-        small_a = np.abs(a) < 1e-10
-        if np.any(small_a):
-            strength_ratio[small_a] = 1.0 / b[small_a]
+        # Only keep positive strength ratios, set others to infinity
+        valid_sr = temp_sr > 0
+        strength_ratio[valid_discriminant] = np.where(valid_sr, temp_sr, np.inf)
 
         # Return scalar if input was 1D
         if strength_ratio.shape[0] == 1:

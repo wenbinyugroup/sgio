@@ -41,6 +41,8 @@ python read_vabs_input.py
 - **`create_beam_model.py`** - Create structural models programmatically using Pydantic classes
   - Demonstrates Euler-Bernoulli (BM1) and Timoshenko (BM2) beam models
   - Shows model validation and property access patterns
+- **`load_cauchy_material_from_json/`** - Build a `CauchyContinuumModel` from serialized JSON material data
+  - Highlights the renamed solid model API and assignment validation
 
 ### Format Conversion
 

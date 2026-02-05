@@ -8,4 +8,13 @@
 ## Testing Instructions
 
 - Always create test modules and functions in folder `sgio/tests`.
-- Use `uv run pytest` for all testing operations.
+- Use `pytest` to manage testing.
+
+## Documentation Instructions
+
+- Use `sphinx` to manage documentation.
+- Use `myst` to write documentation in Markdown.
+- Use `make html` to build documentation.
+- The documentation source files are in `docs/source`.
+- The documentation build files are in `docs/build`.
+- Use numpy docstring format for all docstrings.

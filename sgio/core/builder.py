@@ -391,7 +391,8 @@ def addMaterial(mname, mprop):
 
     # Thermal property
     _cte = list(map(float, mprop.get('cte', [])))
-    m.set('cte', _cte)
+    if _cte:  # Only set if non-empty (validator requires None or 6 components)
+        m.set('cte', _cte)
     _specific_heat = float(mprop.get('specific_heat', 0))
     m.set('specific_heat', _specific_heat)
 
