@@ -1,5 +1,5 @@
 from meshio import Mesh, CellBlock
-from typing import Union
+from typing import Dict, Tuple, Union
 import numpy as np
 
 class SGMesh(Mesh):
@@ -155,6 +155,203 @@ def check_isolated_nodes(mesh: Union[SGMesh, Mesh]):
     return node_cell_ids, nodes_in_cells
 
 
+def _check_tetra4_ordering(points: np.ndarray, cells: np.ndarray) -> np.ndarray:
+    """Return indices of tetra4 cells with invalid ordering."""
+    points = np.asarray(points)
+    cells = np.asarray(cells)
+    if cells.size == 0:
+        return np.array([], dtype=int)
+    if cells.ndim != 2 or cells.shape[1] != 4:
+        raise ValueError(
+            f"Expected tetra4 cells with shape (n, 4), got {cells.shape}"
+        )
+    if points.ndim != 2 or points.shape[1] != 3:
+        raise ValueError(
+            f"Expected point coordinates with shape (n, 3), got {points.shape}"
+        )
+
+    cell_points = points[cells]
+    p0 = cell_points[:, 0, :]
+    p1 = cell_points[:, 1, :]
+    p2 = cell_points[:, 2, :]
+    p3 = cell_points[:, 3, :]
+    normal = np.cross(p1 - p0, p2 - p0)
+    dot = np.einsum("ij,ij->i", normal, p3 - p0)
+    return np.where(dot <= 0.0)[0]
+
+
+def _check_cell_ordering_placeholder(
+    points: np.ndarray,
+    cells: np.ndarray,
+    cell_type: str,
+) -> np.ndarray:
+    """Placeholder for future cell ordering checks."""
+    _ = points
+    _ = cells
+    _ = cell_type
+    return np.array([], dtype=int)
+
+
+def check_cell_ordering(mesh: Union[SGMesh, Mesh]) -> Dict[Tuple[int, str], np.ndarray]:
+    """Check node ordering for supported cell types.
+
+    Parameters
+    ----------
+    mesh : SGMesh or meshio.Mesh
+        Mesh containing cell blocks to validate.
+
+    Returns
+    -------
+    dict[tuple[int, str], np.ndarray]
+        Mapping of (cell_block_id, cell_type) to arrays of invalid cell indices.
+
+    Raises
+    ------
+    ValueError
+        If any invalid cell ordering is detected.
+    """
+    invalid_cells = {}
+    placeholder_cell_types = {
+        "line",
+        "triangle",
+        "quad",
+        "tetra10",
+        "hexahedron",
+        "wedge",
+        "pyramid",
+    }
+
+    for cb_id, cell_block in enumerate(mesh.cells):
+        cell_type = cell_block.type
+        if cell_type == "tetra":
+            invalid = _check_tetra4_ordering(mesh.points, cell_block.data)
+        elif cell_type in placeholder_cell_types:
+            invalid = _check_cell_ordering_placeholder(
+                mesh.points,
+                cell_block.data,
+                cell_type,
+            )
+        else:
+            continue
+
+        if invalid.size > 0:
+            invalid_cells[(cb_id, cell_type)] = invalid
+
+    if invalid_cells:
+        details = ", ".join(
+            f"block {cb_id} '{cell_type}': {len(indices)} invalid"
+            for (cb_id, cell_type), indices in invalid_cells.items()
+        )
+        raise ValueError(f"Invalid cell ordering found: {details}")
+
+    return invalid_cells
+
+
+def get_invalid_cell_ordering_element_ids(
+    mesh: Union[SGMesh, Mesh]
+) -> Dict[Tuple[int, str], np.ndarray]:
+    """Return invalid element IDs for supported cell types.
+
+    Parameters
+    ----------
+    mesh : SGMesh or meshio.Mesh
+        Mesh containing cell blocks to validate.
+
+    Returns
+    -------
+    dict[tuple[int, str], np.ndarray]
+        Mapping of (cell_block_id, cell_type) to arrays of invalid element IDs.
+    """
+    invalid_element_ids = {}
+    placeholder_cell_types = {
+        "line",
+        "triangle",
+        "quad",
+        "tetra10",
+        "hexahedron",
+        "wedge",
+        "pyramid",
+    }
+    element_offset = 0
+
+    for cb_id, cell_block in enumerate(mesh.cells):
+        cell_type = cell_block.type
+        count = len(cell_block.data)
+        if "element_id" in mesh.cell_data and cb_id < len(mesh.cell_data["element_id"]):
+            element_ids = np.asarray(mesh.cell_data["element_id"][cb_id], dtype=int)
+            if element_ids.shape[0] != count:
+                raise ValueError(
+                    "Incompatible element_id cell_data for block "
+                    f"{cb_id} ('{cell_type}'): expected {count}, got {element_ids.shape[0]}"
+                )
+        else:
+            element_ids = np.arange(
+                element_offset + 1,
+                element_offset + 1 + count,
+                dtype=int,
+            )
+
+        if cell_type == "tetra":
+            invalid = _check_tetra4_ordering(mesh.points, cell_block.data)
+        elif cell_type in placeholder_cell_types:
+            invalid = _check_cell_ordering_placeholder(
+                mesh.points,
+                cell_block.data,
+                cell_type,
+            )
+        else:
+            invalid = np.array([], dtype=int)
+
+        if invalid.size > 0:
+            invalid_element_ids[(cb_id, cell_type)] = element_ids[invalid]
+
+        element_offset += count
+
+    return invalid_element_ids
+
+
+def fix_cell_ordering(mesh: Union[SGMesh, Mesh]) -> Dict[Tuple[int, str], np.ndarray]:
+    """Fix node ordering for supported cell types.
+
+    Parameters
+    ----------
+    mesh : SGMesh or meshio.Mesh
+        Mesh containing cell blocks to validate and fix.
+
+    Returns
+    -------
+    dict[tuple[int, str], np.ndarray]
+        Mapping of (cell_block_id, cell_type) to arrays of fixed cell indices.
+    """
+    fixed_cells = {}
+    placeholder_cell_types = {
+        "line",
+        "triangle",
+        "quad",
+        "tetra10",
+        "hexahedron",
+        "wedge",
+        "pyramid",
+    }
+
+    for cb_id, cell_block in enumerate(mesh.cells):
+        cell_type = cell_block.type
+        if cell_type == "tetra":
+            invalid = _check_tetra4_ordering(mesh.points, cell_block.data)
+            if invalid.size > 0:
+                data = cell_block.data
+                temp = data[invalid, 0].copy()
+                data[invalid, 0] = data[invalid, 1]
+                data[invalid, 1] = temp
+                fixed_cells[(cb_id, cell_type)] = invalid
+        elif cell_type in placeholder_cell_types:
+            continue
+        else:
+            continue
+
+    return fixed_cells
+
+
 # def renumber_nodes(mesh: Union[SGMesh, Mesh]):
 #     """
 #     """
@@ -164,7 +361,8 @@ def renumber_elements(mesh: Union[SGMesh, Mesh]):
     """
     """
     eid = 0
-    for _cb in mesh.cell_data['element_id']:
-        for i in range(len(_cb)):
-            eid += 1
-            _cb[i] = eid
+    for cb_id, _cb in enumerate(mesh.cell_data['element_id']):
+        count = np.asarray(_cb).shape[0]
+        element_ids = np.arange(eid + 1, eid + 1 + count, dtype=int)
+        mesh.cell_data['element_id'][cb_id] = element_ids
+        eid += count

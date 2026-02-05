@@ -1,0 +1,22 @@
+{
+  "materials": [
+    {
+      "id": 1,
+      "name": "matrix",
+      "description": "Matrix material with lower stiffness",
+      "isotropy": 0,
+      "density": 1000.0,
+      "e": 1.0e9,
+      "nu": 0.3
+    },
+    {
+      "id": 2,
+      "name": "inclusion",
+      "description": "Spherical inclusion material with higher stiffness",
+      "isotropy": 0,
+      "density": 2500.0,
+      "e": 1.0e11,
+      "nu": 0.25
+    }
+  ]
+}

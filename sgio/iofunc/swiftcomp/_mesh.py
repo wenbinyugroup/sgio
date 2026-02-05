@@ -298,7 +298,7 @@ def _write_elements(
             cell_type, cell_block.data,
             node_id=node_id, renumber_nodes=renumber_nodes
             )
-        print(f'{node_idcs = }')
+        # print(f'{node_idcs = }')
 
         _cid_to_eid = []
         if generate_eid:
