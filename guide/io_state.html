@@ -1,0 +1,552 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Read Local States &#8212; SGIO</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=71d9d8e6"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'guide/io_state';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Convert SG Data" href="convert.html" />
+    <link rel="prev" title="Read Structural Model Data (.k file)" href="io_model.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+<aside class="bd-header-announcement" aria-label="Announcement">
+  <div class="bd-header-announcement__content">Documentation is under construction.</div>
+</aside>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">SGIO</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="index.html">
+    Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../ref/index.html">
+    Reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="index.html">
+    Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../ref/index.html">
+    Reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="sg.html">Structure Gene (SG) Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model/index.html">Material and Structural Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="io.html">Read and Write SG Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="io_model.html">Read Structural Model Data (.k file)</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Read Local States</a></li>
+<li class="toctree-l1"><a class="reference internal" href="convert.html">Convert SG Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="abaqus_cs.html">Build Cross-section in Abaqus and Export to VABS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plot.html">Plot Cross-section</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="index.html" class="nav-link">Guide</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Read Local States</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="read-local-states">
+<h1>Read Local States<a class="headerlink" href="#read-local-states" title="Link to this heading">#</a></h1>
+<p>After dehomogenization and/or failure analysis, local state fields (strain/stress/displacement/failure index/strength ratio) of the SG can be read using the <a class="reference internal" href="../ref/_temp/sgio.readOutputState.html#sgio.readOutputState" title="sgio.readOutputState"><code class="xref py py-func docutils literal notranslate"><span class="pre">sgio.readOutputState()</span></code></a> function.</p>
+<section id="read-vabs-element-local-strain-and-stress-fields-and-visualize-in-gmsh">
+<h2>Read VABS Element Local Strain and Stress Fields and Visualize in Gmsh<a class="headerlink" href="#read-vabs-element-local-strain-and-stress-fields-and-visualize-in-gmsh" title="Link to this heading">#</a></h2>
+<p>Consider the following VABS output file (<code class="docutils literal notranslate"><span class="pre">sgio/examples/files/cs_box_t_vabs41.sg.ELE</span></code>) after dehomogenization.
+This file contains the local strains and stresses of each element of the cross-section, in both the global and material coordinate systems.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span> Strains/stresses for each element for load case #           1
+          1    6.6548337309E-06   -2.6345993204E-05    7.8560962337E-06   -1.7183610831E-06   -2.6521318074E-07   -2.0114465020E-06    1.0750124132E+02   -1.0312628657E+01    5.3297065333E+00    1.1125186688E-01   -2.2293680617E-02   -1.9763155864E-02    4.5425790932E-06   -2.7331486560E-05    7.8110701245E-06    3.9389355464E-07   -8.8077782347E-07   -2.0114465020E-06    1.0522691629E+02   -1.8585410861E+01    5.3115276847E+00    2.3855769008E+00   -4.4038891173E-01   -1.9763155864E-02
+          2   -1.4024016611E-07    1.8995431356E-05    5.7329007405E-06   -6.7419457110E-07   -2.4441809558E-07    1.2292066807E-07    2.7978014946E+01    1.5080740468E+01    3.8885789793E+00   -7.2149438297E-02   -4.1765781659E-02    2.0973407179E-02    1.3422429727E-06    1.8678037203E-05    5.6960512980E-06   -2.1566777099E-06   -6.9346284416E-07    1.2292066807E-07    3.0164490479E+01    1.2701065298E+01    3.8733148826E+00   -2.2586249708E+00   -3.4673142208E-01    2.0973407179E-02
+          3   -1.4422803101E-07    3.3490955634E-05    1.1628523030E-06   -1.0687038767E-06   -2.0138168215E-08    1.3112251832E-07    5.1745575112E+01    2.6765522794E+01    7.8916754100E-01    8.3425533522E-02    6.2805178236E-03    2.8104031875E-02    2.4696509173E-06    3.2934006511E-05    1.1576875950E-06   -3.6825828249E-06   -1.1131242912E-07    1.3112251832E-07    5.5614601957E+01    2.2395124427E+01    7.8722756459E-01   -3.7856013114E+00   -5.5656214562E-02    2.8104031875E-02
+          4    6.7246332002E-06   -2.8812834172E-05    4.5138491289E-06   -1.6070394459E-06   -1.2859360038E-07   -2.0314926853E-06    1.0507505109E+02   -1.2184032322E+01    3.0626053577E+00    1.9065881653E-01   -8.8834660925E-04    1.2910104904E-02    4.4196846922E-06   -2.9761461124E-05    4.4898451008E-06    6.9790906200E-07   -4.8234971013E-07   -2.0314926853E-06    1.0252339806E+02   -2.0237793565E+01    3.0530946686E+00    2.7423118522E+00   -2.4117485507E-01    1.2910104904E-02
+          5   -1.2059035458E-07    2.0737716048E-05    3.4017766843E-06   -7.9666955239E-07   -7.8964312052E-08    1.2190946936E-07    3.1244454738E+01    1.6514922433E+01    2.3083270623E+00   -1.4865691327E-01    8.3243080405E-03   -2.4453686697E-03    1.4972945751E-06    2.0376638264E-05    3.3850946735E-06   -2.4145544820E-06   -3.4562121395E-07    1.2190946936E-07    3.3634707145E+01    1.3856114019E+01    2.3018643780E+00   -2.5389093201E+00   -1.7281060697E-01   -2.4453686697E-03
+          6   -7.6611529969E-08    3.3454676706E-05    2.9844140853E-06   -1.0677426807E-06   -5.8060534702E-08    5.9705432061E-08    5.3206212289E+01    2.6848015414E+01    2.0252772597E+00    1.0021933547E-01    1.2923268591E-02   -3.4745039472E-02    2.5340194622E-06    3.2887747049E-05    2.9706587556E-06   -3.6783736729E-06   -2.9203598386E-07    5.9705432061E-08    5.7079255769E+01    2.2363667994E+01    2.0200479538E+00   -3.7728241444E+00   -1.4601799193E-01   -3.4745039472E-02
+          7   -2.2992070705E-07    3.7716144026E-05    4.1391582983E-06   -1.1803731130E-06   -1.3781368150E-07    1.5394254279E-07    5.6734134697E+01    3.0031064955E+01    2.8081009583E+00    8.1447333511E-02   -1.0783913839E-02    1.0815287927E-02    2.7142808768E-06    3.7103112193E-05    4.1155859178E-06   -4.1245746968E-06   -4.6214346507E-07    1.5394254279E-07    6.1083283982E+01    2.5230116291E+01    2.7985984241E+00   -4.2677019517E+00   -2.3107173253E-01    1.0815287927E-02
+          8    6.9325495617E-06   -6.5422656001E-06    6.9052020091E-06   -2.5730456906E-06   -2.5289542865E-07   -2.0105673220E-06    1.4628260870E+02    6.1066899659E+00    4.6843255211E+00    6.6267610687E-02   -2.9508892534E-02    3.2993615006E-03    6.3623168264E-06   -7.9487221625E-06    6.8640736291E-06   -2.0028129553E-06   -7.9389174189E-07   -2.0105673220E-06    1.4633782258E+02   -5.4051310705E+00    4.6675700678E+00    1.1053728183E-02   -3.9694587095E-01    3.2993615006E-03
+          9   -3.1367237010E-07    4.6424007637E-06    5.0950737363E-06   -6.9804722839E-08   -1.9427763532E-07    1.2022945485E-07    5.0218332952E-01    3.2262029083E+00    3.4562692930E+00   -4.2131468096E-02   -2.5620024782E-02    1.1181040405E-02    5.0944577586E-08    4.6233944116E-06    5.0641244768E-06   -4.3442167053E-07   -5.9343362023E-07    1.2022945485E-07    1.0035219464E+00    3.1439081999E+00    3.4436046442E+00   -5.4347008497E-01   -2.9671681012E-01    1.1181040405E-02
+</pre></div>
+</div>
+<p>To read the data, we need to first read the cross-sectional data using <a class="reference internal" href="../ref/_temp/sgio.read.html#sgio.read" title="sgio.read"><code class="xref py py-func docutils literal notranslate"><span class="pre">sgio.read()</span></code></a>.
+Then read the local state fields using <a class="reference internal" href="../ref/_temp/sgio.readOutputState.html#sgio.readOutputState" title="sgio.readOutputState"><code class="xref py py-func docutils literal notranslate"><span class="pre">sgio.readOutputState()</span></code></a>.
+The returned object is a list of N <a class="reference internal" href="../ref/model/statecase.html#sgio.model.StateCase" title="sgio.model.StateCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">sgio.model.StateCase</span></code></a> objects corresponding to N load cases.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Step 1: Read the mesh from VABS input file</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">[Step 1] Reading mesh from VABS input file...&quot;</span><span class="p">)</span>
+<span class="n">sg</span> <span class="o">=</span> <span class="n">sgio</span><span class="o">.</span><span class="n">read</span><span class="p">(</span>
+    <span class="n">filename</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">input_file</span><span class="p">),</span>
+    <span class="n">file_format</span><span class="o">=</span><span class="s1">&#39;vabs&#39;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  ✓ Loaded mesh with </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">sg</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">points</span><span class="p">)</span><span class="si">}</span><span class="s2"> nodes and </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">sg</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">cells</span><span class="p">)</span><span class="si">}</span><span class="s2"> elements&quot;</span><span class="p">)</span>
+
+<span class="c1"># Step 2: Read the dehomogenization output state</span>
+<span class="c1"># The .ELE file contains element-level stress/strain data</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">[Step 2] Reading dehomogenization output...&quot;</span><span class="p">)</span>
+<span class="n">state_cases</span> <span class="o">=</span> <span class="n">sgio</span><span class="o">.</span><span class="n">readOutputState</span><span class="p">(</span>
+    <span class="n">filename</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">input_file</span><span class="p">),</span>
+    <span class="n">file_format</span><span class="o">=</span><span class="s1">&#39;vabs&#39;</span><span class="p">,</span>
+    <span class="n">analysis</span><span class="o">=</span><span class="s1">&#39;d&#39;</span><span class="p">,</span>          <span class="c1"># &#39;d&#39; for dehomogenization</span>
+    <span class="n">extension</span><span class="o">=</span><span class="s1">&#39;ele&#39;</span><span class="p">,</span>       <span class="c1"># Element-level data</span>
+    <span class="n">sg</span><span class="o">=</span><span class="n">sg</span><span class="p">,</span>
+    <span class="n">tool_version</span><span class="o">=</span><span class="s1">&#39;4.1&#39;</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  ✓ Loaded </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">state_cases</span><span class="p">)</span><span class="si">}</span><span class="s2"> load case(s)&quot;</span><span class="p">)</span>
+
+</pre></div>
+</div>
+<p>Then, we need to add the local state fields to the cross-sectional data.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Step 3: Extract stress data and add to mesh</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">[Step 3] Adding stress data to mesh...&quot;</span><span class="p">)</span>
+<span class="n">state_case</span> <span class="o">=</span> <span class="n">state_cases</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># Use first load case</span>
+
+<span class="c1"># Get the stress tensor in material coordinates (esm)</span>
+<span class="c1"># esm = element stress in material coordinates</span>
+<span class="n">stress_data</span> <span class="o">=</span> <span class="n">state_case</span><span class="o">.</span><span class="n">getState</span><span class="p">(</span><span class="s1">&#39;esm&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">data</span>
+
+<span class="c1"># Add the stress components to the mesh as cell data</span>
+<span class="n">sgio</span><span class="o">.</span><span class="n">addCellDictDataToMesh</span><span class="p">(</span>
+    <span class="n">dict_data</span><span class="o">=</span><span class="n">stress_data</span><span class="p">,</span>
+    <span class="n">name</span><span class="o">=</span><span class="p">[</span>
+        <span class="s1">&#39;S11 (M)&#39;</span><span class="p">,</span>  <span class="c1"># Normal stress in direction 1</span>
+        <span class="s1">&#39;S12 (M)&#39;</span><span class="p">,</span>  <span class="c1"># Shear stress in 1-2 plane</span>
+        <span class="s1">&#39;S13 (M)&#39;</span><span class="p">,</span>  <span class="c1"># Shear stress in 1-3 plane</span>
+        <span class="s1">&#39;S22 (M)&#39;</span><span class="p">,</span>  <span class="c1"># Normal stress in direction 2</span>
+        <span class="s1">&#39;S23 (M)&#39;</span><span class="p">,</span>  <span class="c1"># Shear stress in 2-3 plane</span>
+        <span class="s1">&#39;S33 (M)&#39;</span>   <span class="c1"># Normal stress in direction 3</span>
+    <span class="p">],</span>
+    <span class="n">mesh</span><span class="o">=</span><span class="n">sg</span><span class="o">.</span><span class="n">mesh</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  ✓ Added stress components to mesh&quot;</span><span class="p">)</span>
+
+</pre></div>
+</div>
+<p>Finally, we need to write the cross-sectional data to a Gmsh file.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Step 4: Write the mesh with stress data to Gmsh format</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">[Step 4] Writing mesh to Gmsh format...&quot;</span><span class="p">)</span>
+<span class="n">sgio</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
+    <span class="n">sg</span><span class="o">=</span><span class="n">sg</span><span class="p">,</span>
+    <span class="n">fn</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">output_file</span><span class="p">),</span>
+    <span class="n">file_format</span><span class="o">=</span><span class="s1">&#39;gmsh&#39;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  ✓ Saved to: </span><span class="si">{</span><span class="n">output_file</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The following figure shows the visualization of the local stress field of the cross-section in the material coordinate system.</p>
+<figure class="align-center">
+<a class="reference internal image-reference" href="../_images/cs_box_t_vabs41_ele_sm11.msh.png"><img alt="../_images/cs_box_t_vabs41_ele_sm11.msh.png" src="../_images/cs_box_t_vabs41_ele_sm11.msh.png" style="width: 70%;" />
+</a>
+</figure>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="io_model.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Read Structural Model Data (.k file)</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="convert.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Convert SG Data</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#read-vabs-element-local-strain-and-stress-fields-and-visualize-in-gmsh">Read VABS Element Local Strain and Stress Fields and Visualize in Gmsh</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/guide/io_state.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2023, su tian.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.4.7.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

@@ -1,0 +1,888 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Testing with SGIO &#8212; SGIO</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=71d9d8e6"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'guide/testing';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+<aside class="bd-header-announcement" aria-label="Announcement">
+  <div class="bd-header-announcement__content">Documentation is under construction.</div>
+</aside>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">SGIO</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="index.html">
+    Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../ref/index.html">
+    Reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="index.html">
+    Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../ref/index.html">
+    Reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Testing with SGIO</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="testing-with-sgio">
+<h1>Testing with SGIO<a class="headerlink" href="#testing-with-sgio" title="Link to this heading">#</a></h1>
+<p>This guide shows how to write tests for code that uses SGIO, based on patterns
+from the SGIO test suite.</p>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Link to this heading">#</a></h2>
+<p>The SGIO test suite uses:</p>
+<ul class="simple">
+<li><p><strong>pytest</strong> for test framework</p></li>
+<li><p><strong>fixtures</strong> for reusable test data</p></li>
+<li><p><strong>markers</strong> for test categorization</p></li>
+<li><p><strong>parametrization</strong> for testing multiple cases</p></li>
+</ul>
+</section>
+<section id="basic-test-structure">
+<h2>Basic Test Structure<a class="headerlink" href="#basic-test-structure" title="Link to this heading">#</a></h2>
+<section id="simple-test-example">
+<h3>Simple Test Example<a class="headerlink" href="#simple-test-example" title="Link to this heading">#</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sgio</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">test_read_vabs_file</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Test reading a VABS input file.&quot;&quot;&quot;</span>
+    <span class="c1"># Arrange</span>
+    <span class="n">input_file</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s1">&#39;test_data/cross_section.sg&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Act</span>
+    <span class="n">sg</span> <span class="o">=</span> <span class="n">sgio</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">input_file</span><span class="p">),</span> <span class="s1">&#39;vabs&#39;</span><span class="p">,</span> <span class="n">model_type</span><span class="o">=</span><span class="s1">&#39;BM2&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Assert</span>
+    <span class="k">assert</span> <span class="n">sg</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="k">assert</span> <span class="n">sg</span><span class="o">.</span><span class="n">mesh</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">sg</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">points</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">sg</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">cells</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="using-fixtures">
+<h2>Using Fixtures<a class="headerlink" href="#using-fixtures" title="Link to this heading">#</a></h2>
+<p>Fixtures provide reusable test data and setup.</p>
+<section id="directory-fixtures">
+<h3>Directory Fixtures<a class="headerlink" href="#directory-fixtures" title="Link to this heading">#</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_data_dir</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Root directory for test data.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="s1">&#39;test_data&#39;</span>
+
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">temp_dir</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Temporary directory for test outputs.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">tmp_path</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">test_with_fixtures</span><span class="p">(</span><span class="n">test_data_dir</span><span class="p">,</span> <span class="n">temp_dir</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Test using fixtures.&quot;&quot;&quot;</span>
+    <span class="n">input_file</span> <span class="o">=</span> <span class="n">test_data_dir</span> <span class="o">/</span> <span class="s1">&#39;input.sg&#39;</span>
+    <span class="n">output_file</span> <span class="o">=</span> <span class="n">temp_dir</span> <span class="o">/</span> <span class="s1">&#39;output.sg&#39;</span>
+
+    <span class="n">sg</span> <span class="o">=</span> <span class="n">sgio</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">input_file</span><span class="p">),</span> <span class="s1">&#39;vabs&#39;</span><span class="p">)</span>
+    <span class="n">sgio</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">sg</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">output_file</span><span class="p">),</span> <span class="s1">&#39;vabs&#39;</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">output_file</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="sample-data-fixtures">
+<h3>Sample Data Fixtures<a class="headerlink" href="#sample-data-fixtures" title="Link to this heading">#</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">sample_beam_properties</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Sample beam properties for testing.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s1">&#39;ea&#39;</span><span class="p">:</span> <span class="mf">1.5e8</span><span class="p">,</span>    <span class="c1"># Axial stiffness</span>
+        <span class="s1">&#39;gj&#39;</span><span class="p">:</span> <span class="mf">5.0e6</span><span class="p">,</span>    <span class="c1"># Torsional stiffness</span>
+        <span class="s1">&#39;ei22&#39;</span><span class="p">:</span> <span class="mf">3.0e6</span><span class="p">,</span>  <span class="c1"># Bending stiffness</span>
+        <span class="s1">&#39;ei33&#39;</span><span class="p">:</span> <span class="mf">8.0e6</span><span class="p">,</span>  <span class="c1"># Bending stiffness</span>
+    <span class="p">}</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">test_beam_model</span><span class="p">(</span><span class="n">sample_beam_properties</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Test beam model creation.&quot;&quot;&quot;</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">sgio.model.beam</span><span class="w"> </span><span class="kn">import</span> <span class="n">EulerBernoulliBeamModel</span>
+
+    <span class="n">beam</span> <span class="o">=</span> <span class="n">EulerBernoulliBeamModel</span><span class="p">(</span><span class="o">**</span><span class="n">sample_beam_properties</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">beam</span><span class="o">.</span><span class="n">ea</span> <span class="o">==</span> <span class="n">sample_beam_properties</span><span class="p">[</span><span class="s1">&#39;ea&#39;</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="n">beam</span><span class="o">.</span><span class="n">gj</span> <span class="o">==</span> <span class="n">sample_beam_properties</span><span class="p">[</span><span class="s1">&#39;gj&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="parametrized-tests">
+<h2>Parametrized Tests<a class="headerlink" href="#parametrized-tests" title="Link to this heading">#</a></h2>
+<p>Test multiple cases with one test function.</p>
+<section id="basic-parametrization">
+<h3>Basic Parametrization<a class="headerlink" href="#basic-parametrization" title="Link to this heading">#</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sgio</span>
+
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;model_type,expected_label&quot;</span><span class="p">,</span> <span class="p">[</span>
+    <span class="p">(</span><span class="s1">&#39;BM1&#39;</span><span class="p">,</span> <span class="s1">&#39;bm1&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;BM2&#39;</span><span class="p">,</span> <span class="s1">&#39;bm2&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;PL1&#39;</span><span class="p">,</span> <span class="s1">&#39;pl1&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;PL2&#39;</span><span class="p">,</span> <span class="s1">&#39;pl2&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;SD1&#39;</span><span class="p">,</span> <span class="s1">&#39;sd1&#39;</span><span class="p">),</span>
+<span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_model_labels</span><span class="p">(</span><span class="n">model_type</span><span class="p">,</span> <span class="n">expected_label</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Test that model types have correct labels.&quot;&quot;&quot;</span>
+    <span class="c1"># This is a simplified example</span>
+    <span class="k">assert</span> <span class="n">model_type</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="n">expected_label</span>
+</pre></div>
+</div>
+</section>
+<section id="file-conversion-tests">
+<h3>File Conversion Tests<a class="headerlink" href="#file-conversion-tests" title="Link to this heading">#</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sgio</span>
+
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;input_format,output_format&quot;</span><span class="p">,</span> <span class="p">[</span>
+    <span class="p">(</span><span class="s1">&#39;vabs&#39;</span><span class="p">,</span> <span class="s1">&#39;gmsh&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;abaqus&#39;</span><span class="p">,</span> <span class="s1">&#39;vabs&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;vabs&#39;</span><span class="p">,</span> <span class="s1">&#39;swiftcomp&#39;</span><span class="p">),</span>
+<span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_format_conversion</span><span class="p">(</span><span class="n">input_format</span><span class="p">,</span> <span class="n">output_format</span><span class="p">,</span> <span class="n">test_data_dir</span><span class="p">,</span> <span class="n">temp_dir</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Test conversion between formats.&quot;&quot;&quot;</span>
+    <span class="n">input_file</span> <span class="o">=</span> <span class="n">test_data_dir</span> <span class="o">/</span> <span class="sa">f</span><span class="s1">&#39;sample.</span><span class="si">{</span><span class="n">input_format</span><span class="si">}</span><span class="s1">&#39;</span>
+    <span class="n">output_file</span> <span class="o">=</span> <span class="n">temp_dir</span> <span class="o">/</span> <span class="sa">f</span><span class="s1">&#39;output.</span><span class="si">{</span><span class="n">output_format</span><span class="si">}</span><span class="s1">&#39;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">input_file</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+        <span class="n">pytest</span><span class="o">.</span><span class="n">skip</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Input file not found: </span><span class="si">{</span><span class="n">input_file</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">sgio</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span>
+        <span class="nb">str</span><span class="p">(</span><span class="n">input_file</span><span class="p">),</span>
+        <span class="nb">str</span><span class="p">(</span><span class="n">output_file</span><span class="p">),</span>
+        <span class="n">input_format</span><span class="p">,</span>
+        <span class="n">output_format</span><span class="p">,</span>
+        <span class="n">model_type</span><span class="o">=</span><span class="s1">&#39;BM2&#39;</span>
+    <span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">output_file</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">output_file</span><span class="o">.</span><span class="n">stat</span><span class="p">()</span><span class="o">.</span><span class="n">st_size</span> <span class="o">&gt;</span> <span class="mi">0</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="test-markers">
+<h2>Test Markers<a class="headerlink" href="#test-markers" title="Link to this heading">#</a></h2>
+<p>Use markers to categorize and selectively run tests.</p>
+<section id="defining-markers">
+<h3>Defining Markers<a class="headerlink" href="#defining-markers" title="Link to this heading">#</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">unit</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_model_creation</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Unit test for model creation.&quot;&quot;&quot;</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">sgio.model.beam</span><span class="w"> </span><span class="kn">import</span> <span class="n">EulerBernoulliBeamModel</span>
+    <span class="n">beam</span> <span class="o">=</span> <span class="n">EulerBernoulliBeamModel</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">beam</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">io</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">vabs</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_vabs_read</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;I/O test for VABS reading.&quot;&quot;&quot;</span>
+    <span class="c1"># Test code here</span>
+    <span class="k">pass</span>
+
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">slow</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">integration</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_full_workflow</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Integration test (slow).&quot;&quot;&quot;</span>
+    <span class="c1"># Test code here</span>
+    <span class="k">pass</span>
+</pre></div>
+</div>
+</section>
+<section id="running-specific-tests">
+<h3>Running Specific Tests<a class="headerlink" href="#running-specific-tests" title="Link to this heading">#</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Run all tests</span>
+pytest
+
+<span class="c1"># Run only unit tests</span>
+pytest<span class="w"> </span>-m<span class="w"> </span>unit
+
+<span class="c1"># Run only VABS tests</span>
+pytest<span class="w"> </span>-m<span class="w"> </span>vabs
+
+<span class="c1"># Run fast tests (exclude slow)</span>
+pytest<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;not slow&quot;</span>
+
+<span class="c1"># Run specific test file</span>
+pytest<span class="w"> </span>tests/test_conversion.py
+
+<span class="c1"># Run specific test function</span>
+pytest<span class="w"> </span>tests/test_conversion.py::test_vabs_to_gmsh
+</pre></div>
+</div>
+</section>
+</section>
+<section id="error-handling-tests">
+<h2>Error Handling Tests<a class="headerlink" href="#error-handling-tests" title="Link to this heading">#</a></h2>
+<p>Test that your code handles errors appropriately.</p>
+<section id="testing-exceptions">
+<h3>Testing Exceptions<a class="headerlink" href="#testing-exceptions" title="Link to this heading">#</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sgio</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sgio</span><span class="w"> </span><span class="kn">import</span> <span class="n">SwiftCompError</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">test_invalid_file_raises_error</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Test that reading invalid file raises error.&quot;&quot;&quot;</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">FileNotFoundError</span><span class="p">):</span>
+        <span class="n">sgio</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;nonexistent.sg&#39;</span><span class="p">,</span> <span class="s1">&#39;vabs&#39;</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">test_invalid_format_raises_error</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Test that invalid format raises error.&quot;&quot;&quot;</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
+        <span class="n">sgio</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;file.sg&#39;</span><span class="p">,</span> <span class="s1">&#39;invalid_format&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="testing-file-existence">
+<h3>Testing File Existence<a class="headerlink" href="#testing-file-existence" title="Link to this heading">#</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">test_file_exists_before_reading</span><span class="p">(</span><span class="n">test_data_dir</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Test file existence check.&quot;&quot;&quot;</span>
+    <span class="n">input_file</span> <span class="o">=</span> <span class="n">test_data_dir</span> <span class="o">/</span> <span class="s1">&#39;cross_section.sg&#39;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">input_file</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+        <span class="n">pytest</span><span class="o">.</span><span class="n">skip</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Test file not found: </span><span class="si">{</span><span class="n">input_file</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Proceed with test</span>
+    <span class="n">sg</span> <span class="o">=</span> <span class="n">sgio</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">input_file</span><span class="p">),</span> <span class="s1">&#39;vabs&#39;</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">sg</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="output-validation-tests">
+<h2>Output Validation Tests<a class="headerlink" href="#output-validation-tests" title="Link to this heading">#</a></h2>
+<p>Validate that outputs match expected results.</p>
+<section id="comparing-numerical-values">
+<h3>Comparing Numerical Values<a class="headerlink" href="#comparing-numerical-values" title="Link to this heading">#</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sgio</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">test_beam_properties_accuracy</span><span class="p">(</span><span class="n">test_data_dir</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Test that beam properties match expected values.&quot;&quot;&quot;</span>
+    <span class="n">output_file</span> <span class="o">=</span> <span class="n">test_data_dir</span> <span class="o">/</span> <span class="s1">&#39;beam_output.sg.K&#39;</span>
+
+    <span class="n">model</span> <span class="o">=</span> <span class="n">sgio</span><span class="o">.</span><span class="n">readOutputModel</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">output_file</span><span class="p">),</span> <span class="s1">&#39;vabs&#39;</span><span class="p">,</span> <span class="n">model_type</span><span class="o">=</span><span class="s1">&#39;BM2&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Use pytest.approx for floating point comparison</span>
+    <span class="k">assert</span> <span class="n">model</span><span class="o">.</span><span class="n">ea</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="mf">1.5e8</span><span class="p">,</span> <span class="n">rel</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">model</span><span class="o">.</span><span class="n">gj</span> <span class="o">==</span> <span class="n">pytest</span><span class="o">.</span><span class="n">approx</span><span class="p">(</span><span class="mf">5.0e6</span><span class="p">,</span> <span class="n">rel</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="comparing-files">
+<h3>Comparing Files<a class="headerlink" href="#comparing-files" title="Link to this heading">#</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sgio</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">test_conversion_output_matches_expected</span><span class="p">(</span><span class="n">test_data_dir</span><span class="p">,</span> <span class="n">temp_dir</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Test that conversion output matches expected file.&quot;&quot;&quot;</span>
+    <span class="n">input_file</span> <span class="o">=</span> <span class="n">test_data_dir</span> <span class="o">/</span> <span class="s1">&#39;input.sg&#39;</span>
+    <span class="n">output_file</span> <span class="o">=</span> <span class="n">temp_dir</span> <span class="o">/</span> <span class="s1">&#39;output.msh&#39;</span>
+    <span class="n">expected_file</span> <span class="o">=</span> <span class="n">test_data_dir</span> <span class="o">/</span> <span class="s1">&#39;expected_output.msh&#39;</span>
+
+    <span class="c1"># Convert</span>
+    <span class="n">sgio</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">input_file</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">output_file</span><span class="p">),</span> <span class="s1">&#39;vabs&#39;</span><span class="p">,</span> <span class="s1">&#39;gmsh&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Compare file sizes (simple check)</span>
+    <span class="k">assert</span> <span class="n">output_file</span><span class="o">.</span><span class="n">stat</span><span class="p">()</span><span class="o">.</span><span class="n">st_size</span> <span class="o">&gt;</span> <span class="mi">0</span>
+
+    <span class="c1"># For exact comparison, read and compare content</span>
+    <span class="c1"># (implementation depends on file format)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="best-practices">
+<h2>Best Practices<a class="headerlink" href="#best-practices" title="Link to this heading">#</a></h2>
+<ol class="arabic simple">
+<li><p><strong>Use descriptive test names</strong>: <code class="docutils literal notranslate"><span class="pre">test_vabs_read_with_materials()</span></code> not <code class="docutils literal notranslate"><span class="pre">test1()</span></code></p></li>
+<li><p><strong>Follow AAA pattern</strong>: Arrange, Act, Assert</p></li>
+<li><p><strong>One assertion per test</strong>: Focus on testing one thing</p></li>
+<li><p><strong>Use fixtures for setup</strong>: Avoid code duplication</p></li>
+<li><p><strong>Skip unavailable tests</strong>: Use <code class="docutils literal notranslate"><span class="pre">pytest.skip()</span></code> for missing data</p></li>
+<li><p><strong>Test edge cases</strong>: Empty files, invalid data, etc.</p></li>
+<li><p><strong>Use markers</strong>: Categorize tests for selective running</p></li>
+<li><p><strong>Clean up after tests</strong>: Use <code class="docutils literal notranslate"><span class="pre">tmp_path</span></code> for temporary files</p></li>
+</ol>
+</section>
+<section id="example-test-module">
+<h2>Example Test Module<a class="headerlink" href="#example-test-module" title="Link to this heading">#</a></h2>
+<p>Complete example of a well-structured test module:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Test module for VABS I/O operations.&quot;&quot;&quot;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sgio</span>
+
+
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">vabs_test_files</span><span class="p">(</span><span class="n">test_data_dir</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;VABS test file paths.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s1">&#39;v40&#39;</span><span class="p">:</span> <span class="n">test_data_dir</span> <span class="o">/</span> <span class="s1">&#39;vabs&#39;</span> <span class="o">/</span> <span class="s1">&#39;version_4_0&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;v41&#39;</span><span class="p">:</span> <span class="n">test_data_dir</span> <span class="o">/</span> <span class="s1">&#39;vabs&#39;</span> <span class="o">/</span> <span class="s1">&#39;version_4_1&#39;</span><span class="p">,</span>
+    <span class="p">}</span>
+
+
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">io</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">vabs</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestVABSInput</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Tests for VABS input file reading.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_read_vabs_40</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vabs_test_files</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test reading VABS 4.0 format.&quot;&quot;&quot;</span>
+        <span class="n">input_file</span> <span class="o">=</span> <span class="n">vabs_test_files</span><span class="p">[</span><span class="s1">&#39;v40&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="s1">&#39;sample.sg&#39;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">input_file</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="n">pytest</span><span class="o">.</span><span class="n">skip</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Test file not found: </span><span class="si">{</span><span class="n">input_file</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">sg</span> <span class="o">=</span> <span class="n">sgio</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">input_file</span><span class="p">),</span> <span class="s1">&#39;vabs&#39;</span><span class="p">,</span> <span class="n">format_version</span><span class="o">=</span><span class="s1">&#39;4.0&#39;</span><span class="p">)</span>
+
+        <span class="k">assert</span> <span class="n">sg</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">sg</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">points</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_read_vabs_41</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vabs_test_files</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test reading VABS 4.1 format.&quot;&quot;&quot;</span>
+        <span class="n">input_file</span> <span class="o">=</span> <span class="n">vabs_test_files</span><span class="p">[</span><span class="s1">&#39;v41&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="s1">&#39;sample.sg&#39;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">input_file</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="n">pytest</span><span class="o">.</span><span class="n">skip</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Test file not found: </span><span class="si">{</span><span class="n">input_file</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">sg</span> <span class="o">=</span> <span class="n">sgio</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">input_file</span><span class="p">),</span> <span class="s1">&#39;vabs&#39;</span><span class="p">,</span> <span class="n">format_version</span><span class="o">=</span><span class="s1">&#39;4.1&#39;</span><span class="p">)</span>
+
+        <span class="k">assert</span> <span class="n">sg</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">sg</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">points</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
+
+
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">conversion</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">vabs</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestVABSConversion</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Tests for VABS format conversion.&quot;&quot;&quot;</span>
+
+    <span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;output_format&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;gmsh&#39;</span><span class="p">,</span> <span class="s1">&#39;swiftcomp&#39;</span><span class="p">])</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_vabs_to_format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vabs_test_files</span><span class="p">,</span> <span class="n">temp_dir</span><span class="p">,</span> <span class="n">output_format</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test converting VABS to other formats.&quot;&quot;&quot;</span>
+        <span class="n">input_file</span> <span class="o">=</span> <span class="n">vabs_test_files</span><span class="p">[</span><span class="s1">&#39;v41&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="s1">&#39;sample.sg&#39;</span>
+        <span class="n">output_file</span> <span class="o">=</span> <span class="n">temp_dir</span> <span class="o">/</span> <span class="sa">f</span><span class="s1">&#39;output.</span><span class="si">{</span><span class="n">output_format</span><span class="si">}</span><span class="s1">&#39;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">input_file</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="n">pytest</span><span class="o">.</span><span class="n">skip</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Test file not found: </span><span class="si">{</span><span class="n">input_file</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">sgio</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">input_file</span><span class="p">),</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">output_file</span><span class="p">),</span>
+            <span class="s1">&#39;vabs&#39;</span><span class="p">,</span>
+            <span class="n">output_format</span><span class="p">,</span>
+            <span class="n">model_type</span><span class="o">=</span><span class="s1">&#39;BM2&#39;</span>
+        <span class="p">)</span>
+
+        <span class="k">assert</span> <span class="n">output_file</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">output_file</span><span class="o">.</span><span class="n">stat</span><span class="p">()</span><span class="o">.</span><span class="n">st_size</span> <span class="o">&gt;</span> <span class="mi">0</span>
+</pre></div>
+</div>
+</section>
+<section id="running-tests">
+<h2>Running Tests<a class="headerlink" href="#running-tests" title="Link to this heading">#</a></h2>
+<section id="configuration">
+<h3>Configuration<a class="headerlink" href="#configuration" title="Link to this heading">#</a></h3>
+<p>Create <code class="docutils literal notranslate"><span class="pre">pytest.ini</span></code> in your project root:</p>
+<div class="highlight-ini notranslate"><div class="highlight"><pre><span></span><span class="k">[pytest]</span>
+<span class="na">testpaths</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">tests</span>
+<span class="na">python_files</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">test_*.py</span>
+<span class="na">python_classes</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">Test*</span>
+<span class="na">python_functions</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">test_*</span>
+<span class="na">markers</span><span class="w"> </span><span class="o">=</span>
+<span class="w">    </span><span class="na">unit</span><span class="o">:</span><span class="w"> </span><span class="s">Unit tests</span>
+<span class="w">    </span><span class="na">io</span><span class="o">:</span><span class="w"> </span><span class="s">I/O tests</span>
+<span class="w">    </span><span class="na">conversion</span><span class="o">:</span><span class="w"> </span><span class="s">Format conversion tests</span>
+<span class="w">    </span><span class="na">integration</span><span class="o">:</span><span class="w"> </span><span class="s">Integration tests</span>
+<span class="w">    </span><span class="na">slow</span><span class="o">:</span><span class="w"> </span><span class="s">Slow tests</span>
+<span class="w">    </span><span class="na">vabs</span><span class="o">:</span><span class="w"> </span><span class="s">VABS-specific tests</span>
+<span class="w">    </span><span class="na">swiftcomp</span><span class="o">:</span><span class="w"> </span><span class="s">SwiftComp-specific tests</span>
+</pre></div>
+</div>
+</section>
+<section id="command-line-options">
+<h3>Command Line Options<a class="headerlink" href="#command-line-options" title="Link to this heading">#</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Verbose output</span>
+pytest<span class="w"> </span>-v
+
+<span class="c1"># Show print statements</span>
+pytest<span class="w"> </span>-s
+
+<span class="c1"># Stop on first failure</span>
+pytest<span class="w"> </span>-x
+
+<span class="c1"># Run last failed tests</span>
+pytest<span class="w"> </span>--lf
+
+<span class="c1"># Show test coverage</span>
+pytest<span class="w"> </span>--cov<span class="o">=</span>sgio
+
+<span class="c1"># Generate HTML coverage report</span>
+pytest<span class="w"> </span>--cov<span class="o">=</span>sgio<span class="w"> </span>--cov-report<span class="o">=</span>html
+</pre></div>
+</div>
+</section>
+</section>
+<section id="see-also">
+<h2>See Also<a class="headerlink" href="#see-also" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="../../../tests/README.md">SGIO Test Suite</a> - Complete test suite documentation</p></li>
+<li><p><a class="reference external" href="https://docs.pytest.org/">pytest Documentation</a> - Official pytest docs</p></li>
+<li><p><a class="reference external" href="../../../examples/">Examples</a> - Working code examples</p></li>
+<li><p><a class="reference internal" href="io.html"><span class="doc">Read and Write SG Data</span></a> - I/O operations guide</p></li>
+<li><p><a class="reference internal" href="convert.html"><span class="doc">Convert SG Data</span></a> - Format conversion guide</p></li>
+</ul>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#overview">Overview</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#basic-test-structure">Basic Test Structure</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#simple-test-example">Simple Test Example</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#using-fixtures">Using Fixtures</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#directory-fixtures">Directory Fixtures</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sample-data-fixtures">Sample Data Fixtures</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#parametrized-tests">Parametrized Tests</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#basic-parametrization">Basic Parametrization</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#file-conversion-tests">File Conversion Tests</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#test-markers">Test Markers</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#defining-markers">Defining Markers</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#running-specific-tests">Running Specific Tests</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#error-handling-tests">Error Handling Tests</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#testing-exceptions">Testing Exceptions</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#testing-file-existence">Testing File Existence</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#output-validation-tests">Output Validation Tests</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#comparing-numerical-values">Comparing Numerical Values</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#comparing-files">Comparing Files</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#best-practices">Best Practices</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-test-module">Example Test Module</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#running-tests">Running Tests</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#configuration">Configuration</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#command-line-options">Command Line Options</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#see-also">See Also</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/guide/testing.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2023, su tian.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.4.7.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

@@ -1,0 +1,792 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Convert SG Data &#8212; SGIO</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=71d9d8e6"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'guide/convert';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Build Cross-section in Abaqus and Export to VABS" href="abaqus_cs.html" />
+    <link rel="prev" title="Read Local States" href="io_state.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+<aside class="bd-header-announcement" aria-label="Announcement">
+  <div class="bd-header-announcement__content">Documentation is under construction.</div>
+</aside>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">SGIO</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="index.html">
+    Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../ref/index.html">
+    Reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="index.html">
+    Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../ref/index.html">
+    Reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="sg.html">Structure Gene (SG) Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model/index.html">Material and Structural Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="io.html">Read and Write SG Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="io_model.html">Read Structural Model Data (.k file)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="io_state.html">Read Local States</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Convert SG Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="abaqus_cs.html">Build Cross-section in Abaqus and Export to VABS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plot.html">Plot Cross-section</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="index.html" class="nav-link">Guide</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Convert SG Data</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="convert-sg-data">
+<h1>Convert SG Data<a class="headerlink" href="#convert-sg-data" title="Link to this heading">#</a></h1>
+<p>One of the main capabilities of SGIO is to convert SG data between different formats.
+This can be done using the <a class="reference internal" href="../ref/_temp/sgio.convert.html#sgio.convert" title="sgio.convert"><code class="xref py py-func docutils literal notranslate"><span class="pre">sgio.convert()</span></code></a> function (API) or the <code class="docutils literal notranslate"><span class="pre">sgio</span> <span class="pre">convert</span></code> command (CLI).</p>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Link to this heading">#</a></h2>
+<p>SGIO supports conversion between:</p>
+<ul class="simple">
+<li><p><strong>VABS</strong> ↔ <strong>SwiftComp</strong> ↔ <strong>Abaqus</strong> ↔ <strong>Gmsh</strong></p></li>
+<li><p>Mesh-only conversions for visualization</p></li>
+<li><p>Format version conversions (e.g., VABS 4.0 → 4.1)</p></li>
+</ul>
+</section>
+<section id="basic-usage">
+<h2>Basic Usage<a class="headerlink" href="#basic-usage" title="Link to this heading">#</a></h2>
+<section id="api-method">
+<h3>API Method<a class="headerlink" href="#api-method" title="Link to this heading">#</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">sgio</span>
+
+<span class="n">sgio</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span>
+    <span class="n">file_name_in</span><span class="o">=</span><span class="s1">&#39;input.inp&#39;</span><span class="p">,</span>
+    <span class="n">file_name_out</span><span class="o">=</span><span class="s1">&#39;output.sg&#39;</span><span class="p">,</span>
+    <span class="n">file_format_in</span><span class="o">=</span><span class="s1">&#39;abaqus&#39;</span><span class="p">,</span>
+    <span class="n">file_format_out</span><span class="o">=</span><span class="s1">&#39;vabs&#39;</span><span class="p">,</span>
+    <span class="n">model_type</span><span class="o">=</span><span class="s1">&#39;BM2&#39;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="cli-method">
+<h3>CLI Method<a class="headerlink" href="#cli-method" title="Link to this heading">#</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sgio<span class="w"> </span>convert<span class="w"> </span>input.inp<span class="w"> </span>output.sg<span class="w"> </span>-ff<span class="w"> </span>abaqus<span class="w"> </span>-tf<span class="w"> </span>vabs<span class="w"> </span>-m<span class="w"> </span>BM2
+</pre></div>
+</div>
+</section>
+<section id="common-parameters">
+<h3>Common Parameters<a class="headerlink" href="#common-parameters" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">file_name_in</span></code>: Input file path</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">file_name_out</span></code>: Output file path</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">file_format_in</span></code>: Input format (vabs, swiftcomp, abaqus, gmsh)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">file_format_out</span></code>: Output format</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">model_type</span></code>: Structural model (BM1, BM2, PL1, PL2, SD1)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mesh_only</span></code>: Convert mesh data only (default: False)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">renum_node</span></code>: Renumber nodes (default: False)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">renum_elem</span></code>: Renumber elements (default: False)</p></li>
+</ul>
+</section>
+</section>
+<section id="common-conversion-scenarios">
+<h2>Common Conversion Scenarios<a class="headerlink" href="#common-conversion-scenarios" title="Link to this heading">#</a></h2>
+<section id="scenario-1-vabs-to-gmsh-for-visualization">
+<h3>Scenario 1: VABS to Gmsh for Visualization<a class="headerlink" href="#scenario-1-vabs-to-gmsh-for-visualization" title="Link to this heading">#</a></h3>
+<p>Convert a VABS cross-section to Gmsh format for visualization.</p>
+<p><strong>API:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Example: Convert VABS Mesh to Gmsh Format for Visualization</span>
+
+<span class="sd">This example demonstrates how to convert a VABS cross-section file to</span>
+<span class="sd">Gmsh format for visualization purposes.</span>
+
+<span class="sd">The conversion extracts only the mesh data (nodes and elements) without</span>
+<span class="sd">material properties, making it suitable for quick visualization.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sgio</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+<span class="c1"># Define file paths</span>
+<span class="n">files_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="s1">&#39;files&#39;</span>
+<span class="n">input_file</span> <span class="o">=</span> <span class="n">files_dir</span> <span class="o">/</span> <span class="s1">&#39;cs_box_t_vabs41.sg&#39;</span>
+<span class="n">output_file</span> <span class="o">=</span> <span class="n">files_dir</span> <span class="o">/</span> <span class="s1">&#39;cs_box_t_vabs41.msh&#39;</span>
+
+<span class="c1"># Check if input file exists</span>
+<span class="k">if</span> <span class="ow">not</span> <span class="n">input_file</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error: Input file not found: </span><span class="si">{</span><span class="n">input_file</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Please ensure the file exists in the examples/files/ directory&quot;</span><span class="p">)</span>
+    <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">60</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Converting VABS Mesh to Gmsh Format&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">60</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Input:  </span><span class="si">{</span><span class="n">input_file</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Output: </span><span class="si">{</span><span class="n">output_file</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">60</span><span class="p">)</span>
+
+<span class="c1"># Convert VABS file to Gmsh format</span>
+</pre></div>
+</div>
+<p><strong>CLI:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sgio<span class="w"> </span>convert<span class="w"> </span>cs_box_t_vabs41.sg<span class="w"> </span>cs_box_t_vabs41.msh<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-ff<span class="w"> </span>vabs<span class="w"> </span>-tf<span class="w"> </span>gmsh<span class="w"> </span>-m<span class="w"> </span>BM2<span class="w"> </span>--mesh-only
+</pre></div>
+</div>
+<p><strong>Result:</strong></p>
+<figure class="align-center" id="id1">
+<a class="reference internal image-reference" href="../_images/cs_box_t_vabs41.msh.png"><img alt="Visualization of the box cross-section in Gmsh" src="../_images/cs_box_t_vabs41.msh.png" style="width: 80%;" />
+</a>
+<figcaption>
+<p><span class="caption-number">Figure 1 </span><span class="caption-text">Box cross-section visualized in Gmsh</span><a class="headerlink" href="#id1" title="Link to this image">#</a></p>
+</figcaption>
+</figure>
+</section>
+<section id="scenario-2-abaqus-to-vabs">
+<h3>Scenario 2: Abaqus to VABS<a class="headerlink" href="#scenario-2-abaqus-to-vabs" title="Link to this heading">#</a></h3>
+<p>Convert an Abaqus cross-section model to VABS input format.</p>
+<p><strong>API:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">sgio</span>
+
+<span class="n">sgio</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span>
+    <span class="s1">&#39;airfoil.inp&#39;</span><span class="p">,</span>      <span class="c1"># Abaqus input file</span>
+    <span class="s1">&#39;airfoil.sg&#39;</span><span class="p">,</span>       <span class="c1"># VABS output file</span>
+    <span class="s1">&#39;abaqus&#39;</span><span class="p">,</span>           <span class="c1"># Input format</span>
+    <span class="s1">&#39;vabs&#39;</span><span class="p">,</span>             <span class="c1"># Output format</span>
+    <span class="n">model_type</span><span class="o">=</span><span class="s1">&#39;BM2&#39;</span>    <span class="c1"># Timoshenko beam</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>CLI:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sgio<span class="w"> </span>convert<span class="w"> </span>airfoil.inp<span class="w"> </span>airfoil.sg<span class="w"> </span>-ff<span class="w"> </span>abaqus<span class="w"> </span>-tf<span class="w"> </span>vabs<span class="w"> </span>-m<span class="w"> </span>BM2
+</pre></div>
+</div>
+<p>See <code class="docutils literal notranslate"><span class="pre">examples/convert_abaqus_cs_to_vabs/</span></code> for a complete example.</p>
+</section>
+<section id="scenario-3-abaqus-to-swiftcomp-3d">
+<h3>Scenario 3: Abaqus to SwiftComp (3D)<a class="headerlink" href="#scenario-3-abaqus-to-swiftcomp-3d" title="Link to this heading">#</a></h3>
+<p>Convert a 3D Abaqus model to SwiftComp format.</p>
+<p><strong>API:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">sgio</span>
+
+<span class="n">sgio</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span>
+    <span class="s1">&#39;cube.inp&#39;</span><span class="p">,</span>         <span class="c1"># Abaqus 3D model</span>
+    <span class="s1">&#39;cube.sg&#39;</span><span class="p">,</span>          <span class="c1"># SwiftComp output</span>
+    <span class="s1">&#39;abaqus&#39;</span><span class="p">,</span>           <span class="c1"># Input format</span>
+    <span class="s1">&#39;swiftcomp&#39;</span><span class="p">,</span>        <span class="c1"># Output format</span>
+    <span class="n">model_type</span><span class="o">=</span><span class="s1">&#39;SD1&#39;</span><span class="p">,</span>   <span class="c1"># 3D solid model</span>
+    <span class="n">sgdim</span><span class="o">=</span><span class="mi">3</span>             <span class="c1"># 3D structure gene</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>CLI:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sgio<span class="w"> </span>convert<span class="w"> </span>cube.inp<span class="w"> </span>cube.sg<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-ff<span class="w"> </span>abaqus<span class="w"> </span>-tf<span class="w"> </span>swiftcomp<span class="w"> </span>-m<span class="w"> </span>SD1<span class="w"> </span>--sgdim<span class="w"> </span><span class="m">3</span>
+</pre></div>
+</div>
+<p>See <code class="docutils literal notranslate"><span class="pre">examples/convert_abaqus_sg3d_to_sc/</span></code> for a complete example.</p>
+</section>
+<section id="scenario-4-format-version-conversion">
+<h3>Scenario 4: Format Version Conversion<a class="headerlink" href="#scenario-4-format-version-conversion" title="Link to this heading">#</a></h3>
+<p>Convert between different versions of the same format.</p>
+<p><strong>VABS 4.0 to 4.1:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">sgio</span>
+
+<span class="n">sgio</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span>
+    <span class="s1">&#39;old_format.sg&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;new_format.sg&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;vabs&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;vabs&#39;</span><span class="p">,</span>
+    <span class="n">file_version_in</span><span class="o">=</span><span class="s1">&#39;4.0&#39;</span><span class="p">,</span>
+    <span class="n">file_version_out</span><span class="o">=</span><span class="s1">&#39;4.1&#39;</span><span class="p">,</span>
+    <span class="n">model_type</span><span class="o">=</span><span class="s1">&#39;BM2&#39;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="scenario-5-two-step-conversion">
+<h3>Scenario 5: Two-Step Conversion<a class="headerlink" href="#scenario-5-two-step-conversion" title="Link to this heading">#</a></h3>
+<p>For more control, use separate read and write operations:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">sgio</span>
+
+<span class="c1"># Step 1: Read from Abaqus</span>
+<span class="n">sg</span> <span class="o">=</span> <span class="n">sgio</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;model.inp&#39;</span><span class="p">,</span> <span class="s1">&#39;abaqus&#39;</span><span class="p">,</span> <span class="n">model_type</span><span class="o">=</span><span class="s1">&#39;BM2&#39;</span><span class="p">)</span>
+
+<span class="c1"># Inspect or modify the data</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Nodes: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">sg</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">points</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Elements: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">sg</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">cells</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Step 2: Write to VABS</span>
+<span class="n">sgio</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">sg</span><span class="p">,</span> <span class="s1">&#39;model.sg&#39;</span><span class="p">,</span> <span class="s1">&#39;vabs&#39;</span><span class="p">)</span>
+
+<span class="c1"># Step 3: Also export for visualization</span>
+<span class="n">sgio</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">sg</span><span class="p">,</span> <span class="s1">&#39;model.msh&#39;</span><span class="p">,</span> <span class="s1">&#39;gmsh&#39;</span><span class="p">,</span> <span class="n">mesh_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="advanced-options">
+<h2>Advanced Options<a class="headerlink" href="#advanced-options" title="Link to this heading">#</a></h2>
+<section id="element-and-node-renumbering">
+<h3>Element and Node Renumbering<a class="headerlink" href="#element-and-node-renumbering" title="Link to this heading">#</a></h3>
+<p>Renumber elements and nodes for cleaner output:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">sgio</span>
+
+<span class="n">sgio</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span>
+    <span class="s1">&#39;input.sg&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;output.sg&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;vabs&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;vabs&#39;</span><span class="p">,</span>
+    <span class="n">renum_node</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>      <span class="c1"># Renumber nodes sequentially</span>
+    <span class="n">renum_elem</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>      <span class="c1"># Renumber elements sequentially</span>
+    <span class="n">model_type</span><span class="o">=</span><span class="s1">&#39;BM2&#39;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="mesh-only-conversion">
+<h3>Mesh-Only Conversion<a class="headerlink" href="#mesh-only-conversion" title="Link to this heading">#</a></h3>
+<p>Convert only mesh data without materials:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">sgio</span>
+
+<span class="n">sgio</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span>
+    <span class="s1">&#39;input.sg&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;output.msh&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;vabs&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;gmsh&#39;</span><span class="p">,</span>
+    <span class="n">mesh_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">model_type</span><span class="o">=</span><span class="s1">&#39;BM2&#39;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="error-handling">
+<h3>Error Handling<a class="headerlink" href="#error-handling" title="Link to this heading">#</a></h3>
+<p>Always check for file existence and handle errors:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">sgio</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+<span class="n">input_file</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s1">&#39;input.inp&#39;</span><span class="p">)</span>
+<span class="n">output_file</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s1">&#39;output.sg&#39;</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="ow">not</span> <span class="n">input_file</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error: Input file not found: </span><span class="si">{</span><span class="n">input_file</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">sgio</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span>
+        <span class="nb">str</span><span class="p">(</span><span class="n">input_file</span><span class="p">),</span>
+        <span class="nb">str</span><span class="p">(</span><span class="n">output_file</span><span class="p">),</span>
+        <span class="s1">&#39;abaqus&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;vabs&#39;</span><span class="p">,</span>
+        <span class="n">model_type</span><span class="o">=</span><span class="s1">&#39;BM2&#39;</span>
+    <span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;✓ Conversion successful: </span><span class="si">{</span><span class="n">output_file</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;✗ Conversion failed: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="tips-and-best-practices">
+<h2>Tips and Best Practices<a class="headerlink" href="#tips-and-best-practices" title="Link to this heading">#</a></h2>
+<ol class="arabic simple">
+<li><p><strong>Always specify model_type</strong>: Required for proper data interpretation</p></li>
+<li><p><strong>Use mesh_only for visualization</strong>: Faster and simpler for viewing geometry</p></li>
+<li><p><strong>Check input files first</strong>: Verify files exist before conversion</p></li>
+<li><p><strong>Use renumbering for clean output</strong>: Helps with debugging and analysis</p></li>
+<li><p><strong>Test with small models first</strong>: Verify conversion works before processing large files</p></li>
+</ol>
+</section>
+<section id="troubleshooting">
+<h2>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Link to this heading">#</a></h2>
+<dl class="simple">
+<dt><strong>Issue: “File not found” error</strong></dt><dd><ul class="simple">
+<li><p>Check file path is correct (absolute or relative to working directory)</p></li>
+<li><p>Verify file exists using <code class="docutils literal notranslate"><span class="pre">Path(filename).exists()</span></code></p></li>
+</ul>
+</dd>
+<dt><strong>Issue: “Unknown file format” error</strong></dt><dd><ul class="simple">
+<li><p>Check format string is correct (vabs, swiftcomp, abaqus, gmsh)</p></li>
+<li><p>Verify file extension matches format</p></li>
+</ul>
+</dd>
+<dt><strong>Issue: Conversion produces empty file</strong></dt><dd><ul class="simple">
+<li><p>Check model_type is specified correctly</p></li>
+<li><p>Verify input file contains valid data</p></li>
+<li><p>Try mesh_only=True to isolate material issues</p></li>
+</ul>
+</dd>
+<dt><strong>Issue: Material properties lost</strong></dt><dd><ul class="simple">
+<li><p>Don’t use mesh_only=True if you need materials</p></li>
+<li><p>Some formats (Gmsh) don’t support full material data</p></li>
+</ul>
+</dd>
+</dl>
+</section>
+<section id="see-also">
+<h2>See Also<a class="headerlink" href="#see-also" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><a class="reference internal" href="io.html"><span class="doc">Read and Write SG Data</span></a> - Detailed I/O documentation</p></li>
+<li><p><a class="reference internal" href="io_model.html"><span class="doc">Read Structural Model Data (.k file)</span></a> - Reading analysis output</p></li>
+<li><p><a class="reference external" href="../../../examples/">Examples</a> - Working code examples</p></li>
+<li><p><a class="reference external" href="../../../tests/">Test Suite</a> - Comprehensive test cases</p></li>
+</ul>
+</section>
+<section id="notes">
+<h2>Notes<a class="headerlink" href="#notes" title="Link to this heading">#</a></h2>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Gmsh and ParaView are not included in SGIO.
+Install them separately for visualization:</p>
+<ul class="simple">
+<li><p>Gmsh: <a class="reference external" href="https://gmsh.info/">https://gmsh.info/</a></p></li>
+<li><p>ParaView: <a class="reference external" href="https://www.paraview.org/">https://www.paraview.org/</a></p></li>
+</ul>
+</div>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="io_state.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Read Local States</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="abaqus_cs.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Build Cross-section in Abaqus and Export to VABS</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#overview">Overview</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#basic-usage">Basic Usage</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#api-method">API Method</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cli-method">CLI Method</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#common-parameters">Common Parameters</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#common-conversion-scenarios">Common Conversion Scenarios</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#scenario-1-vabs-to-gmsh-for-visualization">Scenario 1: VABS to Gmsh for Visualization</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#scenario-2-abaqus-to-vabs">Scenario 2: Abaqus to VABS</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#scenario-3-abaqus-to-swiftcomp-3d">Scenario 3: Abaqus to SwiftComp (3D)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#scenario-4-format-version-conversion">Scenario 4: Format Version Conversion</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#scenario-5-two-step-conversion">Scenario 5: Two-Step Conversion</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#advanced-options">Advanced Options</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#element-and-node-renumbering">Element and Node Renumbering</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mesh-only-conversion">Mesh-Only Conversion</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#error-handling">Error Handling</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tips-and-best-practices">Tips and Best Practices</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#troubleshooting">Troubleshooting</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#see-also">See Also</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#notes">Notes</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/guide/convert.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2023, su tian.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.4.7.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

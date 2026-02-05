@@ -1,0 +1,6 @@
+﻿sgio.convert
+============
+
+.. currentmodule:: sgio
+
+.. autofunction:: convert
