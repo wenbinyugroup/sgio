@@ -14,6 +14,8 @@ dist/
 .venv/CASHDIR.TAG
 .venv/pyvenv.cfg
 
+_local_dev_note.md
+
 *.pyc
 *.exe
 

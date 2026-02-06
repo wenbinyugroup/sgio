@@ -1,6 +1,6 @@
-[16:33:31] INFO     Converting                                                             test_format_conversions.py:77
+[17:47:18] INFO     Converting                                                             test_format_conversions.py:77
                     C:\Users\tian50\work\dev\sgio\tests\fixtures\abaqus\sg2_airfoil.inp to                              
-                    C:\Users\tian50\AppData\Local\Temp\pytest-of-tian50\pytest-103\test_fi                              
+                    C:\Users\tian50\AppData\Local\Temp\pytest-of-tian50\pytest-104\test_fi                              
                     le_format_conversion_te0\conversion_output\sg2_airfoil_vabs41.dat...                                
            INFO     Converting file format...                                                                main.py:925
            INFO     Reading file...                                                                          main.py:157
@@ -9,16 +9,16 @@
            INFO     Converting                                                             test_format_conversions.py:77
                     C:\Users\tian50\work\dev\sgio\tests\fixtures\vabs\version_4_1\uh60a.sg                              
                     to                                                                                                  
-                    C:\Users\tian50\AppData\Local\Temp\pytest-of-tian50\pytest-103\test_fi                              
+                    C:\Users\tian50\AppData\Local\Temp\pytest-of-tian50\pytest-104\test_fi                              
                     le_format_conversion_te1\conversion_output\uh60a.msh...                                             
            INFO     Converting file format...                                                                main.py:925
            INFO     Reading file...                                                                          main.py:157
-[16:33:32] INFO     Writing file...                                                                          main.py:781
-           INFO     File format converted.                                                                   main.py:964
+           INFO     Writing file...                                                                          main.py:781
+[17:47:19] INFO     File format converted.                                                                   main.py:964
            INFO     Converting                                                             test_format_conversions.py:77
                     C:\Users\tian50\work\dev\sgio\tests\fixtures\vabs\version_4_0\sg21eb_t                              
                     ri3_vabs40.sg to                                                                                    
-                    C:\Users\tian50\AppData\Local\Temp\pytest-of-tian50\pytest-103\test_fi                              
+                    C:\Users\tian50\AppData\Local\Temp\pytest-of-tian50\pytest-104\test_fi                              
                     le_format_conversion_te1\conversion_output\sg21eb_tri3_vabs40.msh...                                
            INFO     Converting file format...                                                                main.py:925
            INFO     Reading file...                                                                          main.py:157
@@ -27,7 +27,7 @@
            INFO     Converting                                                             test_format_conversions.py:77
                     C:\Users\tian50\work\dev\sgio\tests\fixtures\vabs\version_4_0\sg21t_tr                              
                     i3_vabs40.sg to                                                                                     
-                    C:\Users\tian50\AppData\Local\Temp\pytest-of-tian50\pytest-103\test_fi                              
+                    C:\Users\tian50\AppData\Local\Temp\pytest-of-tian50\pytest-104\test_fi                              
                     le_format_conversion_te1\conversion_output\sg21t_tri3_vabs40.msh...                                 
            INFO     Converting file format...                                                                main.py:925
            INFO     Reading file...                                                                          main.py:157
@@ -35,7 +35,7 @@
            INFO     File format converted.                                                                   main.py:964
            INFO     Converting                                                             test_format_conversions.py:77
                     C:\Users\tian50\work\dev\sgio\tests\fixtures\abaqus\sg33_cube.inp to                                
-                    C:\Users\tian50\AppData\Local\Temp\pytest-of-tian50\pytest-103\test_fi                              
+                    C:\Users\tian50\AppData\Local\Temp\pytest-of-tian50\pytest-104\test_fi                              
                     le_format_conversion_te2\conversion_output\sg33_cube_sc21.sg...                                     
            INFO     Converting file format...                                                                main.py:925
            INFO     Reading file...                                                                          main.py:157
@@ -43,19 +43,7 @@
            INFO     File format converted.                                                                   main.py:964
            INFO     Converting file format...                                                                main.py:925
            INFO     Reading file...                                                                          main.py:157
-[16:33:33] INFO     Writing file...                                                                          main.py:781
-           INFO     File format converted.                                                                   main.py:964
-           INFO     Converting file format...                                                                main.py:925
-           INFO     Reading file...                                                                          main.py:157
-           INFO     Writing file...                                                                          main.py:781
-           INFO     File format converted.                                                                   main.py:964
-           INFO     Converting file format...                                                                main.py:925
-           INFO     Reading file...                                                                          main.py:157
-           INFO     Writing file...                                                                          main.py:781
-           INFO     File format converted.                                                                   main.py:964
-           INFO     Converting file format...                                                                main.py:925
-           INFO     Reading file...                                                                          main.py:157
-[16:33:34] INFO     Writing file...                                                                          main.py:781
+[17:47:20] INFO     Writing file...                                                                          main.py:781
            INFO     File format converted.                                                                   main.py:964
            INFO     Converting file format...                                                                main.py:925
            INFO     Reading file...                                                                          main.py:157
@@ -68,6 +56,10 @@
            INFO     Converting file format...                                                                main.py:925
            INFO     Reading file...                                                                          main.py:157
            INFO     Writing file...                                                                          main.py:781
+[17:47:21] INFO     File format converted.                                                                   main.py:964
+           INFO     Converting file format...                                                                main.py:925
+           INFO     Reading file...                                                                          main.py:157
+           INFO     Writing file...                                                                          main.py:781
            INFO     File format converted.                                                                   main.py:964
            INFO     Converting file format...                                                                main.py:925
            INFO     Reading file...                                                                          main.py:157
@@ -75,84 +67,92 @@
            INFO     File format converted.                                                                   main.py:964
            INFO     Converting file format...                                                                main.py:925
            INFO     Reading file...                                                                          main.py:157
-[16:33:36] INFO     Writing file...                                                                          main.py:781
-[16:33:37] INFO     File format converted.                                                                   main.py:964
+           INFO     Writing file...                                                                          main.py:781
+           INFO     File format converted.                                                                   main.py:964
            INFO     Converting file format...                                                                main.py:925
            INFO     Reading file...                                                                          main.py:157
-[16:33:38] INFO     Writing file...                                                                          main.py:781
+           INFO     Writing file...                                                                          main.py:781
            INFO     File format converted.                                                                   main.py:964
-           INFO     Converting C:\Users\tian50\work\dev\sgio\tests\fixtures\vabs\version_4_1\uh60a.sg test_gmsh_io.py:49
+           INFO     Converting file format...                                                                main.py:925
+           INFO     Reading file...                                                                          main.py:157
+[17:47:23] INFO     Writing file...                                                                          main.py:781
+           INFO     File format converted.                                                                   main.py:964
+           INFO     Converting file format...                                                                main.py:925
+           INFO     Reading file...                                                                          main.py:157
+[17:47:24] INFO     Writing file...                                                                          main.py:781
+           INFO     File format converted.                                                                   main.py:964
+[17:47:25] INFO     Converting C:\Users\tian50\work\dev\sgio\tests\fixtures\vabs\version_4_1\uh60a.sg test_gmsh_io.py:49
                     to                                                                                                  
-                    C:\Users\tian50\AppData\Local\Temp\pytest-of-tian50\pytest-103\test_vabs_to_gmsh_                   
+                    C:\Users\tian50\AppData\Local\Temp\pytest-of-tian50\pytest-104\test_vabs_to_gmsh_                   
                     to_vabs_roun0\uh60a.msh...                                                                          
            INFO     Converting file format...                                                                main.py:925
            INFO     Reading file...                                                                          main.py:157
            INFO     Writing file...                                                                          main.py:781
            INFO     File format converted.                                                                   main.py:964
            INFO     Successfully created                                                              test_gmsh_io.py:62
-                    C:\Users\tian50\AppData\Local\Temp\pytest-of-tian50\pytest-103\test_vabs_to_gmsh_                   
+                    C:\Users\tian50\AppData\Local\Temp\pytest-of-tian50\pytest-104\test_vabs_to_gmsh_                   
                     to_vabs_roun0\uh60a.msh                                                                             
            INFO     Converting                                                                        test_gmsh_io.py:49
                     C:\Users\tian50\work\dev\sgio\tests\fixtures\vabs\version_4_0\sg21eb_tri3_vabs40.                   
                     sg to                                                                                               
-                    C:\Users\tian50\AppData\Local\Temp\pytest-of-tian50\pytest-103\test_vabs_to_gmsh_                   
+                    C:\Users\tian50\AppData\Local\Temp\pytest-of-tian50\pytest-104\test_vabs_to_gmsh_                   
                     to_vabs_roun0\sg21eb_tri3_vabs40.msh...                                                             
            INFO     Converting file format...                                                                main.py:925
            INFO     Reading file...                                                                          main.py:157
            INFO     Writing file...                                                                          main.py:781
            INFO     File format converted.                                                                   main.py:964
            INFO     Successfully created                                                              test_gmsh_io.py:62
-                    C:\Users\tian50\AppData\Local\Temp\pytest-of-tian50\pytest-103\test_vabs_to_gmsh_                   
+                    C:\Users\tian50\AppData\Local\Temp\pytest-of-tian50\pytest-104\test_vabs_to_gmsh_                   
                     to_vabs_roun0\sg21eb_tri3_vabs40.msh                                                                
            INFO     Converting                                                                        test_gmsh_io.py:49
                     C:\Users\tian50\work\dev\sgio\tests\fixtures\vabs\version_4_0\sg21t_tri3_vabs40.s                   
                     g to                                                                                                
-                    C:\Users\tian50\AppData\Local\Temp\pytest-of-tian50\pytest-103\test_vabs_to_gmsh_                   
+                    C:\Users\tian50\AppData\Local\Temp\pytest-of-tian50\pytest-104\test_vabs_to_gmsh_                   
                     to_vabs_roun0\sg21t_tri3_vabs40.msh...                                                              
            INFO     Converting file format...                                                                main.py:925
            INFO     Reading file...                                                                          main.py:157
-           INFO     Writing file...                                                                          main.py:781
+[17:47:26] INFO     Writing file...                                                                          main.py:781
            INFO     File format converted.                                                                   main.py:964
            INFO     Successfully created                                                              test_gmsh_io.py:62
-                    C:\Users\tian50\AppData\Local\Temp\pytest-of-tian50\pytest-103\test_vabs_to_gmsh_                   
+                    C:\Users\tian50\AppData\Local\Temp\pytest-of-tian50\pytest-104\test_vabs_to_gmsh_                   
                     to_vabs_roun0\sg21t_tri3_vabs40.msh                                                                 
            INFO     Converting                                                                        test_gmsh_io.py:81
-                    C:\Users\tian50\AppData\Local\Temp\pytest-of-tian50\pytest-103\test_vabs_to_gmsh_                   
+                    C:\Users\tian50\AppData\Local\Temp\pytest-of-tian50\pytest-104\test_vabs_to_gmsh_                   
                     to_vabs_roun0\uh60a.msh to                                                                          
-                    C:\Users\tian50\AppData\Local\Temp\pytest-of-tian50\pytest-103\test_vabs_to_gmsh_                   
+                    C:\Users\tian50\AppData\Local\Temp\pytest-of-tian50\pytest-104\test_vabs_to_gmsh_                   
                     to_vabs_roun0\uh60a_from_gmsh.sg...                                                                 
            INFO     Converting file format...                                                                main.py:925
            INFO     Reading file...                                                                          main.py:157
            INFO     Writing file...                                                                          main.py:781
            INFO     File format converted.                                                                   main.py:964
-[16:33:39] INFO     Successfully created                                                              test_gmsh_io.py:94
-                    C:\Users\tian50\AppData\Local\Temp\pytest-of-tian50\pytest-103\test_vabs_to_gmsh_                   
+           INFO     Successfully created                                                              test_gmsh_io.py:94
+                    C:\Users\tian50\AppData\Local\Temp\pytest-of-tian50\pytest-104\test_vabs_to_gmsh_                   
                     to_vabs_roun0\uh60a_from_gmsh.sg                                                                    
            INFO     SG has 9719 points and 1 cell blocks                                             test_gmsh_io.py:102
            INFO     Converting                                                                        test_gmsh_io.py:81
-                    C:\Users\tian50\AppData\Local\Temp\pytest-of-tian50\pytest-103\test_vabs_to_gmsh_                   
+                    C:\Users\tian50\AppData\Local\Temp\pytest-of-tian50\pytest-104\test_vabs_to_gmsh_                   
                     to_vabs_roun0\sg21eb_tri3_vabs40.msh to                                                             
-                    C:\Users\tian50\AppData\Local\Temp\pytest-of-tian50\pytest-103\test_vabs_to_gmsh_                   
+                    C:\Users\tian50\AppData\Local\Temp\pytest-of-tian50\pytest-104\test_vabs_to_gmsh_                   
                     to_vabs_roun0\sg21eb_tri3_vabs40_from_gmsh.sg...                                                    
            INFO     Converting file format...                                                                main.py:925
            INFO     Reading file...                                                                          main.py:157
            INFO     Writing file...                                                                          main.py:781
            INFO     File format converted.                                                                   main.py:964
            INFO     Successfully created                                                              test_gmsh_io.py:94
-                    C:\Users\tian50\AppData\Local\Temp\pytest-of-tian50\pytest-103\test_vabs_to_gmsh_                   
+                    C:\Users\tian50\AppData\Local\Temp\pytest-of-tian50\pytest-104\test_vabs_to_gmsh_                   
                     to_vabs_roun0\sg21eb_tri3_vabs40_from_gmsh.sg                                                       
            INFO     SG has 9713 points and 1 cell blocks                                             test_gmsh_io.py:102
            INFO     Converting                                                                        test_gmsh_io.py:81
-                    C:\Users\tian50\AppData\Local\Temp\pytest-of-tian50\pytest-103\test_vabs_to_gmsh_                   
+                    C:\Users\tian50\AppData\Local\Temp\pytest-of-tian50\pytest-104\test_vabs_to_gmsh_                   
                     to_vabs_roun0\sg21t_tri3_vabs40.msh to                                                              
-                    C:\Users\tian50\AppData\Local\Temp\pytest-of-tian50\pytest-103\test_vabs_to_gmsh_                   
+                    C:\Users\tian50\AppData\Local\Temp\pytest-of-tian50\pytest-104\test_vabs_to_gmsh_                   
                     to_vabs_roun0\sg21t_tri3_vabs40_from_gmsh.sg...                                                     
            INFO     Converting file format...                                                                main.py:925
            INFO     Reading file...                                                                          main.py:157
            INFO     Writing file...                                                                          main.py:781
            INFO     File format converted.                                                                   main.py:964
            INFO     Successfully created                                                              test_gmsh_io.py:94
-                    C:\Users\tian50\AppData\Local\Temp\pytest-of-tian50\pytest-103\test_vabs_to_gmsh_                   
+                    C:\Users\tian50\AppData\Local\Temp\pytest-of-tian50\pytest-104\test_vabs_to_gmsh_                   
                     to_vabs_roun0\sg21t_tri3_vabs40_from_gmsh.sg                                                        
            INFO     SG has 9713 points and 1 cell blocks                                             test_gmsh_io.py:102
            INFO     Converting file format...                                                                main.py:925

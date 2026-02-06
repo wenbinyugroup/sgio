@@ -14,11 +14,11 @@ from .config import _elementTypeDictionary
 
 #==================================================================================================================  
 class Node(object):
-    """The Node class stores nodal information from a single node (i.e. one dataline from a \*NODE keyword block)."""
+    r"""The Node class stores nodal information from a single node (i.e. one dataline from a \*NODE keyword block)."""
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def __init__(self, dataline='', label=None, data=None, elements=None, _joinS=', ', _ParamInInp=False, preserveSpacing=True, useDecimal=True):
-        """__init__(dataline='', elements=None, _ParamInInp=False, preserveSpacing=True, useDecimal=True)
+        r"""__init__(dataline='', elements=None, _ParamInInp=False, preserveSpacing=True, useDecimal=True)
            __init__(label=None, data=None, elements=None, _joinS=', ')
         
             Initializes attributes of the Node. 
@@ -99,7 +99,8 @@ class Node(object):
                     of the input file was parsed with. Defaults to True. 
                 useDecimal (bool): If True, any floating point numbers will be parsed as :class:`~decimal.Decimal` or :class:`~inpDecimal.inpDecimal`.
                     In most cases when creating new :class:`.Element` instances, you will want to use the same value that the rest
-                    of the input file was parsed with. Defaults to True."""
+                    of the input file was parsed with. Defaults to True.
+        """
 
         self._joinS = _joinS #: :str: The string used to join data items together when creating a string for the entire dataline. Defaults to ', ', which will be sufficient for most cases.
         self._ParamInInp = _ParamInInp #: :bool: Indicates if \*PARAMETER is in the input file. If True, data items could be references to \*PARAMETER functions, and the datalines might be strings, so the :func:'~eval2.eval2' function must be used when parsing data items instead of assuming they must be integers. Defaults to False.
@@ -124,7 +125,7 @@ class Node(object):
             
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def _parseDataLine(self, dataline):
-        """_parseDataLine(dataline)
+        r"""_parseDataLine(dataline)
         
             Populates the :class:`Node` instance by parsing the *dataline* string. 
 
@@ -139,7 +140,8 @@ class Node(object):
                 Node(label=inpInt('   21'), data=[inpInt('   21'), inpDecimal(' 70.00'), inpDecimal('   0.00')], elements=[])
             
             Args:
-                dataline (str): A string containing the information for the entire dataline."""
+                dataline (str): A string containing the information for the entire dataline.
+        """
 
         ps = self.preserveSpacing
         ud = self.useDecimal
@@ -160,7 +162,7 @@ class Node(object):
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def _mergeElementData(self, other):
-        """_mergeElementData(other)
+        r"""_mergeElementData(other)
         
             Currently unused"""
 
@@ -168,7 +170,7 @@ class Node(object):
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def updateElements(self, ed):
-        """updateElements(ed)
+        r"""updateElements(ed)
        
             Checks if each element in :attr:`elements` exists in *ed*. Returns 0 if :attr:`elements` is empty, 1 if
             elements have been removed, or 2 if no changes were made.
@@ -195,7 +197,7 @@ class Node(object):
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def __repr__(self):
-        """__repr__()
+        r"""__repr__()
             
             Produces a repr of the Node.
             
@@ -213,7 +215,7 @@ class Node(object):
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def __str__(self):
-        """__str__()
+        r"""__str__()
             
             Produces a str of the dataline for the Node.
             
@@ -232,7 +234,7 @@ class Node(object):
 
 #==================================================================================================================  
 class Element(object):
-    """The Element class stores element information from a single element (i.e. one dataline from a \*ELEMENT keyword block)."""
+    r"""The Element class stores element information from a single element (i.e. one dataline from a \*ELEMENT keyword block).r"""
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def __init__(self, eltype, numNodes=None, datalines=None, label=None, data=None, _lineEnd=None, _npll=None, _joinS=', ', _ParamInInp=False, preserveSpacing=True, useDecimal=True, _checkNumNodes=True, _nl='\n'):
@@ -385,7 +387,7 @@ class Element(object):
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def checkNumberNodes(self):
-        """checkNumberNodes() 
+        r"""checkNumberNodes() 
         
             This function will check if the number of nodes in :attr:`data` matches that specified in :attr:`numNodes`.
             
@@ -421,7 +423,7 @@ class Element(object):
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def _parseDataLines(self, datalines):
-        """_parseDataLines(datalines)
+        r"""_parseDataLines(datalines)
         
             Populates the :class:`Element` instance by parsing the strings in *datalines*.
 
@@ -452,7 +454,7 @@ class Element(object):
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def _parseDataLine(self, dataline, con=False):
-        """_parseDataLine(dataline, con=False)
+        r"""_parseDataLine(dataline, con=False)
         
             Parses an individual \*ELEMENT dataline. Meant to be used by :func:`_parseDataLines`.
 
@@ -479,35 +481,35 @@ class Element(object):
         ud = self.useDecimal
 
         def case1(ls):
-            """Parses the information in ls as integers. Used when preserveSpacing and useDecimal are both False."""
+            r"""Parses the information in ls as integers. Used when preserveSpacing and useDecimal are both False."""
 
             key = int(ls[0])
             value = [int(i) for i in ls]
             return key, value
 
         def case2(ls):
-            """Parses the information in ls using eval2. Used when one or both of preserveSpacing and useDecimal are True."""
+            r"""Parses the information in ls using eval2. Used when one or both of preserveSpacing and useDecimal are True."""
 
             key = eval2(ls[0], t=int, ps=ps)
             value = [eval2(i, t=int, ps=ps, useDecimal=ud) for i in ls]
             return key, value
 
         def case3(ls):
-            """Parses the information in ls as integers. This will handle subsequent datalines of an element definition, where every item is 
+            r"""Parses the information in ls as integers. This will handle subsequent datalines of an element definition, where every item is 
             a node label. Used when preserveSpacing and useDecimal are both False."""
 
             value = [int(i) for i in ls]
             return value
 
         def case4(ls):
-            """Parses the information in ls as integers. This will handle subsequent datalines of an element definition, where every item is 
+            r"""Parses the information in ls as integers. This will handle subsequent datalines of an element definition, where every item is 
             a node label. Used when one or both of preserveSpacing and useDecimal are True."""
 
             value = [eval2(i, t=int, ps=ps, useDecimal=ud) for i in ls]
             return value
 
         def findLineEnd(ls):
-            """Tracks any whitespace characters at the end of the dataline."""
+            r"""Tracks any whitespace characters at the end of the dataline."""
 
             endstr = ls[-1]
             if len(endstr) > 0 and endstr.isspace():
@@ -572,7 +574,7 @@ class Element(object):
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def setConnectedNodes(self, nd):
-        """setConnectedNodes(nd)
+        r"""setConnectedNodes(nd)
        
             This function will find each node in *nd* corresponding to the node labels in :attr:`~Element.data` and 
             append :attr:`~Element.label` to the :attr:`~Node.elements`.
@@ -590,7 +592,7 @@ class Element(object):
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def __repr__(self):
-        """__repr__()
+        r"""__repr__()
             
             Produces a repr of the dataline for the Element.
             
@@ -611,7 +613,7 @@ class Element(object):
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def __str__(self):
-        """__str__()
+        r"""__str__()
             
             Produces a str of the dataline for the Element.
             
@@ -648,11 +650,11 @@ class Element(object):
 
 #==================================================================================================================  
 class Mesh(csid):
-    """This class is a :class:`csid` used to store the data from a node :term:`keyword block`. """
+    r"""This class is a :class:`csid` used to store the data from a node :term:`keyword block`. """
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def __init__(self, data=None):
-        """__init__(data=None)
+        r"""__init__(data=None)
         
             Initializes the class. In most cases, users should not directly instantiate this class. Rather, they should
             create a \*NODE :class:`~inpKeyword.inpKeyword` instance and allow that keyword block to handle the logistics.
@@ -676,7 +678,7 @@ class Mesh(csid):
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def __repr__(self):
-        """__repr__()
+        r"""__repr__()
             
             Uses the default __repr__ method from :class:`dict`.
             
@@ -719,7 +721,7 @@ class Mesh(csid):
 
 #==================================================================================================================  
 class MeshElement(Mesh):
-    """:class:`MeshElement` is identical to :class:`Mesh`, except that it checks to make sure that every item added to
+    r""":class:`MeshElement` is identical to :class:`Mesh`, except that it checks to make sure that every item added to
     it has the same element type."""
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -783,7 +785,7 @@ class MeshElement(Mesh):
 
 #==================================================================================================================  
 class TotalMesh(csid):
-    """:class:`TotalMesh` is a parent class, and not meant to be instantiated directly. Users should instead work with
+    r""":class:`TotalMesh` is a parent class, and not meant to be instantiated directly. Users should instead work with
     one of the sub-classes, which are :class:`TotalNodeMesh` and :class:`TotalElementMesh`. 
 
     Users should not need to created instances of this class or the child classes directly. In most cases, they can rely
@@ -829,7 +831,7 @@ class TotalMesh(csid):
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def removeEmptySubMeshes(self):
-        """removeEmptySubMeshes()
+        r"""removeEmptySubMeshes()
        
             Deletes any :attr:`subMeshes` which are now empty. This will also delete the :class:`Mesh` instance."""
 
@@ -841,7 +843,7 @@ class TotalMesh(csid):
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def renameKeys(self, mapping):
-        """renameKeys(mapping)
+        r"""renameKeys(mapping)
        
             Renames all keys in the :class:`TotalMesh` instance (d) as specified by mapping. 
             
@@ -858,7 +860,7 @@ class TotalMesh(csid):
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def update(self, other):
-        """update(other)
+        r"""update(other)
        
             Adds the data from *other* to the :class:`TotalMesh` instance (d), and tracks *other* in :attr:`subMeshes`.
             
@@ -876,7 +878,7 @@ class TotalMesh(csid):
             
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def __delitem__(self, key):
-        """__delitem__(key)
+        r"""__delitem__(key)
         
             Deletes key and value in self and in the subMesh.
             
@@ -890,7 +892,7 @@ class TotalMesh(csid):
    
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def __repr__(self):
-        """__repr__()
+        r"""__repr__()
             
             Uses the default __repr__ method from :class:`dict`."""
 
@@ -898,7 +900,7 @@ class TotalMesh(csid):
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def __setitem__(self):
-        """__setitem__()
+        r"""__setitem__()
             
             Items should not be added to the :class:`TotalMesh` instance. Add them instead to the appropriate
             :class:`Mesh` instance and then :func:`~TotalMesh.update` :class:`TotalMesh` with :class:`Mesh`."""
@@ -907,7 +909,7 @@ class TotalMesh(csid):
     
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def __str__(self):
-        """__str__()
+        r"""__str__()
             
             Uses the default __str__ method from :class:`dict`."""
 
@@ -915,13 +917,13 @@ class TotalMesh(csid):
 
 #==================================================================================================================  
 class TotalNodeMesh(TotalMesh):
-    """A :class:`TotalNodeMesh` enhances :class:`TotalMesh` with some additional functions specific to working with
+    r"""A :class:`TotalNodeMesh` enhances :class:`TotalMesh` with some additional functions specific to working with
         Abaqus nodes."""
 
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def setNodesConnectedElements(self, nd):
-        """setNodesConnectedElements(nd)
+        r"""setNodesConnectedElements(nd)
         
             This function will set the :attr:`~mesh.Node.elements` attribute of each node in the :class:`~mesh.TotalMesh` 
             instance for each node found in *nd*.
@@ -942,7 +944,7 @@ class TotalNodeMesh(TotalMesh):
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def updateNodesConnectedElements(self, ed):
-        """updateNodesConnectedElements(ed)
+        r"""updateNodesConnectedElements(ed)
        
             Calls :func:`~Node.updateElements` on all :class:`Node` instances.
             
@@ -960,7 +962,7 @@ class TotalNodeMesh(TotalMesh):
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def __repr__(self):
-        """__repr__()
+        r"""__repr__()
             
             Uses the default __repr__ method from :class:`dict`."""
 
@@ -968,7 +970,7 @@ class TotalNodeMesh(TotalMesh):
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def __str__(self):
-        """__str__()
+        r"""__str__()
             
             Uses the default __str__ method from :class:`dict`."""
 
@@ -976,11 +978,11 @@ class TotalNodeMesh(TotalMesh):
 
 #==================================================================================================================  
 class TotalElementMesh(TotalMesh):
-    """A :class:`TotalElementMesh` is merely a subclass of :class:`TotalMesh` with no additional behavior."""
+    r"""A :class:`TotalElementMesh` is merely a subclass of :class:`TotalMesh` with no additional behavior."""
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def __repr__(self):
-        """__repr__()
+        r"""__repr__()
             
             Uses the default __repr__ method from :class:`dict`."""
 
@@ -988,7 +990,7 @@ class TotalElementMesh(TotalMesh):
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def __str__(self):
-        """__str__()
+        r"""__str__()
             
             Uses the default __str__ method from :class:`dict`."""
 

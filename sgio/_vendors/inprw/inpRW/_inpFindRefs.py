@@ -1,6 +1,6 @@
 #Copyright © 2023 Dassault Systemès Simulia Corp.
 
-"""This module contains functions for finding references to given names or labels in the input file.
+r"""This module contains functions for finding references to given names or labels in the input file.
 
     The functions here are not really meant to be used by the end-user; the designed entry point is through 
     :func:`~inpRW._inpFind.Find.findItemReferences`. All of the functions in this module are named like the following:
@@ -28,12 +28,12 @@
 from ._importedModules import *
 
 class FindRefs:
-    """The :class:`~inpRW._inpFindRefs.FindRefs` class contains functions that find references to specific named entities
+    r"""The :class:`~inpRW._inpFindRefs.FindRefs` class contains functions that find references to specific named entities
         in the parsed input file structure. For example, :func:`inp.findNodeRefs([1,2,3]) <inpRW._inpFindRefs.FindRefs.findNodeRefs>` 
         will find every location in the parsed input file structure which references node labels 1, 2, and 3."""
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def findAdaptivemeshcontrolsRefs(self, names):
-        """findAdaptiveMeshControlsRefs(names)
+        r"""findAdaptiveMeshControlsRefs(names)
        
             This function searches for keywords that can reference \*ADAPTIVE MESH CONTROLS.
             
@@ -53,7 +53,7 @@ class FindRefs:
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def findClearanceRefs(self, names):
-        """findClearanceRefs(names)
+        r"""findClearanceRefs(names)
        
             This function searches for keywords that can reference \*CLEARANCE.
             
@@ -73,7 +73,7 @@ class FindRefs:
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def findConnectorbehaviorRefs(self, names):
-        """findConnectorBehaviorRefs(names)
+        r"""findConnectorBehaviorRefs(names)
        
             This function searches for keywords that can reference \*CONNECTOR BEHAVIOR.
             
@@ -93,7 +93,7 @@ class FindRefs:
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def findContactclearanceRefs(self, names):
-        """findContactClearanceRefs(names)
+        r"""findContactClearanceRefs(names)
        
             This function searches for keywords that can reference \*CONTACT CLEARANCE.
             
@@ -113,7 +113,7 @@ class FindRefs:
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def findContactinitializationdataRefs(self, names):
-        """findContactInitializationRefs(names)
+        r"""findContactInitializationRefs(names)
        
             This function searches for keywords that can reference \*CONTACT INITIALIZATION DATA.
             
@@ -133,7 +133,7 @@ class FindRefs:
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def findContactpairRefs(self, names):
-        """findContactpairRefs(names)
+        r"""findContactpairRefs(names)
        
             This function searches for keywords that can reference the CPSET parameter of \*CONTACT PAIR.
             
@@ -153,7 +153,7 @@ class FindRefs:
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def findDistributionRefs(self, names):
-        """findDistributionRefs(names)
+        r"""findDistributionRefs(names)
        
             This function searches for keywords that can reference \*DISTRIBUTION.
             
@@ -187,7 +187,7 @@ class FindRefs:
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def findDistributiontableRefs(self, names):
-        """findDistributiontableRefs(names)
+        r"""findDistributiontableRefs(names)
        
             This function searches for keywords that can reference \*DISTRIBUTION TABLE.
             
@@ -208,7 +208,7 @@ class FindRefs:
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def findElementprogressiveactivationRefs(self, names):
-        """findElementprogressiveactivationRefs(names)
+        r"""findElementprogressiveactivationRefs(names)
        
             This function searches for keywords that can reference \*ELEMENT PROGRESSIVE ACTIVATION.
             
@@ -229,7 +229,7 @@ class FindRefs:
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def findElementRefs(self, elements, mode='labels'):
-        """findElementRefs(elements, mode='labels')
+        r"""findElementRefs(elements, mode='labels')
 
             Finds all references in the input file to each element in elements.            
         
@@ -520,7 +520,7 @@ class FindRefs:
     
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def findEnrichmentRefs(self, names):
-        """findEnrichmentRefs(names)
+        r"""findEnrichmentRefs(names)
        
             This function searches for keywords that can reference \*ENRICHMENT.
             
@@ -553,7 +553,7 @@ class FindRefs:
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def findFastenerpropertyRefs(self, names):
-        """findFastenerpropertyRefs(names)
+        r"""findFastenerpropertyRefs(names)
        
             This function searches for keywords that can reference \*FASTENER PROPERTY.
             
@@ -574,7 +574,7 @@ class FindRefs:
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def findFieldmappercontrolsRefs(self, names):
-        """findFieldmappercontrolsRefs(names)
+        r"""findFieldmappercontrolsRefs(names)
        
             This function searches for keywords that can reference \*FIELD MAPPER CONTROLS.
             
@@ -595,7 +595,7 @@ class FindRefs:
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def findFluidbehaviorRefs(self, names):
-        """findFluidbehaviorRefs(names)
+        r"""findFluidbehaviorRefs(names)
        
             This function searches for keywords that can reference \*FLUID BEHAVIOR.
             
@@ -628,7 +628,7 @@ class FindRefs:
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def findGasketbehaviorRefs(self, names):
-        """findGasketbehaviorRefs(names)
+        r"""findGasketbehaviorRefs(names)
        
             This function searches for keywords that can reference \*GASKET BEHAVIOR.
             
@@ -648,7 +648,7 @@ class FindRefs:
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def findImpedancepropertyRefs(self, names):
-        """findImpedancepropertyRefs(names)
+        r"""findImpedancepropertyRefs(names)
        
             This function searches for keywords that can reference \*IMPEDANCE PROPERTY.
             
@@ -669,7 +669,7 @@ class FindRefs:
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def findIncidentwaveinteractionpropertyRefs(self, names):
-        """findIncidentwaveinteractionpropertyRefs(names)
+        r"""findIncidentwaveinteractionpropertyRefs(names)
        
             This function searches for keywords that can reference \*INCIDENT WAVE INTERACTION PROPERTY.
             
@@ -690,7 +690,7 @@ class FindRefs:
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def findIncidentwavepropertyRefs(self, names):
-        """findIncidentwavepropertyRefs(names)
+        r"""findIncidentwavepropertyRefs(names)
        
             This function searches for keywords that can reference \*INCIDENT WAVE PROPERTY.
             
@@ -711,7 +711,7 @@ class FindRefs:
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def findIntegratedoutputsectionRefs(self, names):
-        """findIntegratedoutputsectionRefs(names)
+        r"""findIntegratedoutputsectionRefs(names)
        
             This function searches for keywords that can reference \*INTEGRATED OUTPUT SECTION.
             
@@ -732,7 +732,7 @@ class FindRefs:
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def findNodeRefs(self, nodes, mode='labels'):
-        """findNodeRefs(nodes, mode='labels')
+        r"""findNodeRefs(nodes, mode='labels')
 
             Finds all references in the input file to each node in nodes.            
         
@@ -1157,7 +1157,7 @@ class FindRefs:
             
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def findOrientationRefs(self, names):
-        """findOrientationRefs(names)
+        r"""findOrientationRefs(names)
        
             This function searches for keywords that can reference \*ORIENTATION.
             
@@ -1213,7 +1213,7 @@ class FindRefs:
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def findPeriodicmediaRefs(self, names):
-        """findPeriodicmediaRefs(names)
+        r"""findPeriodicmediaRefs(names)
        
             This function searches for keywords that can reference \*PERIODIC MEDIA.
             
@@ -1234,7 +1234,7 @@ class FindRefs:
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def findRebarlayerRefs(self, names):
-        """findRebarlayerRefs(names)
+        r"""findRebarlayerRefs(names)
        
             This function searches for keywords that can reference \*REBAR LAYER.
             
@@ -1255,7 +1255,7 @@ class FindRefs:
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def findRebarRefs(self, names):
-        """findRebarRefs(names)
+        r"""findRebarRefs(names)
        
             This function searches for keywords that can reference \*REBAR.
             
@@ -1303,7 +1303,7 @@ class FindRefs:
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def findRigidbodyRefs(self, names):
-        """findRigidbodyRefs(names)
+        r"""findRigidbodyRefs(names)
        
             This function searches for keywords that can reference \*RIGID BODY.
             
@@ -1324,7 +1324,7 @@ class FindRefs:
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def findSectioncontrolsRefs(self, names):
-        """findSectioncontrolsRefs(names)
+        r"""findSectioncontrolsRefs(names)
        
             This function searches for keywords that can reference \*SECTION CONTROLS.
             
@@ -1345,7 +1345,7 @@ class FindRefs:
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def findSubstructureloadcaseRefs(self, names):
-        """findSubstructureloadcaseRefs(names)
+        r"""findSubstructureloadcaseRefs(names)
        
             This function searches for keywords that can reference \*SUBSTRUCTURE LOADCASE.
             
@@ -1366,7 +1366,7 @@ class FindRefs:
     
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def findSurfaceRefs(self, names):
-        """findSurfaceRefs(names)
+        r"""findSurfaceRefs(names)
        
             This function searches for keywords that can reference \*SURFACE.
             
@@ -1551,7 +1551,7 @@ class FindRefs:
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def findSurfaceinteractionRefs(self, names):
-        """findSurfaceinteractionRefs(names)
+        r"""findSurfaceinteractionRefs(names)
        
             This function searches for keywords that can reference \*SURFACE INTERACTION.
             
@@ -1576,7 +1576,7 @@ class FindRefs:
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def findSurfacepropertyRefs(self, names):
-        """findSurfacepropertyRefs(names)
+        r"""findSurfacepropertyRefs(names)
        
             This function searches for keywords that can reference \*SURFACE PROPERTY.
             
@@ -1601,7 +1601,7 @@ class FindRefs:
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def findSurfacesmoothingRefs(self, names):
-        """findSurfacesmoothingRefs(names)
+        r"""findSurfacesmoothingRefs(names)
        
             This function searches for keywords that can reference \*SURFACE SMOOTHING.
             
@@ -1622,7 +1622,7 @@ class FindRefs:
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def findTracerparticleRefs(self, names):
-        """findTracerparticleRefs(names)
+        r"""findTracerparticleRefs(names)
        
             This function searches for keywords that can reference \*TRACER PARTICLE.
             

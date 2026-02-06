@@ -233,9 +233,10 @@ def process_mesh(inprw:inpRW):
 
         elems = _elem_block.data
         for _eid, _elem in elems.items():
-            _nids = list(map(int, _elem.data[1:]))  # Keep the original node IDs
-            # _nids = [i - 1 for i in _elem.data[1:]]  # Convert to 0-based
-            # _nids = [nid2pid[i] for i in _elem.data[1:]]
+            # CRITICAL FIX: Convert original node IDs to 0-based array indices
+            # meshio requires cell connectivity to use array indices, not original IDs
+            _nids_original = list(map(int, _elem.data[1:]))  # Original node IDs from file
+            _nids = [nid2pid[nid] for nid in _nids_original]  # Map to 0-based indices
             cells[cell_block_i][1].append(_nids)
             cell_elem_ids[meshio_type].append(_eid)  # Store the original element id
             eid2cid[_eid] = (cell_block_i, len(cells[cell_block_i][1]) - 1)  # Store the mapping from original element id to cell block index and cell index

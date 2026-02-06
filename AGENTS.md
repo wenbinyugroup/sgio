@@ -9,6 +9,8 @@ This document provides essential information for AI coding agents working on the
 - **Python Version**: Requires Python >= 3.9
 - **Install Dependencies**: `uv sync` or `pip install -e .`
 
+ALWAYS USE PROJECT LOCAL VENV
+
 Ignore the following files and directories with the name containing `temp`, `archive`, `legacy`, `old`, `backup`, `~`, or `#`.
 
 ## Build and Test Commands

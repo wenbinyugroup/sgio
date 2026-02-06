@@ -1,6 +1,6 @@
 #Copyright © 2023 Dassault Systemès Simulia Corp.
 
-"""This module contains functions for modifying the data in :attr:`~inpRW.inpRW.keywords`."""
+r"""This module contains functions for modifying the data in :attr:`~inpRW.inpRW.keywords`."""
 
 # cspell:includeRegExp comments
 
@@ -10,10 +10,10 @@ import sgio._vendors.inprw.inpRW as inpRW
 # from . import inpRW
 
 class Mod:
-    """The :class:`~inpRW._inpMod.Mod` class contains functions modify data in the parsed input file structure."""
+    r"""The :class:`~inpRW._inpMod.Mod` class contains functions modify data in the parsed input file structure."""
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def calculateCentroid(self, elementID):
-        """calculateCentroid(elementID)
+        r"""calculateCentroid(elementID)
 
             This function gets the nodal coordinates of an element and calls :func:`centroid.averageVertices`. 
             
@@ -29,7 +29,7 @@ class Mod:
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def convertOPnewToOPmod(self, startStep=0, finishStep=None, bStep=None):
-        """convertOPnewToOPmod(startStep=0, finishStep=None, bStep=None)
+        r"""convertOPnewToOPmod(startStep=0, finishStep=None, bStep=None)
         
             Converts keyword parameter OP=NEW to OP=MOD or OP=REPLACE and removes unnecessary keywords from steps.
 
@@ -54,7 +54,7 @@ class Mod:
                            
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         def findStepRelativeIndex(step):
-            """findStepRelativeIndex(step)
+            r"""findStepRelativeIndex(step)
             
                 Finds the index of *step* in :attr:`~inpRW.inpRW.steps`.
 
@@ -140,7 +140,7 @@ class Mod:
     #                       
     #    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     #    def findStepRelativeIndex(step):
-    #        """findStepRelativeIndex(step)
+    #        r"""findStepRelativeIndex(step)
     #        
     #            Finds the index of *step* in :attr:`~inpRW.inpRW.steps`.
     #
@@ -279,7 +279,7 @@ class Mod:
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def createManifest(self, lastBaseStep=None, stepGroupingIn=None, parameterString=''):
-        """createManifest(lastBaseStep=None, stepGroupingIn=None, parameterString='')
+        r"""createManifest(lastBaseStep=None, stepGroupingIn=None, parameterString='')
 
             Creates a \*MANIFEST :class:`~inpRW.inpRW` instance and places the steps in the original file into sub-input files.
 
@@ -441,7 +441,7 @@ class Mod:
     
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def deleteItemReferences(self, labelD, inputType='other', deleteModCouplings=False, delNodesFromElsLevel1=False, _level=0, _limit=100):
-        """deleteItemReferences(labelD, inputType='other', deleteModCouplings=False, delNodesFromElsLevel1=False, _level=0, _limit=100)
+        r"""deleteItemReferences(labelD, inputType='other', deleteModCouplings=False, delNodesFromElsLevel1=False, _level=0, _limit=100)
        
             This function will delete the item references in *labelD* throughout the input file. If an item that is 
             deleted also deletes a :attr:`named reference <inpRW.inpRW.namedRefs>`, this function will also find the 
@@ -490,7 +490,7 @@ class Mod:
 
         #~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
         def checkIfNewRef(block):
-            """checkIfNewRef(block)
+            r"""checkIfNewRef(block)
             
                 Checks if *block.name* is in :attr:`~inpRW.inpRW.namedRefs`, and if so adds *block.name* to newRefs."""
 
@@ -811,7 +811,7 @@ class Mod:
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def deleteKeyword(self, path='', positionl=None, updateInpStructure=True, printstatus=True):
-        """deleteKeyword(path='', positionl=None, updateInpStructure=True, printstatus=True)
+        r"""deleteKeyword(path='', positionl=None, updateInpStructure=True, printstatus=True)
 
             Deletes the keyword block at the indicated location and updates the data structure.
         
@@ -878,7 +878,7 @@ class Mod:
         
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def getLabelsFromSet(self, blocks):
-        """getLabelsFromSet(blocks)
+        r"""getLabelsFromSet(blocks)
         
             Returns a flat list of all the labels from the set defined in *block*. 
 
@@ -906,7 +906,7 @@ class Mod:
     
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def insertKeyword(self, obj, path='', positionl=None, updateInpStructure=True):
-        """insertKeyword(obj, path='', positionl=None, updateInpStructure=True)
+        r"""insertKeyword(obj, path='', positionl=None, updateInpStructure=True)
             
             Inserts a new keyword object in the :class:`inpKeywordSequence` at the location specified by *path* or *positionl*.
             
@@ -948,7 +948,7 @@ class Mod:
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def mergeNodes(self, dupNodeDict):
-        """mergeNodes(dupNodeDict)
+        r"""mergeNodes(dupNodeDict)
         
             Merges pairs of nodes into one node. The node labels referred to by the keys in *dupNodeDict* will be replaced
             with the node labels in values.
@@ -966,7 +966,7 @@ class Mod:
             Args:
                 dupNodeDict (dict): A dictionary which maps the node label to be removed with the node label with which
                     it should be replaced.
-        """
+        r"""
 
         nd = self.nd
         ed = self.ed
@@ -985,7 +985,7 @@ class Mod:
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def reduceStepSubKWs(self, removeComments=False):
-        """reduceStepSubKWs(removeComments=False)
+        r"""reduceStepSubKWs(removeComments=False)
         
             Consolidates keywords in a particular step that can have the "OP" parameter. 
             
@@ -1168,7 +1168,7 @@ class Mod:
     
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def removeGenerate(self, generateBlocks=None):
-        """removeGenerate(generateBlocks=None)
+        r"""removeGenerate(generateBlocks=None)
         
             Removes the GENERATE parameter from keyword blocks and expands the datalines.    
 
@@ -1202,7 +1202,7 @@ class Mod:
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def replaceKeyword(self, obj, path='', positionl=None, updateInpStructure=True):
-        """replaceKeyword(obj, path='', positionl=None, updateInpStructure=True)
+        r"""replaceKeyword(obj, path='', positionl=None, updateInpStructure=True)
 
             Deletes the keyword at the position designated by *path* or *positionl*, and then inserts the 
             new keyword object at the same location.
@@ -1239,7 +1239,7 @@ class Mod:
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def updateKTRIDD(self, keywordNames):
-        """updateKTRIDD(keywordNames)
+        r"""updateKTRIDD(keywordNames)
         
             Short for "update Keywords To Remove If Data Deleted", this function will update :attr:`~inpRW.inpRW.ktridd`.
 
@@ -1250,7 +1250,7 @@ class Mod:
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def updatePKTRICD(self, mapping):
-        """updatePKTRICD(mapping)
+        r"""updatePKTRICD(mapping)
        
             Updates :attr:`~inpRW.inpRW.pktricd` with the items in mapping.
 
@@ -1267,7 +1267,7 @@ class Mod:
   
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def _consolidateDofXtoYDatalines(self, datalist, removeComments=False):
-        """_consolidateDofXtoYDatalines(datalist, removeComments=False)
+        r"""_consolidateDofXtoYDatalines(datalist, removeComments=False)
 
             Examines *datalist* to determine the DOF ranges that are constrained. Returns a consolidated list.
         
@@ -1332,7 +1332,7 @@ class Mod:
             
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def _convertSystem(self, node):
-        """convertSystem(node)
+        r"""convertSystem(node)
         module: _inpMod.py
         
             .. warning::
@@ -1378,7 +1378,7 @@ class Mod:
     
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def _isolateNodesToKeep(self, dup_node_dict, nodesToKeep):
-        """_isolateNodesToKeep(dup_node_dict, nodesToKeep)
+        r"""_isolateNodesToKeep(dup_node_dict, nodesToKeep)
         
             .. warning::
                
@@ -1401,7 +1401,7 @@ class Mod:
         
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def _removeSystem(self):
-        """_removeSystem()
+        r"""_removeSystem()
         
             Finds the active system at all points of the input file, converts all node definitions to global coordinates, 
             then deletes the \*SYSTEM keywords.
@@ -1423,7 +1423,7 @@ class Mod:
         
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def _replaceStarParameter(self):
-        """_replaceStarParameter()
+        r"""_replaceStarParameter()
         module: _inpMod.py
         
             This function will delete \*PARAMETER keyword lines, and substitute the appropriate values into the input file.
