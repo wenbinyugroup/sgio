@@ -1,0 +1,15 @@
+[
+  {
+    "name": "Steel",
+    "isotropy": 0,
+    "e": 200000000000.0,
+    "nu": 0.3
+  },
+  "not a dictionary",
+  {
+    "name": "Aluminum",
+    "isotropy": 0,
+    "e": 70000000000.0,
+    "nu": 0.33
+  }
+]

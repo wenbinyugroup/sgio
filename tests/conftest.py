@@ -164,6 +164,117 @@ def sample_materials():
 # Utility Fixtures
 # ============================================================================
 
+# ============================================================================
+# Material JSON Fixtures
+# ============================================================================
+
+@pytest.fixture(scope="session")
+def materials_fixtures_dir(test_data_dir):
+    """Directory for material JSON fixtures."""
+    materials_dir = test_data_dir / "materials"
+    return materials_dir
+
+
+@pytest.fixture(scope="session")
+def steel_isotropic_path(materials_fixtures_dir):
+    """Path to steel isotropic material fixture."""
+    return str(materials_fixtures_dir / "steel_isotropic.json")
+
+
+@pytest.fixture(scope="session")
+def carbon_fiber_orthotropic_path(materials_fixtures_dir):
+    """Path to carbon fiber orthotropic material fixture."""
+    return str(materials_fixtures_dir / "carbon_fiber_orthotropic.json")
+
+
+@pytest.fixture(scope="session")
+def ti_composite_transverse_path(materials_fixtures_dir):
+    """Path to Ti composite transverse isotropic material fixture."""
+    return str(materials_fixtures_dir / "ti_composite_transverse.json")
+
+
+@pytest.fixture(scope="session")
+def aluminum_strength_path(materials_fixtures_dir):
+    """Path to aluminum with strength properties fixture."""
+    return str(materials_fixtures_dir / "aluminum_strength.json")
+
+
+@pytest.fixture(scope="session")
+def steel_thermal_path(materials_fixtures_dir):
+    """Path to steel with thermal properties fixture."""
+    return str(materials_fixtures_dir / "steel_thermal.json")
+
+
+@pytest.fixture(scope="session")
+def custom_anisotropic_path(materials_fixtures_dir):
+    """Path to custom anisotropic material fixture."""
+    return str(materials_fixtures_dir / "custom_anisotropic.json")
+
+
+@pytest.fixture(scope="session")
+def empty_material_path(materials_fixtures_dir):
+    """Path to empty material fixture."""
+    return str(materials_fixtures_dir / "empty.json")
+
+
+@pytest.fixture(scope="session")
+def multiple_materials_path(materials_fixtures_dir):
+    """Path to multiple materials fixture."""
+    return str(materials_fixtures_dir / "multiple_materials.json")
+
+
+@pytest.fixture(scope="session")
+def mixed_isotropy_path(materials_fixtures_dir):
+    """Path to mixed isotropy materials fixture."""
+    return str(materials_fixtures_dir / "mixed_isotropy.json")
+
+
+@pytest.fixture(scope="session")
+def empty_list_path(materials_fixtures_dir):
+    """Path to empty list fixture."""
+    return str(materials_fixtures_dir / "empty_list.json")
+
+
+@pytest.fixture(scope="session")
+def invalid_format_path(materials_fixtures_dir):
+    """Path to invalid format fixture."""
+    return str(materials_fixtures_dir / "invalid_format.json")
+
+
+@pytest.fixture(scope="session")
+def invalid_material_path(materials_fixtures_dir):
+    """Path to invalid material fixture."""
+    return str(materials_fixtures_dir / "invalid_material.json")
+
+
+@pytest.fixture(scope="session")
+def not_list_path(materials_fixtures_dir):
+    """Path to not list fixture."""
+    return str(materials_fixtures_dir / "not_list.json")
+
+
+@pytest.fixture(scope="session")
+def invalid_list_path(materials_fixtures_dir):
+    """Path to invalid list fixture."""
+    return str(materials_fixtures_dir / "invalid_list.json")
+
+
+@pytest.fixture(scope="session")
+def mixed_types_path(materials_fixtures_dir):
+    """Path to mixed types fixture."""
+    return str(materials_fixtures_dir / "mixed_types.json")
+
+
+@pytest.fixture(scope="session")
+def varying_properties_path(materials_fixtures_dir):
+    """Path to varying properties fixture."""
+    return str(materials_fixtures_dir / "varying_properties.json")
+
+
+# ============================================================================
+# Utility Fixtures
+# ============================================================================
+
 @pytest.fixture
 def capsys_disabled(capsys):
     """Disable output capture for tests that need to write to stdout.

@@ -1,0 +1,23 @@
+[
+  {
+    "name": "Steel",
+    "isotropy": 0,
+    "e": 200000000000.0,
+    "nu": 0.3,
+    "density": 7850
+  },
+  {
+    "name": "Aluminum",
+    "isotropy": 0,
+    "e": 70000000000.0,
+    "nu": 0.33,
+    "density": 2700
+  },
+  {
+    "name": "Titanium",
+    "isotropy": 0,
+    "e": 110000000000.0,
+    "nu": 0.34,
+    "density": 4500
+  }
+]

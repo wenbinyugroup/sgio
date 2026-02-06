@@ -6,7 +6,7 @@ Overall, this module is similar to meshio._helpers.py.
 from __future__ import annotations
 
 import logging
-from typing import Callable, Optional, Union
+from typing import Callable, Optional, Union, Any, IO
 
 import numpy as np
 from numpy.typing import ArrayLike
@@ -42,9 +42,26 @@ sgmesh_ext_to_filetypes: dict[str, list[str]] = {}
 
 
 def register_sgmesh_format(
-    format_name: str, extensions: list[str], reader, writer
+    format_name: str, extensions: list[str], reader: Optional[Callable], writer: Optional[Callable]
 ) -> None:
-    """
+    """Register a custom SGMesh file format with reader and writer functions.
+    
+    Parameters
+    ----------
+    format_name : str
+        Name identifier for the file format (e.g., 'vabs', 'swiftcomp').
+    extensions : list of str
+        List of file extensions associated with this format (e.g., ['.vab', '.dat']).
+    reader : callable or None
+        Function to read files in this format. Should accept file object and return SGMesh.
+    writer : callable or None
+        Function to write files in this format. Should accept file object and SGMesh.
+        
+    Examples
+    --------
+    >>> def my_reader(f): return SGMesh(...)
+    >>> def my_writer(f, mesh): ...
+    >>> register_sgmesh_format('custom', ['.cst'], my_reader, my_writer)
     """
     for ext in extensions:
         if ext not in sgmesh_ext_to_filetypes:
@@ -58,20 +75,33 @@ def register_sgmesh_format(
         sgmesh_writer_map[format_name] = writer
 
 
-def read_sgmesh_buffer(file, file_format:str|None, **kwargs) -> SGMesh | Mesh | None:
-    """Read the mesh data from an SG file.
+def read_sgmesh_buffer(file: IO, file_format: Optional[str], **kwargs) -> Union[SGMesh, Mesh, None]:
+    """Read mesh data from a file buffer using specified format.
 
     Parameters
     ----------
     file : file-like object
-        The file-like object to read.
-    file_format : str, optional
-        The format of the file to read.
+        The file buffer to read from (must support read operations).
+    file_format : str or None
+        Format identifier (e.g., 'vabs', 'gmsh'). Required when reading from buffer.
+    **kwargs : dict
+        Additional keyword arguments passed to the format-specific reader function.
 
     Returns
     -------
-    mesh : SGMesh | Mesh
-        The SG mesh data.
+    SGMesh or Mesh or None
+        The mesh data read from file. Returns SGMesh for SG-specific formats,
+        meshio.Mesh for standard formats, or None if reading fails.
+        
+    Raises
+    ------
+    ValueError
+        If file_format is None or if the format is not recognized.
+        
+    Examples
+    --------
+    >>> with open('mesh.vab', 'r') as f:
+    ...     mesh = read_sgmesh_buffer(f, 'vabs')
     """
 
     if file_format is None:
@@ -92,17 +122,30 @@ def read_sgmesh_buffer(file, file_format:str|None, **kwargs) -> SGMesh | Mesh | 
 
 
 
-def write_sgmesh_buffer(file, mesh:SGMesh, file_format:str|None, **kwargs) -> None:
-    """Write the mesh data to an SG file.
+def write_sgmesh_buffer(file: IO, mesh: SGMesh, file_format: Optional[str], **kwargs) -> None:
+    """Write mesh data to a file buffer using specified format.
 
     Parameters
     ----------
     file : file-like object
-        The file-like object to write to.
+        The file buffer to write to (must support write operations).
     mesh : SGMesh
         The mesh data to write.
-    file_format : str, optional
-        The format of the file to write.
+    file_format : str or None
+        Format identifier (e.g., 'vabs', 'gmsh'). Required when writing to buffer.
+    **kwargs : dict
+        Additional keyword arguments passed to the format-specific writer function.
+        
+    Raises
+    ------
+    ValueError
+        If file_format is None or if the format is not recognized.
+        
+    Examples
+    --------
+    >>> mesh = SGMesh(points=..., cells=...)
+    >>> with open('output.vab', 'w') as f:
+    ...     write_sgmesh_buffer(f, mesh, 'vabs')
     """
 
     if file_format is None:
@@ -122,17 +165,33 @@ def write_sgmesh_buffer(file, mesh:SGMesh, file_format:str|None, **kwargs) -> No
 
 
 
-def addPointDictDataToMesh(name:str|list, dict_data:dict[int, list], mesh:SGMesh):
-    """Add point/node data (dictionary) to point_data of mesh.
+def add_point_dict_data_to_mesh(name: Union[str, list], dict_data: dict[int, list], mesh: SGMesh) -> None:
+    """Add point/node data from dictionary to mesh.point_data.
 
-    Parameters:
-    -----------
-    name:
-        Name(s) of the point data. If it is a list, then it should have the same length as data for each node.
-    dict_data:
-        Data in the dictionary form {nid: data}.
-    mesh:
-        Mesh where the point data will be added.
+    Parameters
+    ----------
+    name : str or list of str
+        Name(s) of the point data fields to add.
+        If list, must match the length of data values per node.
+    dict_data : dict[int, list]
+        Mapping from node ID to data values.
+        Format: {node_id: value} for single component or {node_id: [val1, val2, ...]} for multiple.
+    mesh : SGMesh
+        Target mesh object. Data will be added to mesh.point_data attribute.
+        
+    Notes
+    -----
+    Node IDs in dict_data are 1-indexed, but will be converted to 0-indexed for mesh storage.
+    
+    Examples
+    --------
+    >>> # Single component
+    >>> data = {1: 1.5, 2: 2.5, 3: 3.5}
+    >>> add_point_dict_data_to_mesh('temperature', data, mesh)
+    
+    >>> # Multiple components
+    >>> data = {1: [1.0, 2.0], 2: [3.0, 4.0]}
+    >>> add_point_dict_data_to_mesh(['u', 'v'], data, mesh)
     """
 
     npoints = len(mesh.points)
@@ -161,150 +220,164 @@ def addPointDictDataToMesh(name:str|list, dict_data:dict[int, list], mesh:SGMesh
             _data = _point_data_all[_i]
             mesh.point_data[_name] = np.array(_data)
 
-    return
 
 
 
-
-def addCellDictDataToMesh(name:str|list, dict_data:dict[int, list], mesh:SGMesh):
-    """Add cell/element data (dictionary) to cell_data or cell_point_data of mesh.
-
-    The mesh should contain a map between (cell_type, index) and element id.
-
-    Parameters:
-    -----------
-    name:
-        Name(s) of the cell data. If it is a list, then it should have the same length as data list for each element.
-    dict_data:
-        Data in the dictionary form {eid: data}.
-        For element data: {eid: [comp1, comp2, ...]}
-        For element_node data: {eid: [[comp1_n1, comp2_n1, ...], [comp1_n2, comp2_n2, ...], ...]}
-    mesh:
-        Mesh where the cell data will be added.
-
-    Note:
-    -----
-    Element data (flat lists) will be added to mesh.cell_data.
-    Element_node data (nested lists) will be added to mesh.cell_point_data.
-
-    """
-
-    _cell_data_eid = mesh.cell_data['element_id']
-
-    # Detect if data is element_node data (nested lists) or element data (flat lists)
-    # Check the first element's data structure
+def _is_element_node_data(dict_data: dict[int, list]) -> bool:
+    """Check if data structure represents element-node data (nested) or element data (flat)."""
     first_eid = next(iter(dict_data))
     first_data = dict_data[first_eid]
-    is_element_node_data = isinstance(first_data, list) and len(first_data) > 0 and isinstance(first_data[0], list)
+    return isinstance(first_data, list) and len(first_data) > 0 and isinstance(first_data[0], list)
 
-    if is_element_node_data:
-        # Add element_node data to cell_point_data
-        _addCellPointDictDataToMesh(name, dict_data, mesh)
+
+def _add_single_component_cell_data(name: str, dict_data: dict[int, list], cell_data_eid: list) -> list:
+    """Build cell data array for a single component."""
+    cell_data = []
+    for typei_ids in cell_data_eid:
+        typei_data = []
+        for eid in typei_ids:
+            typei_data.append(dict_data[eid])
+        cell_data.append(typei_data)
+    return cell_data
+
+
+def _add_multi_component_cell_data(names: list, dict_data: dict[int, list], cell_data_eid: list) -> dict:
+    """Build cell data arrays for multiple components."""
+    ncomps = len(names)
+    cell_data_all = [[] for _ in range(ncomps)]
+
+    for typei_ids in cell_data_eid:
+        typei_data_all = [[] for _ in range(ncomps)]
+
+        for eid in typei_ids:
+            data_all = dict_data[eid]
+            for k, data in enumerate(data_all):
+                typei_data_all[k].append(data)
+
+        for l in range(ncomps):
+            cell_data_all[l].append(typei_data_all[l])
+
+    return {name: cell_data_all[i] for i, name in enumerate(names)}
+
+
+def add_cell_dict_data_to_mesh(name: Union[str, list], dict_data: dict[int, list], mesh: SGMesh) -> None:
+    """Add cell/element data from dictionary to mesh.cell_data or mesh.cell_point_data.
+
+    Automatically detects data type (element vs element-node) and adds to appropriate attribute.
+    The mesh must contain 'element_id' in cell_data for mapping.
+
+    Parameters
+    ----------
+    name : str or list of str
+        Name(s) of the cell data fields to add.
+        If list, must match the number of components in the data.
+    dict_data : dict[int, list or list of list]
+        Mapping from element ID to data values.
+        For element data (flat): {eid: [comp1, comp2, ...]}
+        For element-node data (nested): {eid: [[comp1_n1, comp2_n1, ...], [comp1_n2, comp2_n2, ...], ...]}
+    mesh : SGMesh
+        Target mesh object. Must have mesh.cell_data['element_id'] defined.
+
+    Notes
+    -----
+    - Element data (flat lists) → added to mesh.cell_data
+    - Element-node data (nested lists) → added to mesh.cell_point_data
+    - Detection is automatic based on first element's data structure
+    
+    Examples
+    --------
+    >>> # Element data (one value per element)
+    >>> data = {1: [100.0], 2: [200.0]}
+    >>> add_cell_dict_data_to_mesh('material_id', data, mesh)
+    
+    >>> # Element-node data (values at each node of each element)
+    >>> data = {1: [[1.0, 2.0], [3.0, 4.0]], 2: [[5.0, 6.0], [7.0, 8.0]]}
+    >>> add_cell_dict_data_to_mesh(['stress_x', 'stress_y'], data, mesh)
+    """
+    cell_data_eid = mesh.cell_data['element_id']
+
+    # Detect and route to appropriate handler
+    if _is_element_node_data(dict_data):
+        _add_cell_point_dict_data_to_mesh(name, dict_data, mesh)
         return
 
+    # Add element data to cell_data
     if isinstance(name, str):
-        _cell_data = []
-
-        for _i, _typei_ids in enumerate(_cell_data_eid):
-            _typei_data = []
-
-            for _j, _eid in enumerate(_typei_ids):
-                _data = dict_data[_eid]
-                _typei_data.append(_data)
-
-            _cell_data.append(_typei_data)
-
-        mesh.cell_data[name] = _cell_data
-
-
+        mesh.cell_data[name] = _add_single_component_cell_data(name, dict_data, cell_data_eid)
     elif isinstance(name, list):
-        ncomps = len(name)
-        _cell_data_all = []
-        for _i in range(ncomps):
-            _cell_data_all.append([])
-
-        for _i, _typei_ids in enumerate(_cell_data_eid):
-            _typei_data_all = []
-            for _ in range(ncomps):
-                _typei_data_all.append([])
-
-            for _j, _eid in enumerate(_typei_ids):
-                _data_all = dict_data[_eid]
-                # For element data: {eid: [comp1, comp2, ...]}
-                # _data_all is a flat list of components
-                for _k, _data in enumerate(_data_all):
-                    _typei_data_all[_k].append(_data)
-
-            for _l in range(ncomps):
-                _cell_data_all[_l].append(_typei_data_all[_l])
-
-        for _i, _name in enumerate(name):
-            _data = _cell_data_all[_i]
-            mesh.cell_data[_name] = _data
-
-    return
+        result = _add_multi_component_cell_data(name, dict_data, cell_data_eid)
+        for field_name, data in result.items():
+            mesh.cell_data[field_name] = data
 
 
-def _addCellPointDictDataToMesh(name:str|list, dict_data:dict[int, list], mesh:SGMesh):
-    """Add cell point (element nodal) data (dictionary) to cell_point_data of mesh.
+def _build_single_component_cell_point_data(dict_data: dict[int, list], cell_data_eid: list) -> list:
+    """Build cell point data array for a single component (all values together)."""
+    cell_point_data = []
+    for typei_ids in cell_data_eid:
+        typei_data = []
+        for eid in typei_ids:
+            typei_data.append(dict_data[eid])
+        cell_point_data.append(np.array(typei_data))
+    return cell_point_data
 
-    The mesh should contain a map between (cell_type, index) and element id.
 
-    Parameters:
-    -----------
-    name:
-        Name(s) of the cell point data. If it is a list, then it should have the same
-        length as the number of components in the data.
-    dict_data:
-        Data in the dictionary form {eid: [[comp1_n1, comp2_n1, ...], [comp1_n2, comp2_n2, ...], ...]}.
-        Each element has a list of nodes, and each node has a list of component values.
-    mesh:
-        Mesh where the cell point data will be added.
+def _build_multi_component_cell_point_data(names: list, dict_data: dict[int, list], cell_data_eid: list) -> dict:
+    """Build cell point data arrays for multiple components (transposed structure)."""
+    result = {}
+    for comp_idx, comp_name in enumerate(names):
+        cell_point_data = []
+        for typei_ids in cell_data_eid:
+            typei_data = []
+            for eid in typei_ids:
+                elem_node_data = dict_data[eid]
+                comp_values = [node_data[comp_idx] for node_data in elem_node_data]
+                typei_data.append(comp_values)
+            cell_point_data.append(np.array(typei_data))
+        result[comp_name] = cell_point_data
+    return result
 
+
+def _add_cell_point_dict_data_to_mesh(name: Union[str, list], dict_data: dict[int, list], mesh: SGMesh) -> None:
+    """Add element-node (cell point) data from dictionary to mesh.cell_point_data.
+
+    Helper function for adding nodal values per element to mesh.
+    The mesh must contain 'element_id' in cell_data for mapping.
+
+    Parameters
+    ----------
+    name : str or list of str
+        Name(s) of the cell point data fields to add.
+        If list, must match the number of components per node.
+    dict_data : dict[int, list of list]
+        Mapping from element ID to node-wise data.
+        Format: {eid: [[comp1_n1, comp2_n1, ...], [comp1_n2, comp2_n2, ...], ...]}
+        Each element maps to a list of nodes, each node has component values.
+    mesh : SGMesh
+        Target mesh object. Must have mesh.cell_data['element_id'] defined.
+        
+    Notes
+    -----
+    This is a private helper function called by add_cell_dict_data_to_mesh.
+    Data structure is transposed when multiple component names are provided.
+    
+    Examples
+    --------
+    >>> # Single field name (all components together)
+    >>> data = {1: [[1.0, 2.0], [3.0, 4.0]]}  # 2 nodes, 2 components each
+    >>> _add_cell_point_dict_data_to_mesh('displacement', data, mesh)
+    
+    >>> # Multiple field names (components separated)
+    >>> data = {1: [[1.0, 2.0], [3.0, 4.0]]}  # 2 nodes, 2 components each
+    >>> _add_cell_point_dict_data_to_mesh(['disp_x', 'disp_y'], data, mesh)
     """
-    import numpy as np
-
-    _cell_data_eid = mesh.cell_data['element_id']
+    cell_data_eid = mesh.cell_data['element_id']
 
     if isinstance(name, str):
-        # Single component name - store the entire nested structure
-        _cell_point_data = []
-
-        for _i, _typei_ids in enumerate(_cell_data_eid):
-            _typei_data = []
-
-            for _j, _eid in enumerate(_typei_ids):
-                _data = dict_data[_eid]
-                _typei_data.append(_data)
-
-            _cell_point_data.append(np.array(_typei_data))
-
-        mesh.cell_point_data[name] = _cell_point_data
-
+        mesh.cell_point_data[name] = _build_single_component_cell_point_data(dict_data, cell_data_eid)
     elif isinstance(name, list):
-        # Multiple component names - transpose the data structure
-        # From: {eid: [[comp1_n1, comp2_n1, ...], [comp1_n2, comp2_n2, ...], ...]}
-        # To: For each component, create: [[[comp_n1_e1, comp_n2_e1, ...], ...], ...]
-
-        ncomps = len(name)
-
-        for comp_idx, comp_name in enumerate(name):
-            _cell_point_data = []
-
-            for _i, _typei_ids in enumerate(_cell_data_eid):
-                _typei_data = []
-
-                for _j, _eid in enumerate(_typei_ids):
-                    _elem_node_data = dict_data[_eid]
-                    # Extract component comp_idx from all nodes of this element
-                    _comp_values = [node_data[comp_idx] for node_data in _elem_node_data]
-                    _typei_data.append(_comp_values)
-
-                _cell_point_data.append(np.array(_typei_data))
-
-            mesh.cell_point_data[comp_name] = _cell_point_data
-
-    return
+        result = _build_multi_component_cell_point_data(name, dict_data, cell_data_eid)
+        for field_name, data in result.items():
+            mesh.cell_point_data[field_name] = data
 
 
 
@@ -313,10 +386,38 @@ def _addCellPointDictDataToMesh(name:str|list, dict_data:dict[int, list], mesh:S
 # Readers
 
 
-def _read_nodes(f, nnodes:int, sgdim:int=3):
+def _read_nodes(f: IO, nnodes: int, sgdim: int = 3) -> tuple[np.ndarray, dict[int, int], str]:
+    """Read node coordinates from SG format file.
+    
+    Parameters
+    ----------
+    f : file-like object
+        File buffer to read from (must support readline).
+    nnodes : int
+        Number of nodes to read.
+    sgdim : int, optional
+        Spatial dimension (1, 2, or 3), default is 3.
+        
+    Returns
+    -------
+    points : np.ndarray
+        Array of node coordinates with shape (nnodes, 3).
+        Coordinates are padded with 0.0 for dimensions < 3.
+    point_ids : dict[int, int]
+        Mapping from original node ID to 0-indexed array position.
+    line : str
+        Last line read (for continued parsing).
+        
+    Notes
+    -----
+    - Skips comment lines (lines starting with '!' or empty lines)
+    - Node IDs can be non-sequential
+    - Returned points are always 3D (padded with zeros if sgdim < 3)
+    """
     points = []
     point_ids = {}
     counter = 0
+    line = ""
     while counter < nnodes:
         line = f.readline()
         line = line.split('!')[0].strip()
@@ -329,13 +430,33 @@ def _read_nodes(f, nnodes:int, sgdim:int=3):
         points.append([0.0,]*(3-sgdim)+[float(x) for x in coords])
         counter += 1
 
-    return np.array(points, dtype=float), point_ids, line
+    return np.array(points, dtype=float), point_ids, " ".join(line) if isinstance(line, list) else line
 
 
 
 
 def _sg_to_meshio_order(cell_type: str, idx: ArrayLike) -> np.ndarray:
-    # TODO
+    """Convert SG cell node ordering to meshio/VTK ordering.
+    
+    Parameters
+    ----------
+    cell_type : str
+        Cell type identifier (e.g., 'tetra10', 'hexahedron20', 'wedge15').
+    idx : array-like
+        Array of node indices in SG ordering.
+        
+    Returns
+    -------
+    np.ndarray
+        Array of node indices reordered to meshio/VTK convention.
+        If cell_type is not in the mapping, returns original ordering.
+        
+    Notes
+    -----
+    Only certain higher-order cell types require reordering.
+    Linear elements (tetra4, hex8, etc.) use the same ordering.
+    """
+    # TODO: Verify ordering against latest meshio/VTK specifications
     # Gmsh cells are mostly ordered like VTK, with a few exceptions:
     meshio_ordering = {
         # fmt: off
@@ -401,28 +522,44 @@ def _sg_to_meshio_order(cell_type: str, idx: ArrayLike) -> np.ndarray:
 
 
 def _write_nodes(
-    f, points, sgdim, node_id=[], model_space='',
-    renumber_nodes:bool=False,
-    int_fmt:str='8d', float_fmt:str='20.9e'
-    ):
-    """Write nodes to file.
+    f: IO, points: np.ndarray, sgdim: int, node_id: list[int] = [], model_space: str = '',
+    renumber_nodes: bool = False,
+    int_fmt: str = '8d', float_fmt: str = '20.9e'
+) -> None:
+    """Write node coordinates to SG format file.
 
-    Parameters:
-    -----------
-    f:
-        File object.
-    points:
-        Array of points.
-    sgdim:
-        Spatial dimension.
-    node_ids:
-        List of node ids. If not provided, the node ids will be generated automatically.
-    model_space:
-        Model space. If not provided, the model space will be generated automatically.
-    int_fmt:
-        Format for integer.
-    float_fmt:
-        Format for float.
+    Parameters
+    ----------
+    f : file-like object
+        File buffer to write to (must support write operations).
+    points : np.ndarray
+        Array of node coordinates with shape (n_nodes, 3).
+    sgdim : int
+        Spatial dimension (1, 2, or 3) to write.
+    node_id : list of int, optional
+        List of original node IDs. If empty, nodes are numbered sequentially.
+    model_space : str, optional
+        Coordinate plane for lower dimensions:
+        - For sgdim=1: 'x', 'y', or 'z'
+        - For sgdim=2: 'xy', 'yz', or 'zx'
+        - For sgdim=3: ignored
+    renumber_nodes : bool, optional
+        If True, override node_id and use sequential numbering (1, 2, 3, ...).
+        Default is False.
+    int_fmt : str, optional
+        Format string for integer node IDs (default '8d').
+    float_fmt : str, optional
+        Format string for float coordinates (default '20.9e').
+        
+    Raises
+    ------
+    ValueError
+        If model_space is invalid for the given sgdim.
+        
+    Notes
+    -----
+    - Writes one node per line with format: node_id coord1 [coord2] [coord3]
+    - First line includes comment "! nodal coordinates"
     """
     sfi = '{:' + int_fmt + '}'
     sff = ''.join(['{:' + float_fmt + '}', ]*sgdim)
@@ -473,32 +610,39 @@ def _write_nodes(
 
     f.write('\n')
 
-    return
-
 
 
 
 def _meshio_to_sg_order(
-    cell_type:str, idx:ArrayLike,
-    node_id=[], renumber_nodes:bool=True
-    ):
-    """Convert meshio cell ordering to SG ordering.
+    cell_type: str, idx: ArrayLike,
+    node_id: list[int] = [], renumber_nodes: bool = True
+) -> np.ndarray:
+    """Convert meshio cell connectivity to SG format with padding and reordering.
 
-    Parameters:
-    -----------
-    cell_type:
-        Cell type.
-    idx: np.ndarray (n_cells, n_elem_nodes)
-        2D array of cell connectivity (original node ids).
-    node_id: np.ndarray (n_nodes,)
-        Array of original node ids.
-    renumber_nodes:
-        Whether to renumber nodes.
+    Parameters
+    ----------
+    cell_type : str
+        Cell type identifier (e.g., 'triangle6', 'tetra10', 'wedge15').
+    idx : array-like
+        2D array of cell connectivity with shape (n_cells, n_elem_nodes).
+        Contains original node indices (0-indexed or from node_id).
+    node_id : list of int, optional
+        Array of original node IDs for mapping. If empty and renumber_nodes=True,
+        uses sequential 1-based numbering.
+    renumber_nodes : bool, optional
+        If True, convert to 1-based node IDs. Default is True.
 
-    Returns:
-    --------
-    idx_sg: np.ndarray (n_cells, n_elem_nodes_sg)
-        Array of cell connectivity in SG ordering.
+    Returns
+    -------
+    np.ndarray
+        2D array of cell connectivity in SG format with shape (n_cells, max_nodes_sg).
+        Includes zero-padding and special zero-insertion for certain element types.
+        
+    Notes
+    -----
+    - SG format uses fixed-width cell connectivity with zero-padding
+    - Some elements (triangle6, tetra10, wedge15) insert a zero at specific position
+    - Maximum nodes per cell: line=5, triangle/quad=9, tetra/wedge/hex=20
     """
     idx_sg = np.asarray(idx)
     if renumber_nodes:

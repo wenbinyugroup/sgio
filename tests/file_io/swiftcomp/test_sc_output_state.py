@@ -13,7 +13,7 @@ import yaml
 from sgio import (
     read,
     readOutputState,
-    addCellDictDataToMesh,
+    add_cell_dict_data_to_mesh,
     write,
     logger,
 )
@@ -92,19 +92,19 @@ def test_swiftcomp_output_state_dehomogenization(fn_test_cases, test_data_dir, t
             
             # Element strain in global coordinate
             _name = [f'case{j+1}_{name}' for name in NAME_E]
-            addCellDictDataToMesh(_name, state_case.getState('e').data, sg.mesh)
+            add_cell_dict_data_to_mesh(_name, state_case.getState('e').data, sg.mesh)
             
             # Element strain in material coordinate
             _name = [f'case{j+1}_{name}' for name in NAME_EM]
-            addCellDictDataToMesh(_name, state_case.getState('em').data, sg.mesh)
+            add_cell_dict_data_to_mesh(_name, state_case.getState('em').data, sg.mesh)
             
             # Element stress in global coordinate
             _name = [f'case{j+1}_{name}' for name in NAME_S]
-            addCellDictDataToMesh(_name, state_case.getState('s').data, sg.mesh)
+            add_cell_dict_data_to_mesh(_name, state_case.getState('s').data, sg.mesh)
             
             # Element stress in material coordinate
             _name = [f'case{j+1}_{name}' for name in NAME_SM]
-            addCellDictDataToMesh(_name, state_case.getState('sm').data, sg.mesh)
+            add_cell_dict_data_to_mesh(_name, state_case.getState('sm').data, sg.mesh)
 
         # Write output if specified
         if 'fn_out' in _case.keys():

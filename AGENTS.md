@@ -9,14 +9,20 @@ This document provides essential information for AI coding agents working on the
 - **Python Version**: Requires Python >= 3.9
 - **Install Dependencies**: `uv sync` or `pip install -e .`
 
+Ignore the following files and directories with the name containing `temp`, `archive`, `legacy`, `old`, `backup`, `~`, or `#`.
+
 ## Build and Test Commands
 
 ### Testing
+
+Activate virtual environment first or use `uv run` to run the following commands:
+
 ```bash
 # Run all tests
 pytest
 
 # Run all tests with verbose output (tests are configured with -v by default)
+# pytest configuration is in tests/pytest.ini
 pytest tests/
 
 # Run a single test file

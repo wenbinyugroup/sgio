@@ -1,0 +1,12 @@
+{
+  "name": "Empty Material",
+  "isotropy": 0,
+  "density": 0,
+  "temperature": 0,
+  "strength_measure": 0,
+  "char_len": 0,
+  "specific_heat": 0,
+  "failure_criterion": 0,
+  "d_thetatheta": 0,
+  "f_eff": 0
+}

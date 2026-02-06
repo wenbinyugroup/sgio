@@ -5,7 +5,7 @@ from . import (
     vabs,
 )
 
-from ._meshio import addCellDictDataToMesh, addPointDictDataToMesh
+from ._meshio import add_cell_dict_data_to_mesh, add_point_dict_data_to_mesh
 from .main import (
     convert,
     read, readLoadCsv, readOutput, readOutputModel, readOutputState,

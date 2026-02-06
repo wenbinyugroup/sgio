@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import json
+from pathlib import Path
 from typing import Iterable, Optional, List, Literal, Sequence, Union, cast
 
 FloatSequence = Sequence[float]
@@ -886,7 +888,143 @@ class CauchyContinuumModel(BaseModel):
 
         return
 
+    def write_to_json(self, file_path: str, *, exclude_none: bool = True, indent: Optional[int] = None) -> None:
+        """Write the material model to a JSON file.
+        
+        Parameters
+        ----------
+        file_path : str
+            Path to the JSON file where the material will be saved
+        exclude_none : bool, optional
+            Whether to exclude None values from the JSON output. Defaults to True.
+        indent : Optional[int], optional
+            Number of spaces for JSON indentation. If None, compact JSON is written.
+            Defaults to None.
+            
+        Raises
+        ------
+        OSError
+            If the file cannot be written
+        ValueError
+            If the file path is invalid
+            
+        Examples
+        --------
+        >>> mat = CauchyContinuumModel(name="Steel", isotropy=0, e=200e9, nu=0.3, density=7850)
+        >>> mat.write_to_json("steel.json")
+        >>> mat.write_to_json("steel_pretty.json", indent=2)
+        """
+        path = Path(file_path)
+        
+        # Create parent directories if they don't exist
+        path.parent.mkdir(parents=True, exist_ok=True)
+        
+        # Convert model to dictionary, excluding None values by default
+        data = self.model_dump(exclude_none=exclude_none)
+        
+        with open(path, 'w', encoding='utf-8') as f:
+            json.dump(data, f, indent=indent, ensure_ascii=False)
+
 
 # Backward-compatible alias retained for downstream imports
 CauchyContinuumModelNew = CauchyContinuumModel
+
+
+def read_material_from_json(file_path: str) -> CauchyContinuumModel:
+    """Read a single material from a JSON file.
+    
+    Parameters
+    ----------
+    file_path : str
+        Path to the JSON file containing a material dictionary
+        
+    Returns
+    -------
+    CauchyContinuumModel
+        Material model object created from the JSON data
+        
+    Raises
+    ------
+    FileNotFoundError
+        If the specified file does not exist
+    ValueError
+        If the JSON is invalid or does not represent a single material
+    TypeError
+        If the JSON content is not a dictionary
+        
+    Examples
+    --------
+    >>> # JSON file: {"name": "Steel", "isotropy": 0, "e": 200e9, "nu": 0.3, "density": 7850}
+    >>> mat = read_material_from_json("steel.json")
+    >>> mat.name
+    'Steel'
+    >>> mat.e1
+    200000000000.0
+    """
+    path = Path(file_path)
+    
+    if not path.exists():
+        raise FileNotFoundError(f'File not found: {file_path}')
+    
+    with open(path, 'r', encoding='utf-8') as f:
+        data = json.load(f)
+    
+    if not isinstance(data, dict):
+        raise TypeError(f'Expected JSON dictionary for single material, got {type(data).__name__}')
+    
+    return CauchyContinuumModel(**data)
+
+
+def read_materials_from_json(file_path: str) -> List[CauchyContinuumModel]:
+    """Read multiple materials from a JSON file.
+    
+    Parameters
+    ----------
+    file_path : str
+        Path to the JSON file containing a list of material dictionaries
+        
+    Returns
+    -------
+    List[CauchyContinuumModel]
+        List of material model objects created from the JSON data
+        
+    Raises
+    ------
+    FileNotFoundError
+        If the specified file does not exist
+    ValueError
+        If the JSON is invalid
+    TypeError
+        If the JSON content is not a list
+        
+    Examples
+    --------
+    >>> # JSON file: [{"name": "Steel", "isotropy": 0, "e": 200e9, "nu": 0.3},
+    >>> #              {"name": "Aluminum", "isotropy": 0, "e": 70e9, "nu": 0.33}]
+    >>> materials = read_materials_from_json("materials.json")
+    >>> len(materials)
+    2
+    >>> materials[0].name
+    'Steel'
+    >>> materials[1].name
+    'Aluminum'
+    """
+    path = Path(file_path)
+    
+    if not path.exists():
+        raise FileNotFoundError(f'File not found: {file_path}')
+    
+    with open(path, 'r', encoding='utf-8') as f:
+        data = json.load(f)
+    
+    if not isinstance(data, list):
+        raise TypeError(f'Expected JSON list for multiple materials, got {type(data).__name__}')
+    
+    materials = []
+    for i, mat_data in enumerate(data):
+        if not isinstance(mat_data, dict):
+            raise TypeError(f'Material at index {i} is not a dictionary: {type(mat_data).__name__}')
+        materials.append(CauchyContinuumModel(**mat_data))
+    
+    return materials
 

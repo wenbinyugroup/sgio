@@ -31,8 +31,8 @@ from .iofunc import (
     write,
     convert,
     readLoadCsv,
-    addCellDictDataToMesh,
-    addPointDictDataToMesh,
+    add_cell_dict_data_to_mesh,
+    add_point_dict_data_to_mesh,
     # write_points_cells,
     # register_format,
     # deregister_format,
@@ -63,8 +63,8 @@ __all__ = [
     "write",
     "convert",
     "readLoadCsv",
-    "addCellDictDataToMesh",
-    "addPointDictDataToMesh",
+    "add_cell_dict_data_to_mesh",
+    "add_point_dict_data_to_mesh",
     # Execution
     "run",
     # Core functions and classes
