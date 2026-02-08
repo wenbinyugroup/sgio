@@ -193,28 +193,36 @@ def read_output_buffer(
 def write_buffer(
     sg:StructureGene, file, analysis='h', sg_fmt:int=1, model=0,
     model_space='', prop_ref_y='x',
-    renumber_nodes=False, renumber_elements=False,
     macro_responses:list[smdl.StateCase]=[],
     sfi:str='8d', sff:str='20.12e', version=None,
     **kwargs
     ):
-    """Write analysis input
+    """Write analysis input.
 
     Parameters
     ----------
-    fn : str
-        Name of the input file
-    file_format : {'vabs' (or 'v'), 'swfitcomp' (or 'sc', 's')}
-        file_format of the analysis
-    analysis : {0, 1, 2, 3, '', 'h', 'dn', 'dl', 'd', 'l', 'fi'}, optional
-        Analysis type, by default 'h'
-    sg_fmt : {0, 1}, optional
-        Format for the VABS input, by default 1
-
-    Returns
-    -------
-    str
-        Name of the input file
+    sg : StructureGene
+        The structure gene object to write.
+    file : file-like
+        Output file buffer.
+    analysis : str, optional
+        Analysis type, by default 'h'.
+    sg_fmt : int, optional
+        Format for the VABS input, by default 1.
+    model : int, optional
+        Model identifier, by default 0.
+    model_space : str, optional
+        Model coordinate space, by default ''.
+    prop_ref_y : str, optional
+        Reference axis for property orientation, by default 'x'.
+    macro_responses : list of StateCase, optional
+        Macro-level responses.
+    sfi : str, optional
+        Integer format string, by default '8d'.
+    sff : str, optional
+        Float format string, by default '20.12e'.
+    version : optional
+        Format version.
     """
 
     if sg is None:
@@ -239,8 +247,6 @@ def write_buffer(
             sg, file, analysis,
             timoshenko_flag, vlasov_flag, trapeze_flag, thermal_flag,
             model_space=model_space, prop_ref_y=prop_ref_y,
-            renumber_nodes=renumber_nodes,
-            renumber_elements=renumber_elements,
             sg_fmt=sg_fmt,
             sfi=sfi, sff=sff, version=version)
 
@@ -269,7 +275,6 @@ def writeInputBuffer(
     sg, file, analysis,
     timoshenko_flag, vlasov_flag, trapeze_flag, thermal_flag,
     model_space='', prop_ref_y='x',
-    renumber_nodes=False, renumber_elements=False,
     sg_fmt:int=1,
     sfi:str='8d', sff:str='20.12e', version=None):
     """
@@ -320,8 +325,6 @@ def writeInputBuffer(
     _writeMesh(
         sg.mesh, file,
         model_space=model_space, prop_ref_y=prop_ref_y,
-        renumber_nodes=renumber_nodes,
-        renumber_elements=renumber_elements,
         int_fmt=sfi, float_fmt=sff)
 
     # if not mesh_only:

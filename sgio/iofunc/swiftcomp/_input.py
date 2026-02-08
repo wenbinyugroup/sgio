@@ -250,18 +250,13 @@ def _readThermalProperty(file, isotropy:int):
 def writeInputBuffer(
     sg, file, analysis, physics,
     model_space, prop_ref_y,
-    renumber_nodes=False, renumber_elements=False,
     sfi:str='8d', sff:str='20.12e', version=None):
     """
     """
 
     logger.debug(f'writing sg input...')
 
-    # print(sg)
-
     ssff = '{:' + sff + '}'
-    # if not version is None:
-    #     sg.version = sutl.Version(version)
     sg.version = version
 
     logger.debug('format version: {}'.format(sg.version))
@@ -274,8 +269,6 @@ def writeInputBuffer(
         sgdim=sg.sgdim,
         model_space=model_space,
         prop_ref_y=prop_ref_y,
-        renumber_nodes=renumber_nodes,
-        renumber_elements=renumber_elements,
         int_fmt=sfi, float_fmt=sff
         )
 
@@ -366,17 +359,14 @@ def writeInputBufferGlobal(
 
 def _writeMesh(
     mesh, file, sgdim, model_space, prop_ref_y='x',
-    renumber_nodes=False, renumber_elements=False,
     int_fmt='8d', float_fmt='20.12e'
     ):
-    """
-    """
+    """Write mesh data to SwiftComp format."""
     logger.debug('writing mesh...')
 
     write_buffer(
         file, mesh, sgdim=sgdim,
         model_space=model_space, prop_ref_y=prop_ref_y,
-        renumber_nodes=renumber_nodes, renumber_elements=renumber_elements,
         int_fmt=int_fmt, float_fmt=float_fmt)
 
     return

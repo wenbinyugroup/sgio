@@ -69,6 +69,7 @@ make clean                  # Clean build files
   - `tests/integration/` - Integration tests
 - **Test Discovery**: Files matching `test_*.py`, classes `Test*`, functions `test_*`
 - **Test Markers**: Use `@pytest.mark.unit`, `@pytest.mark.integration`, etc.
+- **Test Fixtures**: `tests/conftest.py`
 - **Pytest Config**: `tests/pytest.ini`
 
 ## Code Style Guidelines
@@ -206,41 +207,8 @@ from sgio.model.solid import CauchyContinuumModel
       assert len(result) == 6
   ```
 
-## Common Patterns
-
-### Parameter Aliases
-Support both canonical and alias names:
-```python
-@staticmethod
-def _resolve_aliases(data: dict) -> dict:
-    """Map aliases to canonical names."""
-    aliases = {'e': 'e1', 'nu': 'nu12'}
-    for alias, canonical in aliases.items():
-        if alias in data and canonical not in data:
-            data[canonical] = data.pop(alias)
-    return data
-```
-
-### Property Aliases
-Provide convenient property accessors:
-```python
-@property
-def e(self) -> Optional[float]:
-    """Alias for e1 (Young's modulus)."""
-    return self.e1
-
-@e.setter
-def e(self, value: float) -> None:
-    self.e1 = float(value)
-```
-
 ## Git Workflow
 - Create feature branches from main
 - Write tests before implementing features
 - Ensure all tests pass before committing
 - Use descriptive commit messages
-
-## Additional Resources
-- Documentation: https://wenbinyugroup.github.io/sgio/
-- GitHub: https://github.com/wenbinyugroup/sgio
-- Issues: Report bugs and feature requests on GitHub

@@ -216,17 +216,14 @@ def _readElasticProperty(file, isotropy:int):
 
 def _writeMesh(
     mesh, file, model_space='', prop_ref_y='x',
-    renumber_nodes=False, renumber_elements=False,
     int_fmt='8d', float_fmt='20.12e'
     ):
-    """
-    """
+    """Write mesh data to VABS format."""
     logger.debug('writing mesh...')
 
     write_buffer(
         file, mesh,
         sgdim=2, model_space=model_space, prop_ref_y=prop_ref_y,
-        renumber_nodes=renumber_nodes, renumber_elements=renumber_elements,
         int_fmt=int_fmt, float_fmt=float_fmt
     )
 

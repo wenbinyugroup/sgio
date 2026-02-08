@@ -14,12 +14,12 @@ import sgio.iofunc.swiftcomp as _swiftcomp
 import sgio.iofunc.vabs as _vabs
 import sgio.model as sgmodel
 from sgio.core import (
-    StructureGene,
-    renumber_elements,
-)
+	    StructureGene,
+	)
+from sgio.core.numbering import ensure_node_ids
 from sgio.utils import (
-    readNextNonEmptyLine,
-)
+	    readNextNonEmptyLine,
+	)
 
 logger = logging.getLogger(__name__)
 
@@ -69,6 +69,9 @@ def _mesh_to_sg(mesh: Mesh, sgdim: int = 3, model_type: str = 'SD1') -> Structur
     sg.smdim = smdim
     sg.model = _submodel
     sg.mesh = mesh
+
+    # Ensure node_id point_data exists (e.g., for gmsh/meshio readers)
+    ensure_node_ids(mesh)
 
     # Ensure element_id cell_data exists (generate if missing)
     if 'element_id' not in mesh.cell_data:
@@ -728,12 +731,11 @@ def write(
     sg:StructureGene, fn:str, file_format:str,
     format_version:str='', analysis:str='h', sg_format:int=1,
     model_space:str='', prop_ref_y:str='x',
-    renumber_nodes:bool=False, renumber_elements:bool=False,
     macro_responses:list[sgmodel.StateCase]=[], model_type:str='SD1',
     load_type:int=0, sfi:str='8d', sff:str='20.12e', mesh_only:bool=False,
     binary:bool=False
 ) -> str:
-    """Write analysis input
+    """Write analysis input.
 
     Parameters
     ----------
@@ -761,20 +763,13 @@ def write(
     model_type : str
         Type of the macro structural model.
         Default is 'SD1'.
-        Choose one from
-
-        * 'SD1': Cauchy continuum model
-        * 'PL1': Kirchhoff-Love plate/shell model
-        * 'PL2': Reissner-Mindlin plate/shell model
-        * 'BM1': Euler-Bernoulli beam model
-        * 'BM2': Timoshenko beam model
     load_type : int, optional
         Type of the load. Default is 0
-    sfi
-        String formating integers. Default is '8d'
-    sff
-        String formating floats. Default is '20.12e'
-    mesh_only
+    sfi : str, optional
+        String formatting integers. Default is '8d'
+    sff : str, optional
+        String formatting floats. Default is '20.12e'
+    mesh_only : bool, optional
         If write meshing data only. Default is False
     """
 
@@ -804,8 +799,6 @@ def write(
                 analysis=analysis, model=model_type,
                 macro_responses=macro_responses,
                 model_space=model_space, prop_ref_y=prop_ref_y,
-                renumber_nodes=renumber_nodes,
-                renumber_elements=renumber_elements,
                 load_type=load_type,
                 sfi=sfi, sff=sff, version=format_version
             )
@@ -819,8 +812,6 @@ def write(
                 analysis=analysis, sg_format=sg_format,
                 macro_responses=macro_responses, model=model_type,
                 model_space=model_space, prop_ref_y=prop_ref_y,
-                renumber_nodes=renumber_nodes,
-                renumber_elements=renumber_elements,
                 sfi=sfi, sff=sff, version=format_version,
                 mesh_only=mesh_only
             )
@@ -942,8 +933,11 @@ def convert(
     if sg is None:
         raise ValueError("Input file is not a valid SG file.")
 
-    if renum_elem:
-        renumber_elements(sg.mesh)
+    if renum_node or renum_elem:
+        logger.warning(
+			"Parameters renum_node/renum_elem are deprecated and ignored. "
+			"Numbering is now handled automatically based on format requirements."
+		)
 
     write(
         sg=sg,
@@ -954,8 +948,6 @@ def convert(
         sg_format=vabs_format_version,
         model_space=model_space,
         prop_ref_y=prop_ref_y,
-        renumber_nodes=renum_node,
-        renumber_elements=renum_elem,
         model_type=model_type,
         sfi=str_format_int,
         sff=str_format_float,

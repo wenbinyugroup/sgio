@@ -7,7 +7,7 @@ from pathlib import Path
 import numpy as np
 
 import sgio
-from sgio.core.mesh import check_cell_ordering, fix_cell_ordering
+from sgio.core.mesh import check_cell_ordering, fix_cell_ordering, renumber_elements
 
 
 @pytest.mark.unit
@@ -218,4 +218,109 @@ def test_fix_cell_ordering_tetra4_invalid():
     assert np.array_equal(fixed[(0, 'tetra')], np.array([0]))
     assert np.array_equal(mesh.cells[0].data, np.array([[2, 0, 1, 3]]))
     assert check_cell_ordering(mesh) == {}
+
+
+# ============================================================================
+# Test renumber_elements error handling
+# ============================================================================
+
+@pytest.mark.unit
+def test_renumber_elements_no_cell_data():
+    """Test renumber_elements raises error when mesh has no cell_data."""
+    points = np.array([[0, 0, 0], [1, 0, 0], [0, 1, 0]], dtype=float)
+    cells = [('triangle', np.array([[0, 1, 2]]))]
+    mesh = sgio.SGMesh(points, cells)
+    
+    # Remove cell_data
+    mesh.cell_data = None
+    
+    with pytest.raises(ValueError, match="Mesh does not have cell_data"):
+        renumber_elements(mesh)
+
+
+@pytest.mark.unit
+def test_renumber_elements_no_element_id():
+    """Test renumber_elements raises error when element_id missing."""
+    points = np.array([[0, 0, 0], [1, 0, 0], [0, 1, 0]], dtype=float)
+    cells = [('triangle', np.array([[0, 1, 2]]))]
+    mesh = sgio.SGMesh(points, cells, cell_data={})
+    
+    with pytest.raises(ValueError, match="does not contain 'element_id'"):
+        renumber_elements(mesh)
+    
+    with pytest.raises(ValueError, match="Consider using ensure_element_ids"):
+        renumber_elements(mesh)
+
+
+@pytest.mark.unit
+def test_renumber_elements_success():
+    """Test renumber_elements successfully renumbers elements."""
+    points = np.array([[0, 0, 0], [1, 0, 0], [0, 1, 0], [1, 1, 0]], dtype=float)
+    cells = [
+        ('triangle', np.array([[0, 1, 2]])),
+        ('triangle', np.array([[1, 3, 2], [0, 3, 1]]))
+    ]
+    cell_data = {'element_id': [[10], [20, 30]]}
+    mesh = sgio.SGMesh(points, cells, cell_data=cell_data)
+    
+    # Renumber elements
+    renumber_elements(mesh)
+    
+    # Check that elements are renumbered consecutively from 1
+    assert mesh.cell_data['element_id'][0].tolist() == [1]
+    assert mesh.cell_data['element_id'][1].tolist() == [2, 3]
+
+
+@pytest.mark.unit
+def test_renumber_elements_single_block():
+    """Test renumber_elements with single cell block."""
+    points = np.array([[0, 0, 0], [1, 0, 0], [0, 1, 0]], dtype=float)
+    cells = [('triangle', np.array([[0, 1, 2], [0, 2, 1]]))]
+    cell_data = {'element_id': [[100, 200]]}
+    mesh = sgio.SGMesh(points, cells, cell_data=cell_data)
+    
+    renumber_elements(mesh)
+    
+    assert mesh.cell_data['element_id'][0].tolist() == [1, 2]
+
+
+@pytest.mark.unit
+def test_renumber_elements_preserves_other_data():
+    """Test renumber_elements preserves other cell_data."""
+    points = np.array([[0, 0, 0], [1, 0, 0], [0, 1, 0]], dtype=float)
+    cells = [('triangle', np.array([[0, 1, 2]]))]
+    cell_data = {
+        'element_id': [[10]],
+        'property_id': [[1]]
+    }
+    mesh = sgio.SGMesh(points, cells, cell_data=cell_data)
+    
+    renumber_elements(mesh)
+    
+    # Check element_id changed
+    assert mesh.cell_data['element_id'][0].tolist() == [1]
+    # Check property_id preserved
+    assert mesh.cell_data['property_id'][0].tolist() == [1]
+
+
+@pytest.mark.unit
+def test_renumber_elements_integration_with_ensure():
+    """Test renumber_elements works with ensure_element_ids."""
+    from sgio import ensure_element_ids
+    
+    points = np.array([[0, 0, 0], [1, 0, 0], [0, 1, 0]], dtype=float)
+    cells = [('triangle', np.array([[0, 1, 2], [0, 2, 1]]))]
+    mesh = sgio.SGMesh(points, cells)
+    
+    # Should fail without element IDs
+    with pytest.raises(ValueError):
+        renumber_elements(mesh)
+    
+    # Ensure element IDs exist
+    ensure_element_ids(mesh)
+    
+    # Now renumber should work
+    renumber_elements(mesh)
+    
+    assert mesh.cell_data['element_id'][0].tolist() == [1, 2]
 

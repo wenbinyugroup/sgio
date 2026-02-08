@@ -9,7 +9,7 @@ This module tests:
 import pytest
 from pathlib import Path
 
-from sgio import convert, run, logger
+from sgio import convert, read, run, logger
 
 
 @pytest.mark.io
@@ -174,4 +174,32 @@ def test_vabs_solver_execution(test_data_dir, temp_dir):
 
         # Run the solver
         run(solver, str(fn_out), analysis='h', smdim=case.get('model', None))
+
+
+@pytest.mark.io
+@pytest.mark.vabs
+def test_vabs_reader_populates_node_and_element_ids(test_data_dir):
+        """Phase 4.4: VABS reader should always populate node_id and element_id.
+
+        This uses a small VABS 4.1 input file and verifies that the mesh
+        returned by sgio.read() has both point_data['node_id'] and
+        cell_data['element_id'] with lengths consistent with the mesh.
+        """
+        fn_in = test_data_dir / 'vabs' / 'version_4_1' / '3cells.sg'
+        if not fn_in.exists():
+            pytest.skip(f"Input file not found: {fn_in}")
+
+        sg = read(str(fn_in), 'vabs', model_type='BM2', format_version='4.1')
+        assert sg is not None
+        assert sg.mesh is not None
+
+        mesh = sg.mesh
+        # node_id should exist and match number of points
+        assert 'node_id' in mesh.point_data, "VABS reader should populate node_id in point_data"
+        assert len(mesh.point_data['node_id']) == len(mesh.points)
+        # element_id should exist and match total number of elements
+        assert 'element_id' in mesh.cell_data, "VABS reader should populate element_id in cell_data"
+        total_elems = sum(len(cb.data) for cb in mesh.cells)
+        total_ids = sum(len(block) for block in mesh.cell_data['element_id'])
+        assert total_ids == total_elems
 

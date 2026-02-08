@@ -7,11 +7,19 @@ This module tests conversions between different file formats:
 - SwiftComp ↔ Gmsh
 """
 import os
+import warnings
+from io import StringIO
 from pathlib import Path
+
+import numpy as np
 import pytest
 import yaml
 
 from sgio import convert, configure_logging, logger
+from sgio.core.mesh import SGMesh
+from sgio.core.numbering import auto_renumber_for_format, ensure_node_ids
+from sgio.iofunc.vabs._mesh import write_buffer as vabs_write_buffer
+from sgio.iofunc.swiftcomp._mesh import write_buffer as sc_write_buffer
 
 configure_logging(cout_level='info')
 
@@ -263,4 +271,75 @@ def test_convert_to_swiftcomp(test_data_dir, tmp_path, capsys):
 
             assert os.path.exists(fn_out), f"Output file was not created: {fn_out}"
             assert os.path.getsize(fn_out) > 0, f"Output file is empty: {fn_out}"
+
+
+# ---------------------------------------------------------------------------
+# Auto-renumbering during format conversion
+# ---------------------------------------------------------------------------
+
+
+def _mesh_with_nonconsecutive_ids():
+    """Triangle mesh with non-consecutive node IDs (require renumbering for vabs/sc)."""
+    points = np.array([[0, 0, 0], [1, 0, 0], [0, 1, 0]], dtype=float)
+    cells = [("triangle", np.array([[0, 1, 2]]))]
+    point_data = {"node_id": np.array([10, 20, 30])}
+    cell_data = {"property_id": [np.array([1])]}
+    return SGMesh(points, cells, point_data=point_data, cell_data=cell_data)
+
+
+@pytest.mark.conversion
+@pytest.mark.vabs
+def test_vabs_conversion_auto_renumbers_nonconsecutive_ids():
+    """VABS output must have consecutive node IDs; non-consecutive ones are renumbered."""
+    mesh = _mesh_with_nonconsecutive_ids()
+    f = StringIO()
+    vabs_write_buffer(f, mesh, sgdim=2, model_space="xy")
+    assert list(mesh.point_data["node_id"]) == [1, 2, 3]  # type: ignore[arg-type]
+
+
+@pytest.mark.conversion
+@pytest.mark.vabs
+def test_vabs_conversion_emits_warning_on_renumber():
+    """VABS write emits UserWarning when renumbering non-consecutive node IDs."""
+    mesh = _mesh_with_nonconsecutive_ids()
+    f = StringIO()
+    with pytest.warns(UserWarning, match="[Nn]ode"):
+        vabs_write_buffer(f, mesh, sgdim=2, model_space="xy")
+
+
+@pytest.mark.conversion
+@pytest.mark.swiftcomp
+def test_swiftcomp_conversion_auto_renumbers_nonconsecutive_ids():
+    """SwiftComp output must have consecutive node IDs; non-consecutive ones are renumbered."""
+    mesh = _mesh_with_nonconsecutive_ids()
+    f = StringIO()
+    sc_write_buffer(f, mesh, sgdim=2, model_space="xy")
+    assert list(mesh.point_data["node_id"]) == [1, 2, 3]  # type: ignore[arg-type]
+
+
+@pytest.mark.conversion
+@pytest.mark.swiftcomp
+def test_swiftcomp_conversion_emits_warning_on_renumber():
+    """SwiftComp write emits UserWarning when renumbering non-consecutive node IDs."""
+    mesh = _mesh_with_nonconsecutive_ids()
+    f = StringIO()
+    with pytest.warns(UserWarning, match="[Nn]ode"):
+        sc_write_buffer(f, mesh, sgdim=2, model_space="xy")
+
+
+@pytest.mark.conversion
+def test_auto_renumber_preserves_compliant_ids():
+    """auto_renumber_for_format is a no-op when IDs already satisfy the format."""
+    points = np.array([[0, 0, 0], [1, 0, 0], [0, 1, 0]], dtype=float)
+    cells = [("triangle", np.array([[0, 1, 2]]))]
+    mesh = SGMesh(
+        points, cells,
+        point_data={"node_id": np.array([1, 2, 3])},
+        cell_data={"property_id": [np.array([1])], "element_id": [np.array([1])]},
+    )
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")
+        nodes_renumbered, elems_renumbered = auto_renumber_for_format(mesh, format="vabs")
+    assert not nodes_renumbered
+    assert not elems_renumbered
 

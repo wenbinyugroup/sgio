@@ -14,6 +14,8 @@ from sgio.iofunc.abaqus import read
 FIXTURES_DIR = Path(__file__).parent.parent.parent / 'fixtures' / 'abaqus'
 
 
+@pytest.mark.io
+@pytest.mark.abaqus
 def test_abaqus_node_id_to_index_conversion():
     """
     Test that Abaqus reader converts original node IDs to 0-based array indices.
@@ -61,6 +63,8 @@ def test_abaqus_node_id_to_index_conversion():
                 assert point is not None, f"Cannot access point at index {node_idx}"
 
 
+@pytest.mark.io
+@pytest.mark.abaqus
 def test_abaqus_preserves_original_node_ids():
     """
     Test that original node IDs from Abaqus file are preserved in point_data.
@@ -90,6 +94,8 @@ def test_abaqus_preserves_original_node_ids():
         "Should have element IDs for each cell block"
 
 
+@pytest.mark.io
+@pytest.mark.abaqus
 def test_abaqus_arbitrary_node_numbering():
     """
     Test handling of arbitrary (non-consecutive) node numbering.
@@ -160,6 +166,8 @@ Test file with non-consecutive node IDs
         os.unlink(temp_file)
 
 
+@pytest.mark.io
+@pytest.mark.abaqus
 def test_abaqus_node_id_mapping_consistency():
     """
     Test that the nid2pid mapping is consistent and complete.

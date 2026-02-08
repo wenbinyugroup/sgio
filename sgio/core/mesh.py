@@ -1,3 +1,85 @@
+"""Mesh data structures and utilities for Structure Genome I/O.
+
+This module provides the SGMesh class and related utilities for handling mesh data
+with a dual numbering system that enables round-trip preservation of node and element
+IDs across different file formats.
+
+Dual Numbering System
+----------------------
+SGIO implements two levels of numbering for nodes and elements:
+
+1. **Internal (0-based array indices)**: All connectivity arrays use 0-based indexing
+   for direct access to node coordinates and efficient array operations.
+   
+2. **External (format-specific IDs)**: Original node and element IDs are preserved
+   in ``point_data['node_id']`` and ``cell_data['element_id']`` to support formats
+   with arbitrary numbering schemes.
+
+Data Structure Contract
+-----------------------
+The mesh data structure follows strict conventions:
+
+**Points (Nodes)**:
+    - ``mesh.points``: NumPy array of shape (n_nodes, 3) containing node coordinates
+    - Accessed using 0-based array indices: ``mesh.points[0]``, ``mesh.points[1]``, etc.
+    - ``mesh.point_data['node_id']``: List of original node IDs from file (optional)
+    - IDs can be arbitrary integers (e.g., [100, 200, 300])
+
+**Cells (Elements)**:
+    - ``mesh.cells``: List of CellBlock objects (type and connectivity data)
+    - ``mesh.cells[i].data``: NumPy array where values are 0-based node indices
+    - **CRITICAL**: Connectivity MUST use array indices, NOT original node IDs
+    - ``mesh.cell_data['element_id']``: List of lists with original element IDs (optional)
+    
+**Example**:
+    >>> # File has nodes: ID=100 at [0,0,0], ID=200 at [1,0,0], ID=300 at [0,1,0]
+    >>> mesh.points = np.array([[0,0,0], [1,0,0], [0,1,0]])
+    >>> mesh.point_data['node_id'] = [100, 200, 300]
+    >>>
+    >>> # File has element: ID=5000 with nodes [100, 200, 300]
+    >>> # Connectivity uses 0-based indices into mesh.points
+    >>> mesh.cells[0].data = np.array([[0, 1, 2]])  # NOT [[100, 200, 300]]
+    >>> mesh.cell_data['element_id'] = [[5000]]
+
+Format Requirements
+-------------------
+Different formats have different numbering requirements:
+
+- **Abaqus**: Arbitrary non-consecutive IDs allowed, no ID=0
+- **VABS/SwiftComp**: Consecutive IDs from 1 required
+- **Gmsh**: 1-based entity tags
+- **Internal (meshio)**: 0-based array indices
+
+Reading Workflow
+----------------
+When reading files, readers must:
+
+1. Parse nodes with original IDs
+2. Create ``point_ids`` mapping: ``{original_id: 0-based_index}``
+3. Convert element connectivity from node IDs to array indices
+4. Store original IDs in ``point_data['node_id']`` and ``cell_data['element_id']``
+
+Writing Workflow
+----------------
+When writing files, writers must:
+
+1. Check if renumbering is requested (``use_sequential_node_ids`` parameter)
+2. If True: Use sequential IDs (1, 2, 3, ...)
+3. If False: Use stored IDs from ``point_data['node_id']``
+4. Validate that numbering meets format requirements
+5. Convert connectivity from array indices to node IDs
+
+Common Pitfalls
+---------------
+1. **Using original IDs in connectivity**: Element connectivity must use 0-based indices
+2. **Forgetting format validation**: VABS/SwiftComp require consecutive numbering
+3. **Not preserving IDs on read**: Round-trip conversion requires storing original IDs
+4. **ID vs Index confusion**: Always distinguish between external IDs and internal indices
+
+See Also
+--------
+sgio.core.numbering : Validation and numbering utilities
+"""
 from meshio import Mesh, CellBlock
 from typing import Dict, Tuple, Union
 import numpy as np
@@ -126,13 +208,16 @@ def check_isolated_nodes(mesh: Union[SGMesh, Mesh]):
     Go through all cells and check if every node is used at least once.
 
     Create a list of cell ids for each node:
-    node_cell_ids = [
-        [
-            (cell_block_id, cell_id_in_block),
+
+    ..  code-block::
+
+        node_cell_ids = [
+            [
+                (cell_block_id, cell_id_in_block),
+                ...
+            ],
             ...
-        ],
-        ...
-    ]
+        ]
     """
     # print(f'len(mesh.points): {len(mesh.points)}')
     nodes_in_cells = []
@@ -358,8 +443,48 @@ def fix_cell_ordering(mesh: Union[SGMesh, Mesh]) -> Dict[Tuple[int, str], np.nda
 
 
 def renumber_elements(mesh: Union[SGMesh, Mesh]):
+    """Renumber elements sequentially starting from 1.
+    
+    Renumbers all element IDs in the mesh to consecutive integers starting from 1,
+    ordered by cell block. Modifies the mesh in-place.
+    
+    Parameters
+    ----------
+    mesh : SGMesh or Mesh
+        Mesh object to renumber. Must have cell_data['element_id'].
+        
+    Raises
+    ------
+    ValueError
+        If mesh does not have cell_data or cell_data['element_id'].
+        
+    Examples
+    --------
+    >>> mesh = SGMesh(points, cells, cell_data={'element_id': [[10, 20, 30]]})
+    >>> renumber_elements(mesh)
+    >>> print(mesh.cell_data['element_id'])
+    [[1, 2, 3]]
+    
+    Notes
+    -----
+    This function modifies the mesh in-place. Element IDs are renumbered
+    consecutively starting from 1, across all cell blocks in order.
     """
-    """
+    # Check if mesh has cell_data
+    if not hasattr(mesh, 'cell_data') or mesh.cell_data is None:
+        raise ValueError(
+            "Mesh does not have cell_data. Cannot renumber elements without cell_data."
+        )
+    
+    # Check if element_id exists in cell_data
+    if 'element_id' not in mesh.cell_data:
+        raise ValueError(
+            "Mesh cell_data does not contain 'element_id'. "
+            "Element IDs must exist before renumbering. "
+            "Consider using ensure_element_ids() to generate element IDs first."
+        )
+    
+    # Renumber elements consecutively
     eid = 0
     for cb_id, _cb in enumerate(mesh.cell_data['element_id']):
         count = np.asarray(_cb).shape[0]

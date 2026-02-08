@@ -40,16 +40,14 @@ vabs_to_meshio_type = {
 
 
 def read_buffer(f, sgdim:int, nnode:int, nelem:int, format_flag, **kwargs):
-    """
-    """
+    """Read VABS mesh from buffer into an SGMesh."""
+    from sgio.core.numbering import ensure_element_ids, ensure_node_ids
+
     # Initialize the optional data fields
     points = []
     cells = []
-    # cell_ids = []
     point_sets = {}
     cell_sets = {}
-    cell_sets_element = {}  # Handle cell sets defined in ELEMENT
-    cell_sets_element_order = []  # Order of keys is not preserved in Python 3.5
     field_data = {}
     cell_data = {}
     point_data = {}
@@ -57,6 +55,13 @@ def read_buffer(f, sgdim:int, nnode:int, nelem:int, format_flag, **kwargs):
 
     # Read nodes
     points, point_ids, line = _read_nodes(f, nnode, sgdim)
+    if point_ids:
+        # Map original node IDs back to array order for point_data['node_id']
+        n_nodes = len(points)
+        node_id = np.empty(n_nodes, dtype=int)
+        for _orig_id, _idx in point_ids.items():
+            node_id[_idx] = _orig_id
+        point_data['node_id'] = node_id
 
     # Read elements
     cells, elem_ids, elem_id_to_cell_id = _read_elements(f, nelem, point_ids)
@@ -68,9 +73,7 @@ def read_buffer(f, sgdim:int, nnode:int, nelem:int, format_flag, **kwargs):
     cell_data['property_id'] = cell_prop_id
     cell_data['property_ref_csys'] = cell_csys
 
-    # print(cells)
-
-    return SGMesh(
+    mesh = SGMesh(
         points,
         cells,
         point_data=point_data,
@@ -79,6 +82,11 @@ def read_buffer(f, sgdim:int, nnode:int, nelem:int, format_flag, **kwargs):
         point_sets=point_sets,
         cell_sets=cell_sets,
     )
+
+    ensure_node_ids(mesh)
+    ensure_element_ids(mesh)
+
+    return mesh
 
 
 
@@ -214,14 +222,11 @@ def _read_property_id_ref_csys(file, nelem, cells, elem_id_to_cell_id, format_fl
 
 def write(
     filename, mesh, sgdim, model_space='', prop_ref_y='x',
-    renumber_nodes=False, renumber_elements=False,
     int_fmt='8d', float_fmt="20.9e"):
-    """
-    """
+    """Write mesh to VABS format file."""
     if is_buffer(filename, 'w'):
         write_buffer(
             filename, mesh, sgdim, model_space=model_space, prop_ref_y=prop_ref_y,
-            renumber_nodes=renumber_nodes, renumber_elements=renumber_elements,
             int_fmt=int_fmt, float_fmt=float_fmt)
     else:
         with open(filename, 'at') as file:
@@ -233,10 +238,13 @@ def write(
 
 def write_buffer(
     file, mesh, sgdim, model_space='', prop_ref_y='x',
-    renumber_nodes=False, renumber_elements=False,
     int_fmt='8d', float_fmt="20.9e"
     ):
     """Write mesh data to VABS format buffer.
+
+    Automatically ensures node and element IDs comply with VABS format requirements
+    (consecutive numbering starting from 1). If renumbering is needed, emits a
+    UserWarning with details of the changes.
 
     Parameters
     ----------
@@ -244,16 +252,14 @@ def write_buffer(
         The file buffer to write to.
     mesh : SGMesh
         The mesh object containing points, cells, and associated data.
+        Node/element IDs in mesh.point_data['node_id'] and mesh.cell_data['element_id']
+        will be automatically renumbered if they do not meet VABS requirements.
     sgdim : int
         The spatial dimension of the structural gene (2 or 3).
     model_space : str, optional
         The model coordinate space ('xy', 'yz', 'zx'), by default ''.
     prop_ref_y : str, optional
         Reference axis for property coordinate system ('x', 'y', 'z'), by default 'x'.
-    renumber_nodes : bool, optional
-        Whether to renumber nodes, by default False.
-    renumber_elements : bool, optional
-        Whether to renumber elements, by default False.
     int_fmt : str, optional
         Format string for integer output, by default '8d'.
     float_fmt : str, optional
@@ -263,25 +269,49 @@ def write_buffer(
     -------
     None
         Writes mesh data directly to the file buffer.
-    """
 
-    # _node_id = []
-    # if renumber_nodes:
-    _node_id = mesh.point_data.get('node_id', [])
-    # print(f'_node_id = {_node_id}')
+    Notes
+    -----
+    - Node and element IDs are automatically generated if missing
+    - Non-consecutive IDs are automatically renumbered (with warning)
+    - VABS requires consecutive 1-based numbering: [1, 2, 3, ...]
+
+    Warns
+    -----
+    UserWarning
+        If node or element IDs are renumbered to meet format requirements.
+
+    Examples
+    --------
+    >>> from io import StringIO
+    >>> f = StringIO()
+    >>> write_buffer(f, mesh, sgdim=2, model_space='xy')
+    # If mesh has non-consecutive IDs, you'll see:
+    # UserWarning: Node IDs were automatically renumbered...
+    """
+    from sgio.core.numbering import (
+        auto_renumber_for_format,
+        ensure_element_ids,
+        ensure_node_ids,
+    )
+
+    ensure_node_ids(mesh)
+    ensure_element_ids(mesh)
+    auto_renumber_for_format(mesh, format="vabs", logger=logger)
+
+    _node_id = mesh.point_data.get("node_id", [])
 
     _write_nodes(
         file, mesh.points, sgdim, node_id=_node_id,
-        renumber_nodes=renumber_nodes,
         model_space=model_space,
         int_fmt=int_fmt, float_fmt=float_fmt
     )
 
-    if not 'element_id' in mesh.cell_data.keys():
+    # IDs are always ensured above; keep a defensive fallback.
+    if 'element_id' not in mesh.cell_data:
         mesh.cell_data['element_id'] = []
     _write_elements(
         file, mesh.cells, mesh.cell_data['element_id'], _node_id,
-        renumber_nodes=renumber_nodes,
         int_fmt=int_fmt
         )
 
@@ -313,7 +343,7 @@ def write_buffer(
 
 
 def _write_elements(
-    f, cells, elem_id, node_id, renumber_nodes=False,
+    f, cells, elem_id, node_id,
     int_fmt:str='8d'
     ):
     """Write element connectivity data to VABS format file.
@@ -328,8 +358,6 @@ def _write_elements(
         List of element IDs for each cell block. If empty, IDs are auto-generated.
     node_id : list
         List of node IDs for renumbering (currently unused).
-    renumber_nodes : bool, optional
-        Whether to renumber nodes (currently unused), by default False.
     int_fmt : str, optional
         Format string for integer output, by default '8d'.
 
@@ -354,7 +382,7 @@ def _write_elements(
         cell_type = cell_block.type
         node_idcs = _meshio_to_sg_order(
             cell_type, cell_block.data,
-            node_id=node_id, renumber_nodes=renumber_nodes)
+            node_id=node_id)
 
         # print(f'cell_block.data = {cell_block.data}')
         # print(f'node_idcs = {node_idcs}')

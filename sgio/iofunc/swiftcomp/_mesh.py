@@ -129,7 +129,10 @@ def read_buffer(f: TextIO, sgdim: int, nnode: int, nelem: int, read_local_frame:
     if nelem < 0:
         raise ValueError(f"nelem must be non-negative, got {nelem}")
     
-    logger.debug(f"Reading SwiftComp mesh: sgdim={sgdim}, nnode={nnode}, nelem={nelem}, read_local_frame={read_local_frame}")
+    logger.debug(
+        f"Reading SwiftComp mesh: sgdim={sgdim}, nnode={nnode}, "
+        f"nelem={nelem}, read_local_frame={read_local_frame}"
+    )
 
     # Initialize the optional data fields
     points = []
@@ -146,25 +149,38 @@ def read_buffer(f: TextIO, sgdim: int, nnode: int, nelem: int, read_local_frame:
 
     # Read nodes
     points, point_ids, line = _read_nodes(f, nnode, sgdim)
+    if point_ids:
+        # Map original node IDs back to array order for point_data['node_id']
+        n_nodes = len(points)
+        node_id = np.empty(n_nodes, dtype=int)
+        for _orig_id, _idx in point_ids.items():
+            node_id[_idx] = _orig_id
+        point_data["node_id"] = node_id
 
     # Read elements
     cells, elem_ids, prop_ids, cell_ids, line = _read_elements(f, nelem, point_ids)
 
     # Set element_id cell data
-    cell_data['element_id'] = elem_ids
+    cell_data["element_id"] = elem_ids
 
+    # Build property_id cell data from prop_ids mapping
     _cd = []
     for _cb in cells:
         _ct = _cb[0]
         _cd.append(prop_ids[_ct])
-    cell_data['property_id'] = _cd
+    cell_data["property_id"] = _cd
 
     if read_local_frame:
         # Read local coordinate system for sectional properties
         cell_csys = _read_property_ref_csys(f, nelem, cells, cell_ids)
-        cell_data['property_ref_csys'] = cell_csys
+        cell_data["property_ref_csys"] = cell_csys
 
-    return SGMesh(
+    from sgio.core.numbering import (
+        ensure_element_ids,
+        ensure_node_ids,
+    )
+
+    mesh = SGMesh(
         points,
         cells,
         point_data=point_data,
@@ -173,6 +189,11 @@ def read_buffer(f: TextIO, sgdim: int, nnode: int, nelem: int, read_local_frame:
         point_sets=point_sets,
         cell_sets=cell_sets,
     )
+
+    ensure_node_ids(mesh)
+    ensure_element_ids(mesh)
+
+    return mesh
 
 
 
@@ -349,15 +370,11 @@ def _read_property_ref_csys(file: TextIO, nelem: int, cells: List, cell_ids: Dic
 # ====================================================================
 
 def write(
-    filename: Union[str, TextIO], mesh: SGMesh, sgdim: int, model_space: str, 
-    prop_ref_y: str = 'x', renumber_nodes: bool = False, 
-    renumber_elements: bool = False, int_fmt: str = '8d', 
-    float_fmt: str = "20.9e") -> None:
+    filename: Union[str, TextIO], mesh: SGMesh, sgdim: int, model_space: str,
+    prop_ref_y: str = 'x', int_fmt: str = '8d', float_fmt: str = "20.9e"
+) -> None:
     """Write SGMesh to SwiftComp format file.
-    
-    Outputs mesh data in SwiftComp format, including nodes, elements,
-    and optional local coordinate system information.
-    
+
     Parameters
     ----------
     filename : str or file-like
@@ -370,80 +387,95 @@ def write(
         Model space identifier for the mesh
     prop_ref_y : str, optional
         Reference axis for property orientation, default 'x'
-    renumber_nodes : bool, optional
-        Whether to renumber nodes sequentially, default False
-    renumber_elements : bool, optional
-        Whether to renumber elements sequentially, default False
     int_fmt : str, optional
         Format string for integer output, default '8d'
     float_fmt : str, optional
         Format string for float output, default "20.9e"
-        
+
     Raises
     ------
     ValueError
         If mesh data is invalid or incomplete
     IOError
         If file writing encounters errors
-        
-    Examples
-    --------
-    >>> write('output.sc', mesh, sgdim=3, model_space='3D')
     """
     if is_buffer(filename, 'w'):
         write_buffer(
             filename, mesh, sgdim, model_space,
-            prop_ref_y, renumber_nodes, renumber_elements,
-            int_fmt, float_fmt
+            prop_ref_y=prop_ref_y,
+            int_fmt=int_fmt, float_fmt=float_fmt
             )
     else:
         with open(str(filename), 'at') as file:
             write_buffer(
                 file, mesh, sgdim, model_space,
-                prop_ref_y, renumber_nodes, renumber_elements,
-                int_fmt, float_fmt
+                prop_ref_y=prop_ref_y,
+                int_fmt=int_fmt, float_fmt=float_fmt
                 )
 
 
 
 def write_buffer(
     file: TextIO, mesh: SGMesh, sgdim: int, model_space: str, prop_ref_y: str = 'x',
-    renumber_nodes: bool = False, renumber_elements: bool = False,
     int_fmt: str = '8d', float_fmt: str = "20.9e"
     ) -> None:
     """Write SGMesh data to SwiftComp format file buffer.
-    
-    Outputs mesh data in SwiftComp format to a file buffer, including
-    nodes, elements, and optional local coordinate system information.
-    
+
+    Automatically ensures node and element IDs comply with SwiftComp format requirements
+    (consecutive numbering starting from 1). If renumbering is needed, emits a
+    UserWarning with details of the changes.
+
     Parameters
     ----------
     file : TextIO
         File buffer object to write to
     mesh : SGMesh
-        Mesh object containing points, cells, and associated data
+        Mesh object containing points, cells, and associated data.
+        Node/element IDs in mesh.point_data['node_id'] and mesh.cell_data['element_id']
+        will be automatically renumbered if they do not meet SwiftComp requirements.
     sgdim : int
         Spatial dimension of the mesh (1, 2, or 3)
     model_space : str
         Model space identifier for the mesh
     prop_ref_y : str, optional
         Reference axis for property orientation, default 'x'
-    renumber_nodes : bool, optional
-        Whether to renumber nodes sequentially, default False
-    renumber_elements : bool, optional
-        Whether to renumber elements sequentially, default False
     int_fmt : str, optional
         Format string for integer output, default '8d'
     float_fmt : str, optional
         Format string for float output, default "20.9e"
-        
+
     Raises
     ------
     ValueError
         If mesh data is invalid or incomplete
     KeyError
         If required cell data fields are missing
+
+    Notes
+    -----
+    - Node and element IDs are automatically generated if missing
+    - Non-consecutive IDs are automatically renumbered (with warning)
+    - SwiftComp requires consecutive 1-based numbering: [1, 2, 3, ...]
+
+    Warns
+    -----
+    UserWarning
+        If node or element IDs are renumbered to meet format requirements.
+
+    Examples
+    --------
+    >>> from io import StringIO
+    >>> f = StringIO()
+    >>> write_buffer(f, mesh, sgdim=2, model_space='xy')
+    # If mesh has non-consecutive IDs, you'll see:
+    # UserWarning: Node IDs were automatically renumbered...
     """
+    from sgio.core.numbering import (
+        auto_renumber_for_format,
+        ensure_element_ids,
+        ensure_node_ids,
+    )
+
     # Input validation
     if sgdim not in (1, 2, 3):
         raise ValueError(f"sgdim must be 1, 2, or 3, got {sgdim}")
@@ -454,21 +486,24 @@ def write_buffer(
     if 'property_id' not in mesh.cell_data:
         raise ValueError("mesh.cell_data must contain 'property_id'")
 
+    ensure_node_ids(mesh)
+    ensure_element_ids(mesh)
+    auto_renumber_for_format(mesh, format="swiftcomp", logger=logger)
+
     _node_id = mesh.point_data.get('node_id', [])
 
     _write_nodes(
         file, mesh.points, sgdim, node_id=_node_id,
         model_space=model_space,
-        renumber_nodes=renumber_nodes,
         int_fmt=int_fmt, float_fmt=float_fmt
         )
 
-    if not 'element_id' in mesh.cell_data.keys():
+    # IDs are always ensured above; keep a defensive fallback.
+    if 'element_id' not in mesh.cell_data:
         mesh.cell_data['element_id'] = []
     cell_id_to_elem_id = _write_elements(
         file, mesh.cells, mesh.cell_data['property_id'],
         mesh.cell_data['element_id'], _node_id,
-        renumber_nodes=renumber_nodes,
         int_fmt=int_fmt
         )
 
@@ -484,9 +519,13 @@ def write_buffer(
 
 
 def _write_elements(
-    f: TextIO, cells: List, cell_prop_ids: List, elem_id: List, 
-    node_id, renumber_nodes: bool, int_fmt: str = '8d'
-    ) -> List:
+    f: TextIO,
+    cells: List,
+    cell_prop_ids: List,
+    elem_id: List,
+    node_id,
+    int_fmt: str = '8d',
+) -> List:
     """Write element connectivity and properties to SwiftComp format.
     
     Outputs element definitions in SwiftComp format, including element
@@ -504,8 +543,6 @@ def _write_elements(
         Element IDs for elements in each cell block (modified in-place)
     node_id : list
         Node ID mapping for renumbering
-    renumber_nodes : bool
-        Whether to apply node renumbering
     int_fmt : str, optional
         Format string for integer output, default '8d'
         
@@ -535,7 +572,7 @@ def _write_elements(
         cell_type = cell_block.type
         node_idcs = _meshio_to_sg_order(
             cell_type, cell_block.data,
-            node_id=node_id, renumber_nodes=renumber_nodes
+            node_id=node_id
             )
 
         _cid_to_eid = []

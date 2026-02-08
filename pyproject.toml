@@ -30,6 +30,7 @@ dependencies = [
     "sphinx-immaterial>=0.12.5",
     "sphinx-design>=0.6.1",
     "sphinx-copybutton>=0.5.2",
+    "pydata-sphinx-theme>=0.16.1",
 ]
 classifiers = [
     "Programming Language :: Python :: 3",

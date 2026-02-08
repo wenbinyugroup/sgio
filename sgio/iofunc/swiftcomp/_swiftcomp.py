@@ -187,36 +187,48 @@ def read_output_buffer(
 def write_buffer(
     sg:StructureGene, file, analysis='h', model='sd1',
     model_space='xy', prop_ref_y='x',
-    renumber_nodes=False, renumber_elements=False,
     macro_responses:list[smdl.StateCase]=[],
     load_type=0,
     sfi:str='8d', sff:str='20.12e', version=None
     ):
-    """Write analysis input
+    """Write analysis input.
 
     Parameters
     ----------
-    fn : str
-        Name of the input file
-    file_format : {'vabs' (or 'v'), 'swfitcomp' (or 'sc', 's')}
-        file_format of the analysis
-    analysis : {0, 1, 2, 3, '', 'h', 'dn', 'dl', 'd', 'l', 'fi'}, optional
-        Analysis type, by default 'h'
-    sg_fmt : {0, 1}, optional
-        Format for the VABS input, by default 1
+    sg : StructureGene
+        The structure gene object to write.
+    file : file-like
+        Output file buffer.
+    analysis : str, optional
+        Analysis type, by default 'h'.
+    model : str, optional
+        Model identifier, by default 'sd1'.
+    model_space : str, optional
+        Model coordinate space, by default 'xy'.
+    prop_ref_y : str, optional
+        Reference axis for property orientation, by default 'x'.
+    macro_responses : list of StateCase, optional
+        Macro-level responses for global analysis.
+    load_type : int, optional
+        Load type identifier, by default 0.
+    sfi : str, optional
+        Integer format string, by default '8d'.
+    sff : str, optional
+        Float format string, by default '20.12e'.
+    version : optional
+        Format version.
 
     Returns
     -------
     str
-        Name of the input file
+        Name of the input file.
     """
 
     if analysis == 'h':
         writeInputBuffer(
             sg, file, analysis, sg.physics,
             model_space, prop_ref_y,
-            renumber_nodes, renumber_elements,
-            sfi, sff, version)
+            sfi=sfi, sff=sff, version=version)
 
     elif (analysis == 'd') or (analysis == 'l') or (analysis.startswith('f')):
         if sg is None:

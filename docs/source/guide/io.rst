@@ -170,8 +170,11 @@ Parameters
 - ``format_version`` (str, optional): Version of the output format
 - ``analysis`` (str, optional): Analysis type for VABS/SwiftComp
 - ``mesh_only`` (bool, optional): Write only mesh data (default: False)
-- ``renumber_nodes`` (bool, optional): Renumber nodes sequentially
-- ``renumber_elements`` (bool, optional): Renumber elements sequentially
+
+.. note::
+   Node and element numbering is handled automatically based on format requirements.
+   VABS and SwiftComp require consecutive numbering starting from 1; Abaqus allows
+   arbitrary numbering. SGIO automatically renumbers when needed and emits a warning.
 
 Examples
 ^^^^^^^^
@@ -204,20 +207,19 @@ Examples
         mesh_only=True
     )
 
-**Write with node/element renumbering:**
+**Write with automatic format compliance:**
 
 ..  code-block:: python
 
     import sgio
 
-    # Renumber nodes and elements for clean output
+    # SGIO automatically ensures numbering meets format requirements
     sgio.write(
         sg=sg,
         fn='output.sg',
-        file_format='vabs',
-        renumber_nodes=True,
-        renumber_elements=True
+        file_format='vabs'
     )
+    # Node/element IDs are automatically renumbered if needed (with warning)
 
 Write Mesh Data Only
 ^^^^^^^^^^^^^^^^^^^^
@@ -246,6 +248,117 @@ For advanced mesh writing, use ``meshio`` directly:
     sg.mesh.write('output.msh')
     # See meshio documentation for format-specific options
 
+
+Automatic Node and Element Numbering
+--------------------------------------
+
+SGIO automatically handles node and element numbering to ensure compatibility with each file format.
+
+How It Works
+^^^^^^^^^^^^
+
+Different formats have different numbering requirements:
+
+- **VABS** and **SwiftComp**: Require consecutive numbering starting from 1 (1, 2, 3, ...)
+- **Abaqus**: Allows arbitrary numbering (10, 50, 100, ...) but must start from 1
+- **Gmsh**: Uses format-specific entity tags
+
+SGIO automatically:
+
+1. **Reads** files preserving original numbering
+2. **Converts** between formats automatically renumbering when needed
+3. **Warns** you when renumbering occurs (via Python warning)
+4. **Preserves** original numbering for round-trip conversions
+
+Format Conversion Examples
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+**Abaqus → VABS** (automatic renumbering):
+
+..  code-block:: python
+
+    import sgio
+
+    # Read Abaqus with arbitrary node IDs [10, 50, 100]
+    sg = sgio.read('model.inp', file_format='abaqus', model_type='BM2')
+    
+    # Write to VABS (automatically renumbers to [1, 2, 3])
+    sgio.write(sg, 'model.vab', file_format='vabs')
+    # Warning: Node IDs were automatically renumbered to meet VABS format requirements
+
+**VABS → Abaqus** (preserves sequential):
+
+..  code-block:: python
+
+    import sgio
+
+    # Read VABS with sequential IDs [1, 2, 3]
+    sg = sgio.read('model.vab', file_format='vabs', model_type='BM2')
+    
+    # Write to Abaqus (no renumbering needed)
+    sgio.write(sg, 'model.inp', file_format='abaqus')
+    # No warning - IDs already comply
+
+**Abaqus → Abaqus** (round-trip preservation):
+
+..  code-block:: python
+
+    import sgio
+
+    # Read Abaqus with arbitrary IDs [10, 50, 100]
+    sg = sgio.read('input.inp', file_format='abaqus', model_type='SD1', sgdim=3)
+    
+    # Write back to Abaqus (preserves original IDs)
+    sgio.write(sg, 'output.inp', file_format='abaqus')
+    # No renumbering - original IDs preserved
+
+Understanding Warnings
+^^^^^^^^^^^^^^^^^^^^^^
+
+You may see warnings like:
+
+..  code-block:: text
+
+    UserWarning: Node IDs were automatically renumbered to meet VABS format 
+    requirements (consecutive numbering starting from 1). 
+    Original IDs: [10, 50, 100] → New IDs: [1, 2, 3].
+
+**What this means:**
+
+- Your mesh had numbering that didn't match the target format requirements
+- SGIO automatically fixed it for you
+- The warning is informational — no action needed
+- Output file is valid and ready to use
+
+**When warnings appear:**
+
+- Converting between formats with different requirements (Abaqus → VABS/SwiftComp)
+- Writing programmatically-created meshes without proper IDs
+- Modifying mesh numbering after reading
+
+**No warning when:**
+
+- IDs already comply with target format
+- Round-trip within same format (VABS → VABS, Abaqus → Abaqus)
+- All IDs are sequential 1-based
+
+Migration from Old API
+^^^^^^^^^^^^^^^^^^^^^^
+
+If you used the old ``renumber_nodes`` or ``renumber_elements`` parameters:
+
+..  code-block:: python
+
+    # Old API (no longer supported)
+    sgio.write(sg, 'output.vab', 'vabs', renumber_nodes=True)  # ERROR
+
+    # New API (automatic)
+    sgio.write(sg, 'output.vab', file_format='vabs')  # Automatic renumbering
+
+Simply remove the ``renumber_nodes`` and ``renumber_elements`` parameters. 
+Numbering is now fully automatic based on format requirements.
+
+For more details, see :doc:`../developer/numbering` (Developer Guide).
 
 
 Supported Data Formats

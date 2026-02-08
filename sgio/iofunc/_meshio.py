@@ -30,6 +30,7 @@ from meshio import Mesh
 
 from sgio.core.mesh import SGMesh
 
+
 logger = logging.getLogger(__name__)
 
 # Maps for SG-specific readers and writers
@@ -484,36 +485,6 @@ def _sg_to_meshio_order(cell_type: str, idx: ArrayLike) -> np.ndarray:
 
 
 
-# def _meshio_to_sg_order(cell_type:str, idx:ArrayLike):
-#     idx_sg = np.asarray(idx) + 1
-
-#     idx_to_insert = None
-#     if cell_type == 'triangle6':
-#         idx_to_insert = 3
-#     elif cell_type == 'tetra10':
-#         idx_to_insert = 4
-#     elif cell_type == 'wedge15':
-#         idx_to_insert = 6
-
-#     max_nodes = idx_sg.shape[1]
-#     if cell_type.startswith('line'):
-#         max_nodes = 5
-#     elif cell_type.startswith('triangle') or cell_type.startswith('quad'):
-#         max_nodes = 9
-#     elif cell_type.startswith('tetra') or cell_type.startswith('wedge') or cell_type.startswith('hexahedron'):
-#         max_nodes = 20
-
-#     # Insert 0 for some types of cells
-#     if idx_to_insert:
-#         idx_sg = np.insert(idx_sg, idx_to_insert, 0, axis=1)
-
-#     # Fill the remaining location with 0s
-#     pad_width = max_nodes - idx_sg.shape[1]
-#     # logger.debug('pad width = {}'.format(pad_width))
-#     idx_sg = np.pad(idx_sg, ((0, 0), (0, pad_width)), 'constant', constant_values=0)
-
-#     return idx_sg
-
 
 
 
@@ -522,9 +493,8 @@ def _sg_to_meshio_order(cell_type: str, idx: ArrayLike) -> np.ndarray:
 
 
 def _write_nodes(
-    f: IO, points: np.ndarray, sgdim: int, node_id: list[int] = [], model_space: str = '',
-    renumber_nodes: bool = False,
-    int_fmt: str = '8d', float_fmt: str = '20.9e'
+    f: IO, points: np.ndarray, sgdim: int, node_id: list[int] = [],
+    model_space: str = '', int_fmt: str = '8d', float_fmt: str = '20.9e'
 ) -> None:
     """Write node coordinates to SG format file.
 
@@ -537,47 +507,34 @@ def _write_nodes(
     sgdim : int
         Spatial dimension (1, 2, or 3) to write.
     node_id : list of int, optional
-        List of original node IDs. If empty, nodes are numbered sequentially.
+        List of original node IDs. If empty, nodes are numbered sequentially
+        from 1.
     model_space : str, optional
         Coordinate plane for lower dimensions:
         - For sgdim=1: 'x', 'y', or 'z'
         - For sgdim=2: 'xy', 'yz', or 'zx'
         - For sgdim=3: ignored
-    renumber_nodes : bool, optional
-        If True, override node_id and use sequential numbering (1, 2, 3, ...).
-        Default is False.
     int_fmt : str, optional
         Format string for integer node IDs (default '8d').
     float_fmt : str, optional
         Format string for float coordinates (default '20.9e').
-        
+
     Raises
     ------
     ValueError
         If model_space is invalid for the given sgdim.
-        
+
     Notes
     -----
-    - Writes one node per line with format: node_id coord1 [coord2] [coord3]
-    - First line includes comment "! nodal coordinates"
+    Writes one node per line with format: node_id coord1 [coord2] [coord3].
+    First line includes comment "! nodal coordinates".
     """
     sfi = '{:' + int_fmt + '}'
-    sff = ''.join(['{:' + float_fmt + '}', ]*sgdim)
-
-    # print(sfi)
-    # print(sff)
+    sff = ''.join(['{:' + float_fmt + '}', ] * sgdim)
 
     for i, ncoord in enumerate(points):
-        if renumber_nodes:
-            nid = i + 1
-        else:
-            if len(node_id) > 0:
-                nid = node_id[i]
-            else:
-                nid = i + 1
+        nid = node_id[i] if len(node_id) > 0 else i + 1
         f.write(sfi.format(nid))  # node id
-
-        # logger.debug(ncoord)
 
         if sgdim == 1:
             if model_space == 'x':
@@ -615,7 +572,7 @@ def _write_nodes(
 
 def _meshio_to_sg_order(
     cell_type: str, idx: ArrayLike,
-    node_id: list[int] = [], renumber_nodes: bool = True
+    node_id: list[int] = []
 ) -> np.ndarray:
     """Convert meshio cell connectivity to SG format with padding and reordering.
 
@@ -625,32 +582,30 @@ def _meshio_to_sg_order(
         Cell type identifier (e.g., 'triangle6', 'tetra10', 'wedge15').
     idx : array-like
         2D array of cell connectivity with shape (n_cells, n_elem_nodes).
-        Contains original node indices (0-indexed or from node_id).
+        Contains 0-based point indices into the mesh points array.
     node_id : list of int, optional
-        Array of original node IDs for mapping. If empty and renumber_nodes=True,
-        uses sequential 1-based numbering.
-    renumber_nodes : bool, optional
-        If True, convert to 1-based node IDs. Default is True.
+        Array of node IDs (one per mesh point). If provided, point indices are
+        mapped to the corresponding node IDs. If empty, sequential 1-based IDs
+        (``idx + 1``) are used.
 
     Returns
     -------
     np.ndarray
         2D array of cell connectivity in SG format with shape (n_cells, max_nodes_sg).
         Includes zero-padding and special zero-insertion for certain element types.
-        
+
     Notes
     -----
-    - SG format uses fixed-width cell connectivity with zero-padding
-    - Some elements (triangle6, tetra10, wedge15) insert a zero at specific position
-    - Maximum nodes per cell: line=5, triangle/quad=9, tetra/wedge/hex=20
+    - SG format uses fixed-width cell connectivity with zero-padding.
+    - Some elements (triangle6, tetra10, wedge15) insert a zero at a specific position.
+    - Maximum nodes per cell: line=5, triangle/quad=9, tetra/wedge/hex=20.
     """
-    idx_sg = np.asarray(idx)
-    if renumber_nodes:
-        if len(node_id) == 0:
-            idx_sg = np.asarray(idx) + 1
-        else:
-            idx_map = {v: i+1 for i, v in enumerate(node_id)}
-            idx_sg = np.vectorize(idx_map.get)(idx_sg)
+    idx_sg = np.asarray(idx, dtype=int)
+    # Map 0-based point indices to 1-based SG node IDs.
+    if len(node_id) == 0:
+        idx_sg = idx_sg + 1
+    else:
+        idx_sg = np.asarray(node_id, dtype=int).reshape(-1)[idx_sg]
 
     idx_to_insert = None
     if cell_type == 'triangle6':
