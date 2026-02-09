@@ -10,6 +10,17 @@ from ._mesh import (
     read_buffer,
     write_buffer,
 )
+from ..common import (
+    read_material_rotation_combinations,
+    read_materials as common_read_materials,
+    read_material as common_read_material,
+    read_elastic_property as common_read_elastic_property,
+    write_material_combos,
+    write_material as common_write_material,
+    write_materials as common_write_materials,
+    write_displacement_rotation,
+    write_load,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -79,29 +90,11 @@ def _readMesh(file, sgdim:int, nnode:int, nelem:int, format_flag):
 
 
 def _readMaterialRotationCombinations(file, ncomb):
+    """Read material rotation combinations (VABS format).
+    
+    Wrapper for common function with VABS-specific comment character.
     """
-    """
-
-    logger.debug('reading combinations of material and in-plane rotations...')
-
-    combinations = {}
-
-    counter = 0
-    while counter < ncomb:
-        line = file.readline().split('!')[0].strip()
-        while line == '':
-            line = file.readline().split('!')[0].strip()
-
-        line = line.split()
-        comb_id = int(line[0])
-        mate_id = int(line[1])
-        ip_ratation = float(line[2])
-
-        combinations[comb_id] = [mate_id, ip_ratation]
-
-        counter += 1
-
-    return combinations
+    return read_material_rotation_combinations(file, ncomb, comment_char='!')
 
 
 
@@ -112,67 +105,25 @@ def _readMaterialRotationCombinations(file, ncomb):
 
 
 def _readMaterials(file, nmate:int):
+    """Read materials from VABS input file.
+    
+    Wrapper for common function with VABS-specific parameters.
     """
-    """
-
-    logger.debug('reading materials...')
-
-    materials = {}
-
-    counter = 0
-    while counter < nmate:
-        line = file.readline().split('!')[0].strip()
-        while line == '':
-            line = file.readline().split('!')[0].strip()
-
-        line = line.split()
-
-        # Read material id, isotropy
-        mate_id, isotropy = list(map(int, line))
-        ntemp = 1
-        # material, line = _readMaterial(file, file_format, isotropy)
-
-        material = _readMaterial(file, isotropy, ntemp)
-
-        materials[mate_id] = material
-
-        counter += 1
-
-    return materials
+    return common_read_materials(
+        file, nmate, comment_char='!', has_ntemp=False, physics=0
+    )
 
 
 
 
 def _readMaterial(file, isotropy:int, ntemp:int=1):
+    """Read a single material from VABS input file.
+    
+    Wrapper for common function with VABS-specific parameters.
     """
-    """
-
-    # mp = mmsd.MaterialProperty()
-    # mp = smdl.MaterialSection()
-    mp = smdl.CauchyContinuumModel()
-    # mp.isotropy = isotropy
-    mp.set('isotropy', isotropy)
-
-    temp_counter = 0
-    while temp_counter < ntemp:
-
-        # Read elastic properties
-        elastic_props = _readElasticProperty(file, isotropy)
-        mp.setElastic(elastic_props, isotropy)
-
-        line = file.readline().split('!')[0].strip()
-        while line == '':
-            line = file.readline().split('!')[0].strip()
-        density = float(line)
-
-        # mp.density = density
-        mp.set('density', density)
-
-        # Read thermal properties
-
-        temp_counter += 1
-
-    return mp
+    return common_read_material(
+        file, isotropy, ntemp, comment_char='!', physics=0
+    )
 
 
 
@@ -183,25 +134,11 @@ def _readMaterial(file, isotropy:int, ntemp:int=1):
 
 
 def _readElasticProperty(file, isotropy:int):
+    """Read elastic properties from VABS input file.
+    
+    Wrapper for common function with VABS-specific parameters.
     """
-    """
-
-    constants = []
-
-    if isotropy == 0:
-        nrow = 1
-    elif isotropy == 1:
-        nrow = 3
-    elif isotropy == 2:
-        nrow = 6
-
-    for i in range(nrow):
-        line = file.readline().split('!')[0].strip()
-        while line == '':
-            line = file.readline().split('!')[0].strip()
-        constants.extend(list(map(float, line.split())))
-
-    return constants
+    return common_read_elastic_property(file, isotropy, comment_char='!')
 
 
 
@@ -233,16 +170,11 @@ def _writeMesh(
 
 
 def _writeMOCombos(sg, file, sfi:str='8d', sff:str='20.12e'):
-    ssfi = '{:' + sfi + '}'
-    ssff = '{:' + sff + '}'
-    count = 0
-    for cid, combo in sg.mocombos.items():
-        count += 1
-        file.write((ssfi + ssfi + ssff).format(cid, combo[0], combo[1]))
-        if count == 1:
-            file.write('  ! combination id, material id, in-plane rotation angle')
-        file.write('\n')
-    file.write('\n')
+    """Write material-orientation combinations (VABS format).
+    
+    Wrapper for common function with VABS-specific comment character.
+    """
+    write_material_combos(sg, file, sfi, sff, comment_char='!')
     return
 
 
@@ -252,98 +184,17 @@ def _writeMaterial(
     mid:int, material:smdl.CauchyContinuumModel, file,
     analysis, thermal_flag,
     sfi:str='8d', sff:str='20.12e'):
+    """Write a single material (VABS format).
+    
+    Wrapper for common function with VABS-specific parameters.
     """
-    """
-
-    anisotropy = material.get('isotropy')
-
-    if analysis == 'h':
-        # Write material properties for homogenization
-
-        sutl.writeFormatIntegers(file, (mid, anisotropy), sfi, newline=False)
-        file.write('  ! material id, anisotropy\n')
-
-        # Write elastic properties
-        if anisotropy == 0:
-            # print(material.get('e'))
-            # print(material.get('nu'))
-            sutl.writeFormatFloats(file, [material.get('e'), material.get('nu')], sff)
-            if thermal_flag == 3:
-                sutl.writeFormatFloats(file, [material.get('alpha'),], sff)
-
-        elif anisotropy == 1:
-            sutl.writeFormatFloats(file, [material.get('e1'), material.get('e2'), material.get('e3')], sff)
-            sutl.writeFormatFloats(file, [material.get('g12'), material.get('g13'), material.get('g23')], sff)
-            sutl.writeFormatFloats(file, [material.get('nu12'), material.get('nu13'), material.get('nu23')], sff)
-            if thermal_flag == 3:
-                sutl.writeFormatFloats(
-                    file, [material.get('alpha11'), material.get('alpha22'), material.get('alpha33')], sff)
-
-        elif anisotropy == 2:
-            for _i in range(6):
-                for _j in range(_i, 6):
-                    sutl.writeFormatFloats(
-                        file, material.get(f'c{_i+1}{_j+1}'), sff)
-            if thermal_flag == 3:
-                sutl.writeFormatFloats(
-                    file, [
-                        material.get('alpha11'),
-                        material.get('alpha12')*2,
-                        material.get('alpha13')*2,
-                        material.get('alpha22'),
-                        material.get('alpha23')*2,
-                        material.get('alpha33')
-                    ],sff)
-
-        sutl.writeFormatFloats(file, [material.get('density'),], sff)
-
-    elif analysis == 'f':
-        # Write material properties for failure analysis
-
-        strength = []
-        if anisotropy == 0:
-            if material.failure_criterion == 1:
-                pass
-            elif material.failure_criterion == 2:
-                pass
-            elif material.failure_criterion == 3:
-                pass
-            elif material.failure_criterion == 4:
-                pass
-            elif material.failure_criterion == 5:
-                pass
-        else:
-            if material.failure_criterion == 1:
-                pass
-            elif material.failure_criterion == 2:
-                pass
-            elif material.failure_criterion == 3:
-                pass
-            elif material.failure_criterion == 4:
-                # Tsai-Wu
-                strength = [
-                    material.get('x1t'), material.get('x2t'), material.get('x3t'),
-                    material.get('x1c'), material.get('x2c'), material.get('x3c'),
-                    material.get('x23'), material.get('x13'), material.get('x12'),
-                    # strength_constants['r'], m.strength_constants['t'], m.strength_constants['s'],
-                ]
-            elif material.failure_criterion == 5:
-                pass
-
-        sutl.writeFormatIntegers(
-            file,
-            # (m.strength['criterion'], len(m.strength['constants'])),
-            [material.failure_criterion, len(strength)],
-            sfi
-        )
-        # file.write((sff+'\n').format(m.strength['chara_len']))
-        # sutl.writeFormatFloats(file, [m.char_len,], sff)
-        # sutl.writeFormatFloats(file, m.strength['constants'], sff[2:-1])
-        sutl.writeFormatFloats(file, strength, sff)
-
-
-    file.write('\n')
-
+    common_write_material(
+        mid, material, file, analysis,
+        physics=thermal_flag,
+        sfi=sfi, sff=sff,
+        comment_char='!',
+        has_ntemp=False
+    )
     return
 
 
@@ -351,24 +202,19 @@ def _writeMaterial(
 
 def _writeMaterials(
     dict_materials, file, analysis, thermal_flag=0,
-    sfi:str='8d', sff:str='20.12e'):
+    sfi:str='8d', sff:str='20.12e', mat_id_map=None):
+    """Write materials (VABS format).
+    
+    Wrapper for common function with VABS-specific parameters.
     """
-    """
-
-    logger.debug('writing materials...')
-
-    # counter = 0
-    for mid, m in dict_materials.items():
-        _writeMaterial(
-            mid=mid,
-            material=m,
-            file=file,
-            analysis=analysis,
-            thermal_flag=thermal_flag,
-            sfi=sfi,
-            sff=sff)
-
-    file.write('\n')
+    common_write_materials(
+        dict_materials, file, analysis,
+        physics=thermal_flag,
+        sfi=sfi, sff=sff,
+        comment_char='!',
+        has_ntemp=False,
+        mat_id_map=mat_id_map
+    )
     return
 
 
@@ -482,17 +328,15 @@ def _writeHeader(
 
 
 def _writeDisplacementRotation(
-    # macro_response:smdl.SectionResponse,
     file,
-    displacement:list[float]=[0, 0, 0],
-    rotation:list[list[float]]=[[1,0,0],[0,1,0],[0,0,1]],
+    displacement:list[float]=None,
+    rotation:list[list[float]]=None,
     sff:str='20.12e'):
-
-    # sutl.writeFormatFloats(file, macro_response.getDisplacement(), sff)
-    # sutl.writeFormatFloatsMatrix(file, macro_response.getDirectionCosine(), sff)
-    sutl.writeFormatFloats(file, displacement, sff)
-    file.write('\n')
-    sutl.writeFormatFloatsMatrix(file, rotation, sff)
+    """Write displacement and rotation (VABS format).
+    
+    Wrapper for common function.
+    """
+    write_displacement_rotation(file, displacement, rotation, sff)
 
 
 
@@ -504,32 +348,11 @@ def _writeDisplacementRotation(
 
 def _writeLoad(
     file, macro_response:smdl.StateCase, model, sff:str='20.12e'):
-
-    # _load = macro_response.getLoad()
-    _load = macro_response.load.data
-
-    if model == 0 or model == 'BM1':
-        # sutl.writeFormatFloats(file, macro_response.getLoad())
-        sutl.writeFormatFloats(file, _load, fmt=sff)
-
-    elif model == 1 or model == 'BM2':
-        sutl.writeFormatFloats(file, [_load[i] for i in [0, 3, 4, 5]], fmt=sff)
-        sutl.writeFormatFloats(file, [_load[i] for i in [1, 2]], fmt=sff)
-        file.write('\n')
-
-        # _distr_load = macro_response.getDistributedLoad()
-        _distr_load = macro_response.distributed_load
-        if _distr_load is None:
-            _distr_load = [[0,]*6]*4
-        else:
-            _distr_load = _distr_load.data
-        sutl.writeFormatFloats(file, _distr_load[0], fmt=sff)
-        sutl.writeFormatFloats(file, _distr_load[1], fmt=sff)
-        sutl.writeFormatFloats(file, _distr_load[2], fmt=sff)
-        sutl.writeFormatFloats(file, _distr_load[3], fmt=sff)
-
-    file.write('\n')
-
+    """Write load data (VABS format).
+    
+    Wrapper for common function.
+    """
+    write_load(file, macro_response, model, sff)
     return
 
 

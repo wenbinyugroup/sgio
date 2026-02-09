@@ -24,9 +24,14 @@ class TestReadMaterialFromJson:
     def test_read_isotropic_material(self, steel_isotropic_path):
         """Test reading an isotropic material from JSON file."""
         # Read material
-        mat = read_material_from_json(steel_isotropic_path)
+        materials = read_material_from_json(steel_isotropic_path)
         
-        # Verify
+        # Verify it's a dict with the material name as key
+        assert isinstance(materials, dict)
+        assert len(materials) == 1
+        assert "Steel" in materials
+        
+        mat = materials["Steel"]
         assert isinstance(mat, CauchyContinuumModel)
         assert mat.name == "Steel"
         assert mat.isotropy == 0
@@ -38,7 +43,8 @@ class TestReadMaterialFromJson:
     def test_read_orthotropic_material(self, carbon_fiber_orthotropic_path):
         """Test reading an orthotropic material from JSON file."""
         # Read material
-        mat = read_material_from_json(carbon_fiber_orthotropic_path)
+        materials = read_material_from_json(carbon_fiber_orthotropic_path)
+        mat = materials["Carbon Fiber"]
         
         # Verify
         assert mat.name == "Carbon Fiber"
@@ -51,7 +57,8 @@ class TestReadMaterialFromJson:
     def test_read_transverse_isotropic_material(self, ti_composite_transverse_path):
         """Test reading a transverse isotropic material from JSON file."""
         # Read material
-        mat = read_material_from_json(ti_composite_transverse_path)
+        materials = read_material_from_json(ti_composite_transverse_path)
+        mat = materials["Ti-Composite"]
         
         # Verify
         assert mat.name == "Ti-Composite"
@@ -63,7 +70,8 @@ class TestReadMaterialFromJson:
     def test_read_material_with_strength_properties(self, aluminum_strength_path):
         """Test reading material with strength properties."""
         # Read material
-        mat = read_material_from_json(aluminum_strength_path)
+        materials = read_material_from_json(aluminum_strength_path)
+        mat = materials["Aluminum"]
         
         # Verify
         assert mat.name == "Aluminum"
@@ -74,7 +82,8 @@ class TestReadMaterialFromJson:
     def test_read_material_with_thermal_properties(self, steel_thermal_path):
         """Test reading material with thermal properties."""
         # Read material
-        mat = read_material_from_json(steel_thermal_path)
+        materials = read_material_from_json(steel_thermal_path)
+        mat = materials["Steel Thermal"]
         
         # Verify
         assert mat.cte is not None
@@ -85,7 +94,8 @@ class TestReadMaterialFromJson:
     def test_read_material_with_stiffness_matrix(self, custom_anisotropic_path):
         """Test reading material with explicit stiffness matrix."""
         # Read material
-        mat = read_material_from_json(custom_anisotropic_path)
+        materials = read_material_from_json(custom_anisotropic_path)
+        mat = materials["Custom Material"]
         
         # Verify
         assert mat.name == "Custom Material"
@@ -114,7 +124,8 @@ class TestReadMaterialFromJson:
     def test_empty_material(self, empty_material_path):
         """Test reading material with minimal parameters."""
         # Should create material with defaults
-        mat = read_material_from_json(empty_material_path)
+        materials = read_material_from_json(empty_material_path)
+        mat = materials['Empty Material']
         assert mat.name == 'Empty Material'
         assert mat.density == 0
         assert mat.isotropy == 0
@@ -129,32 +140,35 @@ class TestReadMaterialsFromJson:
         # Read materials
         materials = read_materials_from_json(multiple_materials_path)
         
-        # Verify
-        assert isinstance(materials, list)
+        # Verify - now returns dict instead of list
+        assert isinstance(materials, dict)
         assert len(materials) == 3
-        assert all(isinstance(m, CauchyContinuumModel) for m in materials)
-        assert materials[0].name == "Steel"
-        assert materials[1].name == "Aluminum"
-        assert materials[2].name == "Titanium"
+        assert all(isinstance(m, CauchyContinuumModel) for m in materials.values())
+        assert "Steel" in materials
+        assert "Aluminum" in materials
+        assert "Titanium" in materials
+        assert materials["Steel"].name == "Steel"
+        assert materials["Aluminum"].name == "Aluminum"
+        assert materials["Titanium"].name == "Titanium"
 
     def test_read_mixed_isotropy_materials(self, mixed_isotropy_path):
         """Test reading materials with different isotropy types."""
         # Read materials
         materials = read_materials_from_json(mixed_isotropy_path)
         
-        # Verify
+        # Verify - access by name instead of index
         assert len(materials) == 3
-        assert materials[0].isotropy == 0
-        assert materials[1].isotropy == 1
-        assert materials[2].isotropy == 3
+        assert materials["Isotropic"].isotropy == 0
+        assert materials["Orthotropic"].isotropy == 1
+        assert materials["Transverse"].isotropy == 3
 
     def test_read_empty_list(self, empty_list_path):
         """Test reading empty material list."""
         # Read materials
         materials = read_materials_from_json(empty_list_path)
         
-        # Verify
-        assert isinstance(materials, list)
+        # Verify - now returns empty dict instead of empty list
+        assert isinstance(materials, dict)
         assert len(materials) == 0
 
     def test_read_single_material_in_list(self, tmp_path):
@@ -169,9 +183,10 @@ class TestReadMaterialsFromJson:
         # Read materials
         materials = read_materials_from_json(str(json_file))
         
-        # Verify
+        # Verify - now dict with name as key
         assert len(materials) == 1
-        assert materials[0].name == "Steel"
+        assert "Steel" in materials
+        assert materials["Steel"].name == "Steel"
 
     def test_file_not_found_multiple(self):
         """Test error when file does not exist."""
@@ -203,11 +218,15 @@ class TestReadMaterialsFromJson:
         # Read materials
         materials = read_materials_from_json(varying_properties_path)
         
-        # Verify
+        # Verify - access by name instead of index
         assert len(materials) == 3
-        assert materials[0].x1t is None
-        assert materials[1].x1t == 400e6
-        assert materials[2].cte is not None
+        # Check specific materials by their names
+        assert "Basic" in materials
+        assert "With Strength" in materials  
+        assert "With Thermal" in materials
+        assert materials["Basic"].x1t is None
+        assert materials["With Strength"].x1t == 400e6
+        assert materials["With Thermal"].cte is not None
 
 
 @pytest.mark.unit
@@ -231,7 +250,8 @@ class TestJsonRoundTrip:
             json.dump(original.model_dump(exclude_none=True), f)
         
         # Read back
-        restored = read_material_from_json(str(json_file))
+        restored_dict = read_material_from_json(str(json_file))
+        restored = restored_dict["Steel"]
         
         # Verify key properties match
         assert restored.name == original.name
@@ -256,7 +276,8 @@ class TestJsonRoundTrip:
             json.dump(original.model_dump(exclude_none=True), f)
         
         # Read back
-        restored = read_material_from_json(str(json_file))
+        restored_dict = read_material_from_json(str(json_file))
+        restored = restored_dict["Composite"]
         
         # Verify
         assert restored.name == original.name
@@ -277,12 +298,14 @@ class TestJsonRoundTrip:
         with open(json_file, 'w') as f:
             json.dump(data, f)
         
-        # Read back
-        restored = read_materials_from_json(str(json_file))
+        # Read back - now returns dict
+        restored_dict = read_materials_from_json(str(json_file))
         
         # Verify
-        assert len(restored) == len(originals)
-        for orig, rest in zip(originals, restored):
+        assert len(restored_dict) == len(originals)
+        for orig in originals:
+            assert orig.name in restored_dict
+            rest = restored_dict[orig.name]
             assert rest.name == orig.name
             assert rest.e1 == orig.e1
 
@@ -294,7 +317,8 @@ class TestWriteMaterialToJson:
     def test_write_isotropic_material(self, tmp_path, steel_isotropic_path):
         """Test writing an isotropic material to JSON file."""
         # Read material from fixture
-        mat = read_material_from_json(steel_isotropic_path)
+        materials = read_material_from_json(steel_isotropic_path)
+        mat = materials["Steel"]
         
         # Write to JSON
         json_file = tmp_path / "steel_write.json"
@@ -317,14 +341,16 @@ class TestWriteMaterialToJson:
     def test_write_orthotropic_material(self, tmp_path, carbon_fiber_orthotropic_path):
         """Test writing an orthotropic material to JSON file."""
         # Read material from fixture
-        mat = read_material_from_json(carbon_fiber_orthotropic_path)
+        materials = read_material_from_json(carbon_fiber_orthotropic_path)
+        mat = materials["Carbon Fiber"]
         
         # Write to JSON
         json_file = tmp_path / "carbon_write.json"
         mat.write_to_json(str(json_file), indent=2)
         
         # Read back
-        restored = read_material_from_json(str(json_file))
+        restored_dict = read_material_from_json(str(json_file))
+        restored = restored_dict["Carbon Fiber"]
         
         # Verify key properties
         assert restored.name == "Carbon Fiber"
@@ -336,14 +362,16 @@ class TestWriteMaterialToJson:
     def test_write_with_thermal_properties(self, tmp_path, steel_thermal_path):
         """Test writing material with thermal properties."""
         # Read material from fixture
-        mat = read_material_from_json(steel_thermal_path)
+        materials = read_material_from_json(steel_thermal_path)
+        mat = materials["Steel Thermal"]
         
         # Write to JSON
         json_file = tmp_path / "thermal_write.json"
         mat.write_to_json(str(json_file))
         
         # Read back
-        restored = read_material_from_json(str(json_file))
+        restored_dict = read_material_from_json(str(json_file))
+        restored = restored_dict["Steel Thermal"]
         
         # Verify thermal properties
         assert restored.cte is not None
@@ -354,14 +382,16 @@ class TestWriteMaterialToJson:
     def test_write_with_strength_properties(self, tmp_path, aluminum_strength_path):
         """Test writing material with strength properties."""
         # Read material from fixture
-        mat = read_material_from_json(aluminum_strength_path)
+        materials = read_material_from_json(aluminum_strength_path)
+        mat = materials["Aluminum"]
         
         # Write to JSON
         json_file = tmp_path / "strength_write.json"
         mat.write_to_json(str(json_file))
         
         # Read back
-        restored = read_material_from_json(str(json_file))
+        restored_dict = read_material_from_json(str(json_file))
+        restored = restored_dict["Aluminum"]
         
         # Verify strength properties
         assert restored.x1t == 310e6
@@ -459,7 +489,8 @@ class TestWriteMaterialToJson:
 
     def test_roundtrip_write_read(self, tmp_path, carbon_fiber_orthotropic_path):
         """Test complete round-trip: create -> write -> read -> compare."""
-        original = read_material_from_json(carbon_fiber_orthotropic_path)
+        materials = read_material_from_json(carbon_fiber_orthotropic_path)
+        original = materials["Carbon Fiber"]
         
         # Add some additional properties
         original.x1t = 2000e6
@@ -470,7 +501,8 @@ class TestWriteMaterialToJson:
         original.write_to_json(str(json_file))
         
         # Read back
-        restored = read_material_from_json(str(json_file))
+        restored_dict = read_material_from_json(str(json_file))
+        restored = restored_dict["Carbon Fiber"]
         
         # Should be equal
         assert original == restored

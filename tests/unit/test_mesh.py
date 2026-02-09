@@ -100,11 +100,11 @@ def test_combine_sg_materials():
     mat1.e = 1e6
     mat1.nu = 0.3
     
-    sg1.materials[1] = mat1
-    sg1.mocombos[1] = [1, 0.0]
+    sg1.materials['mat1'] = mat1
+    sg1.mocombos[1] = ('mat1', 0.0)
     
-    sg2.materials[1] = mat1  # Same material
-    sg2.mocombos[1] = [1, 0.0]
+    sg2.materials['mat1'] = mat1  # Same material
+    sg2.mocombos[1] = ('mat1', 0.0)
     
     # Combine
     sg_combined = sgio.combineSG(sg1, sg2)
@@ -138,10 +138,10 @@ def test_combine_sg_mesh_transformation():
     # Add materials
     from sgio.model import CauchyContinuumModel
     mat1 = CauchyContinuumModel(name='mat1')
-    sg1.materials[1] = mat1
-    sg1.mocombos[1] = [1, 0.0]
-    sg2.materials[1] = mat1
-    sg2.mocombos[1] = [1, 0.0]
+    sg1.materials['mat1'] = mat1
+    sg1.mocombos[1] = ('mat1', 0.0)
+    sg2.materials['mat1'] = mat1
+    sg2.mocombos[1] = ('mat1', 0.0)
     
     # Transform sg2
     offset = np.array([10, 0, 0])

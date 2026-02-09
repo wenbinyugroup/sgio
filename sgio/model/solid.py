@@ -930,8 +930,8 @@ class CauchyContinuumModel(BaseModel):
 CauchyContinuumModelNew = CauchyContinuumModel
 
 
-def read_material_from_json(file_path: str) -> CauchyContinuumModel:
-    """Read a single material from a JSON file.
+def read_material_from_json(file_path: str) -> dict[str, CauchyContinuumModel]:
+    """Read a single material from a JSON file and return as a dictionary.
     
     Parameters
     ----------
@@ -940,26 +940,30 @@ def read_material_from_json(file_path: str) -> CauchyContinuumModel:
         
     Returns
     -------
-    CauchyContinuumModel
-        Material model object created from the JSON data
+    dict[str, CauchyContinuumModel]
+        Dictionary with material name as key and material model as value
         
     Raises
     ------
     FileNotFoundError
         If the specified file does not exist
     ValueError
-        If the JSON is invalid or does not represent a single material
+        If the JSON is invalid or does not represent a single material,
+        or if the material has no name
     TypeError
         If the JSON content is not a dictionary
         
     Examples
     --------
     >>> # JSON file: {"name": "Steel", "isotropy": 0, "e": 200e9, "nu": 0.3, "density": 7850}
-    >>> mat = read_material_from_json("steel.json")
-    >>> mat.name
-    'Steel'
-    >>> mat.e1
+    >>> materials = read_material_from_json("steel.json")
+    >>> materials['Steel'].e1
     200000000000.0
+    
+    Notes
+    -----
+    This function now returns a dictionary to align with the name-based material
+    storage architecture. The material's name field is used as the dictionary key.
     """
     path = Path(file_path)
     
@@ -972,11 +976,16 @@ def read_material_from_json(file_path: str) -> CauchyContinuumModel:
     if not isinstance(data, dict):
         raise TypeError(f'Expected JSON dictionary for single material, got {type(data).__name__}')
     
-    return CauchyContinuumModel(**data)
+    material = CauchyContinuumModel(**data)
+    
+    if not material.name:
+        raise ValueError('Material must have a non-empty name field')
+    
+    return {material.name: material}
 
 
-def read_materials_from_json(file_path: str) -> List[CauchyContinuumModel]:
-    """Read multiple materials from a JSON file.
+def read_materials_from_json(file_path: str) -> dict[str, CauchyContinuumModel]:
+    """Read multiple materials from a JSON file and return as a dictionary.
     
     Parameters
     ----------
@@ -985,15 +994,16 @@ def read_materials_from_json(file_path: str) -> List[CauchyContinuumModel]:
         
     Returns
     -------
-    List[CauchyContinuumModel]
-        List of material model objects created from the JSON data
+    dict[str, CauchyContinuumModel]
+        Dictionary with material names as keys and material model objects as values
         
     Raises
     ------
     FileNotFoundError
         If the specified file does not exist
     ValueError
-        If the JSON is invalid
+        If the JSON is invalid, if any material has no name, or if duplicate
+        material names are found
     TypeError
         If the JSON content is not a list
         
@@ -1004,10 +1014,16 @@ def read_materials_from_json(file_path: str) -> List[CauchyContinuumModel]:
     >>> materials = read_materials_from_json("materials.json")
     >>> len(materials)
     2
-    >>> materials[0].name
-    'Steel'
-    >>> materials[1].name
-    'Aluminum'
+    >>> materials['Steel'].e1
+    200000000000.0
+    >>> materials['Aluminum'].e1
+    70000000000.0
+    
+    Notes
+    -----
+    This function now returns a dictionary to align with the name-based material
+    storage architecture. Each material's name field is used as the dictionary key.
+    Duplicate names will raise a ValueError.
     """
     path = Path(file_path)
     
@@ -1020,11 +1036,20 @@ def read_materials_from_json(file_path: str) -> List[CauchyContinuumModel]:
     if not isinstance(data, list):
         raise TypeError(f'Expected JSON list for multiple materials, got {type(data).__name__}')
     
-    materials = []
+    materials = {}
     for i, mat_data in enumerate(data):
         if not isinstance(mat_data, dict):
             raise TypeError(f'Material at index {i} is not a dictionary: {type(mat_data).__name__}')
-        materials.append(CauchyContinuumModel(**mat_data))
+        
+        material = CauchyContinuumModel(**mat_data)
+        
+        if not material.name:
+            raise ValueError(f'Material at index {i} must have a non-empty name field')
+        
+        if material.name in materials:
+            raise ValueError(f'Duplicate material name found: {material.name}')
+        
+        materials[material.name] = material
     
     return materials
 

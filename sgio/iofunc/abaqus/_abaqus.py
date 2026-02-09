@@ -90,7 +90,7 @@ def read(filename, **kwargs):
     sg.mesh = mesh
 
 
-    # Process materials
+    # Process materials - now using name-based storage
     for _mname, _mdata in materials.items():
         _mid = _mdata['id']
         if _mid == 0:  # Skip not used materials
@@ -142,9 +142,13 @@ def read(filename, **kwargs):
             m.set('isotropy', 2)
             m.set('elastic', _c, input_type='stiffness')
 
-        sg.materials[_mid] = m
+        # Store material by name
+        sg.materials[_mname] = m
+        
+        # Add material name-ID pair
+        sg.add_material_name_id_pair(_mname, _mid)
 
-    # Process material-orientation combinations
+    # Process material-orientation combinations - update to use material names
     sg.mocombos = mocombos
 
     return sg
@@ -555,14 +559,15 @@ def process_section(
 
     prop_id = 0
     for _k, _v in mocombos.items():
+        # mocombos now stores (material_name, angle) instead of (material_id, angle)
         if _v[0] == material_name and _v[1] == angle:
             prop_id = _k
             break
 
     if prop_id == 0:  # New material-angle combination
         prop_id = len(mocombos) + 1
-        mat_id = materials[material_name]['id']
-        mocombos[prop_id] = [mat_id, angle]
+        # Store material name directly instead of ID
+        mocombos[prop_id] = (material_name, angle)
         cell_prop_ids[prop_id] = []
 
     cell_prop_ids[prop_id].extend(cell_sets[elset_name])

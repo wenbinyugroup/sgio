@@ -64,15 +64,27 @@ def read_buffer(f, format_version:str):
     # Read mesh
     sg.mesh = _readMesh(f, sg.sgdim, nnode, nelem, format_flag)
 
-    # Read material in-plane angle combinations
+    # Read material in-plane angle combinations (temporarily with numeric IDs)
     nma_comb = configs['num_mat_angle3_comb']
-    sg.mocombos = _readMaterialRotationCombinations(f, nma_comb)
+    mocombos_temp = _readMaterialRotationCombinations(f, nma_comb)
 
-    # Read materials
+    # Read materials (now returns materials and name-ID pairs)
     nmate = configs['num_materials']
-    sg.materials = _readMaterials(f, nmate)
-
-    # print(f'sg.model: {sg.model}')
+    materials_temp, material_name_id_pairs = _readMaterials(f, nmate)
+    
+    # Store materials and name-ID pairs
+    sg.materials = materials_temp
+    sg.material_name_id_pairs = material_name_id_pairs
+    
+    # Create ID to name mapping from material_name_id_pairs
+    id_to_name = {mat_id: name for name, mat_id in material_name_id_pairs}
+    
+    # Convert mocombos to use material names instead of IDs
+    sg.mocombos = {}
+    for combo_id, combo_data in mocombos_temp.items():
+        mat_id, angle = combo_data
+        mat_name = id_to_name.get(mat_id, f'Material_{mat_id}')
+        sg.mocombos[combo_id] = (mat_name, angle)
 
     return sg
 
@@ -328,6 +340,9 @@ def writeInputBuffer(
         int_fmt=sfi, float_fmt=sff)
 
     # if not mesh_only:
+    # Get material ID mapping for export
+    mat_id_map = sg.get_export_material_ids()
+    
     _writeMOCombos(sg, file, sfi, sff)
 
     # if not mesh_only:
@@ -337,7 +352,8 @@ def writeInputBuffer(
         analysis=analysis,
         thermal_flag=thermal_flag,
         sfi=sfi,
-        sff=sff)
+        sff=sff,
+        mat_id_map=mat_id_map)
 
     return
 
@@ -362,7 +378,9 @@ def writeInputBufferGlobal(
     """
 
     if analysis.startswith('f'):
-        _writeMaterials(dict_materials, file, sfi=sfi, sff=sff)
+        # Generate ID mapping for dict_materials
+        mat_id_map = {name: idx + 1 for idx, name in enumerate(dict_materials.keys())}
+        _writeMaterials(dict_materials, file, analysis='f', sfi=sfi, sff=sff, mat_id_map=mat_id_map)
 
     _writeGlobalResponses(file, macro_responses, model, sff)
 

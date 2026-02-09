@@ -79,13 +79,27 @@ def read_input_buffer(file, format_version:str, model:int|str):
     # Read mesh
     sg.mesh = _readMesh(file, sg.sgdim, nnode, nelem, _use_elem_local_orient)
 
-    # Read material in-plane angle combinations
+    # Read material in-plane angle combinations (temporarily with numeric IDs)
     nma_comb = configs['num_mat_angle3_comb']
-    sg.mocombos = _readMaterialRotationCombinations(file, nma_comb)
+    mocombos_temp = _readMaterialRotationCombinations(file, nma_comb)
 
-    # Read materials
+    # Read materials (now returns materials and name-ID pairs)
     nmate = configs['num_materials']
-    sg.materials = _readMaterials(file, nmate, sg.physics)
+    materials_temp, material_name_id_pairs = _readMaterials(file, nmate, sg.physics)
+    
+    # Store materials and name-ID pairs
+    sg.materials = materials_temp
+    sg.material_name_id_pairs = material_name_id_pairs
+    
+    # Create ID to name mapping from material_name_id_pairs
+    id_to_name = {mat_id: name for name, mat_id in material_name_id_pairs}
+    
+    # Convert mocombos to use material names instead of IDs
+    sg.mocombos = {}
+    for combo_id, combo_data in mocombos_temp.items():
+        mat_id, angle = combo_data
+        mat_name = id_to_name.get(mat_id, f'Material_{mat_id}')
+        sg.mocombos[combo_id] = (mat_name, angle)
 
     return sg
 
