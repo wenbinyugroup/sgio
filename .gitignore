@@ -6,6 +6,7 @@ build*/
 *.egg-info/
 dist/
 .agents-memory/
+local/
 
 .venv/Lib/
 .venv/Scripts/
