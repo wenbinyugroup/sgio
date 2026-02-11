@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import logging
+import os
+import shutil
 import subprocess as sbp
 from typing import List, Union
 
@@ -74,6 +76,17 @@ def run(cmd: Union[List[str], tuple], timeout: int) -> sbp.CompletedProcess:
         cmd = ['cmd.exe', '/c'] + cmd
 
     logger.info(' '.join(cmd))
+
+    logger.debug("PATH used by Python:")
+    for p in os.environ["PATH"].split(os.pathsep):
+        logger.debug(f"  {p}")
+    resolved = shutil.which(cmd[0])
+    logger.debug(f"Resolved path: {resolved}")
+    
+    # Use resolved path if found to ensure subprocess can locate the executable
+    if resolved:
+        cmd[0] = resolved
+        logger.debug(f"Using resolved path: {cmd[0]}")
 
     try:
         out = sbp.run(

@@ -38,6 +38,9 @@ from .model import *
 
 from .iofunc import (
     read,
+    read_output,
+    read_output_model,
+    read_output_state,
     readOutput,
     readOutputModel,
     readOutputState,
@@ -70,6 +73,9 @@ __all__ = [
     "configure_logging",
     # I/O functions
     "read",
+    "read_output",
+    "read_output_model",
+    "read_output_state",
     "readOutput",
     "readOutputModel",
     "readOutputState",

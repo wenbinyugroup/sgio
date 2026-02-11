@@ -207,6 +207,77 @@ from sgio.model.solid import CauchyContinuumModel
       assert len(result) == 6
   ```
 
+## Logging Guidelines
+
+### Using Loggers in Code
+
+```python
+# At top of module
+import logging
+logger = logging.getLogger(__name__)
+
+# In functions
+def my_function():
+    logger.debug("Detailed information for debugging")
+    logger.info("General information about execution")
+    logger.warning("Warning about potential issues")
+    logger.error("Error that should be addressed")
+    logger.critical("Critical error, execution may fail")
+```
+
+### Logger Hierarchy
+- **Root logger**: `'sgio'` (defined in `_global.py:8`)
+- **Module loggers**: Use `logging.getLogger(__name__)`
+- **Child loggers**: Automatically propagate to parent (`sgio`)
+
+### Best Practices
+
+1. **Always use module-level logger**: `logger = logging.getLogger(__name__)`
+2. **Never configure handlers in modules**: Let applications control configuration
+3. **Use appropriate log levels**:
+   - **DEBUG**: Detailed diagnostic information
+   - **INFO**: Confirmation that things are working
+   - **WARNING**: Something unexpected, but code still works
+   - **ERROR**: Serious problem, function failed
+   - **CRITICAL**: Program may not continue
+4. **Don't set `propagate=False`** in library code
+5. **Include context in messages**: `logger.error(f"Failed to read {filename}: {error}")`
+6. **Don't log sensitive data**: Passwords, keys, personal information
+
+### Testing Logging
+
+```python
+def test_function_logs_error(caplog):
+    """Test that function logs error on invalid input."""
+    with caplog.at_level(logging.ERROR):
+        my_function(invalid_input)
+    
+    assert "error message" in caplog.text
+```
+
+### Configuration
+
+For applications using SGIO:
+
+```python
+# Multi-package setup (recommended)
+import logging
+logging.basicConfig(
+    level=logging.DEBUG,
+    handlers=[logging.FileHandler('run.log')]
+)
+
+# Or use SGIO's configure_logging
+import sgio
+sgio.configure_logging(
+    cout_level='INFO',
+    fout_level='DEBUG',
+    filename='run.log'
+)
+```
+
+See `docs/source/guide/logging.md` for complete logging guide.
+
 ## Git Workflow
 - Create feature branches from main
 - Write tests before implementing features
