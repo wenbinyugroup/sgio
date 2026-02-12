@@ -13,7 +13,7 @@ import yaml
 from sgio import (
     read,
     readOutputState,
-    addCellDictDataToMesh,
+    add_cell_dict_data_to_mesh,
     write,
     logger,
 )
@@ -75,6 +75,17 @@ def test_swiftcomp_output_state_dehomogenization(fn_test_cases, test_data_dir, t
         assert sg is not None, "Structure gene object should not be None"
         assert sg.mesh is not None, "Mesh should not be None"
 
+        # Phase 4.4: readers must always populate node_id and element_id
+        mesh = sg.mesh
+        # node_id should exist and match number of points
+        assert "node_id" in mesh.point_data, "SwiftComp reader should populate node_id in point_data"
+        assert len(mesh.point_data["node_id"]) == len(mesh.points)
+        # element_id should exist and match total number of elements
+        assert "element_id" in mesh.cell_data, "SwiftComp reader should populate element_id in cell_data"
+        total_elems = sum(len(cb.data) for cb in mesh.cells)
+        total_ids = sum(len(block) for block in mesh.cell_data["element_id"])
+        assert total_ids == total_elems
+
         # Read the output state
         state_cases = readOutputState(
             fn_in, ff_in, 'd', sg=sg,
@@ -92,19 +103,19 @@ def test_swiftcomp_output_state_dehomogenization(fn_test_cases, test_data_dir, t
             
             # Element strain in global coordinate
             _name = [f'case{j+1}_{name}' for name in NAME_E]
-            addCellDictDataToMesh(_name, state_case.getState('e').data, sg.mesh)
+            add_cell_dict_data_to_mesh(_name, state_case.getState('e').data, sg.mesh)
             
             # Element strain in material coordinate
             _name = [f'case{j+1}_{name}' for name in NAME_EM]
-            addCellDictDataToMesh(_name, state_case.getState('em').data, sg.mesh)
+            add_cell_dict_data_to_mesh(_name, state_case.getState('em').data, sg.mesh)
             
             # Element stress in global coordinate
             _name = [f'case{j+1}_{name}' for name in NAME_S]
-            addCellDictDataToMesh(_name, state_case.getState('s').data, sg.mesh)
+            add_cell_dict_data_to_mesh(_name, state_case.getState('s').data, sg.mesh)
             
             # Element stress in material coordinate
             _name = [f'case{j+1}_{name}' for name in NAME_SM]
-            addCellDictDataToMesh(_name, state_case.getState('sm').data, sg.mesh)
+            add_cell_dict_data_to_mesh(_name, state_case.getState('sm').data, sg.mesh)
 
         # Write output if specified
         if 'fn_out' in _case.keys():

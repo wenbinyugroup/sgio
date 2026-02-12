@@ -7,7 +7,7 @@ import yaml
 from sgio import (
     read,
     readOutputState,
-    addCellDictDataToMesh,
+    add_cell_dict_data_to_mesh,
     write,
     configure_logging,
     logger,
@@ -66,9 +66,9 @@ def test_io_vabs_out_state_f(fn_test_cases, test_data_dir, output_dir):
         for j, state_case in enumerate(state_cases):
             logger.info(f'state case {j+1}')
 
-            addCellDictDataToMesh(
+            add_cell_dict_data_to_mesh(
                 f'case{j+1}_fi', state_case.getState('fi').data, sg.mesh)
-            addCellDictDataToMesh(
+            add_cell_dict_data_to_mesh(
                 f'case{j+1}_sr', state_case.getState('sr').data, sg.mesh)
 
         if 'fn_out' in _case.keys():

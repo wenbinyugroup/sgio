@@ -146,3 +146,75 @@ def test_gmsh_read_basic(test_data_dir, temp_dir):
     assert len(sg.mesh.points) > 0, f"Expected points in mesh, got {len(sg.mesh.points)}"
     assert len(sg.mesh.cells) > 0, f"Expected cells in mesh, got {len(sg.mesh.cells)}"
 
+
+@pytest.mark.io
+@pytest.mark.gmsh
+def test_gmsh_physical_groups_to_property_id(test_data_dir):
+    """Test that gmsh:physical groups are mapped to property_id.
+    
+    This test verifies that:
+    1. Gmsh physical groups are correctly read as property_id
+    2. The property_id matches the physical group tags from the file
+    """
+    import numpy as np
+    from sgio.iofunc.gmsh import _gmsh
+    
+    # Use the test fixture with physical groups
+    fn_gmsh = test_data_dir / 'gmsh' / 'sg33_cube_tetra4_min_gmsh41.msh'
+    
+    if not fn_gmsh.exists():
+        pytest.skip(f"Test file not found: {fn_gmsh}")
+    
+    # Read the Gmsh file
+    with open(fn_gmsh, 'rb') as f:
+        mesh = _gmsh.read_buffer(f, format_version='4.1')
+    
+    # Verify mesh was read successfully
+    assert mesh is not None, "Mesh should not be None"
+    assert len(mesh.points) > 0, "Mesh should have points"
+    assert len(mesh.cells) > 0, "Mesh should have cells"
+    
+    # Verify property_id exists in cell_data
+    assert "property_id" in mesh.cell_data, "property_id should be in cell_data"
+    
+    # Verify gmsh:physical also exists (original data)
+    assert "gmsh:physical" in mesh.cell_data, "gmsh:physical should be in cell_data"
+    
+    # Verify property_id is the same as gmsh:physical
+    for i, cell_block in enumerate(mesh.cells):
+        assert len(mesh.cell_data["property_id"][i]) == len(cell_block.data), \
+            f"property_id length should match cell block {i} size"
+        
+        # property_id should equal gmsh:physical
+        np.testing.assert_array_equal(
+            mesh.cell_data["property_id"][i],
+            mesh.cell_data["gmsh:physical"][i],
+            err_msg=f"property_id should match gmsh:physical for cell block {i}"
+        )
+    
+    # From the test file, we expect physical group 1 named "matrix"
+    # All elements should have property_id = 1
+    for i, cell_block in enumerate(mesh.cells):
+        assert all(mesh.cell_data["property_id"][i] == 1), \
+            f"All elements in cell block {i} should have property_id = 1"
+    
+    logger.info(f"Successfully read {fn_gmsh}")
+    logger.info(f"Mesh has {len(mesh.points)} points and {len(mesh.cells)} cell blocks")
+    logger.info(f"property_id values: {[mesh.cell_data['property_id'][i][0] for i in range(len(mesh.cells))]}")
+
+
+@pytest.mark.io
+@pytest.mark.gmsh
+def test_gmsh_no_physical_groups_warning(test_data_dir, temp_dir):
+    """Test that a warning is issued when no physical groups are present.
+    
+    This test verifies that:
+    1. Files without physical groups still load successfully
+    2. property_id is created with zeros
+    3. A warning is issued to the user
+    """
+    # Create a simple Gmsh file without physical groups for testing
+    # For now, we'll skip this test if we can't find a suitable file
+    # In practice, you might want to create a test fixture without physical groups
+    pytest.skip("Need to create test fixture without physical groups")
+

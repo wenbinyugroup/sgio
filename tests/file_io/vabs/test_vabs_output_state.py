@@ -13,7 +13,7 @@ import yaml
 from sgio import (
     read,
     readOutputState,
-    addCellDictDataToMesh,
+    add_cell_dict_data_to_mesh,
     write,
     configure_logging,
     logger,
@@ -98,19 +98,19 @@ def test_vabs_output_state_dehomogenization(fn_test_cases, test_data_dir, tmp_pa
             
             # Element strain in global coordinate
             _name = [f'case{j+1}_{name}' for name in NAME_E]
-            addCellDictDataToMesh(_name, state_case.getState('ee').data, sg.mesh)
+            add_cell_dict_data_to_mesh(_name, state_case.getState('ee').data, sg.mesh)
             
             # Element strain in material coordinate
             _name = [f'case{j+1}_{name}' for name in NAME_EM]
-            addCellDictDataToMesh(_name, state_case.getState('eem').data, sg.mesh)
+            add_cell_dict_data_to_mesh(_name, state_case.getState('eem').data, sg.mesh)
             
             # Element stress in global coordinate
             _name = [f'case{j+1}_{name}' for name in NAME_S]
-            addCellDictDataToMesh(_name, state_case.getState('es').data, sg.mesh)
+            add_cell_dict_data_to_mesh(_name, state_case.getState('es').data, sg.mesh)
             
             # Element stress in material coordinate
             _name = [f'case{j+1}_{name}' for name in NAME_SM]
-            addCellDictDataToMesh(_name, state_case.getState('esm').data, sg.mesh)
+            add_cell_dict_data_to_mesh(_name, state_case.getState('esm').data, sg.mesh)
 
         if 'fn_out' in _case.keys():
             fn_out = str(output_dir / _case["fn_out"])
@@ -191,11 +191,11 @@ def test_vabs_output_state_failure(fn_test_cases, test_data_dir, tmp_path):
             logger.info(f'state case {j+1}')
 
             # Add failure index data
-            addCellDictDataToMesh(
+            add_cell_dict_data_to_mesh(
                 f'case{j+1}_fi', state_case.getState('fi').data, sg.mesh)
 
             # Add strength ratio data
-            addCellDictDataToMesh(
+            add_cell_dict_data_to_mesh(
                 f'case{j+1}_sr', state_case.getState('sr').data, sg.mesh)
 
         if 'fn_out' in _case.keys():

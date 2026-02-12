@@ -16,5 +16,6 @@ Guide
     convert
     abaqus_cs
     plot.md
+    custom_mesh/index
 
 ..    guide/convert

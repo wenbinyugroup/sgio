@@ -1,0 +1,10 @@
+{
+  "name": "Aluminum",
+  "isotropy": 0,
+  "e": 70000000000.0,
+  "nu": 0.33,
+  "density": 2700,
+  "x1t": 310000000.0,
+  "x1c": 310000000.0,
+  "failure_criterion": 1
+}

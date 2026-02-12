@@ -6,6 +6,7 @@ build*/
 *.egg-info/
 dist/
 .agents-memory/
+local/
 
 .venv/Lib/
 .venv/Scripts/
@@ -13,6 +14,8 @@ dist/
 .venv/.gitignore
 .venv/CASHDIR.TAG
 .venv/pyvenv.cfg
+
+_local_dev_note.md
 
 *.pyc
 *.exe

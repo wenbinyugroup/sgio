@@ -17,7 +17,20 @@ from .core import (
     SGMesh,
     check_isolated_nodes,
     renumber_elements,
-    )
+    validate_node_ids,
+    validate_element_ids,
+    get_node_id_mapping,
+    ensure_node_ids,
+    ensure_element_ids,
+    auto_renumber_for_format,
+    check_duplicate_ids,
+    check_forbidden_ids,
+    FormatNumberingRequirements,
+    FORMAT_ALIASES,
+    FORMAT_REQUIREMENTS,
+    normalize_format_name,
+    get_numbering_requirements,
+)
 from .core.builder import buildSG1D
 from .core.merge import combineSG
 
@@ -25,14 +38,17 @@ from .model import *
 
 from .iofunc import (
     read,
+    read_output,
+    read_output_model,
+    read_output_state,
     readOutput,
     readOutputModel,
     readOutputState,
     write,
     convert,
     readLoadCsv,
-    addCellDictDataToMesh,
-    addPointDictDataToMesh,
+    add_cell_dict_data_to_mesh,
+    add_point_dict_data_to_mesh,
     # write_points_cells,
     # register_format,
     # deregister_format,
@@ -57,14 +73,17 @@ __all__ = [
     "configure_logging",
     # I/O functions
     "read",
+    "read_output",
+    "read_output_model",
+    "read_output_state",
     "readOutput",
     "readOutputModel",
     "readOutputState",
     "write",
     "convert",
     "readLoadCsv",
-    "addCellDictDataToMesh",
-    "addPointDictDataToMesh",
+    "add_cell_dict_data_to_mesh",
+    "add_point_dict_data_to_mesh",
     # Execution
     "run",
     # Core functions and classes
@@ -74,6 +93,21 @@ __all__ = [
     "StructureGene",
     "check_isolated_nodes",
     "renumber_elements",
+    # Numbering validation and utilities
+    "validate_node_ids",
+    "validate_element_ids",
+    "get_node_id_mapping",
+    "ensure_node_ids",
+    "ensure_element_ids",
+    "auto_renumber_for_format",
+    "check_duplicate_ids",
+    "check_forbidden_ids",
+    # Format requirements registry (Phase 4.1)
+    "FormatNumberingRequirements",
+    "FORMAT_ALIASES",
+    "FORMAT_REQUIREMENTS",
+    "normalize_format_name",
+    "get_numbering_requirements",
     # Utility functions
     "plot_sg_2d",
     # Model classes from .model import *

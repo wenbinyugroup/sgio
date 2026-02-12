@@ -5,7 +5,6 @@ import logging
 import meshio
 from meshio import Mesh
 
-
 import sgio._global as GLOBAL
 import sgio.iofunc._meshio as _meshio
 import sgio.iofunc.abaqus as _abaqus
@@ -13,15 +12,124 @@ import sgio.iofunc.gmsh as _gmsh
 import sgio.iofunc.swiftcomp as _swiftcomp
 import sgio.iofunc.vabs as _vabs
 import sgio.model as sgmodel
-from sgio.core import (
-    StructureGene,
-    renumber_elements,
-)
-from sgio.utils import (
-    readNextNonEmptyLine,
+from sgio.core import StructureGene
+from sgio.core.numbering import ensure_node_ids
+from sgio.utils import readNextNonEmptyLine
+
+# Import utility functions from refactored modules
+from .utils import (
+    readLoadCsv,
+    readSGInterfacePairs,
+    readSGInterfaceNodes,
 )
 
 logger = logging.getLogger(__name__)
+
+# ============================================================================
+# SECTION: Constants
+# ============================================================================
+
+DEFAULT_MATERIAL_PROPERTIES = {
+    'elastic': [200e9, 0.3],  # Default steel-like properties
+    'isotropy': 0
+}
+
+FILE_EXTENSIONS = {
+    'displacement': 'u',
+    'element': 'ele', 
+    'element_vabs': 'ELE',
+    'failure_index': 'fi',
+    'element_node_strain': 'sn',
+    'element_node_strain_material': 'snm'
+}
+
+# ============================================================================
+# SECTION: Utility Functions
+# ============================================================================
+
+def _safe_file_read(filename: str, mode: str = 'r'):
+    """Context manager for safe file operations with error handling.
+    
+    Parameters
+    ----------
+    filename : str
+        Path to file
+    mode : str
+        File read mode ('r' or 'rb')
+        
+    Returns
+    -------
+    context manager
+        File context manager with error handling
+        
+    Raises
+    ------
+    FileNotFoundError
+        If file does not exist
+    IOError
+        If file cannot be opened
+    """
+    try:
+        return open(filename, mode)
+    except FileNotFoundError:
+        logger.error(f"File not found: {filename}")
+        raise
+    except IOError as e:
+        logger.error(f"Error opening file {filename}: {e}")
+        raise
+
+
+def _get_file_extension(file_format: str, extension_type: str) -> str:
+    """Get the appropriate file extension for a given format and type.
+    
+    Parameters
+    ----------
+    file_format : str
+        File format ('vabs', 'swiftcomp', etc.)
+    extension_type : str
+        Type of extension ('displacement', 'element', etc.)
+        
+    Returns
+    -------
+    str
+        File extension
+    """
+    if file_format.lower().startswith('v'):
+        if extension_type == 'displacement':
+            return FILE_EXTENSIONS['displacement'].upper()
+        elif extension_type == 'element':
+            return FILE_EXTENSIONS['element_vabs']
+    
+    # Default to lowercase extensions
+    return FILE_EXTENSIONS.get(extension_type, extension_type)
+
+
+def _validate_sg_parameter(sg: StructureGene | None) -> StructureGene:
+    """Validate StructureGene parameter, raise error if None.
+    
+    Parameters
+    ----------
+    sg : StructureGene or None
+        StructureGene object to validate
+        
+    Returns
+    -------
+    StructureGene
+        Valid StructureGene object
+        
+    Raises
+    ------
+    ValueError
+        If sg is None
+    """
+    if sg is None:
+        raise ValueError("StructureGene parameter cannot be None")
+    return sg
+
+
+# ============================================================================
+# SECTION: Mesh Conversion Functions
+# ============================================================================
 
 
 def _mesh_to_sg(mesh: Mesh, sgdim: int = 3, model_type: str = 'SD1') -> StructureGene:
@@ -45,32 +153,68 @@ def _mesh_to_sg(mesh: Mesh, sgdim: int = 3, model_type: str = 'SD1') -> Structur
 
     sg = StructureGene()
     sg.sgdim = sgdim
+    sg.smdim, sg.model = _parse_model_type(model_type)
+    sg.mesh = mesh
 
+    # Ensure required data exists in mesh
+    _ensure_mesh_data(mesh)
+    
+    # Process materials and properties
+    _process_materials_from_mesh(sg, mesh, sgdim)
+
+    return sg
+
+
+def _parse_model_type(model_type: str | int) -> tuple[int, int]:
+    """Parse model type string/integer into smdim and submodel.
+    
+    Parameters
+    ----------
+    model_type : str or int
+        Model type specification
+        
+    Returns
+    -------
+    tuple[int, int]
+        (smdim, submodel) values
+    """
     if isinstance(model_type, int):
-        smdim = model_type
-        _submodel = model_type
-    elif isinstance(model_type, str):
-        if model_type.upper()[:2] == 'SD':
+        return model_type, model_type
+    
+    if isinstance(model_type, str):
+        prefix = model_type.upper()[:2]
+        if prefix == 'SD':
             smdim = 3
-        elif model_type.upper()[:2] == 'PL':
+        elif prefix == 'PL':
             smdim = 2
-        elif model_type.upper()[:2] == 'BM':
+        elif prefix == 'BM':
             smdim = 1
         else:
             smdim = 3
+            
         try:
-            _submodel = int(model_type[2]) - 1
+            submodel = int(model_type[2]) - 1
         except (IndexError, ValueError):
-            _submodel = 0
-    else:
-        smdim = 3
-        _submodel = 0
+            submodel = 0
+        return smdim, submodel
+    
+    return 3, 0
 
-    sg.smdim = smdim
-    sg.model = _submodel
-    sg.mesh = mesh
 
-    # Ensure element_id cell_data exists (generate if missing)
+def _ensure_mesh_data(mesh: Mesh) -> None:
+    """Ensure required mesh data (node_id, element_id, property_id) exists.
+    
+    Parameters
+    ----------
+    mesh : Mesh
+        Mesh object to update
+    """
+    import numpy as np
+    
+    # Ensure node_id point_data exists
+    ensure_node_ids(mesh)
+
+    # Ensure element_id cell_data exists
     if 'element_id' not in mesh.cell_data:
         element_id = []
         elem_idx = 0
@@ -80,7 +224,7 @@ def _mesh_to_sg(mesh: Mesh, sgdim: int = 3, model_type: str = 'SD1') -> Structur
             elem_idx += len(cell_block.data)
         mesh.cell_data['element_id'] = element_id
 
-    # Ensure property_id cell_data exists (use gmsh:physical or gmsh:geometrical if available)
+    # Ensure property_id cell_data exists
     if 'property_id' not in mesh.cell_data:
         if 'gmsh:physical' in mesh.cell_data:
             mesh.cell_data['property_id'] = [
@@ -97,9 +241,27 @@ def _mesh_to_sg(mesh: Mesh, sgdim: int = 3, model_type: str = 'SD1') -> Structur
                 property_id.append(np.ones(len(cell_block.data), dtype=int))
             mesh.cell_data['property_id'] = property_id
 
-    # Process property_id from cell_data
+
+def _process_materials_from_mesh(sg: StructureGene, mesh: Mesh, sgdim: int) -> None:
+    """Process materials from mesh field_data and cell_data.
+    
+    Parameters
+    ----------
+    sg : StructureGene
+        Structure gene object to update
+    mesh : Mesh
+        Mesh object containing material information
+    sgdim : int
+        Structure gene dimension
+    """
+    # Extract material name-ID pairs from Gmsh PhysicalNames
+    if hasattr(mesh, 'field_data') and mesh.field_data:
+        for name, (phys_id, dim) in mesh.field_data.items():
+            if dim == sgdim:
+                sg.add_material_name_id_pair(name, phys_id)
+
+    # Process property_id from cell_data and create materials
     if 'property_id' in mesh.cell_data:
-        # Create mocombos from unique property_ids
         property_ids = set()
         for prop_block in mesh.cell_data['property_id']:
             for prop_id in prop_block:
@@ -108,10 +270,415 @@ def _mesh_to_sg(mesh: Mesh, sgdim: int = 3, model_type: str = 'SD1') -> Structur
 
         for prop_id in property_ids:
             if prop_id not in sg.mocombos:
-                sg.mocombos[prop_id] = [prop_id, 0.0]  # [material_id, angle]
+                mat_name = _get_or_create_material_name(sg, prop_id)
+                _ensure_material_exists(sg, mat_name)
+                sg.mocombos[prop_id] = (mat_name, 0.0)  # (material_name, angle)
 
-    return sg
 
+def _get_or_create_material_name(sg: StructureGene, prop_id: int) -> str:
+    """Get material name by property ID or create a default name.
+    
+    Parameters
+    ----------
+    sg : StructureGene
+        Structure gene object
+    prop_id : int
+        Property ID
+        
+    Returns
+    -------
+    str
+        Material name
+    """
+    mat_name = sg.get_material_name_by_id(prop_id)
+    if mat_name is None:
+        mat_name = f'Material_{prop_id}'
+        sg.add_material_name_id_pair(mat_name, prop_id)
+    return mat_name
+
+
+def _ensure_material_exists(sg: StructureGene, mat_name: str) -> None:
+    """Ensure material exists in structure gene, create with defaults if needed.
+    
+    Parameters
+    ----------
+    sg : StructureGene
+        Structure gene object
+    mat_name : str
+        Material name to ensure exists
+    """
+    if mat_name not in sg.materials:
+        import sgio.model.solid as smdl
+        mat = smdl.CauchyContinuumModel(name=mat_name)
+        mat.set('isotropy', 0)
+        mat.set('elastic', DEFAULT_MATERIAL_PROPERTIES['elastic'])
+        sg.materials[mat_name] = mat
+
+
+def _read_swiftcomp_output_state(
+    filename: str, analysis: str, model_type: str, extension: list[str], 
+    num_cases: int, num_elements: int, sg: StructureGene, **kwargs
+) -> list[sgmodel.StateCase]:
+    """Read SwiftComp output state data.
+    
+    Parameters
+    ----------
+    filename : str
+        Base filename
+    analysis : str
+        Analysis type
+    model_type : str
+        Model type
+    extension : list[str]
+        Extensions to read
+    num_cases : int
+        Number of cases
+    num_elements : int
+        Number of elements
+    sg : StructureGene
+        Structure gene object
+    **kwargs
+        Additional arguments
+        
+    Returns
+    -------
+    list[StateCase]
+        List of state cases
+    """
+    state_cases = [sgmodel.StateCase({}, {}) for _ in range(num_cases)]
+    
+    if analysis == "fi":
+        with open(f"{filename}.fi", "r") as file:
+            return _swiftcomp.read_output_buffer(
+                file, analysis=analysis, model_type=model_type, **kwargs
+            )
+    
+    elif analysis == "d" or analysis == "l":
+        # Read displacement
+        if 'u' in extension:
+            if num_elements == 0:
+                num_elements = sg.nelems
+            logger.info(f'reading displacement... {filename}.u')
+            with open(f"{filename}.u", "r") as file:
+                for i_case in range(num_cases):
+                    state_case = state_cases[i_case]
+                    try:
+                        u = _swiftcomp._read_output_node_disp_case(file, sg.nnodes)
+                    except Exception as e:
+                        logger.error(f"Error: {e}")
+                        return None
+                    if u is None:
+                        logger.error("Error: No data read")
+                        return None
+                    state_case.addState(
+                        name="u", state=sgmodel.State(
+                            name="u", data=u, label=["u1", "u2", "u3"], location="node"
+                        )
+                    )
+
+        # Read element node strain and stress
+        if 'sn' in extension:
+            if num_elements == 0:
+                num_elements = sg.nelems
+            logger.info(f'reading element node strain and stress... {filename}.sn')
+            with open(f"{filename}.sn", "r") as file:
+                for i_case in range(num_cases):
+                    state_case = state_cases[i_case]
+                    try:
+                        strains, stresses = _swiftcomp._read_output_node_strain_stress_case_global_gmsh(
+                            file, num_elements, sg
+                        )
+                    except Exception as e:
+                        logger.error(f"Error: {e}")
+                        return None
+                    if strains is None or stresses is None:
+                        logger.error("Error: No data read")
+                        return None
+                    
+                    # Add strain state
+                    state_case.addState(
+                        name='e', state=sgmodel.State(
+                            name='e', data=strains,
+                            label=['e11', 'e22', 'e33', '2e23', '2e13', '2e12'],
+                            location='element_node'
+                        )
+                    )
+                    # Add stress state
+                    state_case.addState(
+                        name='s', state=sgmodel.State(
+                            name='s', data=stresses,
+                            label=['s11', 's22', 's33', 's23', 's13', 's12'],
+                            location='element_node'
+                        )
+                    )
+
+        # Read element node strain and stress in material coordinate system
+        if 'snm' in extension:
+            if num_elements == 0:
+                num_elements = sg.nelems
+            logger.info(f'reading element node strain and stress in material c/s... {filename}.snm')
+            with open(f"{filename}.snm", "r") as file:
+                for i_case in range(num_cases):
+                    state_case = state_cases[i_case]
+                    try:
+                        strains, stresses = _swiftcomp._read_output_node_strain_stress_case_global_gmsh(
+                            file, num_elements, sg
+                        )
+                    except Exception as e:
+                        logger.error(f"Error: {e}")
+                        return None
+                    if strains is None or stresses is None:
+                        logger.error("Error: No data read")
+                        return None
+                    
+                    # Add strain state in material coordinate system
+                    state_case.addState(
+                        name='em', state=sgmodel.State(
+                            name='em', data=strains,
+                            label=['e11m', 'e22m', 'e33m', '2e23m', '2e13m', '2e12m'],
+                            location='element_node'
+                        )
+                    )
+                    # Add stress state in material coordinate system
+                    state_case.addState(
+                        name='sm', state=sgmodel.State(
+                            name='sm', data=stresses,
+                            label=['s11m', 's22m', 's33m', 's23m', 's13m', 's12m'],
+                            location='element_node'
+                        )
+                    )
+
+    return state_cases
+
+
+def _read_vabs_output_state(
+    filename: str, analysis: str, extension: list[str], 
+    num_cases: int, num_elements: int, sg: StructureGene, 
+    tool_version: str, **kwargs
+) -> list[sgmodel.StateCase]:
+    """Read VABS output state data.
+    
+    Parameters
+    ----------
+    filename : str
+        Base filename
+    analysis : str
+        Analysis type
+    extension : list[str]
+        Extensions to read
+    num_cases : int
+        Number of cases
+    num_elements : int
+        Number of elements
+    sg : StructureGene
+        Structure gene object
+    tool_version : str
+        Tool version
+    **kwargs
+        Additional arguments
+        
+    Returns
+    -------
+    list[StateCase]
+        List of state cases
+    """
+    state_cases = [sgmodel.StateCase({}, {}) for _ in range(num_cases)]
+    
+    if analysis == "fi":
+        if num_elements == 0:
+            num_elements = sg.nelems
+        with open(f"{filename}.fi", "r") as file:
+            for i_case in range(num_cases):
+                state_case = state_cases[i_case]
+                try:
+                    if float(tool_version) > 4:
+                        line = file.readline()  # skip the first line
+                        while line.strip() == '':
+                            line = file.readline()
+                        print(f'line: {line}')
+                    fi, sr, eids_sr_min = _vabs._readOutputFailureIndexCase(file, num_elements)
+                except Exception as e:
+                    logger.error(f"Error: {e}")
+                    return None
+                if fi is None or sr is None:
+                    logger.error("Error: No data read")
+                    return None
+                
+                state_case.addState(
+                    name="fi", state=sgmodel.State(
+                        name="fi", data=fi, label=["fi"], location="element"
+                    )
+                )
+                state_case.addState(
+                    name="sr", state=sgmodel.State(
+                        name="sr", data=sr, label=["sr"], location="element"
+                    )
+                )
+                sr_min = {}
+                for eid in eids_sr_min:
+                    sr_min[eid] = sr[eid]
+                state_case.addState(
+                    name="sr_min", state=sgmodel.State(
+                        name="sr_min", data=sr_min, label=["sr_min"], location="element"
+                    )
+                )
+    
+    elif analysis == "d" or analysis == "l":
+        # Read displacement
+        if "u" in extension:
+            if num_elements == 0:
+                num_elements = sg.nelems
+            with open(f"{filename}.U", "r") as file:
+                for i_case in range(num_cases):
+                    state_case = state_cases[i_case]
+                    try:
+                        u = _vabs.read_output_buffer(file, analysis, extension="u", **kwargs)
+                    except Exception as e:
+                        logger.error(f"Error: {e}")
+                        return None
+                    if u is None:
+                        logger.error("Error: No data read")
+                        return None
+                    state_case.addState(
+                        name="u", state=sgmodel.State(
+                            name="u", data=u, label=["u1", "u2", "u3"], location="node"
+                        )
+                    )
+
+        # Read element strain and stress
+        if "ele" in extension:
+            if num_elements == 0:
+                num_elements = sg.nelems
+            with open(f"{filename}.ELE", "r") as file:
+                for i_case in range(num_cases):
+                    state_case = state_cases[i_case]
+                    ee, es, eem, esm = None, None, None, None
+                    try:
+                        if float(tool_version) > 4:
+                            line = file.readline()  # skip the first line
+                            while line.strip() == '':
+                                line = file.readline()
+                            print(f'line: {line}')
+                        ee, es, eem, esm = _vabs._readOutputElementStrainStressCase(file, num_elements)
+                    except Exception as e:
+                        logger.error(f"Error: {e}")
+                        return None
+                    if ee is None or es is None or eem is None or esm is None:
+                        logger.error("Error: No data read")
+                        return None
+                    
+                    state_case.addState(
+                        name="ee", state=sgmodel.State(
+                            name="ee", data=ee,
+                            label=["e11", "2e12", "2e13", "e22", "2e23", "e33"],
+                            location="element"
+                        )
+                    )
+                    state_case.addState(
+                        name="es", state=sgmodel.State(
+                            name="es", data=es,
+                            label=["s11", "s12", "s13", "s22", "s23", "s33"],
+                            location="element"
+                        )
+                    )
+                    state_case.addState(
+                        name="eem", state=sgmodel.State(
+                            name="eem", data=eem,
+                            label=["em11", "2em12", "2em13", "em22", "2em23", "em33"],
+                            location="element"
+                        )
+                    )
+                    state_case.addState(
+                        name="esm", state=sgmodel.State(
+                            name="esm", data=esm,
+                            label=["sm11", "sm12", "sm13", "sm22", "sm23", "sm33"],
+                            location="element"
+                        )
+                    )
+
+    return state_cases
+
+
+def read_output_state(
+    filename: str, file_format: str, analysis: str, model_type: str = "",
+    extension: str = "ele", sg: StructureGene = None, tool_version: str = "",
+    num_cases: int = 1, num_elements: int = 0, output_format: int = 0, **kwargs
+) -> list[sgmodel.StateCase]:
+    """Read SG dehomogenization or failure analysis output.
+
+    Parameters
+    ----------
+    filename : str
+        Name of the SG analysis output file
+    file_format : str
+        Format of the SG data file.
+        Choose one from 'vabs', 'sc', 'swiftcomp'.
+    analysis : str
+        Indicator of SG analysis.
+        Choose one from
+
+        * 'd' or 'l': Dehomogenization
+        * 'fi': Initial failure indices and strength ratios
+    model_type : str
+        Type of the macro structural model.
+        Choose one from
+
+        * 'SD1': Cauchy continuum model
+        * 'PL1': Kirchhoff-Love plate/shell model
+        * 'PL2': Reissner-Mindlin plate/shell model
+        * 'BM1': Euler-Bernoulli beam model
+        * 'BM2': Timoshenko beam model
+    extension : str or list of str
+        Extension of the output data.
+        Default is 'ele'.
+        Include one or more of the following keywords:
+
+        * 'u': Displacement
+        * 'ele': Element strain and stress
+    sg : StructureGene
+        Structure gene object
+    tool_version : str
+        Version of the tool
+    num_cases : int
+        Number of load cases
+    num_elements : int
+        Number of elements
+    output_format : int
+        Format of the output file. Choose one from
+
+        * 0 - Native format
+        * 1 - Gmsh format
+
+    Returns
+    -------
+    list[StateCase]
+        List of state case objects
+    """
+    logger.debug('reading output state...')
+    logger.debug(locals())
+
+    # Validate and normalize parameters
+    if not isinstance(extension, list):
+        extension = [extension]
+    extension = [e.lower() for e in extension]
+    
+    # Delegate to format-specific handlers
+    if file_format.lower().startswith("s"):
+        return _read_swiftcomp_output_state(
+            filename, analysis, model_type, extension, 
+            num_cases, num_elements, sg, **kwargs
+        )
+    elif file_format.lower().startswith("v"):
+        return _read_vabs_output_state(
+            filename, analysis, extension, num_cases, 
+            num_elements, sg, tool_version, **kwargs
+        )
+    else:
+        raise ValueError(f"Unsupported file format: {file_format}")
+
+
+# Backward compatibility alias
+readOutputState = read_output_state
 
 
 def read(
@@ -170,7 +737,6 @@ def read(
                 file, format_version
             )
     elif file_format == 'abaqus':
-        # with open(filename, 'r') as file:
         sg = _abaqus.read(
             filename, sgdim=sgdim, model=model_type
         )
@@ -189,9 +755,7 @@ def read(
     return sg
 
 
-
-
-def readOutputModel(
+def read_output_model(
     filename: str, file_format: str, model_type: str = "", sg: StructureGene = None,
     **kwargs
 ):
@@ -206,13 +770,6 @@ def readOutputModel(
         Choose one from 'vabs', 'sc', 'swiftcomp'.
     model_type : str
         Type of the macro structural model.
-        Choose one from
-
-        * 'SD1': Cauchy continuum model
-        * 'PL1': Kirchhoff-Love plate/shell model
-        * 'PL2': Reissner-Mindlin plate/shell model
-        * 'BM1': Euler-Bernoulli beam model
-        * 'BM2': Timoshenko beam model
     sg : StructureGene, optional
         SG object.
 
@@ -241,384 +798,19 @@ def readOutputModel(
     return model
 
 
+# Backward compatibility alias
+readOutputModel = read_output_model
 
 
-def readOutputState(
-    filename:str, file_format:str, analysis:str, model_type:str="",
-    extension:str="ele", sg:StructureGene=None, tool_version:str="",
-    num_cases:int=1, num_elements:int=0, output_format:int=0, **kwargs
-    ):
-    """Read SG dehomogenization or failure analysis output.
-
-    Parameters
-    ----------
-    filename : str
-        Name of the SG analysis output file
-    file_format : str
-        Format of the SG data file.
-        Choose one from 'vabs', 'sc', 'swiftcomp'.
-    analysis : str
-        Indicator of SG analysis.
-        Choose one from
-
-        * 'd' or 'l': Dehomogenization
-        * 'fi': Initial failure indices and strength ratios
-    model_type : str
-        Type of the macro structural model.
-        Choose one from
-
-        * 'SD1': Cauchy continuum model
-        * 'PL1': Kirchhoff-Love plate/shell model
-        * 'PL2': Reissner-Mindlin plate/shell model
-        * 'BM1': Euler-Bernoulli beam model
-        * 'BM2': Timoshenko beam model
-    extension : str or list of str
-        Extension of the output data.
-        Default is 'ele'.
-        Include one or more of the following keywords:
-
-        * 'u': Displacement
-        * 'ele': Element strain and stress
-    sg : StructureGene
-        Structure gene object
-    tool_version : str
-        Version of the tool
-    num_cases : int
-        Number of load cases
-    num_elements : int
-        Number of elements
-    output_format : int
-        Format of the output file. Choose one from
-
-        * 0 - Native format
-        * 1 - Gmsh format
-
-    Returns
-    -------
-    StateCase
-        State case object
-    """
-    logger.debug('reading output state...')
-    logger.debug(locals())
-
-    state_cases = [sgmodel.StateCase({}, {}) for _ in range(num_cases)]
-
-    if analysis == "fi":
-        # Read failure index
-        if file_format.lower().startswith("s"):
-            with open(f"{filename}.fi", "r") as file:
-                return _swiftcomp.read_output_buffer(
-                    file, analysis=analysis, model_type=model_type, **kwargs
-                )
-
-        elif file_format.lower().startswith("v"):
-            if num_elements == 0:
-                num_elements = sg.nelems
-
-            with open(f"{filename}.fi", "r") as file:
-
-                for i_case in range(num_cases):
-                    # print(f'i_case: {i_case}')
-
-                    state_case = state_cases[i_case]
-
-                    try:
-                        # fi, sr, eids_sr_min = _vabs.read_output_buffer(
-                        #     file, analysis, sg, tool_version=tool_version,
-                        #     num_cases=num_cases, num_elements=num_elements, **kwargs
-                        # )
-                        if float(tool_version) > 4:
-                            line = file.readline()  # skip the first line
-                            while line.strip() == '':
-                                line = file.readline()
-                            print(f'line: {line}')
-                        fi, sr, eids_sr_min = _vabs._readOutputFailureIndexCase(
-                            file, num_elements
-                        )
-
-                    except Exception as e:
-                        logger.error(f"Error: {e}")
-                        return None
-
-                    if fi is None or sr is None:
-                        logger.error("Error: No data read")
-                        return None
-
-                    state_case.addState(
-                        name="fi", state=sgmodel.State(
-                            name="fi", data=fi, label=["fi"], location="element"
-                        )
-                    )
-                    state_case.addState(
-                        name="sr", state=sgmodel.State(
-                            name="sr", data=sr, label=["sr"], location="element"
-                        )
-                    )
-                    sr_min = {}
-                    for eid in eids_sr_min:
-                        sr_min[eid] = sr[eid]
-                    state_case.addState(
-                        name="sr_min", state=sgmodel.State(
-                            name="sr_min", data=sr_min, label=["sr_min"], location="element"
-                        )
-                    )
-
-    elif analysis == "d" or analysis == "l":
-        # Read dehomogenization output
-        if file_format.lower().startswith("s"):
-            if not isinstance(extension, list):
-                extension = [extension,]
-            extension = [e.lower() for e in extension]
-
-            # Displacement
-            if 'u' in extension:
-                if num_elements == 0:
-                    num_elements = sg.nelems
-                u = None
-
-                logger.info(f'reading displacement... {filename}.u')
-                with open(f"{filename}.u", "r") as file:
-                    for i_case in range(num_cases):
-
-                        # print(f'i_case: {i_case}')
-
-                        state_case = state_cases[i_case]
-
-                        try:
-                            u = _swiftcomp._read_output_node_disp_case(file, sg.nnodes)
-                        except Exception as e:
-                            logger.error(f"Error: {e}")
-                            return None
-
-                        if u is None:
-                            logger.error("Error: No data read")
-                            return None
-
-                        state_case.addState(
-                            name="u", state=sgmodel.State(
-                                name="u", data=u, label=["u1", "u2", "u3"], location="node"
-                            )
-                        )
-
-            # Element node strain and stress
-            if 'sn' in extension:
-
-                if num_elements == 0:
-                    num_elements = sg.nelems
-
-                logger.info(f'reading element node strain and stress... {filename}.sn')
-                with open(f"{filename}.sn", "r") as file:
-                    for i_case in range(num_cases):
-
-                        # print(f'i_case: {i_case}')
-
-                        state_case = state_cases[i_case]
-
-                        try:
-                            strains, stresses = _swiftcomp._read_output_node_strain_stress_case_global_gmsh(
-                                file, num_elements, sg
-                            )
-                        except Exception as e:
-                            logger.error(f"Error: {e}")
-                            return None
-
-                        if strains is None or stresses is None:
-                            logger.error("Error: No data read")
-                            return None
-
-                        # Add strain state
-                        state_case.addState(
-                            name='e',
-                            state=sgmodel.State(
-                                name='e',
-                                data=strains,
-                                label=['e11', 'e22', 'e33', '2e23', '2e13', '2e12'],
-                                location='element_node'
-                            )
-                        )
-
-                        # Add stress state
-                        state_case.addState(
-                            name='s',
-                            state=sgmodel.State(
-                                name='s',
-                                data=stresses,
-                                label=['s11', 's22', 's33', 's23', 's13', 's12'],
-                                location='element_node'
-                            )
-                        )
-
-                        # state_case.addState(
-                        #     name="ee", state=sgmodel.State(
-                        #         name="ee", data=ee,
-                        #         label=["e11", "e22", "e33", "2e23", "2e13", "2e12"],
-                        #         location="element_node"
-                        #     )
-                        # )
-
-            if 'snm' in extension:
-                
-                if num_elements == 0:
-                    num_elements = sg.nelems
-
-                logger.info(f'reading element node strain and stress in material c/s... {filename}.snm')
-                with open(f"{filename}.snm", "r") as file:
-                    for i_case in range(num_cases):
-
-                        # print(f'i_case: {i_case}')
-
-                        state_case = state_cases[i_case]
-
-                        try:
-                            strains, stresses = _swiftcomp._read_output_node_strain_stress_case_global_gmsh(
-                                file, num_elements, sg
-                            )
-                        except Exception as e:
-                            logger.error(f"Error: {e}")
-                            return None
-
-                        if strains is None or stresses is None:
-                            logger.error("Error: No data read")
-                            return None
-
-                        # Add strain state in material coordinate system
-                        state_case.addState(
-                            name='em',
-                            state=sgmodel.State(
-                                name='em',
-                                data=strains,
-                                label=['e11m', 'e22m', 'e33m', '2e23m', '2e13m', '2e12m'],
-                                location='element_node'
-                            )
-                        )
-
-                        # Add stress state in material coordinate system
-                        state_case.addState(
-                            name='sm',
-                            state=sgmodel.State(
-                                name='sm',
-                                data=stresses,
-                                label=['s11m', 's22m', 's33m', 's23m', 's13m', 's12m'],
-                                location='element_node'
-                            )
-                        )
-
-        elif file_format.lower().startswith("v"):
-            if not isinstance(extension, list):
-                extension = [extension,]
-            extension = [e.lower() for e in extension]
-
-            # Displacement
-            if "u" in extension:
-                if num_elements == 0:
-                    num_elements = sg.nelems
-                u = None
-                with open(f"{filename}.U", "r") as file:
-                    for i_case in range(num_cases):
-
-                        # print(f'i_case: {i_case}')
-
-                        state_case = state_cases[i_case]
-
-                        try:
-                            u = _vabs.read_output_buffer(file, analysis, extension="u", **kwargs)
-                        except Exception as e:
-                            logger.error(f"Error: {e}")
-                            return None
-
-                        if u is None:
-                            logger.error("Error: No data read")
-                            return None
-
-                        state_case.addState(
-                            name="u", state=sgmodel.State(
-                                name="u", data=u, label=["u1", "u2", "u3"], location="node"
-                            )
-                        )
-
-            # Element strain and stress
-            if "ele" in extension:
-
-                if num_elements == 0:
-                    num_elements = sg.nelems
-
-                with open(f"{filename}.ELE", "r") as file:
-                    for i_case in range(num_cases):
-
-                        # print(f'i_case: {i_case}')
-
-                        state_case = state_cases[i_case]
-
-                        ee, es, eem, esm = None, None, None, None
-
-                        try:
-                            # ee, es, eem, esm = _vabs.read_output_buffer(
-                            #     file, analysis, sg=sg, extension="ele", tool_version=tool_version,
-                            #     ncase=num_cases, nelem=num_elements, **kwargs
-                            # )
-                            # print(float(tool_version))
-                            if float(tool_version) > 4:
-                                line = file.readline()  # skip the first line
-                                while line.strip() == '':
-                                    line = file.readline()
-                                print(f'line: {line}')
-                            ee, es, eem, esm = _vabs._readOutputElementStrainStressCase(
-                                file, num_elements
-                            )
-
-                        except Exception as e:
-                            logger.error(f"Error: {e}")
-                            return None
-
-                        if ee is None or es is None or eem is None or esm is None:
-                            logger.error("Error: No data read")
-                            return None
-
-                        state_case.addState(
-                            name="ee", state=sgmodel.State(
-                                name="ee", data=ee,
-                                label=["e11", "2e12", "2e13", "e22", "2e23", "e33"],
-                                location="element"
-                            )
-                        )
-                        state_case.addState(
-                            name="es", state=sgmodel.State(
-                                name="es", data=es,
-                                label=["s11", "s12", "s13", "s22", "s23", "s33"],
-                                location="element"
-                            )
-                        )
-                        state_case.addState(
-                            name="eem", state=sgmodel.State(
-                                name="eem", data=eem,
-                                label=["em11", "2em12", "2em13", "em22", "2em23", "em33"],
-                                location="element"
-                            )
-                        )
-                        state_case.addState(
-                            name="esm", state=sgmodel.State(
-                                name="esm", data=esm,
-                                label=["sm11", "sm12", "sm13", "sm22", "sm23", "sm33"],
-                                location="element"
-                            )
-                        )
-
-                        # state_cases.append(state_case)
-
-    return state_cases
-
-
-
-
-def readOutput(
-    fn, file_format, analysis='h', model_type='',
-    sg=None, **kwargs
-    ):
+def read_output(
+    filename: str, file_format: str, analysis: str = 'h', model_type: str = '',
+    sg: StructureGene = None, **kwargs
+) -> sgmodel.Model | sgmodel.StateCase | None:
     """Read SG analysis output file.
 
     Parameters
     ----------
-    fn : str
+    filename : str
         Name of the SG analysis output file.
     file_format : str
         Format of the SG data file.
@@ -638,13 +830,13 @@ def readOutput(
         * 'PL2': Reissner-Mindlin plate/shell model
         * 'BM1': Euler-Bernoulli beam model
         * 'BM2': Timoshenko beam model
-    sg : :obj:`StructureGene`
+    sg : StructureGene
         Structure gene object
 
     Returns
     -------
     Model
-        If `analysis` is 'h', return the consitutive model.
+        If `analysis` is 'h', return consitutive model.
         * :obj:`EulerBernoulliBeamModel` if `model_type` is 'BM1'
         * :obj:`TimoshenkoBeamModel` if `model_type` is 'BM2'
         * :obj:`KirchhoffLovePlateModel` if `model_type` is 'PL1' and `file_format` is 'sc' or 'swiftcomp'
@@ -655,7 +847,7 @@ def readOutput(
     """
 
     if analysis == 'h':
-        with open(fn, 'r') as file:
+        with open(filename, 'r') as file:
             if file_format.lower().startswith('s'):
                 return _swiftcomp.read_output_buffer(
                     file, analysis=analysis, model_type=model_type,
@@ -667,79 +859,71 @@ def readOutput(
 
     elif analysis == 'fi':
         if file_format.lower().startswith('s'):
-            _fn = f'{fn}.fi'
-            with open(_fn, 'r') as file:
+            fi_filename = f'{filename}.fi'
+            with open(fi_filename, 'r') as file:
                 return _swiftcomp.read_output_buffer(
                     file, analysis=analysis, model_type=model_type,
                     **kwargs)
         elif file_format.lower().startswith('v'):
-            _fn = f'{fn}.fi'
-            with open(_fn, 'r') as file:
+            fi_filename = f'{filename}.fi'
+            with open(fi_filename, 'r') as file:
                 return _vabs.read_output_buffer(file, analysis, sg, **kwargs)
 
     elif analysis == 'd' or analysis == 'l':
-        if file_format.lower().startswith('s'):
-            pass
-
-        elif file_format.lower().startswith('v'):
+        if file_format.lower().startswith('v'):
             state_case = sgmodel.StateCase()
 
             # Displacement
-            _u = None
-            _fn = f'{fn}.U'
-            with open(_fn, 'r') as file:
-                _u = _vabs.read_output_buffer(file, analysis, ext='u', **kwargs)
-            _state = sgmodel.State(
-                name='u', data=_u, label=['u1', 'u2', 'u3'], location='node')
-            state_case.addState(name='u', state=_state)
+            u_data = None
+            u_filename = f'{filename}.U'
+            with open(u_filename, 'r') as file:
+                u_data = _vabs.read_output_buffer(file, analysis, ext='u', **kwargs)
+            state = sgmodel.State(
+                name='u', data=u_data, label=['u1', 'u2', 'u3'], location='node')
+            state_case.addState(name='u', state=state)
 
             # Element strain and stress
-            _ee, _es, _eem, _esm = None, None, None, None
-            _fn = f'{fn}.ELE'
-            with open(_fn, 'r') as file:
-                _ee, _es, _eem, _esm = _vabs.read_output_buffer(file, analysis, ext='ele', **kwargs)
-            _state = sgmodel.State(
-                name='ee', data=_ee, label=['e11', 'e12', 'e13', 'e22', 'e23', 'e33'], location='element')
-            state_case.addState(name='ee', state=_state)
-            _state = sgmodel.State(
-                name='es', data=_es, label=['s11', 's12', 's13', 's22', 's23', 's33'], location='element')
-            state_case.addState(name='es', state=_state)
-            _state = sgmodel.State(
-                name='eem', data=_eem, label=['em11', 'em12', 'em13', 'em22', 'em23', 'em33'], location='element')
-            state_case.addState(name='eem', state=_state)
-            _state = sgmodel.State(
-                name='esm', data=_esm, label=['sm11', 'sm12', 'sm13', 'sm22', 'sm23', 'sm33'], location='element')
-            state_case.addState(name='esm', state=_state)
-
-            # state_field = sgmodel.StateField(
-            #     node_displ=_u,
-            #     elem_strain=_ee, elem_stress=_es, elem_strain_m=_eem, elem_stress_m=_esm
-            # )
+            ee, es, eem, esm = None, None, None, None
+            ele_filename = f'{filename}.ELE'
+            with open(ele_filename, 'r') as file:
+                ee, es, eem, esm = _vabs.read_output_buffer(file, analysis, ext='ele', **kwargs)
+            state = sgmodel.State(
+                name='ee', data=ee, label=['e11', 'e12', 'e13', 'e22', 'e23', 'e33'], location='element')
+            state_case.addState(name='ee', state=state)
+            state = sgmodel.State(
+                name='es', data=es, label=['s11', 's12', 's13', 's22', 's23', 's33'], location='element')
+            state_case.addState(name='es', state=state)
+            state = sgmodel.State(
+                name='eem', data=eem, label=['em11', 'em12', 'em13', 'em22', 'em23', 'em33'], location='element')
+            state_case.addState(name='eem', state=state)
+            state = sgmodel.State(
+                name='esm', data=esm, label=['sm11', 'sm12', 'sm13', 'sm22', 'sm23', 'sm33'], location='element')
+            state_case.addState(name='esm', state=state)
 
             return state_case
 
+    return None
 
-    return
 
-
+# Backward compatibility alias
+readOutput = read_output
 
 
 def write(
-    sg:StructureGene, fn:str, file_format:str,
-    format_version:str='', analysis:str='h', sg_format:int=1,
-    model_space:str='', prop_ref_y:str='x',
-    renumber_nodes:bool=False, renumber_elements:bool=False,
-    macro_responses:list[sgmodel.StateCase]=[], model_type:str='SD1',
-    load_type:int=0, sfi:str='8d', sff:str='20.12e', mesh_only:bool=False,
-    binary:bool=False
+    sg: StructureGene, filename: str, file_format: str,
+    format_version: str = '', analysis: str = 'h', sg_format: int = 1,
+    model_space: str = '', prop_ref_y: str = 'x',
+    macro_responses: list[sgmodel.StateCase] = [], model_type: str = 'SD1',
+    load_type: int = 0, sfi: str = '8d', sff: str = '20.12e', mesh_only: bool = False,
+    binary: bool = False
 ) -> str:
-    """Write analysis input
+    """Write analysis input.
 
     Parameters
     ----------
     sg : StructureGene
         Structure gene object
-    fn : str
+    filename : str
         Name of the input file
     file_format : str
         Format of the SG data file.
@@ -761,20 +945,13 @@ def write(
     model_type : str
         Type of the macro structural model.
         Default is 'SD1'.
-        Choose one from
-
-        * 'SD1': Cauchy continuum model
-        * 'PL1': Kirchhoff-Love plate/shell model
-        * 'PL2': Reissner-Mindlin plate/shell model
-        * 'BM1': Euler-Bernoulli beam model
-        * 'BM2': Timoshenko beam model
     load_type : int, optional
         Type of the load. Default is 0
-    sfi
-        String formating integers. Default is '8d'
-    sff
-        String formating floats. Default is '20.12e'
-    mesh_only
+    sfi : str, optional
+        String formatting integers. Default is '8d'
+    sff : str, optional
+        String formatting floats. Default is '20.12e'
+    mesh_only : bool, optional
         If write meshing data only. Default is False
     """
 
@@ -794,7 +971,7 @@ def write(
         raise ValueError('structure_gene.mesh is None')
 
     # Open the file and write the data
-    with open(fn, 'w', encoding='utf-8') as file:
+    with open(filename, 'w', encoding='utf-8') as file:
         if file_format.startswith('s'):
             if format_version == '':
                 format_version = GLOBAL.SC_VERSION_DEFAULT
@@ -804,8 +981,6 @@ def write(
                 analysis=analysis, model=model_type,
                 macro_responses=macro_responses,
                 model_space=model_space, prop_ref_y=prop_ref_y,
-                renumber_nodes=renumber_nodes,
-                renumber_elements=renumber_elements,
                 load_type=load_type,
                 sfi=sfi, sff=sff, version=format_version
             )
@@ -819,8 +994,6 @@ def write(
                 analysis=analysis, sg_format=sg_format,
                 macro_responses=macro_responses, model=model_type,
                 model_space=model_space, prop_ref_y=prop_ref_y,
-                renumber_nodes=renumber_nodes,
-                renumber_elements=renumber_elements,
                 sfi=sfi, sff=sff, version=format_version,
                 mesh_only=mesh_only
             )
@@ -840,19 +1013,11 @@ def write(
             meshio.write(
                 file, sg.mesh, file_format=file_format,
                 int_fmt=sfi, float_fmt=sff)
-            # sg.mesh.write(
-            #     file,
-            #     file_format,
-            #     int_fmt=sfi,
-            #     float_fmt=sff
-            # )
 
-    return fn
+    return filename
 
 
-
-
-def convert(
+def convert_file_format(
     file_name_in: str,
     file_name_out: str,
     file_format_in: str,
@@ -942,20 +1107,21 @@ def convert(
     if sg is None:
         raise ValueError("Input file is not a valid SG file.")
 
-    if renum_elem:
-        renumber_elements(sg.mesh)
+    if renum_node or renum_elem:
+        logger.warning(
+			"Parameters renum_node/renum_elem are deprecated and ignored. "
+			"Numbering is now handled automatically based on format requirements."
+		)
 
     write(
         sg=sg,
-        fn=file_name_out,
+        filename=file_name_out,
         file_format=file_format_out,
         format_version=file_version_out,
         analysis=analysis,
         sg_format=vabs_format_version,
         model_space=model_space,
         prop_ref_y=prop_ref_y,
-        renumber_nodes=renum_node,
-        renumber_elements=renum_elem,
         model_type=model_type,
         sfi=str_format_int,
         sff=str_format_float,
@@ -966,404 +1132,18 @@ def convert(
     return sg
 
 
-
-
-# def readVABSOut(fn_in, analysis=0, scrnout=True):
-#     """Read VABS outputs.
-
-#     Parameters
-#     ----------
-#     fn_in : str
-#         VABS input file name.
-#     analysis : {0, 1, 2, 3, '', 'h', 'dn', 'dl', 'd', 'l', 'fi'}
-#         Analysis to be carried out.
-
-#         * 0 or 'h' or '' - homogenization
-#         * 1 or 'dn' - dehomogenization (nonlinear)
-#         * 2 or 'dl' or 'd' or 'l' - dehomogenization (linear)
-#         * 3 or 'fi' - initial failure indices and strength ratios
-#     scrnout : bool, optional
-#         Switch of printing solver messages, by default True.
-
-#     Returns
-#     -------
-#     various
-#         Different analyses return different types of results.
-#     """
-#     if analysis == 0 or analysis == 'h' or analysis == '':
-#         # Read homogenization results
-#         if not fn_in.lower()[-2:] == '.k':
-#             fn_in = fn_in + '.K'
-#         return readVABSOutHomo(fn_in, scrnout)
-#     elif analysis == 1 or analysis == 2 or ('d' in analysis) or analysis == 'l':
-#         pass
-#     elif analysis == 3 or analysis == 'fi':
-#         # return readVABSOutStrengthRatio(fn_in+'.fi')
-#         return readSGOutFailureIndex(fn_in+'.fi', 'vabs')
-
-
-
-
-
-
-
-
-
-# def readSCOut(fn_in, smdim, analysis=0, scrnout=True):
-#     r"""Read SwiftComp outputs.
-
-#     Parameters
-#     ----------
-#     fn_in : str
-#         SwiftComp input file name.
-#     smdim : int
-#         Dimension of the macroscopic structural model.
-#     analysis : {0, 2, 3, 4, 5, '', 'h', 'dl', 'd', 'l', 'fi', 'f', 'fe'}
-#         Analysis to be carried out.
-
-#         * 0 or 'h' or '' - homogenization
-#         * 2 or 'dl' or 'd' or 'l' - dehomogenization (linear)
-#         * 3 or 'fi' - initial failure indices and strength ratios
-#         * 4 or 'f' - initial failure strength
-#         * 5 or 'fe' - initial failure envelope
-#     scrnout : bool, optional
-#         Switch of printing solver messages., by default True
-
-#     Returns
-#     -------
-#     various
-#         Different analyses return different types of results.
-#     """
-#     # if not logger:
-#     #     logger = mul.initLogger(__name__)
-
-#     logger.info('reading sc output file (smdim={}, analysis={})...'.format(smdim, analysis))
-
-#     if analysis == 0 or analysis == 'h' or analysis == '':
-#         # Read homogenization results
-#         if not fn_in.lower()[-2:] == '.k':
-#             fn_in = fn_in + '.k'
-#         return readSCOutHomo(fn_in, smdim, scrnout)
-
-#     elif analysis == 1 or analysis == 2 or analysis == 'dl' or analysis == 'd' or analysis == 'l':
-#         pass
-
-#     elif (analysis.startswith('f')) or (analysis >= 3):
-#         return readSCOutFailure(fn_in+'.fi', analysis)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# ====================================================================
-
-def readSGInterfacePairs(fn):
-    """
-    """
-
-    # if logger is None:
-    #     logger = mul.initLogger(__name__)
-
-    logger.debug('reading sg interface paris: {0}...'.format(fn))
-
-    itf_pairs = []
-
-    with open(fn, 'r') as fobj:
-        for li, line in enumerate(fobj):
-            line = line.strip()
-            if line == '\n' or line == '':
-                continue
-
-            line = line.split()
-
-            _pair = [
-                int(line[1]), int(line[2]),
-                float(line[3]), float(line[4]),
-                float(line[5]), float(line[6])
-            ]
-
-            itf_pairs.append(_pair)
-
-    return itf_pairs
-
-
-
-
-
-
-
-
-
-def readSGInterfaceNodes(fn):
-    """
-    """
-
-    # if logger is None:
-    #     logger = mul.initLogger(__name__)
-
-    logger.debug('reading sg interface nodes: {0}...'.format(fn))
-
-    itf_nodes = []
-
-    with open(fn, 'r') as fobj:
-        for li, line in enumerate(fobj):
-            line = line.strip()
-            if line == '\n' or line == '':
-                continue
-
-            line = line.split()
-
-            _nodes = []
-            for nid in line[1:]:
-                _nodes.append(int(nid))
-
-            itf_nodes.append(_nodes)
-
-    return itf_nodes
-
-
-
-
-
-
-
-
-
-# ====================================================================
-
-def readLoadCsv(
-    fn: str, smdim: int, model: int, load_tags: list = [],
-    load_type: int = 0, disp_tags: list = ['u1', 'u2', 'u3'],
-    rot_tags: list = ['c11', 'c12', 'c13', 'c21', 'c22', 'c23', 'c31', 'c32', 'c33'],
-    loc_tags: list = ['loc',], cond_tags: list = [],
-    loc_vtypes: list = [], cond_vtypes: list = [],
-    delimiter: str = ',', nhead: int = 1, encoding: str = 'utf-8-sig'
-) -> sgmodel.StructureResponseCases:
-    """
-    Reads a CSV file containing load data for a given structure.
-    The file should have the following format:
-
-    loc, cond, u1, u2, u3, c11, c12, c13, c21, c22, c23, c31, c32, c33, f1, f2, ...
-    1, 1, 1, 2, 3, 0, 0, 1, 0, 1, 0, 0, 0, 1, 4, 5, ...
-
-    Parameters
-    ----------
-    fn : str
-        The filename of the CSV file to read.
-    smdim : int
-        The dimension of the structure model.
-    model : int
-        The model type of the structure.
-    load_tags : list, optional
-        The tags of the loads to be read. Defaults to an empty list.
-    load_type : int, optional
-        The type of the loads. Defaults to 0.
-    disp_tags : list, optional
-        The tags of the displacements to be read. Defaults to ['u1', 'u2', 'u3'].
-    rot_tags : list, optional
-        The tags of the rotations to be read. Defaults to ['c11', 'c12', 'c13', 'c21', 'c22', 'c23', 'c31', 'c32', 'c33'].
-    loc_tags : list, optional
-        The tags of the locations to be read. Defaults to ['loc',].
-    cond_tags : list, optional
-        The tags of the conditions to be read. Defaults to an empty list.
-    loc_vtypes : list, optional
-        The value types of the locations to be read. Defaults to an empty list.
-    cond_vtypes : list, optional
-        The value types of the conditions to be read. Defaults to an empty list.
-    delimiter : str, optional
-        The delimiter of the CSV file. Defaults to ','.
-    nhead : int, optional
-        The number of header lines to skip. Defaults to 1.
-    encoding : str, optional
-        The encoding of the CSV file. Defaults to 'utf-8-sig'.
-
-    Returns
-    -------
-    struct_resp_cases : StructureResponseCases
-        The structure response cases.
-    """
-
-    if len(load_tags) == 0:
-        if smdim == 1:
-            if model == 'b1':
-                load_tags = ['f1', 'm1', 'm2', 'm3']
-            elif model == 'b2':
-                load_tags = ['f1', 'f2', 'f3', 'm1', 'm2', 'm3']
-
-    if isinstance(loc_tags, str):
-        loc_tags = [loc_tags,]
-    if isinstance(cond_tags, str):
-        cond_tags = [cond_tags,]
-
-    if isinstance(loc_vtypes, str):
-        loc_vtypes = [loc_vtypes,]
-    if isinstance(cond_vtypes, str):
-        cond_vtypes = [cond_vtypes,]
-
-    if len(loc_vtypes) < len(loc_tags):
-        if len(loc_vtypes) == 0:
-            loc_vtypes = ['int',] * len(loc_tags)
-        elif len(loc_vtypes) == 1:
-            loc_vtypes = loc_vtypes * len(loc_tags)
-    if len(cond_vtypes) < len(cond_tags):
-        if len(cond_vtypes) == 0:
-            cond_vtypes = ['int',] * len(cond_tags)
-        elif len(cond_vtypes) == 1:
-            cond_vtypes = cond_vtypes * len(cond_tags)
-
-    struct_resp_cases = sgmodel.StructureResponseCases()
-    struct_resp_cases.loc_tags = loc_tags
-    struct_resp_cases.cond_tags = cond_tags
-
-    with open(fn, 'r', encoding=encoding) as file:
-        cr = csv.reader(file, delimiter=delimiter)
-
-        tags_idx = {}
-
-        hi = 0
-        for i, row in enumerate(cr):
-            row = [s.strip() for s in row]
-            if row[0] == '':
-                continue
-
-            if i < nhead:
-                if hi == 0:
-                    for tag in loc_tags:
-                        if tag not in row:
-                            raise ValueError(f'Column {tag} not found in the file')
-                        tags_idx[tag] = row.index(tag)
-                    for tag in cond_tags:
-                        if tag not in row:
-                            raise ValueError(f'Column {tag} not found in the file')
-                        tags_idx[tag] = row.index(tag)
-                    for tag in disp_tags:
-                        if tag not in row:
-                            raise ValueError(f'Column {tag} not found in the file')
-                        tags_idx[tag] = row.index(tag)
-                    for tag in rot_tags:
-                        if tag not in row:
-                            raise ValueError(f'Column {tag} not found in the file')
-                        tags_idx[tag] = row.index(tag)
-                    for tag in load_tags:
-                        if tag not in row:
-                            raise ValueError(f'Column {tag} not found in the file')
-                        tags_idx[tag] = row.index(tag)
-                hi += 1
-                continue
-
-            else:
-                resp_case = {}
-
-                sect_resp = sgmodel.SectionResponse()
-
-                sect_resp.load_type = load_type
-                sect_resp.load_tags = load_tags
-
-                for tag, vtype in zip(loc_tags, loc_vtypes):
-                    sect_resp.loc[tag] = eval(vtype)(row[tags_idx[tag]])
-
-                for tag, vtype in zip(cond_tags, cond_vtypes):
-                    sect_resp.cond[tag] = eval(vtype)(row[tags_idx[tag]])
-
-                sect_resp.load = [float(row[tags_idx[tag]]) for tag in load_tags]
-                sect_resp.displacement = [float(row[tags_idx[tag]]) for tag in disp_tags]
-                sect_resp.directional_cosine = [
-                    [float(row[tags_idx[tag]]) for tag in rot_tags[0:3]],
-                    [float(row[tags_idx[tag]]) for tag in rot_tags[3:6]],
-                    [float(row[tags_idx[tag]]) for tag in rot_tags[6:9]]
-                ]
-
-                resp_case['response'] = sect_resp
-                struct_resp_cases.responses.append(resp_case)
-
-    return struct_resp_cases
-
-
-
-
-
-
-
-
-
-# def readLoadCsv(fn, delimiter=',', nhead=1, encoding='utf-8-sig'):
-#     r"""
-#     load = {
-#         'flight_condition_1': {
-#             'fx': {
-#                 'a': [],
-#                 'r': [],
-#                 'v': []
-#             },
-#             'fy': [],
-#             'fz': [],
-#             'mx', [],
-#             'my', [],
-#             'mz', []
-#         },
-#         'flight_condition_2': {},
-#         ...
-#     }
-#     """
-
-#     load = {}
-#     azimuth = []
-
-#     with open(fn, 'r', encoding=encoding) as file:
-#         cr = csv.reader(file, delimiter=delimiter)
-
-#         for i, row in enumerate(cr):
-#             row = [s.strip() for s in row]
-#             if row[0] == '':
-#                 continue
-
-#             if i < nhead:
-#                 continue
-#                 # # Read head
-#                 # for label in row:
-#                 #     if label.lower().startswith('rotor'):
-#                 #         nid = int(label.split('NODE')[1])
-#                 #         load['node_id'].append(nid)
-
-#             else:
-#                 condition = str(row[0])
-#                 if not condition in load.keys():
-#                     load[condition] = {
-#                         'fx': {'a': [], 'r': [], 'v': []},
-#                         'fy': {'a': [], 'r': [], 'v': []},
-#                         'fz': {'a': [], 'r': [], 'v': []},
-#                         'mx': {'a': [], 'r': [], 'v': []},
-#                         'my': {'a': [], 'r': [], 'v': []},
-#                         'mz': {'a': [], 'r': [], 'v': []}
-#                     }
-
-#                 a, r, fx, fy, fz, mx, my, mz = list(map(float, row[1:]))
-#                 v = {
-#                     'fx': fx, 'fy': fy, 'fz': fz,
-#                     'mx': mx, 'my': my, 'mz': mz
-#                 }
-
-#                 azimuth.append(a)
-
-#                 for component in ['fx', 'fy', 'fz', 'mx', 'my', 'mz']:
-#                     load[condition][component]['a'].append(a)
-#                     load[condition][component]['r'].append(r)
-#                     load[condition][component]['v'].append(v[component])
-
-#     azimuth = list(set(azimuth))
-
-#     return load, azimuth
+# Backward compatibility alias
+convert = convert_file_format
+
+
+# ============================================================================
+# SECTION: All Backward Compatibility Aliases
+# ============================================================================
+
+# Create all backward compatibility aliases for camelCase function names
+__all__ = [
+    # Snake_case functions (new preferred names)
+    'read_output_model', 'read_output_state', 'read_output', 'write', 'convert_file_format',
+    # CamelCase aliases (backward compatibility)
+    'readOutputModel', 'readOutputState', 'readOutput', 'convert',
+]

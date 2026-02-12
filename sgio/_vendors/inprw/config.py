@@ -1,6 +1,6 @@
 #Copyright © 2023 Dassault Systemès Simulia Corp.
 
-"""In addition, it sets several groupings of keyword names and other similar items that are 
+r"""In addition, it sets several groupings of keyword names and other similar items that are 
 constant and need to be referenced throughout :mod:`~inpRW`.
 See `How do I share global variables across modules? <https://docs.python.org/3/faq/programming.html#how-do-i-share-global-variables-across-modules>`_
 for more information."""
@@ -116,7 +116,7 @@ _dataKWs = {'amplitude', 'clearance', 'correlation', 'element', 'equation', 'eve
 """
 
 _EndKWs = {'assembly', 'instance', 'loadcase', 'part', 'step'} 
-"""Keywords that have an associated \*END KEYWORD.
+r"""Keywords that have an associated \*END KEYWORD.
 
 :meta hide-value:
 :type: set

@@ -1,6 +1,6 @@
 #Copyright © 2023 Dassault Systemès Simulia Corp.
 
-"""This module contains functions for parsing the data in the input file."""
+r"""This module contains functions for parsing the data in the input file."""
 
 # cspell:includeRegExp comments
 
@@ -9,10 +9,10 @@ import sgio._vendors.inprw.inpRW as inpRW
 # from . import inpRW
 
 class Read:   
-    """The :class:`~inpRW._inpR.Read` class contains functions related to reading information from the input file."""
+    r"""The :class:`~inpRW._inpR.Read` class contains functions related to reading information from the input file."""
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def createPathFromSequence(self, seq, base='self'):
-        """createPathFromSequence(seq, base='self')
+        r"""createPathFromSequence(seq, base='self')
             
             Generates a path string from a sequence of sequences.
         
@@ -71,7 +71,7 @@ class Read:
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def parsePath(self, path):
-        """parsePath(path)
+        r"""parsePath(path)
 
             Returns a list containing the object at *path* and a list of integers representing the path. The object should
             be somewhere in the keywords -> subkeywords -> data structure (i.e. it should represent a keyword block, or
@@ -143,7 +143,7 @@ class Read:
     
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def sortKWs(self, iterable, reverse=False):
-        """sortKWs(iterable, reverse=False)
+        r"""sortKWs(iterable, reverse=False)
        
             This function will sort the keyword blocks in *iterable* by their top-down order in the input file.
             
@@ -165,7 +165,7 @@ class Read:
    
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def subBlockLoop(self, block, func):
-        """subBlockLoop(block, func)
+        r"""subBlockLoop(block, func)
             
             Performs *func* on all items in *block.suboptions*.
             
@@ -193,7 +193,7 @@ class Read:
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def updateObjectsPath(self, startIndex=0, _parentBlock=''):
-        """updateObjectsPath(startIndex=0, _parentBlock='')
+        r"""updateObjectsPath(startIndex=0, _parentBlock='')
         
             Updates the :attr:`path <inpKeyword.inpKeyword.path>` string of each keyword block after *startIndex*.
 
@@ -227,7 +227,7 @@ class Read:
       
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def _createSubKW(self, block):
-        """_createSubKW(block)
+        r"""_createSubKW(block)
 
             Checks if the keyword name in *block* matches a key in :attr:`~config._subBlockKWs`. If so, a subkw block, 
             and subsequent keyword blocks will be placed into :attr:`~inpKeyword.inpKeyword.suboptions` of this keyword
@@ -265,7 +265,7 @@ class Read:
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def _endSubKW(self, block):
-        """_endSubKW(block)
+        r"""_endSubKW(block)
 
             This function tries to close any and all open sub keyword blocks.
         
@@ -273,7 +273,7 @@ class Read:
             the open parent block.
             
             Args:
-                block (inpKeyword): An :class:`~inpKeyword.inpKeyword` object."""
+                block (inpKeyword): An :class:`~inpKeyword.inpKeyword` object.r"""
         
         try:
             p = self._parentkws[-1]
@@ -297,7 +297,7 @@ class Read:
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def _getLeadingCommentsPattern(self):
-        """_getLeadingCommentsPattern()
+        r"""_getLeadingCommentsPattern()
         
             This function finds the location where the first keyword block begins in an input file and returns a regular
             expression pattern to identify that location.
@@ -308,7 +308,7 @@ class Read:
             Returns:
                 str: A string representing the re pattern which will be used to split the text of the input file on
                     the characters prior to the first keyword block.
-        """
+        r"""
         
         c = 0
         while 1:
@@ -330,7 +330,7 @@ class Read:
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def _groupKeywordBlocks(self, b=None, _parentBlock=''):
-        """_groupKeywordBlocks(b=None, parentBlock='')
+        r"""_groupKeywordBlocks(b=None, parentBlock='')
         
             Creates :attr:`~inpRW.inpRW.kwg`, with the unique keyword names in the input file as the keys, and a set of
             blocks as each value.
@@ -379,7 +379,7 @@ class Read:
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def _readInclude(self, block):
-        """_readInclude(block)
+        r"""_readInclude(block)
         
             Creates a sub-instance of :class:`~inpRW` to read the \*INCLUDE input file. 
             
@@ -413,7 +413,7 @@ class Read:
         
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def _readManifest(self, block):
-        """_readManifest(block)
+        r"""_readManifest(block)
 
             Creates a sub-instance of :class:`~inpRW` to read the \*MANIFEST input files. 
             
@@ -451,7 +451,7 @@ class Read:
     
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def _splitKeywords(self):
-        """_splitKeywords()
+        r"""_splitKeywords()
         
             Splits the text string of the input file using the * and letter characters.    
 
@@ -469,7 +469,7 @@ class Read:
           
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def _subParam(self, obj):
-        """_subParam(obj)
+        r"""_subParam(obj)
      
             Converts references to a parameter defined in \*PARAMETER to the actual value.
 

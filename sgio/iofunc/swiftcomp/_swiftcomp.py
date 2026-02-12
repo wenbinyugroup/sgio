@@ -79,13 +79,27 @@ def read_input_buffer(file, format_version:str, model:int|str):
     # Read mesh
     sg.mesh = _readMesh(file, sg.sgdim, nnode, nelem, _use_elem_local_orient)
 
-    # Read material in-plane angle combinations
+    # Read material in-plane angle combinations (temporarily with numeric IDs)
     nma_comb = configs['num_mat_angle3_comb']
-    sg.mocombos = _readMaterialRotationCombinations(file, nma_comb)
+    mocombos_temp = _readMaterialRotationCombinations(file, nma_comb)
 
-    # Read materials
+    # Read materials (now returns materials and name-ID pairs)
     nmate = configs['num_materials']
-    sg.materials = _readMaterials(file, nmate, sg.physics)
+    materials_temp, material_name_id_pairs = _readMaterials(file, nmate, sg.physics)
+    
+    # Store materials and name-ID pairs
+    sg.materials = materials_temp
+    sg.material_name_id_pairs = material_name_id_pairs
+    
+    # Create ID to name mapping from material_name_id_pairs
+    id_to_name = {mat_id: name for name, mat_id in material_name_id_pairs}
+    
+    # Convert mocombos to use material names instead of IDs
+    sg.mocombos = {}
+    for combo_id, combo_data in mocombos_temp.items():
+        mat_id, angle = combo_data
+        mat_name = id_to_name.get(mat_id, f'Material_{mat_id}')
+        sg.mocombos[combo_id] = (mat_name, angle)
 
     return sg
 
@@ -187,36 +201,48 @@ def read_output_buffer(
 def write_buffer(
     sg:StructureGene, file, analysis='h', model='sd1',
     model_space='xy', prop_ref_y='x',
-    renumber_nodes=False, renumber_elements=False,
     macro_responses:list[smdl.StateCase]=[],
     load_type=0,
     sfi:str='8d', sff:str='20.12e', version=None
     ):
-    """Write analysis input
+    """Write analysis input.
 
     Parameters
     ----------
-    fn : str
-        Name of the input file
-    file_format : {'vabs' (or 'v'), 'swfitcomp' (or 'sc', 's')}
-        file_format of the analysis
-    analysis : {0, 1, 2, 3, '', 'h', 'dn', 'dl', 'd', 'l', 'fi'}, optional
-        Analysis type, by default 'h'
-    sg_fmt : {0, 1}, optional
-        Format for the VABS input, by default 1
+    sg : StructureGene
+        The structure gene object to write.
+    file : file-like
+        Output file buffer.
+    analysis : str, optional
+        Analysis type, by default 'h'.
+    model : str, optional
+        Model identifier, by default 'sd1'.
+    model_space : str, optional
+        Model coordinate space, by default 'xy'.
+    prop_ref_y : str, optional
+        Reference axis for property orientation, by default 'x'.
+    macro_responses : list of StateCase, optional
+        Macro-level responses for global analysis.
+    load_type : int, optional
+        Load type identifier, by default 0.
+    sfi : str, optional
+        Integer format string, by default '8d'.
+    sff : str, optional
+        Float format string, by default '20.12e'.
+    version : optional
+        Format version.
 
     Returns
     -------
     str
-        Name of the input file
+        Name of the input file.
     """
 
     if analysis == 'h':
         writeInputBuffer(
             sg, file, analysis, sg.physics,
             model_space, prop_ref_y,
-            renumber_nodes, renumber_elements,
-            sfi, sff, version)
+            sfi=sfi, sff=sff, version=version)
 
     elif (analysis == 'd') or (analysis == 'l') or (analysis.startswith('f')):
         if sg is None:

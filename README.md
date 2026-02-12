@@ -78,6 +78,50 @@ See [BUILD_EXECUTABLE.md](BUILD_EXECUTABLE.md) for detailed instructions.
 
 ## Usage
 
+### Logging Configuration
+
+SGIO uses Python's standard logging with Rich formatting. Configure logging to capture detailed information:
+
+#### Basic Setup (Single Package)
+
+```python
+import sgio
+
+# Configure SGIO logging
+sgio.configure_logging(
+    cout_level='INFO',      # Console output level
+    fout_level='DEBUG',     # File output level  
+    filename='run.log'      # Log file path
+)
+
+# Use SGIO - logs appear automatically
+model = sgio.readOutputModel('file.sg.k', 'vabs', 'BM1')
+```
+
+#### Multi-Package Applications
+
+For applications using SGIO with other packages, configure the root logger to capture all logs in one place:
+
+```python
+import logging
+from rich.logging import RichHandler
+
+# Configure root logger BEFORE importing packages
+root = logging.getLogger()
+root.setLevel(logging.DEBUG)
+root.addHandler(RichHandler())
+root.addHandler(logging.FileHandler('run.log'))
+
+# Now import packages - their logs will be captured
+import sgio
+import numpy as np
+
+# All logs go to run.log
+sgio.logger.info("Analysis starting...")
+```
+
+See the [Logging Guide](https://wenbinyugroup.github.io/sgio/guide/logging.html) for detailed configuration options, filtering third-party packages, and advanced patterns.
+
 ### API
 
 #### Example: Read Beam Properties from VABS Output File

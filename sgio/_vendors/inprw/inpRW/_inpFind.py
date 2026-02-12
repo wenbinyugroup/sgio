@@ -1,6 +1,6 @@
 #Copyright © 2023 Dassault Systemès Simulia Corp.
 
-"""This module contains functions for finding information in :attr:`~inpRW.inpRW.keywords`."""
+r"""This module contains functions for finding information in :attr:`~inpRW.inpRW.keywords`."""
 
 # cspell:includeRegExp comments
 
@@ -8,11 +8,11 @@ from ._importedModules import *
 from functools import reduce
 
 class Find:
-    """The :class:`~inpRW._inpFind.Find` class contains functions related to finding information from the :class:`~inpRW.inpRW`
+    r"""The :class:`~inpRW._inpFind.Find` class contains functions related to finding information from the :class:`~inpRW.inpRW`
         data structure."""
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def findItemReferences(self, blockName, refNames):
-        """findItemReferences(blockName, refNames)
+        r"""findItemReferences(blockName, refNames)
             
             This function will call the appropriate function from :class:`~inpRW._inpFindRefs.FindRefs` based on the
             value of *blockName*. *refNames* will serve as the input to the final function.
@@ -49,7 +49,7 @@ class Find:
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def findKeyword(self, keywordName='', parameters=None, excludeParameters=None, data='', mode='all', printOutput=True, parentBlock=''):
-        """findKeyword(keywordName='', parameters=None, excludeParameters=None, data='', mode='all', printOutput=True, parentBlock='')
+        r"""findKeyword(keywordName='', parameters=None, excludeParameters=None, data='', mode='all', printOutput=True, parentBlock='')
 
             Finds keyword blocks in :attr:`~inpRW.inpRW.keywords` using multiple criteria.
             
@@ -305,7 +305,7 @@ class Find:
     
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def findKeywordsIgnoreParam(self, kwNameGroup):
-        """findKeywordsIgnoreParam(kwNameGroup)
+        r"""findKeywordsIgnoreParam(kwNameGroup)
     
             Searches :attr:`~inpRW.inpRW.kwg` for the keywords in *kwNameGroup*, and returns the keyword groups it finds.
         
@@ -320,7 +320,7 @@ class Find:
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def findStepLocations(self):
-        """findStepLocations()
+        r"""findStepLocations()
         
             Creates objects :attr:`~inpRW.inpRW.steps` and :attr:`~inpRW.inpRW.step_paths`.
             
@@ -343,7 +343,7 @@ class Find:
     
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def findValidParentKW(self, child):
-        """findValidParentKW(child)
+        r"""findValidParentKW(child)
         
             Prints the keyword names that can be parent blocks for child.
 
@@ -364,7 +364,7 @@ class Find:
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def getParentBlock(self, item, parentKWName='', _level=1):
-        """getParentBlock(item, parentKWName='', _level=1)
+        r"""getParentBlock(item, parentKWName='', _level=1)
         
             Retrieves the parent block for *item*. 
             
@@ -409,7 +409,7 @@ class Find:
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def _findActiveSystem(self):
-        """_findActiveSystem()
+        r"""_findActiveSystem()
         module: _inpFind.py
         
             Finds which \*SYSTEM is active at all points in the .inp
@@ -431,7 +431,7 @@ class Find:
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def findCloseNodes(self, nodeGroup1=None, nodeGroup2=None, searchDist=1e-6, _sliceStart=1):
-        """findCloseNodes(nodeGroup1=None, nodeGroup2=None, searchDist=1e-6, _sliceStart=1)
+        r"""findCloseNodes(nodeGroup1=None, nodeGroup2=None, searchDist=1e-6, _sliceStart=1)
 
             This function searches for nodes that are within *searchDist* of each other. It will generate a cKDTree 
             from :mod:`scipy.spatial`, and the function will return a dictionary using the pairs of nodes which
@@ -534,7 +534,7 @@ class Find:
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def _findData(self, labelD, kwNames=None, parameters=None, excludeParameters=None, mode='all', data_pos='', linesToCheck='', 
                   custom='', dataOffset=None, dataStep=None, lineOffset=None, lineStep=None, dataGroup='line', kwBlocks=None):
-        """_findData(labelD, kwNames=None, parameters=None, excludeParameters=None, mode='all', data_pos='', linesToCheck='', custom='', dataOffset=None, dataStep=None, lineOffset=None, lineStep=None, dataGroup='line', kwBlocks=None)
+        r"""_findData(labelD, kwNames=None, parameters=None, excludeParameters=None, mode='all', data_pos='', linesToCheck='', custom='', dataOffset=None, dataStep=None, lineOffset=None, lineStep=None, dataGroup='line', kwBlocks=None)
         
             This function will search for references to the keys in labelD in the locations specified by the rest of
             the parameters to this function. It is meant to be called from one of the functions in :class:`~inpRW._inpFindRefs.FindRefs`.
@@ -592,7 +592,7 @@ class Find:
         
         #~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
         def calcStepandOffset(indic, offsetDefault=None, stepDefault=None):
-            """calcStepandOffset(indic, offsetDefault=None, stepDefault=None)
+            r"""calcStepandOffset(indic, offsetDefault=None, stepDefault=None)
             
                 Calculates step and offset, which will be used to reconstruct the path to the original items in block.data.
                 If *offsetDefault* and *stepDefault* are specified, these will be used over what the function calculates
@@ -644,7 +644,7 @@ class Find:
 
         #~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
         def calcFuncGroupString(path, lineno, ls, datano, ds, dataGroup):
-            """calcFuncGroupString(path, lineno, ls, datano, ds, dataGroup) 
+            r"""calcFuncGroupString(path, lineno, ls, datano, ds, dataGroup) 
             
                 Generates the string which indicates the area affected by the found reference.
                 
@@ -738,7 +738,7 @@ class Find:
     
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def _findIncludeFileNames(self):
-        """_findIncludeFileNames()
+        r"""_findIncludeFileNames()
         
             Finds all child input file names in :attr:`~inpRW.inpRW.keywords`.
 
@@ -762,7 +762,7 @@ class Find:
     
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def _findParam(self, labelD, parameterName, kwNames=None, excludeParameters=None, mode='all', kwBlocks=None):
-        """_findParam(labelD, parameterName, kwNames=None, excludeParameters=None, mode='all', kwBlocks=None)
+        r"""_findParam(labelD, parameterName, kwNames=None, excludeParameters=None, mode='all', kwBlocks=None)
             
             This function will look for keyword blocks that reference items in *labelD*. 
             
@@ -802,7 +802,7 @@ class Find:
 
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     def _getLastBlockPath(self, _block=''):
-        """_getLastBlockPath(_block='')
+        r"""_getLastBlockPath(_block='')
         
             Sets :attr:`~inpRW.inpRW._lbp` to the path of the last block in the input file.
             

@@ -66,28 +66,28 @@ class inpRW(_inpR.Read, _inpW.Write, _inpMod.Mod, _inpFind.Find, _inpFindRefs.Fi
                 parseSubFiles (bool): Parse sub input files (i.e. target of INCLUDE) if True. Defaults to False.
                 preserveSpacing (bool): Preserve the original spacing for every item in the input file if True. Defaults to True.
                 useDecimal (bool): If True, :class:`~decimal.Decimal` (or :class:`inpDecimal` if *preserveSpacing* = True) will be used instead of :class:`float` for all floating point numbers. Will be True if :attr:`preserveSpacing` is True. Defaults to True.
-                _parentInp (inpRW): An :class:`inpRW` instance to serve as the parent for the new instance. Meant to be used when :class:`inpRW` instances itself recursively to handle child input files (i.e. \*INCLUDE).
+                _parentInp (inpRW): An :class:`inpRW` instance to serve as the parent for the new instance. Meant to be used when :class:`inpRW` instances itself recursively to handle child input files (i.e. \\*INCLUDE).
                 _parentblock (inpKeyword): An inpKeyword block which will serve as the parent to the new :class:`inpRW` instance. All keywords in the child inp will be suboptions to _parentblock.
                 _debug (bool): If True, prints some additional information while inpRW is performing certain tasks and keeps :attr:`~inpRW.inpRW._kw` after parsing the input file. Defaults to False.
                
             Returns:
                 :class:`inpRW` instance"""
 
-        self._parentINP = _parentINP #: :inpRW: References the parent inp instance if this is reading a sub input file (i.e. \*INCLUDE, \*MANIFEST). This is needed to track some variables from the parent instance.
+        self._parentINP = _parentINP #: :inpRW: References the parent inp instance if this is reading a sub input file (i.e. \\*INCLUDE, \\*MANIFEST). This is needed to track some variables from the parent instance.
         self._parentblock = _parentblock #: :inpKeyword: References the parent block. All keyword blocks read by a child inpRW instance will be suboptions of _parentblock.
 
         if not self._parentINP:
             self.keywords = inpKeywordSequence() #: :inpKeywordSequence: Holds all the parsed keyword blocks. This is the main point of interaction for the user.
-            self.nd = self.keywords._nd #: :TotalNodeMesh: Node dictionary. A dictionary type object which contains every node in the input file. :attr:`nd` is populated from :class:`~mesh.Mesh`, which make up the :attr:`~inpKeyword.inpKeyword.data` attribute of \*NODE keyword blocks. When operating on nodes, the user should access them through :attr:`nd`. When adding new nodes, they should be added to an existing :class:`~mesh.Mesh`, or create a new \*NODE keyword block with a new :attr:`~inpKeyword.inpKeyword.data`, and then update :attr:`nd` with the :attr:`~inpKeyword.inpKeyword.data` of the new block.
+            self.nd = self.keywords._nd #: :TotalNodeMesh: Node dictionary. A dictionary type object which contains every node in the input file. :attr:`nd` is populated from :class:`~mesh.Mesh`, which make up the :attr:`~inpKeyword.inpKeyword.data` attribute of \\*NODE keyword blocks. When operating on nodes, the user should access them through :attr:`nd`. When adding new nodes, they should be added to an existing :class:`~mesh.Mesh`, or create a new \\*NODE keyword block with a new :attr:`~inpKeyword.inpKeyword.data`, and then update :attr:`nd` with the :attr:`~inpKeyword.inpKeyword.data` of the new block.
             self.ed = self.keywords._ed #: :TotalElementMesh: Element dictionary. Identical in concept to :attr:`nd`, but holds element information. See :attr:`nd` for further details.
-            self.pd = self.keywords._pd #: :csid: Parameter dictionary, uses each variable defined in \*PARAMETER block datalines as the key, the value is the evaluated result. If the user needs the value of a group of items which may reference parameters, call :py:func:`~inpRW._inpR.Read._subParam` on the group of objects. Defaults to csid().
-            self._manBaseStep = None #: :inpKeyword: The last base step for \*MANIFEST simulations. Defaults to None
+            self.pd = self.keywords._pd #: :csid: Parameter dictionary, uses each variable defined in \\*PARAMETER block datalines as the key, the value is the evaluated result. If the user needs the value of a group of items which may reference parameters, call :py:func:`~inpRW._inpR.Read._subParam` on the group of objects. Defaults to csid().
+            self._manBaseStep = None #: :inpKeyword: The last base step for \\*MANIFEST simulations. Defaults to None
             self._curBaseStep = None #: :inpKeyword: Tracks the current base step in the model. Defaults to None
             self._delayedPlaceBlocks = self.keywords._delayedPlaceBlocks #: :dict: Tracks blocks that should be parsed on later passes. Any blocks placed into :attr:`~inpRW.inpRW._delayedPlaceBlocks` will have the data in their :attr:`~inpKeyword.inpKeyword._inpItemsToUpdate` inserted at the end of the :func:`~inpRW.inpRW.parse` function. For example, \*PARAMETER keyword blocks should have their data placed before all other blocks (loop 0), and all \*NODE blocks should have their data populated before any \*ELEMENT blocks are placed. Unless otherwise specified in :attr:`~config._keywordsDelayPlacingData`, all blocks will have their data placed in loop 1. Defaults to {0: [], 1: [], 2: []}
             
             #Set variables that should be overridden when parse() is called
             self._nl = '\n'
-            self._ParamInInp = False #: :bool: If True, indicates that \*PARAMETER is a keyword block in the input file. Will be set in :func:`parse`. Defaults to False
+            self._ParamInInp = False #: :bool: If True, indicates that \\*PARAMETER is a keyword block in the input file. Will be set in :func:`parse`. Defaults to False
 
             #Assign input parameters to instance variables
             try:
@@ -198,7 +198,7 @@ the new input files, so it will be easier to manage the new files in the future.
                 self._lcpattern = self._getLeadingCommentsPattern()
                 self._inpText = self.inp.read()
             self._nl = '\n'
-        self._ParamInInp = re.search('\*PARAMETER', self._inpText, re.IGNORECASE)
+        self._ParamInInp = re.search(r'\*PARAMETER', self._inpText, re.IGNORECASE)
         print(f'\nSplitting string of input file from {self.inputFolder}{self.inpName} into strings representing each keyword block.\n')
         self._splitKeywords() #generates self._kw
         self._kw = [i for i in self._kw if i !=''] 

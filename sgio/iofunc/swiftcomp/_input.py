@@ -9,6 +9,18 @@ from ._mesh import (
     read_buffer,
     write_buffer,
 )
+from ..common import (
+    read_material_rotation_combinations,
+    read_materials as common_read_materials,
+    read_material as common_read_material,
+    read_elastic_property as common_read_elastic_property,
+    read_thermal_property,
+    write_material_combos,
+    write_material as common_write_material,
+    write_materials as common_write_materials,
+    write_displacement_rotation,
+    write_load,
+)
 
 
 logger = logging.getLogger(__name__)
@@ -81,149 +93,54 @@ def _readMesh(file, sgdim:int, nnode:int, nelem:int, read_local_frame):
 
 
 def _readMaterialRotationCombinations(file, ncomb):
+    """Read material rotation combinations (SwiftComp format).
+    
+    Wrapper for common function with SwiftComp-specific comment character.
     """
-    """
-
-    logger.debug('reading combinations of material and in-plane rotations...')
-
-    combinations = {}
-
-    counter = 0
-    while counter < ncomb:
-        line = file.readline().strip()
-        while line == '':
-            line = file.readline().strip()
-
-        line = line.split()
-        comb_id = int(line[0])
-        mate_id = int(line[1])
-        ip_ratation = float(line[2])
-
-        combinations[comb_id] = [mate_id, ip_ratation]
-
-        counter += 1
-
-    return combinations
+    return read_material_rotation_combinations(file, ncomb, comment_char='#')
 
 
 
 
 def _readMaterials(file, nmate:int, physics:int):
+    """Read materials from SwiftComp input file.
+    
+    Wrapper for common function with SwiftComp-specific parameters.
     """
-    """
-
-    logger.debug('reading materials...')
-
-    materials = {}
-
-    counter = 0
-    while counter < nmate:
-        line = file.readline().split('#')[0].strip()
-        while line == '':
-            line = file.readline().split('#')[0].strip()
-
-        line = line.split()
-
-        # Read material id, isotropy
-        mate_id, isotropy, ntemp = list(map(int, line))
-
-        material = _readMaterial(file, isotropy, ntemp, physics)
-
-        materials[mate_id] = material
-
-        counter += 1
-
-    return materials
+    return common_read_materials(
+        file, nmate, comment_char='#', has_ntemp=True, physics=physics
+    )
 
 
 
 
 def _readMaterial(file, isotropy:int, ntemp:int=1, physics:int=0):
+    """Read a single material from SwiftComp input file.
+    
+    Wrapper for common function with SwiftComp-specific parameters.
     """
-    """
-
-    # mp = smdl.MaterialProperty()
-    # mp = smdl.MaterialSection()
-    mp = smdl.CauchyContinuumModel()
-    # mp.isotropy = isotropy
-    mp.set('isotropy', isotropy)
-
-    temp_counter = 0
-    while temp_counter < ntemp:
-
-        line = file.readline().strip()
-        while line == '':
-            line = file.readline().strip()
-        line = line.split()
-        temperature, density = list(map(float, line))
-        mp.temperature = temperature
-
-        # Read conductivity properties
-
-        # Read elastic properties
-        elastic_props = _readElasticProperty(file, isotropy)
-        mp.setElastic(elastic_props, isotropy)
-
-        # mp.density = density
-        mp.set('density', density)
-
-        # Read thermal properties
-        if physics in [1, 4, 6]:
-            cte, specific_heat = _readThermalProperty(file, isotropy)
-            mp.set('cte', cte)
-            mp.set('specific_heat', specific_heat)
-
-        temp_counter += 1
-
-    return mp
+    return common_read_material(
+        file, isotropy, ntemp, comment_char='#', physics=physics
+    )
 
 
 
 
 def _readElasticProperty(file, isotropy:int):
+    """Read elastic properties from SwiftComp input file.
+    
+    Wrapper for common function with SwiftComp-specific parameters.
     """
-    """
-
-    constants = []
-
-    if isotropy == 0:
-        nrow = 1
-    elif isotropy == 1:
-        nrow = 3
-    elif isotropy == 2:
-        nrow = 6
-
-    for i in range(nrow):
-        line = file.readline().strip()
-        while line == '':
-            line = file.readline().strip()
-        constants.extend(list(map(float, line.split())))
-
-    return constants
-
+    return common_read_elastic_property(file, isotropy, comment_char='#')
 
 
 
 def _readThermalProperty(file, isotropy:int):
+    """Read thermal properties from SwiftComp input file.
+    
+    Wrapper for common function.
     """
-    """
-    cte = []
-    specific_heat = 0
-
-    line = sutl.readNextNonEmptyLine(file)
-    line = list(map(float, line.split()))
-
-    if isotropy == 0:
-        cte = line[:1]
-        specific_heat = line[1]
-    elif isotropy == 1:
-        cte = line[:3]
-        specific_heat = line[3]
-    elif isotropy == 2:
-        cte = line[:6]
-        specific_heat = line[6]
-
-    return cte, specific_heat
+    return read_thermal_property(file, isotropy)
 
 
 
@@ -250,18 +167,13 @@ def _readThermalProperty(file, isotropy:int):
 def writeInputBuffer(
     sg, file, analysis, physics,
     model_space, prop_ref_y,
-    renumber_nodes=False, renumber_elements=False,
     sfi:str='8d', sff:str='20.12e', version=None):
     """
     """
 
     logger.debug(f'writing sg input...')
 
-    # print(sg)
-
     ssff = '{:' + sff + '}'
-    # if not version is None:
-    #     sg.version = sutl.Version(version)
     sg.version = version
 
     logger.debug('format version: {}'.format(sg.version))
@@ -274,11 +186,12 @@ def writeInputBuffer(
         sgdim=sg.sgdim,
         model_space=model_space,
         prop_ref_y=prop_ref_y,
-        renumber_nodes=renumber_nodes,
-        renumber_elements=renumber_elements,
         int_fmt=sfi, float_fmt=sff
         )
 
+    # Get material ID mapping for export
+    mat_id_map = sg.get_export_material_ids()
+    
     _writeMOCombos(sg, file, sfi, sff)
 
     _writeMaterials(
@@ -287,7 +200,8 @@ def writeInputBuffer(
         analysis=analysis,
         physics=physics,
         sfi=sfi,
-        sff=sff
+        sff=sff,
+        mat_id_map=mat_id_map
         )
 
     file.write((ssff + '\n').format(sg.omega))
@@ -334,14 +248,16 @@ def writeInputBufferGlobal(
         )
 
     elif analysis.startswith('f'):
-        # _writeInputMaterialStrength(sg, file, sfi, sff)
+        # Generate ID mapping for dict_materials
+        mat_id_map = {name: idx + 1 for idx, name in enumerate(dict_materials.keys())}
         _writeMaterials(
             dict_materials=dict_materials,
             file=file,
             analysis=analysis,
             physics=physics,
             sfi=sfi,
-            sff=sff
+            sff=sff,
+            mat_id_map=mat_id_map
             )
 
     sutl.writeFormatIntegers(file, [load_type, ], sfi)
@@ -366,17 +282,14 @@ def writeInputBufferGlobal(
 
 def _writeMesh(
     mesh, file, sgdim, model_space, prop_ref_y='x',
-    renumber_nodes=False, renumber_elements=False,
     int_fmt='8d', float_fmt='20.12e'
     ):
-    """
-    """
+    """Write mesh data to SwiftComp format."""
     logger.debug('writing mesh...')
 
     write_buffer(
         file, mesh, sgdim=sgdim,
         model_space=model_space, prop_ref_y=prop_ref_y,
-        renumber_nodes=renumber_nodes, renumber_elements=renumber_elements,
         int_fmt=int_fmt, float_fmt=float_fmt)
 
     return
@@ -390,17 +303,11 @@ def _writeMesh(
 
 
 def _writeMOCombos(sg, file, sfi, sff):
-    ssfi = '{:' + sfi + '}'
-    ssff = '{:' + sff + '}'
-    count = 0
-    for cid, combo in sg.mocombos.items():
-        # print(f'cid: {cid}, combo: {combo}')
-        count += 1
-        file.write((ssfi + ssfi + ssff).format(cid, combo[0], combo[1]))
-        if count == 1:
-            file.write('  # combination id, material id, in-plane rotation angle')
-        file.write('\n')
-    file.write('\n')
+    """Write material-orientation combinations (SwiftComp format).
+    
+    Wrapper for common function with SwiftComp-specific comment character.
+    """
+    write_material_combos(sg, file, sfi, sff, comment_char='#')
     return
 
 
@@ -415,108 +322,17 @@ def _writeMaterial(
     mid:int, material:smdl.CauchyContinuumModel, file,
     analysis, physics,
     sfi:str='8d', sff:str='20.12e'):
-    """
-    """
-
-    # logger.debug('writing materials...')
-
-    # counter = 0
-    # for mid, m in sg.materials.items():
-
-    # print('writing material {}'.format(mid))
-
-    # print(material)
-
-    # cm = m.constitutive
-
-    # if m.stff:
-    #     anisotropy = 2
-    # else:
-    anisotropy = material.get('isotropy')
-
-    if analysis == 'h':
-
-        sutl.writeFormatIntegers(file, (mid, anisotropy, 1), sfi, newline=False)
-        file.write('  # material id, anisotropy, ntemp\n')
-
-        sutl.writeFormatFloats(
-            file, (material.get('temperature'), material.get('density')), sff)
-
-        # Write elastic properties
-        if anisotropy == 0:
-            sutl.writeFormatFloats(
-                file, [material.get('e1'), material.get('nu12')], sff)
-
-        elif anisotropy == 1:
-            sutl.writeFormatFloats(
-                file, [material.get('e1'), material.get('e2'), material.get('e3')], sff)
-            sutl.writeFormatFloats(
-                file, [material.get('g12'), material.get('g13'), material.get('g23')], sff)
-            sutl.writeFormatFloats(
-                file, [material.get('nu12'), material.get('nu13'), material.get('nu23')], sff)
-
-        elif anisotropy == 2:
-            for i in range(6):
-                for j in range(i, 6):
-                    _v = material.get(f'c{i+1}{j+1}')
-                    file.write(f'{_v:{sff}}')
-                    # sutl.writeFormatFloats(
-                    #     file, material.get(f'c{i+1}{j+1}'), sff, newline=False)
-                file.write('\n')
-
-        if physics in [1, 4, 6]:
-            sutl.writeFormatFloats(
-                file, material.get('cte')+[material.get('specific_heat'),], sff)
-
-    elif analysis.startswith('f'):
-        # Write material properties for failure analysis
-
-        strength = []
-        if anisotropy == 0:
-            if material.failure_criterion == 1:
-                pass
-            elif material.failure_criterion == 2:
-                pass
-            elif material.failure_criterion == 3:
-                pass
-            elif material.failure_criterion == 4:
-                pass
-            elif material.failure_criterion == 5:
-                pass
-        else:
-            if material.failure_criterion == 1:
-                pass
-            elif material.failure_criterion == 2:
-                pass
-            elif material.failure_criterion == 3:
-                pass
-            elif material.failure_criterion == 4:
-                # Tsai-Wu
-                strength = [
-                    material.get('x1t'), material.get('x2t'), material.get('x3t'),
-                    material.get('x1c'), material.get('x2c'), material.get('x3c'),
-                    material.get('x23'), material.get('x13'), material.get('x12'),
-                    # strength_constants['r'], m.strength_constants['t'], m.strength_constants['s'],
-                ]
-            elif material.failure_criterion == 5:
-                pass
-
-        sutl.writeFormatIntegers(
-            file,
-            # (m.strength['criterion'], len(m.strength['constants'])),
-            [material.failure_criterion, len(strength)],
-            sfi
-        )
-        # file.write((sff+'\n').format(m.strength['chara_len']))
-        sutl.writeFormatFloats(file, [material.get('char_len'),], sff)
-        # sutl.writeFormatFloats(file, m.strength['constants'], sff[2:-1])
-        sutl.writeFormatFloats(file, strength, sff)
-
-    file.write('\n')
+    """Write a single material (SwiftComp format).
     
-    # counter += 1
-
-    # file.write('\n')
+    Wrapper for common function with SwiftComp-specific parameters.
+    """
+    common_write_material(
+        mid, material, file, analysis,
+        physics=physics,
+        sfi=sfi, sff=sff,
+        comment_char='#',
+        has_ntemp=True
+    )
     return
 
 
@@ -529,24 +345,19 @@ def _writeMaterial(
 
 def _writeMaterials(
     dict_materials, file, analysis, physics=0,
-    sfi:str='8d', sff:str='20.12e'):
+    sfi:str='8d', sff:str='20.12e', mat_id_map=None):
+    """Write materials (SwiftComp format).
+    
+    Wrapper for common function with SwiftComp-specific parameters.
     """
-    """
-
-    logger.debug('writing materials...')
-
-    # counter = 0
-    for mid, m in dict_materials.items():
-        _writeMaterial(
-            mid=mid,
-            material=m,
-            file=file,
-            analysis=analysis,
-            physics=physics,
-            sfi=sfi,
-            sff=sff)
-
-    file.write('\n')
+    common_write_materials(
+        dict_materials, file, analysis,
+        physics=physics,
+        sfi=sfi, sff=sff,
+        comment_char='#',
+        has_ntemp=True,
+        mat_id_map=mat_id_map
+    )
     return
 
 
@@ -673,15 +484,14 @@ def _writeHeader(sg:StructureGene, file, sfi, sff, version=None):
 
 def _writeDisplacementRotation(
     file,
-    displacement:list[float]=[0, 0, 0],
-    rotation:list[list[float]]=[[1,0,0],[0,1,0],[0,0,1]],
+    displacement:list[float]=None,
+    rotation:list[list[float]]=None,
     sff:str='20.12e'):
-
-    # sutl.writeFormatFloats(file, macro_response.getDisplacement(), sff)
-    # sutl.writeFormatFloatsMatrix(file, macro_response.getDirectionCosine(), sff)
-    sutl.writeFormatFloats(file, displacement, sff)
-    file.write('\n')
-    sutl.writeFormatFloatsMatrix(file, rotation, sff)
+    """Write displacement and rotation (SwiftComp format).
+    
+    Wrapper for common function.
+    """
+    write_displacement_rotation(file, displacement, rotation, sff)
 
 
 
@@ -699,41 +509,11 @@ def _writeDisplacementRotation(
 
 def _writeLoad(
     file, macro_response:smdl.StateCase, model, sff:str='20.12e'):
-
-    # _load = macro_response.getLoad()
-    _load = macro_response.load.data
-
-    if model.lower() == 'sd1':
-        pass
-
-    elif model.lower() == 'pl1':
-        sutl.writeFormatFloats(file, _load, fmt=sff)
-
-    elif model.lower() == 'pl2':
-        pass
-
-    elif model.lower() == 'bm1':
-        # sutl.writeFormatFloats(file, macro_response.getLoad())
-        sutl.writeFormatFloats(file, _load, fmt=sff)
-
-    elif model.lower() == 'bm2':
-        sutl.writeFormatFloats(file, [_load[i] for i in [0, 3, 4, 5]], fmt=sff)
-        sutl.writeFormatFloats(file, [_load[i] for i in [1, 2]], fmt=sff)
-        file.write('\n')
-
-        # _distr_load = macro_response.getDistributedLoad()
-        _distr_load = macro_response.distributed_load
-        if _distr_load is None:
-            _distr_load = [[0,]*6]*4
-        else:
-            _distr_load = _distr_load.data
-        sutl.writeFormatFloats(file, _distr_load[0], fmt=sff)
-        sutl.writeFormatFloats(file, _distr_load[1], fmt=sff)
-        sutl.writeFormatFloats(file, _distr_load[2], fmt=sff)
-        sutl.writeFormatFloats(file, _distr_load[3], fmt=sff)
-
-    file.write('\n')
-
+    """Write load data (SwiftComp format).
+    
+    Wrapper for common function.
+    """
+    write_load(file, macro_response, model, sff)
     return
 
 

@@ -105,6 +105,15 @@ def read_buffer(f, is_ascii: bool, data_size):
     cell_data = cell_data_from_raw(cells, cell_data_raw)
     cell_data.update(cell_tags)
 
+    # Map gmsh:physical to property_id for compatibility with SGIO
+    if "gmsh:physical" in cell_data:
+        cell_data["property_id"] = cell_data["gmsh:physical"]
+    else:
+        # Create empty property_id arrays and warn user
+        warn("No physical groups found in mesh. Creating empty property_id arrays. "
+             "Consider using Gmsh physical groups to assign materials.")
+        cell_data["property_id"] = [np.zeros(len(cell_block.data), dtype=int) for cell_block in cells]
+
     # Add node entity information to the point data
     point_data.update({"gmsh:dim_tags": point_entities})
 

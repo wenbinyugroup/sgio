@@ -35,56 +35,55 @@ def combineSG(sg1:StructureGene, sg2:StructureGene) -> StructureGene:
     for _name, _data in sg1.mesh.point_data.items():
         point_data_c[_name] = np.concatenate((_data, sg2.mesh.point_data[_name]))
 
-    # Combine materials
-    # -----------------
+    # Combine materials (now name-based)
+    # -----------------------------------
     material_c = copy.deepcopy(sg1.materials)
-    mid_map_sg2 = {}  # old: new
-    for _mid_old, _m2 in sg2.materials.items():
-        _mid_new = 0
-        for _mid, _m1 in material_c.items():
+    mat_name_map_sg2 = {}  # old_name: new_name
+    
+    for _mat_name_old, _m2 in sg2.materials.items():
+        # Check if material already exists in combined set
+        _mat_name_new = None
+        for _mat_name, _m1 in material_c.items():
             if _m2 == _m1:
-                _mid_new = _mid
+                _mat_name_new = _mat_name
                 break
-        if _mid_new == 0:
-            _mid_new = len(material_c) + 1
-            material_c[_mid_new] = _m2
-        mid_map_sg2[_mid_old] = _mid_new
+        
+        if _mat_name_new is None:
+            # Material not found - add it with its original name
+            # If name conflicts, append suffix
+            _mat_name_new = _mat_name_old
+            if _mat_name_new in material_c:
+                suffix = 2
+                while f'{_mat_name_old}_{suffix}' in material_c:
+                    suffix += 1
+                _mat_name_new = f'{_mat_name_old}_{suffix}'
+            material_c[_mat_name_new] = _m2
+        
+        mat_name_map_sg2[_mat_name_old] = _mat_name_new
 
-    # for _mid, _m in material_c.items():
-    #     print(f'\nmaterial {_mid}')
-    #     print(_m)
-    # print('\nmid_map_sg2')
-    # print(mid_map_sg2)
-
-    # Update SG2 mocombos
-    # -------------------
-    mocombo_sg2 = {}
-    for _id, _combo in sg2.mocombos.items():
-        _mid = mid_map_sg2[_combo[0]]
-        _ori = _combo[1]
-        mocombo_sg2[_id] = [_mid, _ori]
-    # print('\nmocombo_sg2')
-    # print(mocombo_sg2)
-
-    # Combine mocombos
-    # ----------------
+    # Combine mocombos (now using material names)
+    # --------------------------------------------
     mocombo_c = copy.deepcopy(sg1.mocombos)
-    cid_map_sg2 = {}  # old: new
-    for _cid_old, _c2 in mocombo_sg2.items():
-        _cid_new = 0
+    cid_map_sg2 = {}  # old_combo_id: new_combo_id
+    
+    for _cid_old, _combo in sg2.mocombos.items():
+        _mat_name_old, _ori = _combo
+        # Map to new material name
+        _mat_name_new = mat_name_map_sg2[_mat_name_old]
+        _combo_new = (_mat_name_new, _ori)
+        
+        # Check if this combo already exists
+        _cid_new = None
         for _cid, _c1 in mocombo_c.items():
-            if _c2 == _c1:
+            if _combo_new == _c1:
                 _cid_new = _cid
                 break
-        if _cid_new == 0:
+        
+        if _cid_new is None:
             _cid_new = len(mocombo_c) + 1
-            mocombo_c[_cid_new] = _c2
+            mocombo_c[_cid_new] = _combo_new
+        
         cid_map_sg2[_cid_old] = _cid_new
-
-    # print('\nmocombo_c')
-    # print(mocombo_c)
-    # print('\ncid_map_sg2')
-    # print(cid_map_sg2)
 
     # Update SG2 property_id
     cid_sg2 = sg2.mesh.cell_data.get('property_id')

@@ -97,29 +97,24 @@ def buildSG1D(
 
         logger.debug(f'checking material {_lyr_m_name}...')
 
-        cid = sg.findComboByMaterialOrientation(_lyr_m_name, _lyr_ipo)
-        if cid == 0:
-            # Not found
-            # Check used material
-            mid = sg.findMaterialByName(_lyr_m_name)
-
-            if mid == 0:
-                # Not found
-                mid = len(sg.materials) + 1
-
+        cid = sg.find_combo_by_material_orientation(_lyr_m_name, _lyr_ipo)
+        if cid is None:
+            # Combo not found - check if material exists
+            if _lyr_m_name not in sg.materials:
+                # Material not found - add it
                 mprop = sgdb[f'{_lyr_m_name}']
-                # print(f'mprop: {mprop}')
 
                 if isinstance(mprop, smdl.CauchyContinuumModel):
                     m = mprop
                 else:
                     m = addMaterial(_lyr_m_name, mprop['property'])
 
-                sg.materials[mid] = m
+                sg.materials[_lyr_m_name] = m
 
+            # Create new combo with material name
             cid = len(sg.mocombos) + 1
-            sg.mocombos[cid] = [mid, _lyr_ipo]
-            # sg.prop_elem[cid] = []
+            sg.mocombos[cid] = (_lyr_m_name, _lyr_ipo)
+            
         layer['mocombo'] = cid
         lyr_thk = _lyr_ply_thk * _lyr_np
         # print('lyr_thk =', lyr_thk)

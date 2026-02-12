@@ -7,6 +7,7 @@ Reference
     :caption: Contents
 
     sg
+    mesh
     model/index
     io
     plot
