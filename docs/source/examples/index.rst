@@ -6,4 +6,5 @@ Examples
 
     abaqus_sg_3d
     read_sc_output_state
+    plot_cs
 
