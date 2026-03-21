@@ -87,6 +87,7 @@ def read_buffer(file, format_version="4.1", **kwargs):
 def write_buffer(
     file, mesh, format_version, float_fmt, sgdim,
     mesh_only, binary,
+    mocombos=None, material_id_map=None, sg_configs=None,
     **kwargs):
     """
     """
@@ -105,4 +106,8 @@ def write_buffer(
         mesh.point_data['gmsh:dim_tags'] = np.array([[sgdim, 1] for i in range(len(mesh.points))])
         # mesh.cell_data['gmsh:geometrical'] = np.array([[i,] for i in range(len(mesh.cells))])
         mesh.cell_data['gmsh:geometrical'] = [[1,],] * len(mesh.cells)
-        _gmsh41.write_buffer(file, mesh, float_fmt, mesh_only, binary)
+        _gmsh41.write_buffer(
+            file, mesh, float_fmt, mesh_only, binary,
+            mocombos=mocombos, material_id_map=material_id_map, sg_configs=sg_configs,
+            sgdim=sgdim,
+        )

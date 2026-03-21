@@ -14,6 +14,7 @@ Guide
     io_model
     io_state
     convert
+    gmsh.md
     abaqus_cs
     plot.md
     custom_mesh/index

@@ -57,12 +57,12 @@ def _readHeader(file):
     if configs['is_curve'] == 1:
         line = sutl.readNextNonEmptyLine(file)
         line = line.split()
-        configs['curvature'] = list(map(float, line[:3]))
+        configs['curvature'] = list(map(sutl.fortran_float, line[:3]))
 
     if configs['is_oblique'] == 1:
         line = sutl.readNextNonEmptyLine(file)
         line = line.split()
-        configs['oblique'] = list(map(float, line[:2]))
+        configs['oblique'] = list(map(sutl.fortran_float, line[:2]))
 
     line = sutl.readNextNonEmptyLine(file)
     line = line.split()

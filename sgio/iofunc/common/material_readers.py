@@ -53,7 +53,7 @@ def read_material_rotation_combinations(
         line = line.split()
         comb_id = int(line[0])
         mate_id = int(line[1])
-        ip_rotation = float(line[2])
+        ip_rotation = sutl.fortran_float(line[2])
         
         combinations[comb_id] = [mate_id, ip_rotation]
         
@@ -171,7 +171,7 @@ def read_material(
             while line == '':
                 line = file.readline().strip()
             line = line.split()
-            temperature, density = list(map(float, line))
+            temperature, density = list(map(sutl.fortran_float, line))
             mp.temperature = temperature
         
         # Read elastic properties
@@ -183,7 +183,7 @@ def read_material(
             line = file.readline().split(comment_char)[0].strip()
             while line == '':
                 line = file.readline().split(comment_char)[0].strip()
-            density = float(line)
+            density = sutl.fortran_float(line)
         
         mp.set('density', density)
         
@@ -234,7 +234,7 @@ def read_elastic_property(
         line = file.readline().split(comment_char)[0].strip()
         while line == '':
             line = file.readline().split(comment_char)[0].strip()
-        constants.extend(list(map(float, line.split())))
+        constants.extend(list(map(sutl.fortran_float, line.split())))
     
     return constants
 
@@ -261,7 +261,7 @@ def read_thermal_property(
     specific_heat = 0.0
     
     line = sutl.readNextNonEmptyLine(file)
-    line = list(map(float, line.split()))
+    line = list(map(sutl.fortran_float, line.split()))
     
     if isotropy == 0:
         cte = line[:1]

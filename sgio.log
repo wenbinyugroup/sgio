@@ -1,0 +1,263 @@
+[22:05:49] INFO     Converting                                                                      test_vabs_gmsh.py:51
+                    C:\Users\foxta\work\dev\sgio\tests\fixtures\vabs\version_4_1\uh60a.sg to                            
+                    C:\Users\foxta\AppData\Local\Temp\pytest-of-foxta\pytest-0\test_vabs_gmsh_conve                     
+                    rsion0\output\uh60a.msh...                                                                          
+           INFO     Converting file format...                                                               main.py:1090
+           INFO     Reading file...                                                                          main.py:724
+           INFO     Writing file...                                                                          main.py:958
+           INFO     File format converted.                                                                  main.py:1130
+           INFO     Converting                                                                      test_vabs_gmsh.py:51
+                    C:\Users\foxta\work\dev\sgio\tests\fixtures\vabs\version_4_0\sg21eb_tri3_vabs40                     
+                    .sg to                                                                                              
+                    C:\Users\foxta\AppData\Local\Temp\pytest-of-foxta\pytest-0\test_vabs_gmsh_conve                     
+                    rsion0\output\sg21eb_tri3_vabs40.msh...                                                             
+           INFO     Converting file format...                                                               main.py:1090
+           INFO     Reading file...                                                                          main.py:724
+           INFO     Writing file...                                                                          main.py:958
+[22:05:50] INFO     File format converted.                                                                  main.py:1130
+           INFO     Converting                                                                      test_vabs_gmsh.py:51
+                    C:\Users\foxta\work\dev\sgio\tests\fixtures\vabs\version_4_0\sg21t_tri3_vabs40.                     
+                    sg to                                                                                               
+                    C:\Users\foxta\AppData\Local\Temp\pytest-of-foxta\pytest-0\test_vabs_gmsh_conve                     
+                    rsion0\output\sg21t_tri3_vabs40.msh...                                                              
+           INFO     Converting file format...                                                               main.py:1090
+           INFO     Reading file...                                                                          main.py:724
+           INFO     Writing file...                                                                          main.py:958
+           INFO     File format converted.                                                                  main.py:1130
+           INFO     Converting file format...                                                               main.py:1090
+           INFO     Reading file...                                                                          main.py:724
+           INFO     Writing file...                                                                          main.py:958
+           INFO     File format converted.                                                                  main.py:1130
+           INFO     Converting file format...                                                               main.py:1090
+           INFO     Reading file...                                                                          main.py:724
+           INFO     Writing file...                                                                          main.py:958
+           INFO     File format converted.                                                                  main.py:1130
+           INFO     Converting file format...                                                               main.py:1090
+           INFO     Reading file...                                                                          main.py:724
+           INFO     Writing file...                                                                          main.py:958
+           INFO     File format converted.                                                                  main.py:1130
+[22:11:21] INFO     Converting                                                                      test_vabs_gmsh.py:51
+                    C:\Users\foxta\work\dev\sgio\tests\fixtures\vabs\version_4_1\uh60a.sg to                            
+                    C:\Users\foxta\work\dev\sgio\tests\_temp\uh60a.msh...                                               
+           INFO     Converting file format...                                                               main.py:1090
+           INFO     Reading file...                                                                          main.py:724
+           INFO     Writing file...                                                                          main.py:958
+           INFO     File format converted.                                                                  main.py:1130
+           INFO     Converting                                                                      test_vabs_gmsh.py:51
+                    C:\Users\foxta\work\dev\sgio\tests\fixtures\vabs\version_4_0\sg21eb_tri3_vabs40                     
+                    .sg to C:\Users\foxta\work\dev\sgio\tests\_temp\sg21eb_tri3_vabs40.msh...                           
+           INFO     Converting file format...                                                               main.py:1090
+           INFO     Reading file...                                                                          main.py:724
+           INFO     Writing file...                                                                          main.py:958
+           INFO     File format converted.                                                                  main.py:1130
+           INFO     Converting                                                                      test_vabs_gmsh.py:51
+                    C:\Users\foxta\work\dev\sgio\tests\fixtures\vabs\version_4_0\sg21t_tri3_vabs40.                     
+                    sg to C:\Users\foxta\work\dev\sgio\tests\_temp\sg21t_tri3_vabs40.msh...                             
+           INFO     Converting file format...                                                               main.py:1090
+           INFO     Reading file...                                                                          main.py:724
+           INFO     Writing file...                                                                          main.py:958
+           INFO     File format converted.                                                                  main.py:1130
+           INFO     Converting file format...                                                               main.py:1090
+           INFO     Reading file...                                                                          main.py:724
+           INFO     Writing file...                                                                          main.py:958
+[22:11:22] INFO     File format converted.                                                                  main.py:1130
+           INFO     Converting file format...                                                               main.py:1090
+           INFO     Reading file...                                                                          main.py:724
+           INFO     Writing file...                                                                          main.py:958
+           INFO     File format converted.                                                                  main.py:1130
+           INFO     Converting file format...                                                               main.py:1090
+           INFO     Reading file...                                                                          main.py:724
+           INFO     Writing file...                                                                          main.py:958
+           INFO     File format converted.                                                                  main.py:1130
+[22:50:30] INFO     Converting                                                                      test_vabs_gmsh.py:51
+                    C:\Users\foxta\work\dev\sgio\tests\fixtures\vabs\version_4_1\isorect.sg to                          
+                    C:\Users\foxta\work\dev\sgio\tests\_temp\isorect.msh...                                             
+           INFO     Converting file format...                                                               main.py:1090
+           INFO     Reading file...                                                                          main.py:724
+[22:50:31] INFO     Converting file format...                                                               main.py:1090
+           INFO     Reading file...                                                                          main.py:724
+[23:11:37] INFO     Converting                                                                      test_vabs_gmsh.py:51
+                    C:\Users\foxta\work\dev\sgio\tests\fixtures\vabs\version_4_1\isorect.sg to                          
+                    C:\Users\foxta\work\dev\sgio\tests\_temp\isorect.msh...                                             
+           INFO     Converting file format...                                                               main.py:1090
+           INFO     Reading file...                                                                          main.py:724
+           INFO     Writing file...                                                                          main.py:958
+           INFO     File format converted.                                                                  main.py:1130
+           INFO     Converting                                                                      test_vabs_gmsh.py:51
+                    C:\Users\foxta\work\dev\sgio\tests\fixtures\vabs\version_4_1\uh60a.sg to                            
+                    C:\Users\foxta\work\dev\sgio\tests\_temp\uh60a.msh...                                               
+           INFO     Converting file format...                                                               main.py:1090
+           INFO     Reading file...                                                                          main.py:724
+           INFO     Writing file...                                                                          main.py:958
+           INFO     File format converted.                                                                  main.py:1130
+           INFO     Converting                                                                      test_vabs_gmsh.py:51
+                    C:\Users\foxta\work\dev\sgio\tests\fixtures\vabs\version_4_0\sg21eb_tri3_vabs40                     
+                    .sg to C:\Users\foxta\work\dev\sgio\tests\_temp\sg21eb_tri3_vabs40.msh...                           
+           INFO     Converting file format...                                                               main.py:1090
+           INFO     Reading file...                                                                          main.py:724
+           INFO     Writing file...                                                                          main.py:958
+           INFO     File format converted.                                                                  main.py:1130
+           INFO     Converting                                                                      test_vabs_gmsh.py:51
+                    C:\Users\foxta\work\dev\sgio\tests\fixtures\vabs\version_4_0\sg21t_tri3_vabs40.                     
+                    sg to C:\Users\foxta\work\dev\sgio\tests\_temp\sg21t_tri3_vabs40.msh...                             
+           INFO     Converting file format...                                                               main.py:1090
+           INFO     Reading file...                                                                          main.py:724
+           INFO     Writing file...                                                                          main.py:958
+           INFO     File format converted.                                                                  main.py:1130
+           INFO     Converting file format...                                                               main.py:1090
+           INFO     Reading file...                                                                          main.py:724
+           INFO     Writing file...                                                                          main.py:958
+           INFO     File format converted.                                                                  main.py:1130
+           INFO     Converting file format...                                                               main.py:1090
+           INFO     Reading file...                                                                          main.py:724
+           INFO     Writing file...                                                                          main.py:958
+           INFO     File format converted.                                                                  main.py:1130
+           INFO     Converting file format...                                                               main.py:1090
+           INFO     Reading file...                                                                          main.py:724
+           INFO     Writing file...                                                                          main.py:958
+           INFO     File format converted.                                                                  main.py:1130
+           INFO     Converting file format...                                                               main.py:1090
+           INFO     Reading file...                                                                          main.py:724
+           INFO     Writing file...                                                                          main.py:958
+           INFO     File format converted.                                                                  main.py:1130
+[00:09:42] INFO     Converting                                                                      test_vabs_gmsh.py:51
+                    C:\Users\foxta\work\dev\sgio\tests\fixtures\vabs\version_4_1\isorect.sg to                          
+                    C:\Users\foxta\work\dev\sgio\tests\_temp\isorect.msh...                                             
+           INFO     Converting file format...                                                               main.py:1152
+           INFO     Reading file...                                                                          main.py:763
+           INFO     Writing file...                                                                          main.py:998
+           INFO     Converting file format...                                                               main.py:1152
+           INFO     Reading file...                                                                          main.py:763
+           INFO     Writing file...                                                                          main.py:998
+[00:11:26] INFO     Converting                                                                      test_vabs_gmsh.py:51
+                    C:\Users\foxta\work\dev\sgio\tests\fixtures\vabs\version_4_1\isorect.sg to                          
+                    C:\Users\foxta\work\dev\sgio\tests\_temp\isorect.msh...                                             
+           INFO     Converting file format...                                                               main.py:1143
+           INFO     Reading file...                                                                          main.py:763
+           INFO     Writing file...                                                                          main.py:998
+           INFO     File format converted.                                                                  main.py:1183
+           INFO     Converting                                                                      test_vabs_gmsh.py:51
+                    C:\Users\foxta\work\dev\sgio\tests\fixtures\vabs\version_4_1\uh60a.sg to                            
+                    C:\Users\foxta\work\dev\sgio\tests\_temp\uh60a.msh...                                               
+           INFO     Converting file format...                                                               main.py:1143
+           INFO     Reading file...                                                                          main.py:763
+           INFO     Writing file...                                                                          main.py:998
+           INFO     File format converted.                                                                  main.py:1183
+           INFO     Converting                                                                      test_vabs_gmsh.py:51
+                    C:\Users\foxta\work\dev\sgio\tests\fixtures\vabs\version_4_0\sg21eb_tri3_vabs40                     
+                    .sg to C:\Users\foxta\work\dev\sgio\tests\_temp\sg21eb_tri3_vabs40.msh...                           
+           INFO     Converting file format...                                                               main.py:1143
+           INFO     Reading file...                                                                          main.py:763
+           INFO     Writing file...                                                                          main.py:998
+           INFO     File format converted.                                                                  main.py:1183
+           INFO     Converting                                                                      test_vabs_gmsh.py:51
+                    C:\Users\foxta\work\dev\sgio\tests\fixtures\vabs\version_4_0\sg21t_tri3_vabs40.                     
+                    sg to C:\Users\foxta\work\dev\sgio\tests\_temp\sg21t_tri3_vabs40.msh...                             
+           INFO     Converting file format...                                                               main.py:1143
+           INFO     Reading file...                                                                          main.py:763
+           INFO     Writing file...                                                                          main.py:998
+           INFO     File format converted.                                                                  main.py:1183
+           INFO     Converting file format...                                                               main.py:1143
+           INFO     Reading file...                                                                          main.py:763
+           INFO     Writing file...                                                                          main.py:998
+           INFO     File format converted.                                                                  main.py:1183
+           INFO     Converting file format...                                                               main.py:1143
+           INFO     Reading file...                                                                          main.py:763
+           INFO     Writing file...                                                                          main.py:998
+           INFO     File format converted.                                                                  main.py:1183
+           INFO     Converting file format...                                                               main.py:1143
+           INFO     Reading file...                                                                          main.py:763
+           INFO     Writing file...                                                                          main.py:998
+           INFO     File format converted.                                                                  main.py:1183
+           INFO     Converting file format...                                                               main.py:1143
+           INFO     Reading file...                                                                          main.py:763
+[00:11:27] INFO     Writing file...                                                                          main.py:998
+           INFO     File format converted.                                                                  main.py:1183
+[00:15:03] INFO     Converting C:\Users\foxta\work\dev\sgio\tests\fixtures\abaqus\sg33_cube.inp to  test_sc_abaqus.py:64
+                    C:\Users\foxta\work\dev\sgio\tests\_temp\sg33_cube_sc21.sg...                                       
+           INFO     Converting file format...                                                               main.py:1143
+           INFO     Reading file...                                                                          main.py:763
+           INFO     Writing file...                                                                          main.py:998
+           INFO     File format converted.                                                                  main.py:1183
+           INFO     Converting file format...                                                               main.py:1143
+           INFO     Reading file...                                                                          main.py:763
+           INFO     Writing file...                                                                          main.py:998
+           INFO     File format converted.                                                                  main.py:1183
+           INFO     Converting file format...                                                               main.py:1143
+           INFO     Reading file...                                                                          main.py:763
+[00:15:06] INFO     Writing file...                                                                          main.py:998
+[00:15:07] INFO     File format converted.                                                                  main.py:1183
+           INFO     Converting file format...                                                               main.py:1143
+           INFO     Reading file...                                                                          main.py:763
+[00:15:08] INFO     Writing file...                                                                          main.py:998
+           INFO     File format converted.                                                                  main.py:1183
+           WARNING  Node IDs renumbered to meet SwiftComp format requirements (consecutive from 1)      numbering.py:510
+           WARNING  Node IDs renumbered to meet SwiftComp format requirements (consecutive from 1)      numbering.py:510
+           INFO     Converting C:\Users\foxta\work\dev\sgio\tests\fixtures\abaqus\sg2_airfoil.inp test_vabs_abaqus.py:66
+                    to C:\Users\foxta\work\dev\sgio\tests\_temp\sg2_airfoil_vabs41.dat...                               
+           INFO     Converting file format...                                                               main.py:1143
+           INFO     Reading file...                                                                          main.py:763
+[00:15:09] INFO     Writing file...                                                                          main.py:998
+[00:15:10] INFO     File format converted.                                                                  main.py:1183
+           INFO     Converting file format...                                                               main.py:1143
+           INFO     Reading file...                                                                          main.py:763
+           INFO     Writing file...                                                                          main.py:998
+[00:15:11] INFO     File format converted.                                                                  main.py:1183
+           INFO     Converting file format...                                                               main.py:1143
+           INFO     Reading file...                                                                          main.py:763
+           INFO     Writing file...                                                                          main.py:998
+           INFO     File format converted.                                                                  main.py:1183
+           INFO     Converting file format...                                                               main.py:1143
+           INFO     Reading file...                                                                          main.py:763
+           INFO     Writing file...                                                                          main.py:998
+           INFO     File format converted.                                                                  main.py:1183
+           INFO     Converting file format...                                                               main.py:1143
+           INFO     Reading file...                                                                          main.py:763
+[00:15:12] INFO     Writing file...                                                                          main.py:998
+           INFO     File format converted.                                                                  main.py:1183
+           WARNING  Node IDs renumbered to meet VABS format requirements (consecutive from 1)           numbering.py:510
+           WARNING  Node IDs renumbered to meet VABS format requirements (consecutive from 1)           numbering.py:510
+           INFO     Converting                                                                      test_vabs_gmsh.py:51
+                    C:\Users\foxta\work\dev\sgio\tests\fixtures\vabs\version_4_1\isorect.sg to                          
+                    C:\Users\foxta\work\dev\sgio\tests\_temp\isorect.msh...                                             
+           INFO     Converting file format...                                                               main.py:1143
+           INFO     Reading file...                                                                          main.py:763
+           INFO     Writing file...                                                                          main.py:998
+           INFO     File format converted.                                                                  main.py:1183
+           INFO     Converting                                                                      test_vabs_gmsh.py:51
+                    C:\Users\foxta\work\dev\sgio\tests\fixtures\vabs\version_4_1\uh60a.sg to                            
+                    C:\Users\foxta\work\dev\sgio\tests\_temp\uh60a.msh...                                               
+           INFO     Converting file format...                                                               main.py:1143
+           INFO     Reading file...                                                                          main.py:763
+           INFO     Writing file...                                                                          main.py:998
+           INFO     File format converted.                                                                  main.py:1183
+           INFO     Converting                                                                      test_vabs_gmsh.py:51
+                    C:\Users\foxta\work\dev\sgio\tests\fixtures\vabs\version_4_0\sg21eb_tri3_vabs40                     
+                    .sg to C:\Users\foxta\work\dev\sgio\tests\_temp\sg21eb_tri3_vabs40.msh...                           
+           INFO     Converting file format...                                                               main.py:1143
+           INFO     Reading file...                                                                          main.py:763
+           INFO     Writing file...                                                                          main.py:998
+[00:15:13] INFO     File format converted.                                                                  main.py:1183
+           INFO     Converting                                                                      test_vabs_gmsh.py:51
+                    C:\Users\foxta\work\dev\sgio\tests\fixtures\vabs\version_4_0\sg21t_tri3_vabs40.                     
+                    sg to C:\Users\foxta\work\dev\sgio\tests\_temp\sg21t_tri3_vabs40.msh...                             
+           INFO     Converting file format...                                                               main.py:1143
+           INFO     Reading file...                                                                          main.py:763
+           INFO     Writing file...                                                                          main.py:998
+           INFO     File format converted.                                                                  main.py:1183
+           INFO     Converting file format...                                                               main.py:1143
+           INFO     Reading file...                                                                          main.py:763
+           INFO     Writing file...                                                                          main.py:998
+           INFO     File format converted.                                                                  main.py:1183
+           INFO     Converting file format...                                                               main.py:1143
+           INFO     Reading file...                                                                          main.py:763
+           INFO     Writing file...                                                                          main.py:998
+           INFO     File format converted.                                                                  main.py:1183
+           INFO     Converting file format...                                                               main.py:1143
+           INFO     Reading file...                                                                          main.py:763
+           INFO     Writing file...                                                                          main.py:998
+           INFO     File format converted.                                                                  main.py:1183
+           INFO     Converting file format...                                                               main.py:1143
+           INFO     Reading file...                                                                          main.py:763
+[00:15:14] INFO     Writing file...                                                                          main.py:998
+           INFO     File format converted.                                                                  main.py:1183

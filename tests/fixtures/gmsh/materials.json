@@ -1,0 +1,18 @@
+[
+  {
+    "id": 1,
+    "name": "frp",
+    "description": "Fiber reinforced polymer",
+    "density": 1.353e-04,
+    "isotropy": 1,
+    "e1": 20.59e+06,
+    "e2": 1.42e+06,
+    "e3": 1.42e+06,
+    "g12": 0.87e+06,
+    "g13": 0.87e+06,
+    "g23": 0.696e+06,
+    "nu12": 0.30,
+    "nu13": 0.30,
+    "nu23": 0.34
+  }
+]

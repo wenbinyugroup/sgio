@@ -345,7 +345,7 @@ def rotate_vector_2d(vector_2d, angle_radians):
 
 
 def calc_direction_cosine_matrix(a_basis, b_basis):
-    """Calculate the direction cosine matrix between frame a and frame b.
+    r"""Calculate the direction cosine matrix between frame a and frame b.
 
     :math:`C_{ij} = a_i\ \cdot\ b_j`
 
