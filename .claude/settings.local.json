@@ -1,8 +1,0 @@
-{
-  "respectGitignore": false,
-  "permissions": {
-    "allow": [
-      "Bash(uv run:*)"
-    ]
-  }
-}
