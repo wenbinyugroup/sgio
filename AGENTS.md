@@ -21,7 +21,7 @@ Ignore the following files and directories with the name containing `temp`, `arc
 
 Activate virtual environment first or use `uv run` to run pytest.
 
-### Documentation
+## Documentation
 ```bash
 # Build documentation
 cd docs
@@ -31,6 +31,17 @@ make clean                  # Clean build files
 # Documentation is in docs/source/ (Markdown with MyST)
 # Built docs are in docs/build/html/
 ```
+
+### Examples
+
+Document each example in the following structure:
+- Problem description
+- Explaination of the solution (mainly how to use sgio to tackle this problem)
+- Result
+- List of all files (download link)
+
+One file for one example.
+Use myst markdown.
 
 
 ## Test Structure
