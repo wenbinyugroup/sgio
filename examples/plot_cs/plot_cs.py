@@ -16,7 +16,7 @@ input_file = 'sg21eb_tri3_vabs40.sg'
 output_file = 'sg21eb_tri3_vabs40.sg.K'
 
 # Read VABS output (beam properties)
-model = sgio.readOutputModel(output_file, 'vabs', model_type='BM1')
+model = sgio.read_output_model(output_file, 'vabs', model_type='BM1')
 
 # Read VABS input (cross-section mesh)
 cs = sgio.read(input_file, 'vabs')

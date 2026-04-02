@@ -18,7 +18,7 @@ def test_combine_sg_basic(test_data_dir, tmp_path):
 
     This test verifies:
     1. Two SGs can be read from files
-    2. SGs can be combined using combineSG()
+    2. SGs can be combined using combine_sg()
     3. Combined SG has correct number of nodes and elements
     4. Combined SG can be written to file
     """
@@ -46,7 +46,7 @@ def test_combine_sg_basic(test_data_dir, tmp_path):
     sg2.mesh.points += np.array([10, 0, 0])
     
     # Combine the structure genes
-    sg_combined = sgio.combineSG(sg1, sg2)
+    sg_combined = sgio.combine_sg(sg1, sg2)
     
     assert sg_combined is not None, "Failed to combine SGs"
     assert hasattr(sg_combined, 'mesh'), "Combined SG should have mesh"
@@ -107,7 +107,7 @@ def test_combine_sg_materials():
     sg2.mocombos[1] = ('mat1', 0.0)
     
     # Combine
-    sg_combined = sgio.combineSG(sg1, sg2)
+    sg_combined = sgio.combine_sg(sg1, sg2)
     
     # Verify materials were not duplicated
     assert len(sg_combined.materials) == 1, "Should have only 1 unique material"
@@ -148,7 +148,7 @@ def test_combine_sg_mesh_transformation():
     sg2.mesh.points += offset
     
     # Combine
-    sg_combined = sgio.combineSG(sg1, sg2)
+    sg_combined = sgio.combine_sg(sg1, sg2)
     
     # Verify points
     assert sg_combined.nnodes == 4, "Should have 4 nodes total"

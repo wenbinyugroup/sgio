@@ -18,9 +18,9 @@ from sgio.utils import readNextNonEmptyLine
 
 # Import utility functions from refactored modules
 from .utils import (
-    readLoadCsv,
-    readSGInterfacePairs,
-    readSGInterfaceNodes,
+    read_load_csv,
+    read_sg_interface_pairs,
+    read_sg_interface_nodes,
 )
 
 logger = logging.getLogger(__name__)
@@ -716,10 +716,6 @@ def read_output_state(
         raise ValueError(f"Unsupported file format: {file_format}")
 
 
-# Backward compatibility alias
-readOutputState = read_output_state
-
-
 def read(
     filename: str,
     file_format: str,
@@ -838,10 +834,6 @@ def read_output_model(
     return model
 
 
-# Backward compatibility alias
-readOutputModel = read_output_model
-
-
 def read_output(
     filename: str, file_format: str, analysis: str = 'h', model_type: str = '',
     sg: StructureGene = None, **kwargs
@@ -943,10 +935,6 @@ def read_output(
             return state_case
 
     return None
-
-
-# Backward compatibility alias
-readOutput = read_output
 
 
 def write(
@@ -1195,8 +1183,5 @@ convert = convert_file_format
 
 # Create all backward compatibility aliases for camelCase function names
 __all__ = [
-    # Snake_case functions (new preferred names)
-    'read_output_model', 'read_output_state', 'read_output', 'write', 'convert_file_format',
-    # CamelCase aliases (backward compatibility)
-    'readOutputModel', 'readOutputState', 'readOutput', 'convert',
+    'read_output_model', 'read_output_state', 'read_output', 'read_load_csv', 'write', 'convert',
 ]

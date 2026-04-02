@@ -21,7 +21,7 @@ sg = sgio.read(
     file_format='vabs',
 )
 
-state_cases = sgio.readOutputState(
+state_cases = sgio.read_output_state(
     filename=input_file,
     file_format='vabs',
     analysis='d',          # 'd' for dehomogenization

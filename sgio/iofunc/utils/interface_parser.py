@@ -12,7 +12,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-def readSGInterfacePairs(fn: str) -> list[list[int | float]]:
+def read_sg_interface_pairs(fn: str) -> list[list[int | float]]:
     """Read Structure Gene interface pairs from file.
     
     Parameters
@@ -48,7 +48,7 @@ def readSGInterfacePairs(fn: str) -> list[list[int | float]]:
     return itf_pairs
 
 
-def readSGInterfaceNodes(fn: str) -> list[list[int]]:
+def read_sg_interface_nodes(fn: str) -> list[list[int]]:
     """Read Structure Gene interface nodes from file.
     
     Parameters

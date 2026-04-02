@@ -14,7 +14,7 @@ output_file = 'cs_box_t_vabs41.sg.K'
 # Read the VABS homogenized output
 # - file_format='vabs': Specifies VABS format
 # - model_type='BM2': Timoshenko beam model (includes shear deformation)
-model = sgio.readOutputModel(
+model = sgio.read_output_model(
     str(output_file),
     file_format='vabs',
     model_type='BM2'

@@ -8,7 +8,7 @@ from . import (
 from ._meshio import add_cell_dict_data_to_mesh, add_point_dict_data_to_mesh
 from .main import (
     convert,
-    read, readLoadCsv, readOutput, readOutputModel, readOutputState,
+    read, read_load_csv,
     read_output, read_output_model, read_output_state,
     write
     )
@@ -34,24 +34,21 @@ from . import registry_init
 # )
 
 __all__ = [
-    # Legacy main functions
+    # Main functions
     "read",
     "write",
     "convert",
     "read_output",
     "read_output_model",
     "read_output_state",
-    "readLoadCsv",
-    "readOutput",
-    "readOutputModel",
-    "readOutputState",
+    "read_load_csv",
 
     # Base classes and registry
     "BaseFormatReader",
     "BaseFormatWriter",
     "FormatRegistry",
     "get_format_registry",
-    
+
     # Mesh utilities
     "add_cell_dict_data_to_mesh",
     "add_point_dict_data_to_mesh",

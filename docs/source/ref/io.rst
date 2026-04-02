@@ -15,8 +15,8 @@ I/O Functions
     :toctree: _temp
 
     read
-    readOutputModel
-    readOutputState
+    read_output_model
+    read_output_state
     write
     convert
 

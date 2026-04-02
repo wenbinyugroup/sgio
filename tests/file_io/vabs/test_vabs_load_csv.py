@@ -5,7 +5,7 @@ This module tests reading load case data from CSV files for VABS analysis.
 import pytest
 from pathlib import Path
 
-from sgio.iofunc import readLoadCsv
+from sgio.iofunc import read_load_csv
 
 
 @pytest.mark.io
@@ -29,7 +29,7 @@ def test_read_load_csv_bm2(test_data_dir):
     model = 'b2'  # BM2 (Timoshenko beam)
 
     # Read the load cases
-    struct_resp_cases = readLoadCsv(str(fn), smdim, model)
+    struct_resp_cases = read_load_csv(str(fn), smdim, model)
 
     # Verify we got load cases
     assert len(struct_resp_cases.responses) > 0, "Should read at least one load case"
@@ -50,7 +50,7 @@ def test_read_load_csv_response_structure(test_data_dir):
     if not fn.exists():
         pytest.skip(f"Test file not found: {fn}")
 
-    struct_resp_cases = readLoadCsv(str(fn), 1, 'b2')
+    struct_resp_cases = read_load_csv(str(fn), 1, 'b2')
 
     for resp_case in struct_resp_cases.responses:
         # Each response case is a dict with 'response' key
@@ -78,7 +78,7 @@ def test_read_load_csv_load_values(test_data_dir):
     if not fn.exists():
         pytest.skip(f"Test file not found: {fn}")
 
-    struct_resp_cases = readLoadCsv(str(fn), 1, 'b2')
+    struct_resp_cases = read_load_csv(str(fn), 1, 'b2')
 
     # For BM2 (Timoshenko beam), we expect 6 load components
     for resp_case in struct_resp_cases.responses:
@@ -102,7 +102,7 @@ def test_read_load_csv_multiple_cases(test_data_dir):
     if not fn.exists():
         pytest.skip(f"Test file not found: {fn}")
 
-    struct_resp_cases = readLoadCsv(str(fn), 1, 'b2')
+    struct_resp_cases = read_load_csv(str(fn), 1, 'b2')
 
     # Should have multiple load cases
     assert len(struct_resp_cases.responses) >= 2, "Should have at least 2 load cases in the test file"

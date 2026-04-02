@@ -31,8 +31,8 @@ from .core import (
     normalize_format_name,
     get_numbering_requirements,
 )
-from .core.builder import buildSG1D
-from .core.merge import combineSG
+from .core.builder import build_sg_1d
+from .core.merge import combine_sg
 
 from .model import *
 
@@ -41,12 +41,9 @@ from .iofunc import (
     read_output,
     read_output_model,
     read_output_state,
-    readOutput,
-    readOutputModel,
-    readOutputState,
     write,
     convert,
-    readLoadCsv,
+    read_load_csv,
     add_cell_dict_data_to_mesh,
     add_point_dict_data_to_mesh,
     # write_points_cells,
@@ -76,19 +73,16 @@ __all__ = [
     "read_output",
     "read_output_model",
     "read_output_state",
-    "readOutput",
-    "readOutputModel",
-    "readOutputState",
     "write",
     "convert",
-    "readLoadCsv",
+    "read_load_csv",
     "add_cell_dict_data_to_mesh",
     "add_point_dict_data_to_mesh",
     # Execution
     "run",
     # Core functions and classes
-    "buildSG1D",
-    "combineSG",
+    "build_sg_1d",
+    "combine_sg",
     "SGMesh",
     "StructureGene",
     "check_isolated_nodes",
