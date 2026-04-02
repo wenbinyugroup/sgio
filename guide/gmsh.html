@@ -1,0 +1,829 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Gmsh Format Guide &#8212; SGIO</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=db78e746"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'guide/gmsh';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Build Cross-section in Abaqus and Export to VABS" href="abaqus_cs.html" />
+    <link rel="prev" title="Convert SG Data" href="convert.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+<aside class="bd-header-announcement" aria-label="Announcement">
+  <div class="bd-header-announcement__content">Documentation is under construction.</div>
+</aside>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">SGIO</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="index.html">
+    Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../ref/index.html">
+    Reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="index.html">
+    Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../ref/index.html">
+    Reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="sg.html">Structure Gene (SG) Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model/index.html">Material and Structural Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="io.html">Read and Write SG Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="io_model.html">Read Structural Model Data (.k file)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="convert.html">Convert SG Data</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Gmsh Format Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="abaqus_cs.html">Build Cross-section in Abaqus and Export to VABS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plot.html">Plot Cross-section</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="index.html" class="nav-link">Guide</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Gmsh Format Guide</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="gmsh-format-guide">
+<h1>Gmsh Format Guide<a class="headerlink" href="#gmsh-format-guide" title="Link to this heading">#</a></h1>
+<p>SGIO uses the <a class="reference external" href="https://gmsh.info/doc/texinfo/gmsh.html#MSH-file-format">Gmsh 4.1 <code class="docutils literal notranslate"><span class="pre">.msh</span></code> format</a>
+as its portable mesh exchange format. This page explains the full <code class="docutils literal notranslate"><span class="pre">.msh</span></code>
+structure that SGIO writes and reads, including two custom blocks—<code class="docutils literal notranslate"><span class="pre">$SGLayerDef</span></code>
+and <code class="docutils literal notranslate"><span class="pre">$SGConfig</span></code>—that carry the layer definitions and solver flags that are not
+part of standard Gmsh.</p>
+<hr class="docutils" />
+<section id="file-structure-overview">
+<h2>File structure overview<a class="headerlink" href="#file-structure-overview" title="Link to this heading">#</a></h2>
+<p>A complete SGIO-flavoured <code class="docutils literal notranslate"><span class="pre">.msh</span></code> file looks like this:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$MeshFormat … $EndMeshFormat
+$PhysicalNames … $EndPhysicalNames     ← layer ID → human-readable name
+$Entities   … $EndEntities
+$Nodes      … $EndNodes
+$Elements   … $EndElements
+$ElementData &quot;node_id&quot;         … $EndElementData
+$ElementData &quot;element_id&quot;      … $EndElementData
+$ElementData &quot;property_id&quot;     … $EndElementData   ← element → layer mapping
+$ElementData &quot;property_ref_csys&quot; … $EndElementData ← optional orientation
+$SGLayerDef … $EndSGLayerDef           ← layer_id, material_id, fiber_angle
+$SGConfig   … $EndSGConfig             ← solver flags (sgdim, model, …)
+</pre></div>
+</div>
+<p>Gmsh silently ignores any <code class="docutils literal notranslate"><span class="pre">$…</span></code> block it does not recognise, so the file
+remains fully compatible with the Gmsh GUI and other Gmsh-aware tools.</p>
+</section>
+<hr class="docutils" />
+<section id="standard-blocks">
+<h2>Standard blocks<a class="headerlink" href="#standard-blocks" title="Link to this heading">#</a></h2>
+<section id="physicalnames">
+<h3><code class="docutils literal notranslate"><span class="pre">$PhysicalNames</span></code><a class="headerlink" href="#physicalnames" title="Link to this heading">#</a></h3>
+<p>Each layer gets a physical group whose tag equals the <code class="docutils literal notranslate"><span class="pre">property_id</span></code> used in
+<code class="docutils literal notranslate"><span class="pre">$ElementData</span> <span class="pre">property_id</span></code>. The group name takes the form <code class="docutils literal notranslate"><span class="pre">&quot;layer_{id}&quot;</span></code>:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$PhysicalNames
+2
+2 1 &quot;layer_1&quot;
+2 2 &quot;layer_2&quot;
+$EndPhysicalNames
+</pre></div>
+</div>
+<p>The dimension field (first column) equals the SG dimension (<code class="docutils literal notranslate"><span class="pre">sgdim</span></code>).</p>
+</section>
+<section id="elementdata-property-id">
+<h3><code class="docutils literal notranslate"><span class="pre">$ElementData</span> <span class="pre">property_id</span></code><a class="headerlink" href="#elementdata-property-id" title="Link to this heading">#</a></h3>
+<p>The element-to-layer mapping is stored as a per-element scalar field:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ElementData
+1
+&quot;property_id&quot;
+1
+0.0
+3
+0
+1
+&lt;num_elements&gt;
+1  1
+2  1
+3  2
+…
+$EndElementData
+</pre></div>
+</div>
+<p>This approach keeps the layer assignment flexible: multiple element types and
+mesh entities can share the same layer without requiring topology changes.</p>
+</section>
+<section id="elementdata-property-ref-csys">
+<h3><code class="docutils literal notranslate"><span class="pre">$ElementData</span> <span class="pre">property_ref_csys</span></code><a class="headerlink" href="#elementdata-property-ref-csys" title="Link to this heading">#</a></h3>
+<p>When elements have a local reference coordinate system (e.g., for beam
+cross-section orientations), SGIO writes a second <code class="docutils literal notranslate"><span class="pre">$ElementData</span></code> block:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ElementData
+1
+&quot;property_ref_csys&quot;
+1
+0.0
+3
+0
+1
+&lt;num_elements&gt;
+1  0.0
+2  45.0
+…
+$EndElementData
+</pre></div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="custom-sgio-blocks">
+<h2>Custom SGIO blocks<a class="headerlink" href="#custom-sgio-blocks" title="Link to this heading">#</a></h2>
+<section id="sglayerdef">
+<h3><code class="docutils literal notranslate"><span class="pre">$SGLayerDef</span></code><a class="headerlink" href="#sglayerdef" title="Link to this heading">#</a></h3>
+<p>This block records the layer definitions: which material each layer references
+and the fiber orientation angle.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$SGLayerDef
+! nlayers
+2
+! layer_id  material_id  fiber_angle
+1  1  0.0
+2  1  45.0
+$EndSGLayerDef
+</pre></div>
+</div>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Field</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">layer_id</span></code></p></td>
+<td><p>Property ID (matches <code class="docutils literal notranslate"><span class="pre">$ElementData</span> <span class="pre">property_id</span></code> and <code class="docutils literal notranslate"><span class="pre">$PhysicalNames</span></code> tag)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">material_id</span></code></p></td>
+<td><p>Numeric material ID (matches the <code class="docutils literal notranslate"><span class="pre">&quot;id&quot;</span></code> field in the materials JSON)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">fiber_angle</span></code></p></td>
+<td><p>In-plane fiber orientation angle in degrees</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Lines beginning with <code class="docutils literal notranslate"><span class="pre">!</span></code> are comments and are ignored by the reader.</p>
+</section>
+<section id="sgconfig">
+<h3><code class="docutils literal notranslate"><span class="pre">$SGConfig</span></code><a class="headerlink" href="#sgconfig" title="Link to this heading">#</a></h3>
+<p>Solver flags that control how VABS or SwiftComp analyses the model.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$SGConfig
+! key  value
+sgdim       2
+model       1
+do_damping  0
+thermal     0
+$EndSGConfig
+</pre></div>
+</div>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Key</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">sgdim</span></code></p></td>
+<td><p>SG geometry dimension (1, 2, or 3)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">model</span></code></p></td>
+<td><p>Macroscopic structural sub-model (0 = classical, 1 = refined/Timoshenko)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">do_damping</span></code></p></td>
+<td><p>Enable damping computation (0 or 1)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">thermal</span></code></p></td>
+<td><p>Physics flag (0 = elastic, 1 = thermoelastic)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="material-properties-file">
+<h2>Material properties file<a class="headerlink" href="#material-properties-file" title="Link to this heading">#</a></h2>
+<p>Material elastic properties are <strong>not</strong> embedded in the <code class="docutils literal notranslate"><span class="pre">.msh</span></code> file. They live
+in a companion JSON file (by convention <code class="docutils literal notranslate"><span class="pre">materials.json</span></code>) alongside the <code class="docutils literal notranslate"><span class="pre">.msh</span></code>.
+Each material entry must include an <code class="docutils literal notranslate"><span class="pre">&quot;id&quot;</span></code> field that matches the
+<code class="docutils literal notranslate"><span class="pre">material_id</span></code> values in <code class="docutils literal notranslate"><span class="pre">$SGLayerDef</span></code>.</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">[</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;carbon_fiber&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;isotropy&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;density&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">1600.0</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;e1&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">135e9</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;e2&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">10e9</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;e3&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">10e9</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;g12&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">5e9</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;g13&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">5e9</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;g23&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">3.5e9</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;nu12&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.3</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;nu13&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.3</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;nu23&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.4</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="converting-to-and-from-gmsh">
+<h2>Converting to and from Gmsh<a class="headerlink" href="#converting-to-and-from-gmsh" title="Link to this heading">#</a></h2>
+<section id="vabs-swiftcomp-gmsh">
+<h3>VABS / SwiftComp → Gmsh<a class="headerlink" href="#vabs-swiftcomp-gmsh" title="Link to this heading">#</a></h3>
+<p>Use <a class="reference internal" href="../ref/_temp/sgio.convert.html#sgio.convert" title="sgio.convert"><code class="xref py py-func docutils literal notranslate"><span class="pre">sgio.convert()</span></code></a> to produce a self-contained <code class="docutils literal notranslate"><span class="pre">.msh</span></code> file:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">sgio</span>
+
+<span class="n">sgio</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span>
+    <span class="n">file_name_in</span><span class="o">=</span><span class="s1">&#39;cross_section.sg&#39;</span><span class="p">,</span>
+    <span class="n">file_name_out</span><span class="o">=</span><span class="s1">&#39;cross_section.msh&#39;</span><span class="p">,</span>
+    <span class="n">file_format_in</span><span class="o">=</span><span class="s1">&#39;vabs&#39;</span><span class="p">,</span>
+    <span class="n">file_format_out</span><span class="o">=</span><span class="s1">&#39;gmsh&#39;</span><span class="p">,</span>
+    <span class="n">file_version_in</span><span class="o">=</span><span class="s1">&#39;4.1&#39;</span><span class="p">,</span>
+    <span class="n">file_version_out</span><span class="o">=</span><span class="s1">&#39;4.1&#39;</span><span class="p">,</span>
+    <span class="n">model_type</span><span class="o">=</span><span class="s1">&#39;BM2&#39;</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Equivalent CLI command:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sgio<span class="w"> </span>convert<span class="w"> </span>cross_section.sg<span class="w"> </span>cross_section.msh<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-ff<span class="w"> </span>vabs<span class="w"> </span>-tf<span class="w"> </span>gmsh<span class="w"> </span>-fv<span class="w"> </span><span class="m">4</span>.1<span class="w"> </span>-tv<span class="w"> </span><span class="m">4</span>.1<span class="w"> </span>-m<span class="w"> </span>BM2
+</pre></div>
+</div>
+<p>The converter:</p>
+<ol class="arabic simple">
+<li><p>Reads layer definitions from <code class="docutils literal notranslate"><span class="pre">sg.mocombos</span></code> and writes them to <code class="docutils literal notranslate"><span class="pre">$SGLayerDef</span></code>.</p></li>
+<li><p>Writes solver flags (<code class="docutils literal notranslate"><span class="pre">sgdim</span></code>, <code class="docutils literal notranslate"><span class="pre">model</span></code>, <code class="docutils literal notranslate"><span class="pre">do_damping</span></code>, <code class="docutils literal notranslate"><span class="pre">thermal</span></code>) to <code class="docutils literal notranslate"><span class="pre">$SGConfig</span></code>.</p></li>
+<li><p>Writes <code class="docutils literal notranslate"><span class="pre">$PhysicalNames</span></code> with <code class="docutils literal notranslate"><span class="pre">&quot;layer_{id}&quot;</span></code> names for each layer.</p></li>
+<li><p>Writes the element-to-layer mapping in <code class="docutils literal notranslate"><span class="pre">$ElementData</span> <span class="pre">property_id</span></code>.</p></li>
+</ol>
+</section>
+<section id="gmsh-vabs-swiftcomp">
+<h3>Gmsh → VABS / SwiftComp<a class="headerlink" href="#gmsh-vabs-swiftcomp" title="Link to this heading">#</a></h3>
+<p>When reading back, SGIO restores the full model from the custom blocks:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">sgio</span>
+
+<span class="c1"># Read the .msh (layer defs and configs are restored automatically)</span>
+<span class="n">sg</span> <span class="o">=</span> <span class="n">sgio</span><span class="o">.</span><span class="n">read</span><span class="p">(</span>
+    <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;cross_section.msh&#39;</span><span class="p">,</span>
+    <span class="n">file_format</span><span class="o">=</span><span class="s1">&#39;gmsh&#39;</span><span class="p">,</span>
+    <span class="n">sgdim</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+    <span class="n">model_type</span><span class="o">=</span><span class="s1">&#39;BM2&#39;</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># Load material properties from the companion JSON</span>
+<span class="n">sgio</span><span class="o">.</span><span class="n">read_materials_from_json</span><span class="p">(</span><span class="n">sg</span><span class="p">,</span> <span class="s1">&#39;materials.json&#39;</span><span class="p">)</span>
+
+<span class="c1"># Write VABS input</span>
+<span class="n">sgio</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">sg</span><span class="p">,</span> <span class="s1">&#39;cross_section_out.sg&#39;</span><span class="p">,</span> <span class="n">file_format</span><span class="o">=</span><span class="s1">&#39;vabs&#39;</span><span class="p">,</span> <span class="n">model_type</span><span class="o">=</span><span class="s1">&#39;BM2&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Data restored from the <code class="docutils literal notranslate"><span class="pre">.msh</span></code>:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Source block</p></th>
+<th class="head"><p>Restored field</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">$ElementData</span> <span class="pre">property_id</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">sg.mesh.cell_data['property_id']</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">$SGLayerDef</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">sg.mocombos</span></code> (<code class="docutils literal notranslate"><span class="pre">{layer_id:</span> <span class="pre">(material_name,</span> <span class="pre">angle)}</span></code>)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">$SGConfig</span> <span class="pre">sgdim</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">sg.sgdim</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">$SGConfig</span> <span class="pre">model</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">sg.model</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">$SGConfig</span> <span class="pre">do_damping</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">sg.do_damping</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">$SGConfig</span> <span class="pre">thermal</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">sg.physics</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="creating-a-gmsh-input-file-by-hand">
+<h2>Creating a Gmsh input file by hand<a class="headerlink" href="#creating-a-gmsh-input-file-by-hand" title="Link to this heading">#</a></h2>
+<p>If you mesh your cross-section directly in Gmsh, you only need to create
+physical groups and the companion <code class="docutils literal notranslate"><span class="pre">materials.json</span></code>. SGIO will derive sensible
+defaults for <code class="docutils literal notranslate"><span class="pre">$SGLayerDef</span></code> from <code class="docutils literal notranslate"><span class="pre">$PhysicalNames</span></code> and <code class="docutils literal notranslate"><span class="pre">$ElementData</span> <span class="pre">property_id</span></code>.</p>
+<section id="minimum-viable-msh">
+<h3>Minimum viable <code class="docutils literal notranslate"><span class="pre">.msh</span></code><a class="headerlink" href="#minimum-viable-msh" title="Link to this heading">#</a></h3>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$MeshFormat
+4.1 0 8
+$EndMeshFormat
+$PhysicalNames
+1
+2 1 &quot;matrix&quot;
+$EndPhysicalNames
+$Entities
+0 0 1 0
+1  0 -0.5 -0.5  0 0.5 0.5  1 1  0
+$EndEntities
+$Nodes
+…
+$EndNodes
+$Elements
+…
+$EndElements
+</pre></div>
+</div>
+<p>Assign your material entities to the physical group in Gmsh:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Physical Surface(&quot;matrix&quot;) = {1};
+</pre></div>
+</div>
+<p>Then read with:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">sg</span> <span class="o">=</span> <span class="n">sgio</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;mesh.msh&#39;</span><span class="p">,</span> <span class="s1">&#39;gmsh&#39;</span><span class="p">,</span> <span class="n">sgdim</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">model_type</span><span class="o">=</span><span class="s1">&#39;BM2&#39;</span><span class="p">)</span>
+<span class="n">sgio</span><span class="o">.</span><span class="n">read_materials_from_json</span><span class="p">(</span><span class="n">sg</span><span class="p">,</span> <span class="s1">&#39;materials.json&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>SGIO maps the physical group name <code class="docutils literal notranslate"><span class="pre">&quot;matrix&quot;</span></code> to <code class="docutils literal notranslate"><span class="pre">material_name_id_pairs</span></code> and
+populates <code class="docutils literal notranslate"><span class="pre">mocombos</span></code> with a default fiber angle of <code class="docutils literal notranslate"><span class="pre">0.0</span></code>. If you need
+non-zero fiber angles, add a <code class="docutils literal notranslate"><span class="pre">$SGLayerDef</span></code> block to the <code class="docutils literal notranslate"><span class="pre">.msh</span></code> or set
+<code class="docutils literal notranslate"><span class="pre">sg.mocombos</span></code> programmatically before writing.</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="summary-of-data-ownership">
+<h2>Summary of data ownership<a class="headerlink" href="#summary-of-data-ownership" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Data</p></th>
+<th class="head"><p>Location</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Node coordinates and connectivity</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.msh</span></code> — <code class="docutils literal notranslate"><span class="pre">$Nodes</span></code> / <code class="docutils literal notranslate"><span class="pre">$Elements</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Element → layer assignment</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.msh</span></code> — <code class="docutils literal notranslate"><span class="pre">$ElementData</span> <span class="pre">property_id</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Layer → material + fiber angle</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.msh</span></code> — <code class="docutils literal notranslate"><span class="pre">$SGLayerDef</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Human-readable layer names</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.msh</span></code> — <code class="docutils literal notranslate"><span class="pre">$PhysicalNames</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Solver flags</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.msh</span></code> — <code class="docutils literal notranslate"><span class="pre">$SGConfig</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Material elastic properties</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">materials.json</span></code> (separate file)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="convert.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Convert SG Data</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="abaqus_cs.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Build Cross-section in Abaqus and Export to VABS</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#file-structure-overview">File structure overview</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#standard-blocks">Standard blocks</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#physicalnames"><code class="docutils literal notranslate"><span class="pre">$PhysicalNames</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elementdata-property-id"><code class="docutils literal notranslate"><span class="pre">$ElementData</span> <span class="pre">property_id</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elementdata-property-ref-csys"><code class="docutils literal notranslate"><span class="pre">$ElementData</span> <span class="pre">property_ref_csys</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#custom-sgio-blocks">Custom SGIO blocks</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sglayerdef"><code class="docutils literal notranslate"><span class="pre">$SGLayerDef</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sgconfig"><code class="docutils literal notranslate"><span class="pre">$SGConfig</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#material-properties-file">Material properties file</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#converting-to-and-from-gmsh">Converting to and from Gmsh</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#vabs-swiftcomp-gmsh">VABS / SwiftComp → Gmsh</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#gmsh-vabs-swiftcomp">Gmsh → VABS / SwiftComp</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#creating-a-gmsh-input-file-by-hand">Creating a Gmsh input file by hand</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#minimum-viable-msh">Minimum viable <code class="docutils literal notranslate"><span class="pre">.msh</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summary-of-data-ownership">Summary of data ownership</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/guide/gmsh.md.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2023, su tian.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.4.7.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

@@ -1,0 +1,6 @@
+﻿sgio.core.mesh.renumber\_elements
+=================================
+
+.. currentmodule:: sgio.core.mesh
+
+.. autofunction:: renumber_elements

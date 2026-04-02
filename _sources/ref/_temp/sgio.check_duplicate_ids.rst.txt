@@ -1,0 +1,6 @@
+﻿sgio.check\_duplicate\_ids
+==========================
+
+.. currentmodule:: sgio
+
+.. autofunction:: check_duplicate_ids

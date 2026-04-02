@@ -1,0 +1,869 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Troubleshooting Common Issues &#8212; SGIO</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../_static/documentation_options.js?v=db78e746"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'guide/custom_mesh/troubleshooting';</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+<aside class="bd-header-announcement" aria-label="Announcement">
+  <div class="bd-header-announcement__content">Documentation is under construction.</div>
+</aside>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">SGIO</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../index.html">
+    Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../ref/index.html">
+    Reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../index.html">
+    Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../ref/index.html">
+    Reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"></div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Troubleshooting Common Issues</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="troubleshooting-common-issues">
+<span id="custom-mesh-troubleshooting"></span><h1>Troubleshooting Common Issues<a class="headerlink" href="#troubleshooting-common-issues" title="Link to this heading">#</a></h1>
+<p>This page covers common problems and their solutions when creating StructureGene from custom mesh data.</p>
+<section id="connectivity-issues">
+<h2>Connectivity Issues<a class="headerlink" href="#connectivity-issues" title="Link to this heading">#</a></h2>
+<section id="error-element-connectivity-out-of-bounds">
+<h3>Error: “Element connectivity out of bounds”<a class="headerlink" href="#error-element-connectivity-out-of-bounds" title="Link to this heading">#</a></h3>
+<p><strong>Symptoms:</strong></p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>IndexError: index 100 is out of bounds for axis 0 with size 5
+</pre></div>
+</div>
+<p><strong>Cause:</strong></p>
+<p>Connectivity array uses original node IDs instead of 0-based array indices.</p>
+<p><strong>Solution:</strong></p>
+<p>Create a mapping from original node IDs to array indices:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># ✗ WRONG: Using original IDs directly</span>
+<span class="n">points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+    <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>  <span class="c1"># This is index 0</span>
+    <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>  <span class="c1"># This is index 1</span>
+<span class="p">])</span>
+<span class="n">cells</span> <span class="o">=</span> <span class="p">[</span><span class="n">CellBlock</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="s1">&#39;line&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">100</span><span class="p">,</span> <span class="mi">200</span><span class="p">]]))]</span>  <span class="c1"># Wrong!</span>
+
+<span class="c1"># ✓ CORRECT: Map original IDs to indices</span>
+<span class="n">original_node_ids</span> <span class="o">=</span> <span class="p">[</span><span class="mi">100</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">300</span><span class="p">,</span> <span class="mi">400</span><span class="p">]</span>
+<span class="n">node_id_to_index</span> <span class="o">=</span> <span class="p">{</span><span class="n">nid</span><span class="p">:</span> <span class="n">idx</span> <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">nid</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">original_node_ids</span><span class="p">)}</span>
+
+<span class="c1"># Apply mapping</span>
+<span class="n">original_connectivity</span> <span class="o">=</span> <span class="p">[</span><span class="mi">100</span><span class="p">,</span> <span class="mi">200</span><span class="p">]</span>
+<span class="n">correct_connectivity</span> <span class="o">=</span> <span class="p">[</span><span class="n">node_id_to_index</span><span class="p">[</span><span class="n">nid</span><span class="p">]</span> <span class="k">for</span> <span class="n">nid</span> <span class="ow">in</span> <span class="n">original_connectivity</span><span class="p">]</span>
+<span class="c1"># Result: [0, 1]</span>
+
+<span class="n">cells</span> <span class="o">=</span> <span class="p">[</span><span class="n">CellBlock</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="s1">&#39;line&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">correct_connectivity</span><span class="p">]))]</span>
+</pre></div>
+</div>
+<p><strong>Best Practice:</strong></p>
+<p>Always build the mapping at the start of your conversion:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Sort node IDs to get consistent ordering</span>
+<span class="n">node_ids</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">mesh_data</span><span class="p">[</span><span class="s1">&#39;nodes&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+<span class="n">node_id_to_index</span> <span class="o">=</span> <span class="p">{</span><span class="n">nid</span><span class="p">:</span> <span class="n">idx</span> <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">nid</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">node_ids</span><span class="p">)}</span>
+
+<span class="c1"># Create points array in the same order</span>
+<span class="n">points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">mesh_data</span><span class="p">[</span><span class="s1">&#39;nodes&#39;</span><span class="p">][</span><span class="n">nid</span><span class="p">]</span> <span class="k">for</span> <span class="n">nid</span> <span class="ow">in</span> <span class="n">node_ids</span><span class="p">])</span>
+
+<span class="c1"># Apply to all connectivity</span>
+<span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">mesh_data</span><span class="p">[</span><span class="s1">&#39;elements&#39;</span><span class="p">]:</span>
+    <span class="n">conn_indices</span> <span class="o">=</span> <span class="p">[</span><span class="n">node_id_to_index</span><span class="p">[</span><span class="n">nid</span><span class="p">]</span> <span class="k">for</span> <span class="n">nid</span> <span class="ow">in</span> <span class="n">elem</span><span class="p">[</span><span class="s1">&#39;connectivity&#39;</span><span class="p">]]</span>
+    <span class="c1"># Use conn_indices in CellBlock</span>
+</pre></div>
+</div>
+</section>
+<section id="error-node-id-not-found-in-mapping">
+<h3>Error: “Node ID not found in mapping”<a class="headerlink" href="#error-node-id-not-found-in-mapping" title="Link to this heading">#</a></h3>
+<p><strong>Symptoms:</strong></p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>KeyError: 999
+</pre></div>
+</div>
+<p><strong>Cause:</strong></p>
+<p>An element references a node ID that doesn’t exist in your nodes dictionary.</p>
+<p><strong>Solution:</strong></p>
+<p>Add validation and helpful error messages:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">mesh_data</span><span class="p">[</span><span class="s1">&#39;elements&#39;</span><span class="p">]:</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">conn</span> <span class="o">=</span> <span class="p">[</span><span class="n">node_id_to_index</span><span class="p">[</span><span class="n">nid</span><span class="p">]</span> <span class="k">for</span> <span class="n">nid</span> <span class="ow">in</span> <span class="n">elem</span><span class="p">[</span><span class="s1">&#39;connectivity&#39;</span><span class="p">]]</span>
+    <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">missing_node_id</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Element </span><span class="si">{</span><span class="n">elem</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> references undefined node ID </span><span class="si">{</span><span class="n">missing_node_id</span><span class="si">}</span><span class="s2">. &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Available node IDs: </span><span class="si">{</span><span class="nb">min</span><span class="p">(</span><span class="n">node_ids</span><span class="p">)</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="nb">max</span><span class="p">(</span><span class="n">node_ids</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="property-and-material-issues">
+<h2>Property and Material Issues<a class="headerlink" href="#property-and-material-issues" title="Link to this heading">#</a></h2>
+<section id="error-property-id-not-found-in-mocombos">
+<h3>Error: “Property ID not found in mocombos”<a class="headerlink" href="#error-property-id-not-found-in-mocombos" title="Link to this heading">#</a></h3>
+<p><strong>Symptoms:</strong></p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>KeyError: 5
+</pre></div>
+</div>
+<p><strong>Cause:</strong></p>
+<p>Property IDs in <code class="docutils literal notranslate"><span class="pre">cell_data['property_id']</span></code> don’t match keys in <code class="docutils literal notranslate"><span class="pre">sg.mocombos</span></code>.</p>
+<p><strong>Solution:</strong></p>
+<p>Ensure all property IDs used by elements are defined in mocombos:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Check which property IDs are actually used</span>
+<span class="n">used_prop_ids</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">prop_array</span> <span class="ow">in</span> <span class="n">sg</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">cell_data</span><span class="p">[</span><span class="s1">&#39;property_id&#39;</span><span class="p">]:</span>
+    <span class="n">used_prop_ids</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">prop_array</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Property IDs used: </span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="n">used_prop_ids</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Property IDs defined: </span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="n">sg</span><span class="o">.</span><span class="n">mocombos</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Find missing definitions</span>
+<span class="k">for</span> <span class="n">prop_id</span> <span class="ow">in</span> <span class="n">used_prop_ids</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">prop_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sg</span><span class="o">.</span><span class="n">mocombos</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;ERROR: Missing mocombo for property_id </span><span class="si">{</span><span class="n">prop_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Prevention:</strong></p>
+<p>When building mocombos, ensure every unique (material, angle) combination gets an entry:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">mocombo_map</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">next_property_id</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">mesh_data</span><span class="p">[</span><span class="s1">&#39;elements&#39;</span><span class="p">]:</span>
+    <span class="n">key</span> <span class="o">=</span> <span class="p">(</span><span class="n">elem</span><span class="p">[</span><span class="s1">&#39;material&#39;</span><span class="p">],</span> <span class="n">elem</span><span class="p">[</span><span class="s1">&#39;angle&#39;</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">mocombo_map</span><span class="p">:</span>
+        <span class="n">mocombo_map</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">next_property_id</span>
+        <span class="n">sg</span><span class="o">.</span><span class="n">mocombos</span><span class="p">[</span><span class="n">next_property_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">key</span>
+        <span class="n">next_property_id</span> <span class="o">+=</span> <span class="mi">1</span>
+</pre></div>
+</div>
+</section>
+<section id="error-material-name-not-found">
+<h3>Error: “Material name not found”<a class="headerlink" href="#error-material-name-not-found" title="Link to this heading">#</a></h3>
+<p><strong>Symptoms:</strong></p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>KeyError: &#39;steel&#39;
+</pre></div>
+</div>
+<p><strong>Cause:</strong></p>
+<p>Material name in mocombos doesn’t exactly match a key in <code class="docutils literal notranslate"><span class="pre">sg.materials</span></code>. Often due to:
+- Case sensitivity (<code class="docutils literal notranslate"><span class="pre">'Steel'</span></code> vs <code class="docutils literal notranslate"><span class="pre">'steel'</span></code>)
+- Whitespace (<code class="docutils literal notranslate"><span class="pre">'Steel'</span></code> vs <code class="docutils literal notranslate"><span class="pre">'Steel</span> <span class="pre">'</span></code>)
+- Typos</p>
+<p><strong>Solution:</strong></p>
+<p>Verify material names match exactly:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Check what&#39;s defined</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Defined materials:&quot;</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">sg</span><span class="o">.</span><span class="n">materials</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+
+<span class="c1"># Check what&#39;s referenced</span>
+<span class="k">for</span> <span class="n">prop_id</span><span class="p">,</span> <span class="p">(</span><span class="n">mat_name</span><span class="p">,</span> <span class="n">angle</span><span class="p">)</span> <span class="ow">in</span> <span class="n">sg</span><span class="o">.</span><span class="n">mocombos</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="k">if</span> <span class="n">mat_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sg</span><span class="o">.</span><span class="n">materials</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;ERROR: Property </span><span class="si">{</span><span class="n">prop_id</span><span class="si">}</span><span class="s2"> references undefined material &#39;</span><span class="si">{</span><span class="n">mat_name</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+        <span class="c1"># Show similar names</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">difflib</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_close_matches</span>
+        <span class="n">similar</span> <span class="o">=</span> <span class="n">get_close_matches</span><span class="p">(</span><span class="n">mat_name</span><span class="p">,</span> <span class="n">sg</span><span class="o">.</span><span class="n">materials</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="k">if</span> <span class="n">similar</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Did you mean: </span><span class="si">{</span><span class="n">similar</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">?&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Prevention:</strong></p>
+<p>Normalize material names during conversion:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">normalize_name</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Normalize material name (strip whitespace, consistent case).&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">name</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+
+<span class="c1"># Use when adding materials</span>
+<span class="k">for</span> <span class="n">mat_name</span><span class="p">,</span> <span class="n">props</span> <span class="ow">in</span> <span class="n">mesh_data</span><span class="p">[</span><span class="s1">&#39;materials&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="n">normalized_name</span> <span class="o">=</span> <span class="n">normalize_name</span><span class="p">(</span><span class="n">mat_name</span><span class="p">)</span>
+    <span class="n">material</span> <span class="o">=</span> <span class="n">CauchyContinuumModel</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">normalized_name</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
+    <span class="n">sg</span><span class="o">.</span><span class="n">materials</span><span class="p">[</span><span class="n">normalized_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">material</span>
+
+<span class="c1"># Use when creating mocombos</span>
+<span class="n">key</span> <span class="o">=</span> <span class="p">(</span><span class="n">normalize_name</span><span class="p">(</span><span class="n">elem</span><span class="p">[</span><span class="s1">&#39;material&#39;</span><span class="p">]),</span> <span class="n">elem</span><span class="p">[</span><span class="s1">&#39;angle&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="mesh-structure-issues">
+<h2>Mesh Structure Issues<a class="headerlink" href="#mesh-structure-issues" title="Link to this heading">#</a></h2>
+<section id="error-mixed-element-types-in-one-cell-block">
+<h3>Error: “Mixed element types in one cell block”<a class="headerlink" href="#error-mixed-element-types-in-one-cell-block" title="Link to this heading">#</a></h3>
+<p><strong>Symptoms:</strong></p>
+<p>Elements with different numbers of nodes in the same CellBlock, or validation errors.</p>
+<p><strong>Cause:</strong></p>
+<p>Trying to put different element types (e.g., triangles and quads) in one CellBlock.</p>
+<p><strong>Solution:</strong></p>
+<p>Group elements by type before creating CellBlocks:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># ✗ WRONG: Mixed types</span>
+<span class="n">cells</span> <span class="o">=</span> <span class="p">[</span><span class="n">CellBlock</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="s1">&#39;triangle&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+    <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span>     <span class="c1"># 3 nodes (triangle)</span>
+    <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">],</span>  <span class="c1"># 4 nodes (quad) - ERROR!</span>
+<span class="p">]))]</span>
+
+<span class="c1"># ✓ CORRECT: Separate by type</span>
+<span class="n">elements_by_type</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">mesh_data</span><span class="p">[</span><span class="s1">&#39;elements&#39;</span><span class="p">]:</span>
+    <span class="n">elem_type</span> <span class="o">=</span> <span class="n">elem</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">elem_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">elements_by_type</span><span class="p">:</span>
+        <span class="n">elements_by_type</span><span class="p">[</span><span class="n">elem_type</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">elements_by_type</span><span class="p">[</span><span class="n">elem_type</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">elem</span><span class="p">)</span>
+
+<span class="n">cells</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">elem_type</span><span class="p">,</span> <span class="n">elems</span> <span class="ow">in</span> <span class="n">elements_by_type</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="n">connectivity</span> <span class="o">=</span> <span class="p">[</span><span class="o">...</span><span class="p">]</span>  <span class="c1"># Build connectivity for this type</span>
+    <span class="n">cells</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">CellBlock</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="n">elem_type</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">connectivity</span><span class="p">)))</span>
+</pre></div>
+</div>
+</section>
+<section id="error-unsupported-element-type">
+<h3>Error: “Unsupported element type”<a class="headerlink" href="#error-unsupported-element-type" title="Link to this heading">#</a></h3>
+<p><strong>Symptoms:</strong></p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>ValueError: Unsupported element type: TRIA6
+</pre></div>
+</div>
+<p><strong>Cause:</strong></p>
+<p>Your custom format uses element type names that need mapping to meshio names.</p>
+<p><strong>Solution:</strong></p>
+<p>Create a type mapping dictionary:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">TYPE_MAP</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="c1"># Custom format -&gt; meshio format</span>
+    <span class="s1">&#39;TRIA3&#39;</span><span class="p">:</span> <span class="s1">&#39;triangle&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;TRIA6&#39;</span><span class="p">:</span> <span class="s1">&#39;triangle6&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;QUAD4&#39;</span><span class="p">:</span> <span class="s1">&#39;quad&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;QUAD8&#39;</span><span class="p">:</span> <span class="s1">&#39;quad8&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;QUAD9&#39;</span><span class="p">:</span> <span class="s1">&#39;quad9&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;TETRA4&#39;</span><span class="p">:</span> <span class="s1">&#39;tetra&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;TETRA10&#39;</span><span class="p">:</span> <span class="s1">&#39;tetra10&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;HEXA8&#39;</span><span class="p">:</span> <span class="s1">&#39;hexahedron&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;HEXA20&#39;</span><span class="p">:</span> <span class="s1">&#39;hexahedron20&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;HEXA27&#39;</span><span class="p">:</span> <span class="s1">&#39;hexahedron27&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;WEDGE6&#39;</span><span class="p">:</span> <span class="s1">&#39;wedge&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;PYRA5&#39;</span><span class="p">:</span> <span class="s1">&#39;pyramid&#39;</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">mesh_data</span><span class="p">[</span><span class="s1">&#39;elements&#39;</span><span class="p">]:</span>
+    <span class="k">if</span> <span class="n">elem</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">TYPE_MAP</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Unsupported element type: </span><span class="si">{</span><span class="n">elem</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">. &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Supported types: </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="n">TYPE_MAP</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+    <span class="n">meshio_type</span> <span class="o">=</span> <span class="n">TYPE_MAP</span><span class="p">[</span><span class="n">elem</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]]</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="dimension-and-configuration-issues">
+<h2>Dimension and Configuration Issues<a class="headerlink" href="#dimension-and-configuration-issues" title="Link to this heading">#</a></h2>
+<section id="error-invalid-model-type-for-dimension">
+<h3>Error: “Invalid model type for dimension”<a class="headerlink" href="#error-invalid-model-type-for-dimension" title="Link to this heading">#</a></h3>
+<p><strong>Symptoms:</strong></p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>ValueError: Model type &#39;PL1&#39; requires sgdim=2, but got sgdim=3
+</pre></div>
+</div>
+<p><strong>Cause:</strong></p>
+<p>Mismatch between StructureGene dimension and model type.</p>
+<p><strong>Solution:</strong></p>
+<p>Match model type to dimension:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Dimension 1 (Beam)</span>
+<span class="n">sg</span> <span class="o">=</span> <span class="n">StructureGene</span><span class="p">(</span><span class="n">sgdim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">smdim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">sgio</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">model_type</span><span class="o">=</span><span class="s1">&#39;BM1&#39;</span><span class="p">)</span>  <span class="c1"># or BM2, BM3, BM4</span>
+
+<span class="c1"># Dimension 2 (Plate/Shell)</span>
+<span class="n">sg</span> <span class="o">=</span> <span class="n">StructureGene</span><span class="p">(</span><span class="n">sgdim</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">smdim</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">sgio</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">model_type</span><span class="o">=</span><span class="s1">&#39;PL1&#39;</span><span class="p">)</span>  <span class="c1"># or PL2</span>
+
+<span class="c1"># Dimension 3 (Solid)</span>
+<span class="n">sg</span> <span class="o">=</span> <span class="n">StructureGene</span><span class="p">(</span><span class="n">sgdim</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">smdim</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">sgio</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">model_type</span><span class="o">=</span><span class="s1">&#39;SD1&#39;</span><span class="p">)</span>  <span class="c1"># or SD2</span>
+</pre></div>
+</div>
+<p><strong>Auto-select model type:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">MODEL_TYPES</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="mi">1</span><span class="p">:</span> <span class="s1">&#39;BM1&#39;</span><span class="p">,</span>  <span class="c1"># Default for beams</span>
+    <span class="mi">2</span><span class="p">:</span> <span class="s1">&#39;PL1&#39;</span><span class="p">,</span>  <span class="c1"># Default for plates</span>
+    <span class="mi">3</span><span class="p">:</span> <span class="s1">&#39;SD1&#39;</span><span class="p">,</span>  <span class="c1"># Default for solids</span>
+<span class="p">}</span>
+
+<span class="n">model_type</span> <span class="o">=</span> <span class="n">MODEL_TYPES</span><span class="p">[</span><span class="n">sg</span><span class="o">.</span><span class="n">sgdim</span><span class="p">]</span>
+<span class="n">sgio</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">sg</span><span class="o">=</span><span class="n">sg</span><span class="p">,</span> <span class="n">fn</span><span class="o">=</span><span class="s1">&#39;output.sc&#39;</span><span class="p">,</span> <span class="n">model_type</span><span class="o">=</span><span class="n">model_type</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="validation-and-debugging">
+<h2>Validation and Debugging<a class="headerlink" href="#validation-and-debugging" title="Link to this heading">#</a></h2>
+<section id="empty-or-missing-mesh">
+<h3>Empty or Missing Mesh<a class="headerlink" href="#empty-or-missing-mesh" title="Link to this heading">#</a></h3>
+<p><strong>Symptoms:</strong></p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>AttributeError: &#39;NoneType&#39; object has no attribute &#39;points&#39;
+</pre></div>
+</div>
+<p><strong>Solution:</strong></p>
+<p>Check mesh exists before accessing:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="n">sg</span><span class="o">.</span><span class="n">mesh</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Mesh not created. Did you assign sg.mesh?&quot;</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="n">sg</span><span class="o">.</span><span class="n">nnodes</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Mesh has no nodes&quot;</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="n">sg</span><span class="o">.</span><span class="n">nelems</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Mesh has no elements&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="pre-write-validation-checklist">
+<h3>Pre-write Validation Checklist<a class="headerlink" href="#pre-write-validation-checklist" title="Link to this heading">#</a></h3>
+<p>Use this validation function before writing:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">validate_sg</span><span class="p">(</span><span class="n">sg</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Comprehensive validation with helpful messages.&quot;&quot;&quot;</span>
+    <span class="n">errors</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># Configuration</span>
+    <span class="k">if</span> <span class="n">sg</span><span class="o">.</span><span class="n">sgdim</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]:</span>
+        <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid sgdim: </span><span class="si">{</span><span class="n">sg</span><span class="o">.</span><span class="n">sgdim</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">sg</span><span class="o">.</span><span class="n">name</span><span class="p">:</span>
+        <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Name is empty&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Mesh</span>
+    <span class="k">if</span> <span class="n">sg</span><span class="o">.</span><span class="n">mesh</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Mesh is None&quot;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">sg</span><span class="o">.</span><span class="n">nnodes</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Mesh has no nodes&quot;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">sg</span><span class="o">.</span><span class="n">nelems</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Mesh has no elements&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Materials</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">sg</span><span class="o">.</span><span class="n">materials</span><span class="p">:</span>
+        <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;No materials defined&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Mocombos</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">sg</span><span class="o">.</span><span class="n">mocombos</span><span class="p">:</span>
+        <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;No mocombos defined&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Property IDs</span>
+    <span class="k">if</span> <span class="n">sg</span><span class="o">.</span><span class="n">mesh</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">prop_array</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">sg</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">cell_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;property_id&#39;</span><span class="p">,</span> <span class="p">[])):</span>
+            <span class="k">for</span> <span class="n">prop_id</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">prop_array</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">prop_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sg</span><span class="o">.</span><span class="n">mocombos</span><span class="p">:</span>
+                    <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Block </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">: property_id </span><span class="si">{</span><span class="n">prop_id</span><span class="si">}</span><span class="s2"> not in mocombos&quot;</span>
+                    <span class="p">)</span>
+
+    <span class="c1"># Material references</span>
+    <span class="k">for</span> <span class="n">prop_id</span><span class="p">,</span> <span class="p">(</span><span class="n">mat_name</span><span class="p">,</span> <span class="n">angle</span><span class="p">)</span> <span class="ow">in</span> <span class="n">sg</span><span class="o">.</span><span class="n">mocombos</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">mat_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sg</span><span class="o">.</span><span class="n">materials</span><span class="p">:</span>
+            <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Mocombo </span><span class="si">{</span><span class="n">prop_id</span><span class="si">}</span><span class="s2"> references undefined material &#39;</span><span class="si">{</span><span class="n">mat_name</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
+            <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">errors</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Validation errors:&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">error</span> <span class="ow">in</span> <span class="n">errors</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  ✗ </span><span class="si">{</span><span class="n">error</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;✓ Validation passed&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">True</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="performance-issues">
+<h2>Performance Issues<a class="headerlink" href="#performance-issues" title="Link to this heading">#</a></h2>
+<section id="slow-conversion-for-large-meshes">
+<h3>Slow conversion for large meshes<a class="headerlink" href="#slow-conversion-for-large-meshes" title="Link to this heading">#</a></h3>
+<p><strong>Problem:</strong> Converting millions of nodes/elements is slow.</p>
+<p><strong>Solutions:</strong></p>
+<ol class="arabic simple">
+<li><p><strong>Pre-allocate arrays:</strong></p></li>
+</ol>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Slow: Appending to lists</span>
+<span class="n">connectivity</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">elems</span><span class="p">:</span>
+    <span class="n">connectivity</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="o">...</span><span class="p">])</span>
+
+<span class="c1"># Fast: Pre-allocate numpy array</span>
+<span class="n">n_elems</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">elems</span><span class="p">)</span>
+<span class="n">nodes_per_elem</span> <span class="o">=</span> <span class="mi">4</span>
+<span class="n">connectivity</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n_elems</span><span class="p">,</span> <span class="n">nodes_per_elem</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">elem</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">elems</span><span class="p">):</span>
+    <span class="n">connectivity</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="o">...</span><span class="p">]</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="2">
+<li><p><strong>Vectorize operations:</strong></p></li>
+</ol>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Slow: Loop over mapping</span>
+<span class="n">conn_indices</span> <span class="o">=</span> <span class="p">[</span><span class="n">node_id_to_index</span><span class="p">[</span><span class="n">nid</span><span class="p">]</span> <span class="k">for</span> <span class="n">nid</span> <span class="ow">in</span> <span class="n">elem</span><span class="p">[</span><span class="s1">&#39;connectivity&#39;</span><span class="p">]]</span>
+
+<span class="c1"># Fast: Use numpy vectorized operations</span>
+<span class="n">conn_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">elem</span><span class="p">[</span><span class="s1">&#39;connectivity&#39;</span><span class="p">])</span>
+<span class="n">conn_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vectorize</span><span class="p">(</span><span class="n">node_id_to_index</span><span class="o">.</span><span class="n">get</span><span class="p">)(</span><span class="n">conn_array</span><span class="p">)</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="3">
+<li><p><strong>Process in chunks:</strong></p></li>
+</ol>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">CHUNK_SIZE</span> <span class="o">=</span> <span class="mi">10000</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">elements</span><span class="p">),</span> <span class="n">CHUNK_SIZE</span><span class="p">):</span>
+    <span class="n">chunk</span> <span class="o">=</span> <span class="n">elements</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="n">CHUNK_SIZE</span><span class="p">]</span>
+    <span class="c1"># Process chunk</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="getting-more-help">
+<h2>Getting More Help<a class="headerlink" href="#getting-more-help" title="Link to this heading">#</a></h2>
+<p>If you’re still having issues:</p>
+<ol class="arabic simple">
+<li><p><strong>Check data structure documentation</strong>: <a class="reference internal" href="data_structures.html#custom-mesh-data-structures"><span class="std std-ref">Data Structure Reference</span></a></p></li>
+<li><p><strong>Review working examples</strong>: <a class="reference internal" href="quickstart.html#custom-mesh-quickstart"><span class="std std-ref">Quick Start: Simple Triangle Mesh</span></a> and <a class="reference internal" href="conversion_example.html#custom-mesh-conversion"><span class="std std-ref">Converting from Custom Format</span></a></p></li>
+<li><p><strong>Verify with minimal example</strong>: Strip down to smallest failing case</p></li>
+<li><p><strong>Check sgio version</strong>: Ensure you’re using the latest version</p></li>
+</ol>
+<p><strong>Debug output template:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Debug info:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  sgio version: </span><span class="si">{</span><span class="n">sgio</span><span class="o">.</span><span class="n">__version__</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  sgdim: </span><span class="si">{</span><span class="n">sg</span><span class="o">.</span><span class="n">sgdim</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Nodes: </span><span class="si">{</span><span class="n">sg</span><span class="o">.</span><span class="n">nnodes</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">sg</span><span class="o">.</span><span class="n">mesh</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">&#39;No mesh&#39;</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Elements: </span><span class="si">{</span><span class="n">sg</span><span class="o">.</span><span class="n">nelems</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">sg</span><span class="o">.</span><span class="n">mesh</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">&#39;No mesh&#39;</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Materials: </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="n">sg</span><span class="o">.</span><span class="n">materials</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Mocombos: </span><span class="si">{</span><span class="nb">dict</span><span class="p">(</span><span class="n">sg</span><span class="o">.</span><span class="n">mocombos</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">sg</span><span class="o">.</span><span class="n">mesh</span> <span class="ow">and</span> <span class="s1">&#39;property_id&#39;</span> <span class="ow">in</span> <span class="n">sg</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">cell_data</span><span class="p">:</span>
+    <span class="n">all_props</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">pa</span> <span class="ow">in</span> <span class="n">sg</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">cell_data</span><span class="p">[</span><span class="s1">&#39;property_id&#39;</span><span class="p">]:</span>
+        <span class="n">all_props</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">pa</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Property IDs used: </span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">all_props</span><span class="p">))</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#connectivity-issues">Connectivity Issues</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#error-element-connectivity-out-of-bounds">Error: “Element connectivity out of bounds”</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#error-node-id-not-found-in-mapping">Error: “Node ID not found in mapping”</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#property-and-material-issues">Property and Material Issues</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#error-property-id-not-found-in-mocombos">Error: “Property ID not found in mocombos”</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#error-material-name-not-found">Error: “Material name not found”</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mesh-structure-issues">Mesh Structure Issues</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#error-mixed-element-types-in-one-cell-block">Error: “Mixed element types in one cell block”</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#error-unsupported-element-type">Error: “Unsupported element type”</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dimension-and-configuration-issues">Dimension and Configuration Issues</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#error-invalid-model-type-for-dimension">Error: “Invalid model type for dimension”</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#validation-and-debugging">Validation and Debugging</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#empty-or-missing-mesh">Empty or Missing Mesh</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pre-write-validation-checklist">Pre-write Validation Checklist</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#performance-issues">Performance Issues</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#slow-conversion-for-large-meshes">Slow conversion for large meshes</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#getting-more-help">Getting More Help</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/guide/custom_mesh/troubleshooting.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2023, su tian.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.4.7.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

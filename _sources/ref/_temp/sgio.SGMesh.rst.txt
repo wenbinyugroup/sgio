@@ -1,0 +1,40 @@
+﻿sgio.SGMesh
+===========
+
+.. currentmodule:: sgio
+
+.. autoclass:: SGMesh
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~SGMesh.__init__
+      ~SGMesh.cell_data_to_sets
+      ~SGMesh.cell_sets_to_data
+      ~SGMesh.copy
+      ~SGMesh.get_cell_block_by_type
+      ~SGMesh.get_cell_data
+      ~SGMesh.get_cells_type
+      ~SGMesh.point_data_to_sets
+      ~SGMesh.point_sets_to_data
+      ~SGMesh.read
+      ~SGMesh.write
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~SGMesh.cell_data_dict
+      ~SGMesh.cell_sets_dict
+      ~SGMesh.cells_dict
+   
+   

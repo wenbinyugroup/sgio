@@ -1,0 +1,6 @@
+﻿sgio.ensure\_element\_ids
+=========================
+
+.. currentmodule:: sgio
+
+.. autofunction:: ensure_element_ids
