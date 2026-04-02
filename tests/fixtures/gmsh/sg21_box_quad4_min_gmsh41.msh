@@ -1,0 +1,53 @@
+$MeshFormat
+4.1 0 8
+$EndMeshFormat
+$PhysicalNames
+1
+2 1 "frp"
+$EndPhysicalNames
+$Entities
+0 0 1 0
+1  0 -0.5 -0.5  0 0.5 0.5  1 1  0
+$EndEntities
+$Nodes
+1 8 1 8
+2 1 0 8
+1
+2
+3
+4
+5
+6
+7
+8
+0  0.5  0.5
+0 -0.5  0.5
+0 -0.5 -0.5
+0  0.5 -0.5
+0  0.4  0.4
+0 -0.4  0.4
+0 -0.4 -0.4
+0  0.4 -0.4
+$EndNodes
+$Elements
+1 4 1 4
+2 1 3 4
+1 1 2 6 5
+2 2 3 7 6
+3 3 4 8 7
+4 4 1 5 8
+$EndElements
+$ElementData
+1
+"property_ref_csys"
+1
+0.0
+3
+0
+1
+4
+1 0.0
+2 90.0
+3 180.0
+4 270.0
+$EndElementData

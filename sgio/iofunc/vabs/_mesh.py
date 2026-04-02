@@ -8,6 +8,8 @@ import logging
 import numpy as np
 from meshio._files import is_buffer
 
+import sgio.utils as sutl
+
 from sgio.core.mesh import SGMesh
 from sgio.iofunc._meshio import (
     register_sgmesh_format,
@@ -191,7 +193,7 @@ def _read_property_id_ref_csys(file, nelem, cells, elem_id_to_cell_id, format_fl
 
         elem_id = int(line[0])
         prop_id = int(line[1])
-        elem_csys = float(line[2])
+        elem_csys = sutl.fortran_float(line[2])
 
         cell_block_id, cell_id = elem_id_to_cell_id[elem_id]
 

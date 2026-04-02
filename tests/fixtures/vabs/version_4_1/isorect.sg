@@ -1,4 +1,4 @@
-! old format, no layers
+! new format, 1 layer
 1 1
 
 !carry out Timoshenko modeling, no damping, no thermal
@@ -30,11 +30,11 @@
     2    11     6     4     8    13     7     9    10     0 
 
 ! orientation of layups in each element
-1	1	0	
+1	1	0	! element id, layer id, element orientation
 2	1	0	
 
 !Layer definition
-1 1 0
+1 1 0  ! layer id, material id, fiber angle
 
 !material properties
 ! mat_id, orth

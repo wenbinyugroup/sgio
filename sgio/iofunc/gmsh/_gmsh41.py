@@ -60,6 +60,8 @@ def read_buffer(f, is_ascii: bool, data_size):
     bounding_entities = None
     cell_sets = {}
     periodic = None
+    sg_layer_defs = {}
+    sg_configs = {}
 
     while True:
         # fast-forward over blank lines
@@ -95,6 +97,10 @@ def read_buffer(f, is_ascii: bool, data_size):
             _read_data(f, "NodeData", point_data, data_size, is_ascii)
         elif environ == "ElementData":
             _read_data(f, "ElementData", cell_data_raw, data_size, is_ascii)
+        elif environ == "SGLayerDef":
+            sg_layer_defs = _read_sg_layer_def(f)
+        elif environ == "SGConfig":
+            sg_configs = _read_sg_config(f)
         else:
             # Skip unrecognized sections
             _fast_forward_to_end_block(f, environ)
@@ -105,19 +111,21 @@ def read_buffer(f, is_ascii: bool, data_size):
     cell_data = cell_data_from_raw(cells, cell_data_raw)
     cell_data.update(cell_tags)
 
-    # Map gmsh:physical to property_id for compatibility with SGIO
+    # Map gmsh:physical to property_id for compatibility with SGIO.
+    # Priority: gmsh:physical > existing property_id from $ElementData > zeros fallback.
     if "gmsh:physical" in cell_data:
         cell_data["property_id"] = cell_data["gmsh:physical"]
-    else:
-        # Create empty property_id arrays and warn user
+    elif "property_id" not in cell_data:
+        # No physical groups and no $ElementData property_id — create empty arrays
         warn("No physical groups found in mesh. Creating empty property_id arrays. "
              "Consider using Gmsh physical groups to assign materials.")
         cell_data["property_id"] = [np.zeros(len(cell_block.data), dtype=int) for cell_block in cells]
+    # else: property_id already populated from $ElementData — keep it
 
     # Add node entity information to the point data
     point_data.update({"gmsh:dim_tags": point_entities})
 
-    return Mesh(
+    mesh = Mesh(
         points,
         cells,
         point_data=point_data,
@@ -126,6 +134,10 @@ def read_buffer(f, is_ascii: bool, data_size):
         cell_sets=cell_sets,
         gmsh_periodic=periodic,
     )
+    # Attach SG-specific data as attributes for downstream processing
+    mesh.sg_layer_defs = sg_layer_defs
+    mesh.sg_configs = sg_configs
+    return mesh
 
 
 def _read_entities(f, is_ascii: bool, data_size):
@@ -305,7 +317,7 @@ def _read_periodic(f, is_ascii, data_size):
 # Writers
 # ====================================================================
 
-def write_buffer(file, mesh, float_fmt, mesh_only, binary, **kwargs):
+def write_buffer(file, mesh, float_fmt, mesh_only, binary, mocombos=None, material_id_map=None, sg_configs=None, sgdim=None, **kwargs):
     """Writes msh files, cf.
     <http://gmsh.info/doc/texinfo/gmsh.html#MSH-file-format>.
     """
@@ -344,8 +356,8 @@ def write_buffer(file, mesh, float_fmt, mesh_only, binary, **kwargs):
     else:
         file.write("$EndMeshFormat\n")
 
-    if mesh.field_data:
-        _write_physical_names(file, mesh.field_data)
+    # Write $PhysicalNames: combine existing field_data with layer names from mocombos
+    _write_physical_names_ascii(file, mesh.field_data, mocombos=mocombos, sgdim=sgdim)
 
     if not mesh_only:
         _write_entities(
@@ -367,6 +379,12 @@ def write_buffer(file, mesh, float_fmt, mesh_only, binary, **kwargs):
     # Write cell_point_data (element nodal data) to ElementNodeData sections
     if hasattr(mesh, 'cell_point_data') and mesh.cell_point_data:
         _write_cell_point_data(file, mesh, binary)
+
+    # Write SG-specific custom blocks
+    if mocombos:
+        _write_sg_layer_def(file, mocombos, material_id_map or {})
+    if sg_configs:
+        _write_sg_config(file, sg_configs)
 
 
 def _write_entities(fh, cells, tag_data, cell_sets, point_data, binary):
@@ -937,3 +955,156 @@ def _write_cell_point_data(fh, mesh, binary: bool) -> None:
             fh.write(b"$EndElementNodeData\n")
         else:
             fh.write("$EndElementNodeData\n")
+
+
+def _write_physical_names_ascii(fh, field_data: dict, mocombos: dict = None, sgdim: int = None) -> None:
+    """Write $PhysicalNames block in ASCII (text) mode.
+
+    Combines entries from ``field_data`` with layer names derived from
+    ``mocombos``.  Layer names take the form ``"layer_{property_id}"`` and
+    are only written when ``mocombos`` and ``sgdim`` are provided.
+
+    Parameters
+    ----------
+    fh : file
+        File handle opened in text mode.
+    field_data : dict
+        Existing physical names mapping ``{name: [id, dim]}``.
+    mocombos : dict, optional
+        ``{property_id: (mat_name, angle)}`` used to generate layer names.
+    sgdim : int, optional
+        SG dimension used as the physical group dimension for layer names.
+    """
+    # Collect names: field_data first, then layer names from mocombos
+    names: dict[str, tuple[int, int]] = {}
+    if field_data:
+        for name, (phys_id, dim) in field_data.items():
+            names[name] = (int(phys_id), int(dim))
+
+    if mocombos and sgdim is not None:
+        for prop_id in sorted(mocombos):
+            layer_name = f'layer_{prop_id}'
+            if layer_name not in names:
+                names[layer_name] = (int(prop_id), int(sgdim))
+
+    if not names:
+        return
+
+    fh.write("$PhysicalNames\n")
+    fh.write(f"{len(names)}\n")
+    for name, (phys_id, dim) in names.items():
+        fh.write(f'{dim} {phys_id} "{name}"\n')
+    fh.write("$EndPhysicalNames\n")
+
+
+def _write_sg_layer_def(fh, mocombos: dict, material_id_map: dict) -> None:
+    """Write $SGLayerDef block mapping layer IDs to material IDs and fiber angles.
+
+    Parameters
+    ----------
+    fh : file
+        File handle (text mode).
+    mocombos : dict
+        Mapping ``{property_id: (material_name, fiber_angle)}``.
+    material_id_map : dict
+        Mapping ``{material_name: material_id_int}`` used to resolve names to IDs.
+    """
+    fh.write("$SGLayerDef\n")
+    fh.write(f"! nlayers\n")
+    fh.write(f"{len(mocombos)}\n")
+    fh.write("! layer_id  material_id  fiber_angle\n")
+    for layer_id, (mat_name, angle) in sorted(mocombos.items()):
+        mat_id = material_id_map.get(mat_name, layer_id)
+        fh.write(f"{layer_id}  {mat_id}  {angle}\n")
+    fh.write("$EndSGLayerDef\n")
+
+
+def _write_sg_config(fh, sg_configs: dict) -> None:
+    """Write $SGConfig block with solver flags.
+
+    Parameters
+    ----------
+    fh : file
+        File handle (text mode).
+    sg_configs : dict
+        Mapping ``{key: value}`` of solver configuration flags.
+    """
+    fh.write("$SGConfig\n")
+    fh.write("! key  value\n")
+    for key, value in sg_configs.items():
+        fh.write(f"{key}  {value}\n")
+    fh.write("$EndSGConfig\n")
+
+
+def _read_sg_layer_def(f) -> dict:
+    """Read $SGLayerDef block.
+
+    Returns
+    -------
+    dict
+        Mapping ``{layer_id: (material_id, fiber_angle)}``.
+    """
+    layer_defs = {}
+    while True:
+        line = f.readline().decode().strip()
+        if not line or line.startswith("!"):
+            continue
+        if line == "$EndSGLayerDef":
+            break
+        # first non-comment line is nlayers
+        nlayers = int(line)
+        break
+    else:
+        return layer_defs
+
+    # read data lines
+    read_count = 0
+    while read_count < nlayers:
+        line = f.readline().decode().strip()
+        if not line or line.startswith("!"):
+            continue
+        if line == "$EndSGLayerDef":
+            break
+        parts = line.split()
+        layer_id = int(parts[0])
+        mat_id = int(parts[1])
+        angle = float(parts[2])
+        layer_defs[layer_id] = (mat_id, angle)
+        read_count += 1
+
+    # consume end block if not already consumed
+    if line != "$EndSGLayerDef":
+        _fast_forward_to_end_block(f, "SGLayerDef")
+    return layer_defs
+
+
+def _read_sg_config(f) -> dict:
+    """Read $SGConfig block.
+
+    Returns
+    -------
+    dict
+        Mapping ``{key: value}`` of solver configuration flags.
+    """
+    configs = {}
+    while True:
+        line = f.readline().decode().strip()
+        if not line:
+            continue
+        if line == "$EndSGConfig":
+            break
+        if line.startswith("!"):
+            continue
+        parts = line.split()
+        if len(parts) >= 2:
+            key = parts[0]
+            # try to parse as int, then float, else keep as string
+            raw = parts[1]
+            try:
+                configs[key] = int(raw)
+            except ValueError:
+                try:
+                    configs[key] = float(raw)
+                except ValueError:
+                    configs[key] = raw
+    return configs

@@ -12,7 +12,7 @@ import yaml
 
 from sgio import (
     read,
-    readOutputState,
+    read_output_state,
     add_cell_dict_data_to_mesh,
     write,
     logger,
@@ -87,7 +87,7 @@ def test_swiftcomp_output_state_dehomogenization(fn_test_cases, test_data_dir, t
         assert total_ids == total_elems
 
         # Read the output state
-        state_cases = readOutputState(
+        state_cases = read_output_state(
             fn_in, ff_in, 'd', sg=sg,
             tool_version=version_in, num_cases=num_cases, extension=extension)
 

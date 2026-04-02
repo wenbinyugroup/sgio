@@ -12,7 +12,7 @@ from sgio.core.sg import StructureGene
 logger = logging.getLogger(__name__)
 
 
-def buildSG1D(
+def build_sg_1d(
     name, layup, sgdb, model, mesh_size=0,
     k11=0, k22=0, lame1=1, lame2=1,
     load_cases=[], analysis='', physics=0,
@@ -71,7 +71,7 @@ def buildSG1D(
     # ----------------------------------------------------------------
 
     # Generate complete layup data from design inputs
-    layers = generateLayerList(layup)
+    layers = generate_layer_list(layup)
     # nsym = layup.get('symmetry', 0)
     # layers = layup['layers']
     # print(f'layers: {layers}')
@@ -107,7 +107,7 @@ def buildSG1D(
                 if isinstance(mprop, smdl.CauchyContinuumModel):
                     m = mprop
                 else:
-                    m = addMaterial(_lyr_m_name, mprop['property'])
+                    m = add_material(_lyr_m_name, mprop['property'])
 
                 sg.materials[_lyr_m_name] = m
 
@@ -291,7 +291,7 @@ def buildSG1D(
 
 
 
-def generateLayerList(layup_design):
+def generate_layer_list(layup_design):
     """Generate the list of layers from the layup design input
     """
 
@@ -361,7 +361,7 @@ def generateLayerList(layup_design):
 
 
 
-def addMaterial(mname, mprop):
+def add_material(mname, mprop):
     """
     """
 

@@ -1,4 +1,4 @@
-from .builder import buildSG1D
+from .builder import build_sg_1d
 from .mesh import (
     SGMesh,
     check_isolated_nodes,

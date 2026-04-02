@@ -1,6 +1,8 @@
-# AGENTS.md - Developer Guide for SGIO
+# AGENTS.md
 
-This document provides essential information for AI coding agents working on the SGIO codebase.
+## First Principles
+
+Use first-principles thinking. Do not assume that I always clearly understand what I want or how to achieve it. Stay cautious and start from the fundamental needs and problems. If the motivation or goal is unclear, stop and discuss it with me.
 
 ## Environment Setup
 
@@ -17,35 +19,9 @@ Ignore the following files and directories with the name containing `temp`, `arc
 
 ### Testing
 
-Activate virtual environment first or use `uv run` to run the following commands:
+Activate virtual environment first or use `uv run` to run pytest.
 
-```bash
-# Run all tests
-pytest
-
-# Run all tests with verbose output (tests are configured with -v by default)
-# pytest configuration is in tests/pytest.ini
-pytest tests/
-
-# Run a single test file
-pytest tests/unit/test_models.py
-
-# Run a single test class
-pytest tests/unit/test_models.py::TestEulerBernoulliBeamModelBasic
-
-# Run a single test function
-pytest tests/unit/test_models.py::TestEulerBernoulliBeamModelBasic::test_default_creation
-
-# Run tests by marker
-pytest -m unit              # Run only unit tests
-pytest -m integration       # Run integration tests
-pytest -m "not slow"        # Skip slow tests
-
-# Run with coverage (if pytest-cov installed)
-pytest --cov=sgio --cov-report=html
-```
-
-### Documentation
+## Documentation
 ```bash
 # Build documentation
 cd docs
@@ -56,11 +32,17 @@ make clean                  # Clean build files
 # Built docs are in docs/build/html/
 ```
 
-### Linting and Formatting
-```bash
-# Note: No explicit linters configured in pyproject.toml
-# Follow PEP 8 style guide and use IDE formatting
-```
+### Examples
+
+Document each example in the following structure:
+- Problem description
+- Explaination of the solution (mainly how to use sgio to tackle this problem)
+- Result
+- List of all files (download link)
+
+One file for one example.
+Use myst markdown.
+
 
 ## Test Structure
 
@@ -74,68 +56,31 @@ make clean                  # Clean build files
 
 ## Code Style Guidelines
 
-### Imports
-```python
-# Standard library imports first
-from __future__ import annotations
-import math
-from typing import Optional, List, Literal
+- Encourage **modularity** and **reusability** in code design.
+- Discourage **monolithic** code design.
+- Avoid one giant function/file.
+- When creating new functions, classes, modules, etc., start from simplest possible implementation, and gradually add features. **Do not overengineer**.
+- Always use numpy style docstrings.
+- Use comments to annotate key steps in the code.
 
-# Third-party imports
-import pytest
-from pydantic import BaseModel, Field, field_validator
+- When developing new functions, make use of existing functions as much as possible. Try to avoid reinventing the wheel.
 
-# Local application imports
-from sgio.model.beam import EulerBernoulliBeamModel
-from sgio.model.solid import CauchyContinuumModel
-```
+- When proposing modifications or refactoring plans, you must follow these rules:
+  - Do not provide compatibility or workaround-based solutions.
+  - Avoid over-engineering; follow the shortest path to implementation while still adhering to the first-principles requirement.
+  - Do not introduce solutions beyond the requirements I provided (e.g., fallback or downgrade strategies), as they may cause deviations in business logic.
+  - Ensure the logical correctness of the solution; it must be validated through end-to-end reasoning.
+
 
 ### Type Hints
 - **Always use type hints** for function signatures
 - Use `from __future__ import annotations` for forward references
-- Prefer `Optional[Type]` over `Type | None` for consistency with Python 3.9+
-- Use `Literal` for restricted value sets
-- Example:
-  ```python
-  def process_data(value: float, isotropy: Literal[0, 1, 2]) -> Optional[List[float]]:
-      """Process data with type-safe parameters."""
-      pass
-  ```
+
 
 ### Docstrings
 - **Format**: NumPy style docstrings
 - **Required for**: All public functions, classes, and methods
-- **Structure**:
-  ```python
-  def function_name(param1: int, param2: str) -> bool:
-      """Brief one-line description.
-      
-      Longer description if needed, explaining what the function does
-      and any important details.
-      
-      Parameters
-      ----------
-      param1 : int
-          Description of param1
-      param2 : str
-          Description of param2
-          
-      Returns
-      -------
-      bool
-          Description of return value
-          
-      Raises
-      ------
-      ValueError
-          When invalid input is provided
-          
-      Examples
-      --------
-      >>> function_name(42, "hello")
-      True
-      """
-  ```
+
 
 ### Naming Conventions
 - **Classes**: PascalCase (e.g., `CauchyContinuumModel`, `StructureGene`)
@@ -144,142 +89,22 @@ from sgio.model.solid import CauchyContinuumModel
 - **Constants**: UPPER_SNAKE_CASE (e.g., `MAX_ITERATIONS`)
 - **Private attributes**: Prefix with underscore (e.g., `_internal_state`)
 
-### Pydantic Models
-- Use Pydantic v2+ features (`BaseModel`, `Field`, `field_validator`)
-- Set `ConfigDict(validate_assignment=True)` for runtime validation
-- Use `Field()` with descriptions for all model fields
-- Implement custom `__init__` for backward compatibility if needed
-- Example:
-  ```python
-  from pydantic import BaseModel, Field, ConfigDict
-  
-  class MaterialModel(BaseModel):
-      name: str = Field(default='', description="Material name")
-      density: float = Field(default=0, ge=0, description="Material density")
-      
-      model_config = ConfigDict(validate_assignment=True)
-  ```
 
 ### Error Handling
 - **Custom Exceptions**: Defined in `sgio/_exceptions.py`
 - Use specific exceptions: `VABSError`, `SwiftCompError`, `OutputFileError`, etc.
 - Raise `ValueError` for invalid parameter values
 - Raise `TypeError` for incorrect parameter types
-- Always include descriptive error messages:
-  ```python
-  if value < 0:
-      raise ValueError(f'Parameter must be >= 0, got {value}')
-  ```
+- Always include descriptive error messages
+
 
 ### Code Organization
 - **Keep methods short**: Aim for < 50 lines per method
-- **Extract helper functions**: Use module-level helper functions (prefix with `_`) for complex logic
 - **Avoid very long classes**: Break into smaller, focused classes or use composition
-- **Example structure**:
-  ```python
-  # Helper functions (module-level)
-  def _build_matrix(params: dict) -> List[List[float]]:
-      """Private helper function."""
-      pass
-  
-  # Main class
-  class Model(BaseModel):
-      """Public model class."""
-      pass
-  ```
+
 
 ### Testing Guidelines
 - **One test file per module**: `test_models.py` for `model/*.py`
 - **Use descriptive test names**: `test_initialization_with_aliases`
 - **Structure**: Arrange tests in classes by feature area
-- **AAA Pattern**: Arrange, Act, Assert
-  ```python
-  def test_feature(self):
-      """Test description."""
-      # Arrange
-      mat = CauchyContinuumModel(isotropy=0, e=200e9, nu=0.3)
-      
-      # Act
-      result = mat.compute_stiffness()
-      
-      # Assert
-      assert result is not None
-      assert len(result) == 6
-  ```
 
-## Logging Guidelines
-
-### Using Loggers in Code
-
-```python
-# At top of module
-import logging
-logger = logging.getLogger(__name__)
-
-# In functions
-def my_function():
-    logger.debug("Detailed information for debugging")
-    logger.info("General information about execution")
-    logger.warning("Warning about potential issues")
-    logger.error("Error that should be addressed")
-    logger.critical("Critical error, execution may fail")
-```
-
-### Logger Hierarchy
-- **Root logger**: `'sgio'` (defined in `_global.py:8`)
-- **Module loggers**: Use `logging.getLogger(__name__)`
-- **Child loggers**: Automatically propagate to parent (`sgio`)
-
-### Best Practices
-
-1. **Always use module-level logger**: `logger = logging.getLogger(__name__)`
-2. **Never configure handlers in modules**: Let applications control configuration
-3. **Use appropriate log levels**:
-   - **DEBUG**: Detailed diagnostic information
-   - **INFO**: Confirmation that things are working
-   - **WARNING**: Something unexpected, but code still works
-   - **ERROR**: Serious problem, function failed
-   - **CRITICAL**: Program may not continue
-4. **Don't set `propagate=False`** in library code
-5. **Include context in messages**: `logger.error(f"Failed to read {filename}: {error}")`
-6. **Don't log sensitive data**: Passwords, keys, personal information
-
-### Testing Logging
-
-```python
-def test_function_logs_error(caplog):
-    """Test that function logs error on invalid input."""
-    with caplog.at_level(logging.ERROR):
-        my_function(invalid_input)
-    
-    assert "error message" in caplog.text
-```
-
-### Configuration
-
-For applications using SGIO:
-
-```python
-# Multi-package setup (recommended)
-import logging
-logging.basicConfig(
-    level=logging.DEBUG,
-    handlers=[logging.FileHandler('run.log')]
-)
-
-# Or use SGIO's configure_logging
-import sgio
-sgio.configure_logging(
-    cout_level='INFO',
-    fout_level='DEBUG',
-    filename='run.log'
-)
-```
-
-See `docs/source/guide/logging.md` for complete logging guide.
-
-## Git Workflow
-- Create feature branches from main
-- Write tests before implementing features
-- Ensure all tests pass before committing
-- Use descriptive commit messages

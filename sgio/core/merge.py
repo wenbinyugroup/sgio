@@ -11,7 +11,7 @@ from sgio.core.sg import StructureGene
 logger = logging.getLogger(__name__)
 
 
-def combineSG(sg1:StructureGene, sg2:StructureGene) -> StructureGene:
+def combine_sg(sg1:StructureGene, sg2:StructureGene) -> StructureGene:
     """
     """
 

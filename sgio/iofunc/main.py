@@ -18,9 +18,9 @@ from sgio.utils import readNextNonEmptyLine
 
 # Import utility functions from refactored modules
 from .utils import (
-    readLoadCsv,
-    readSGInterfacePairs,
-    readSGInterfaceNodes,
+    read_load_csv,
+    read_sg_interface_pairs,
+    read_sg_interface_nodes,
 )
 
 logger = logging.getLogger(__name__)
@@ -163,6 +163,45 @@ def _mesh_to_sg(mesh: Mesh, sgdim: int = 3, model_type: str = 'SD1') -> Structur
     _process_materials_from_mesh(sg, mesh, sgdim)
 
     return sg
+
+
+def _restore_sg_from_mesh_extras(sg: StructureGene, mesh) -> None:
+    """Restore SG layer definitions and config from custom mesh attributes.
+
+    Reads ``mesh.sg_layer_defs`` and ``mesh.sg_configs`` (attached by the Gmsh
+    reader from ``$SGLayerDef`` / ``$SGConfig`` blocks) and repopulates the
+    corresponding StructureGene fields.
+
+    Parameters
+    ----------
+    sg : StructureGene
+        Structure gene object to update.
+    mesh : meshio.Mesh
+        Mesh object that may carry ``sg_layer_defs`` and ``sg_configs``.
+    """
+    # Restore mocombos from $SGLayerDef
+    sg_layer_defs = getattr(mesh, 'sg_layer_defs', {})
+    if sg_layer_defs:
+        # sg_layer_defs: {layer_id: (mat_id, angle)}
+        # mocombos needs: {property_id: (material_name, angle)}
+        for layer_id, (mat_id, angle) in sg_layer_defs.items():
+            mat_name = sg.get_material_name_by_id(mat_id)
+            if mat_name is None:
+                mat_name = f'Material_{mat_id}'
+                sg.add_material_name_id_pair(mat_name, mat_id)
+            sg.mocombos[layer_id] = (mat_name, angle)
+
+    # Restore solver config from $SGConfig
+    sg_configs = getattr(mesh, 'sg_configs', {})
+    if sg_configs:
+        if 'sgdim' in sg_configs:
+            sg.sgdim = int(sg_configs['sgdim'])
+        if 'model' in sg_configs:
+            sg.model = int(sg_configs['model'])
+        if 'do_damping' in sg_configs:
+            sg.do_damping = int(sg_configs['do_damping'])
+        if 'thermal' in sg_configs:
+            sg.physics = int(sg_configs['thermal'])
 
 
 def _parse_model_type(model_type: str | int) -> tuple[int, int]:
@@ -677,10 +716,6 @@ def read_output_state(
         raise ValueError(f"Unsupported file format: {file_format}")
 
 
-# Backward compatibility alias
-readOutputState = read_output_state
-
-
 def read(
     filename: str,
     file_format: str,
@@ -744,6 +779,7 @@ def read(
         with open(filename, 'rb') as file:
             mesh = _gmsh.read_buffer(file, format_version=format_version)
         sg = _mesh_to_sg(mesh, sgdim=sgdim, model_type=model_type)
+        _restore_sg_from_mesh_extras(sg, mesh)
     else:
         raise ValueError(f"Unknown file format: {file_format}")
 
@@ -796,10 +832,6 @@ def read_output_model(
         logger.error(f"Error: {e}")
 
     return model
-
-
-# Backward compatibility alias
-readOutputModel = read_output_model
 
 
 def read_output(
@@ -905,10 +937,6 @@ def read_output(
     return None
 
 
-# Backward compatibility alias
-readOutput = read_output
-
-
 def write(
     sg: StructureGene, filename: str, file_format: str,
     format_version: str = '', analysis: str = 'h', sg_format: int = 1,
@@ -999,6 +1027,16 @@ def write(
             )
 
         elif file_format.startswith('gmsh'):
+            # Build material_id_map and sg_configs for custom SG blocks
+            material_id_map = sg.get_export_material_ids() if sg.mocombos else {}
+            sg_configs = {}
+            if sg.sgdim is not None:
+                sg_configs['sgdim'] = sg.sgdim
+            if sg.smdim is not None:
+                sg_configs['model'] = sg.model
+            sg_configs['do_damping'] = sg.do_damping
+            sg_configs['thermal'] = sg.physics
+
             _gmsh.write_buffer(
                 file,
                 sg.mesh,
@@ -1006,7 +1044,10 @@ def write(
                 float_fmt=sff,
                 sgdim=sg.sgdim,
                 mesh_only=mesh_only,
-                binary=binary
+                binary=binary,
+                mocombos=sg.mocombos if sg.mocombos else None,
+                material_id_map=material_id_map,
+                sg_configs=sg_configs,
             )
 
         else:
@@ -1142,8 +1183,5 @@ convert = convert_file_format
 
 # Create all backward compatibility aliases for camelCase function names
 __all__ = [
-    # Snake_case functions (new preferred names)
-    'read_output_model', 'read_output_state', 'read_output', 'write', 'convert_file_format',
-    # CamelCase aliases (backward compatibility)
-    'readOutputModel', 'readOutputState', 'readOutput', 'convert',
+    'read_output_model', 'read_output_state', 'read_output', 'read_load_csv', 'write', 'convert',
 ]

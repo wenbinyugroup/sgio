@@ -14,7 +14,7 @@ import sgio.model as sgmodel
 logger = logging.getLogger(__name__)
 
 
-def readLoadCsv(
+def read_load_csv(
     fn: str, smdim: int, model: int, load_tags: list = [],
     load_type: int = 0, disp_tags: list = ['u1', 'u2', 'u3'],
     rot_tags: list = ['c11', 'c12', 'c13', 'c21', 'c22', 'c23', 'c31', 'c32', 'c33'],
