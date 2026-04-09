@@ -238,6 +238,18 @@ def write_buffer(
         Name of the input file.
     """
 
+    # Resolve smdim from model string so header writes the correct block
+    if isinstance(model, str):
+        m = model.upper()[:2]
+        if m == 'SD':
+            sg.smdim = 3
+        elif m == 'PL':
+            sg.smdim = 2
+        elif m == 'BM':
+            sg.smdim = 1
+    elif isinstance(model, int):
+        sg.smdim = model
+
     if analysis == 'h':
         writeInputBuffer(
             sg, file, analysis, sg.physics,

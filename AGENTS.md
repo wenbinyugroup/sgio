@@ -7,7 +7,7 @@ Use first-principles thinking. Do not assume that I always clearly understand wh
 ## Environment Setup
 
 - **Package Manager**: Use `uv` for dependency management
-- **Virtual Environment**: Activate with `.venv/Scripts/activate.ps1` (Windows) or `source .venv/bin/activate` (Unix)
+- **Virtual Environment**: Activate with `.venv/Scripts/activate.ps1` (Windows) or `source .venv/bin/activate` (Unix). In WSL, use `.venv/Scripts/python.exe` to run scripts.
 - **Python Version**: Requires Python >= 3.9
 - **Install Dependencies**: `uv sync` or `pip install -e .`
 

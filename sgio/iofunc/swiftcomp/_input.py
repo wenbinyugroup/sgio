@@ -373,9 +373,11 @@ def _writeHeader(sg:StructureGene, file, sfi, sff, version=None):
 
     # Extra inputs for dimensionally reducible structures
     if (sg.smdim == 1) or (sg.smdim == 2):
-        # model (0: classical, 1: shear refined)
+        # model (0: classical/kirchhoff-love, 1: shear refined/mindlin)
+        _model_names = {1: {0: 'euler-bernoulli', 1: 'timoshenko'}, 2: {0: 'kirchhoff-love', 1: 'mindlin'}}
+        _model_name = _model_names.get(sg.smdim, {}).get(sg.model, str(sg.model))
         file.write(ssfi.format(sg.model))
-        file.write('  # structural model (0: classical, 1: shear refined)')
+        file.write(f'  # model ({_model_name})')
         file.write('\n\n')
 
         if sg.smdim == 1:  # beam

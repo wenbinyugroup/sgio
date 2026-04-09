@@ -20,7 +20,9 @@ from sgio.core.sg import StructureGene
 logger = logging.getLogger(__name__)
 
 abaqus_to_meshio_type.update({
+    "CPE3": "triangle",
     "CPS6M": "triangle6",
+    "CPE4": "quad",
     "CPS8": "quad8",
     "CPS8R": "quad8",
     "WARP2D4": "quad",

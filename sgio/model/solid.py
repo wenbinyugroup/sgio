@@ -508,35 +508,35 @@ class CauchyContinuumModel(BaseModel):
                 self.stff = _build_anisotropic_stiffness(aniso_consts)
             # else: user must provide stff matrix directly
 
-    # Field validators
-    @field_validator('stff', 'cmpl')
-    @classmethod
-    def validate_6x6_matrix(cls, v):
-        """Validate that stiffness/compliance matrices are 6x6."""
-        if v is not None:
-            if not isinstance(v, list) or len(v) != 6:
-                raise ValueError('Matrix must be 6x6 (6 rows)')
-            for i, row in enumerate(v):
-                if not isinstance(row, list) or len(row) != 6:
-                    raise ValueError(f'Row {i} must have 6 columns')
-        return v
+    # # Field validators
+    # @field_validator('stff', 'cmpl')
+    # @classmethod
+    # def validate_6x6_matrix(cls, v):
+    #     """Validate that stiffness/compliance matrices are 6x6."""
+    #     if v is not None:
+    #         if not isinstance(v, list) or len(v) != 6:
+    #             raise ValueError('Matrix must be 6x6 (6 rows)')
+    #         for i, row in enumerate(v):
+    #             if not isinstance(row, list) or len(row) != 6:
+    #                 raise ValueError(f'Row {i} must have 6 columns')
+    #     return v
 
-    @field_validator('nu12', 'nu13', 'nu23')
-    @classmethod
-    def validate_poisson_ratio(cls, v):
-        """Validate that Poisson's ratios are in valid range."""
-        if v is not None and not (-1 < v < 0.5):
-            raise ValueError('Poisson ratio must be in range (-1, 0.5)')
-        return v
+    # @field_validator('nu12', 'nu13', 'nu23')
+    # @classmethod
+    # def validate_poisson_ratio(cls, v):
+    #     """Validate that Poisson's ratios are in valid range."""
+    #     if v is not None and not (-1 < v < 0.5):
+    #         raise ValueError('Poisson ratio must be in range (-1, 0.5)')
+    #     return v
 
-    @field_validator('cte')
-    @classmethod
-    def validate_cte(cls, v):
-        """Validate that CTE has 6 components if provided."""
-        if v is not None:
-            if not isinstance(v, list) or len(v) != 6:
-                raise ValueError('CTE must have 6 components')
-        return v
+    # @field_validator('cte')
+    # @classmethod
+    # def validate_cte(cls, v):
+    #     """Validate that CTE has 6 components if provided."""
+    #     if v is not None:
+    #         if not isinstance(v, list) or len(v) != 6:
+    #             raise ValueError('CTE must have 6 components')
+    #     return v
 
     def __repr__(self) -> str:
         """String representation of the model."""
