@@ -17,11 +17,58 @@ Ignore the following files and directories with the name containing `temp`, `arc
 
 ## Build and Test Commands
 
-### Testing
+### Running Tests
 
-Activate virtual environment first or use `uv run` to run pytest.
+```bash
+# Run all tests with verbose output
+uv run pytest
 
-## Documentation
+# Run tests with markers
+uv run pytest -m unit           # Unit tests only
+uv run pytest -m integration    # Integration tests only
+
+# Run a single test file
+uv run pytest tests/unit/test_reader.py
+
+# Run a single test function (most specific)
+uv run pytest tests/unit/test_reader.py::test_read_vabs_nodes
+
+# Run tests by keyword expression
+uv run pytest -k "test_read and not slow"
+
+# Run tests with coverage (if pytest-cov installed)
+uv run pytest --cov=sgio --cov-report=html
+
+# Run tests in parallel (if pytest-xdist installed)
+uv run pytest -n auto
+
+# Run tests matching a specific pattern
+uv run pytest --collect-only    # List all tests without running
+```
+
+### Building
+
+```bash
+# Install package in development mode
+uv sync
+pip install -e .
+
+# Build package
+uv run hatch build
+
+# Build documentation
+cd docs && make html
+
+# Check package can be imported
+uv run python -c "import sgio; print(sgio.__version__)"
+```
+
+### Linting and Type Checking
+
+No linting/type checking tools are configured in this project. Use your best judgment for code quality.
+
+### Documentation
+
 ```bash
 # Build documentation
 cd docs
@@ -103,8 +150,20 @@ Use myst markdown.
 - **Avoid very long classes**: Break into smaller, focused classes or use composition
 
 
+### Imports and Formatting
+
+- Use standard library imports first, then third-party, then local
+- Sort imports alphabetically within each group
+- Use explicit relative imports for intra-package imports (e.g., `from .module import something`)
+- Group imports: standard library, third-party, local
+- Maximum line length: 100 characters
+- Use 4 spaces for indentation (no tabs)
+
+
 ### Testing Guidelines
 - **One test file per module**: `test_models.py` for `model/*.py`
 - **Use descriptive test names**: `test_initialization_with_aliases`
 - **Structure**: Arrange tests in classes by feature area
+- **Arrange/Act/Assert**: Structure test methods with AAA pattern
+- **Fixtures**: Use fixtures for common test setup, place in `conftest.py`
 

@@ -1,11 +1,9 @@
-# import abc
-from math import *
+from math import atan2, cos, radians, sin, sqrt
 import numpy as np
-# from sympy import *
 
 
 def skew_symmetric_matrix(v):
-    """
+    r"""
     Compute the skew symmetric matrix of a 3x1 vector.
 
     Parameters
@@ -50,7 +48,7 @@ def skew_symmetric_matrix(v):
 
 
 def calc_rotation_tensor_from_parameters(rotation_parameters, method=''):
-    """Calculate rotation tensor from rotation parameters.
+    r"""Calculate rotation tensor from rotation parameters.
 
     Parameters
     ----------
@@ -106,7 +104,7 @@ def calc_rotation_tensor_from_parameters(rotation_parameters, method=''):
 
 
 def floor_absolute(value):
-    """Round the value such that the absolute value is smaller than the given value.
+    r"""Floor the value towards negative infinity, clamping near-zero values to 0.
 
     Parameters
     ----------
@@ -116,7 +114,7 @@ def floor_absolute(value):
     Returns
     -------
     float
-        Rounded value
+        Floored value
 
     Examples
     --------
@@ -134,7 +132,7 @@ def floor_absolute(value):
         return np.floor(value)
     elif value < -1e-15:
         # Negative
-        return np.ceil(value)
+        return np.floor(value)
     else:
         # Very close to 0
         return 0.0
@@ -143,7 +141,7 @@ def floor_absolute(value):
 
 
 def angle_to_cosine_2d(angle_degrees):
-    """
+    r"""
     Convert an angle in degrees to a 2x2 cosine matrix.
 
     Parameters
@@ -180,7 +178,7 @@ def angle_to_cosine_2d(angle_degrees):
 
 
 def calc_basic_rotation_3d(angle, axis=1):
-    """
+    r"""
     Calculate a 3D rotation matrix about a basic axis.
 
     Parameters
@@ -243,7 +241,7 @@ def calc_basic_rotation_3d(angle, axis=1):
 
 
 def calculate_general_rotation_matrix(angles_radians, rotation_order=[1, 2, 3]):
-    """
+    r"""
     Calculate the general rotation matrix.
 
     Parameters
@@ -294,7 +292,7 @@ def calculate_general_rotation_matrix(angles_radians, rotation_order=[1, 2, 3]):
 
 
 def rotate_vector_2d(vector_2d, angle_radians):
-    """
+    r"""
     Rotate a 2D vector by a given angle.
 
     Parameters
@@ -325,19 +323,11 @@ def rotate_vector_2d(vector_2d, angle_radians):
     if not isinstance(angle_radians, (int, float)):
         raise TypeError("`angle_radians` must be an int or float.")
 
-    cosines = angle_to_cosine_2d(angle_radians)
-    if cosines is None:
-        raise ValueError("cosines is None.")
-    if not isinstance(cosines, list) or len(cosines) != 2:
-        raise ValueError("cosines must be a list of two lists.")
-    if not all(isinstance(row, list) and len(row) == 2 for row in cosines):
-        raise ValueError("Each row in cosines must be a list of two floats.")
-    if not all(isinstance(x, (int, float)) for row in cosines for x in row):
-        raise TypeError("Each element in cosines must be an int or float.")
-
+    c = cos(angle_radians)
+    s = sin(angle_radians)
     rotated_vector = [
-        cosines[0][0] * vector_2d[0] + cosines[0][1] * vector_2d[1],
-        cosines[1][0] * vector_2d[0] + cosines[1][1] * vector_2d[1]
+        c * vector_2d[0] - s * vector_2d[1],
+        s * vector_2d[0] + c * vector_2d[1]
     ]
     return rotated_vector
 
@@ -389,18 +379,14 @@ def calc_direction_cosine_matrix(a_basis, b_basis):
 
     a_basis = np.array(a_basis)
     b_basis = np.array(b_basis)
-    direction_cosine_matrix = np.zeros((3, 3))
-    for i in range(3):
-        for j in range(3):
-            direction_cosine_matrix[i][j] = np.dot(a_basis[i], b_basis[j])
-    return direction_cosine_matrix
+    return a_basis @ b_basis.T
 
 
 
 
 
 def rotation_matrix(axis, angle):
-    """
+    r"""
     Returns the 3x3 rotation matrix for a rotation
     about 'axis' (must be length 3) by 'angle' (radians).
 
@@ -440,7 +426,7 @@ def rotation_matrix(axis, angle):
 
 
 def rotate_stiffness_matrix(C, axis, angle_rad):
-    """
+    r"""
     Rotate a 6x6 stiffness matrix using a rotation around an arbitrary axis.
 
     Parameters:
@@ -452,21 +438,6 @@ def rotate_stiffness_matrix(C, axis, angle_rad):
     - C_rot: rotated 6x6 stiffness matrix
     """
     C = np.array(C, dtype=np.float64)
-    # axis = np.array(axis, dtype=np.float64)
-    # axis /= np.linalg.norm(axis)  # normalize axis
-
-    # # Rodrigues' rotation formula for 3x3 rotation matrix
-    # ux, uy, uz = axis
-    # cos_a = np.cos(angle_rad)
-    # sin_a = np.sin(angle_rad)
-    # one_c = 1 - cos_a
-
-    # R = np.array([
-    #     [cos_a + ux**2 * one_c,       ux*uy*one_c - uz*sin_a, ux*uz*one_c + uy*sin_a],
-    #     [uy*ux*one_c + uz*sin_a, cos_a + uy**2 * one_c,       uy*uz*one_c - ux*sin_a],
-    #     [uz*ux*one_c - uy*sin_a, uz*uy*one_c + ux*sin_a, cos_a + uz**2 * one_c]
-    # ])
-
     b = rotation_matrix(axis, angle_rad)
 
     # Construct 6x6 transformation matrix T for stiffness in Voigt notation
@@ -524,17 +495,53 @@ def rotate_stiffness_matrix(C, axis, angle_rad):
 
 
 
-def distance(p1, p2):
+def distance(p1: list, p2: list) -> float:
+    r"""Compute the Euclidean distance between two 2D points.
+
+    Parameters
+    ----------
+    p1 : list
+        First point ``[x, y]``.
+    p2 : list
+        Second point ``[x, y]``.
+
+    Returns
+    -------
+    float
+        Euclidean distance between ``p1`` and ``p2``.
+    """
     s2 = (p1[0] - p2[0])**2 + (p1[1] - p2[1])**2
     return sqrt(s2)
 
 
 
 
-def ss(v1, v2, scale=None):
+def ss(v1: list, v2: list, scale: list = None) -> float:
+    r"""Compute the scaled sum of squared differences between two vectors.
+
+    Parameters
+    ----------
+    v1 : list
+        First vector.
+    v2 : list
+        Second vector, must have the same length as ``v1``.
+    scale : list, optional
+        Per-element scale factors. Defaults to ones (no scaling).
+
+    Returns
+    -------
+    float
+        Sum of ``(v1[i]*scale[i] - v2[i]*scale[i])**2`` over all elements.
+
+    Raises
+    ------
+    ValueError
+        If ``scale`` length does not match ``v1``.
+    """
     if scale is None:
-        scale = [1., ] * len(v1)
-    assert len(scale) == len(v1)
+        scale = [1.] * len(v1)
+    if len(scale) != len(v1):
+        raise ValueError("`scale` length must match `v1`.")
     sumsqr = 0.0
     for i in range(len(v1)):
         sumsqr = sumsqr + (v1[i] * scale[i] - v2[i] * scale[i])**2
@@ -543,54 +550,98 @@ def ss(v1, v2, scale=None):
 
 
 
-class Polynomial2DSP(object):
-    def __init__(self, order, coeffs):
+class Polynomial2DSP:
+    r"""2D polynomial in two variables using the symmetric Pascal triangle basis.
+
+    Parameters
+    ----------
+    order : int
+        Maximum total degree of the polynomial.
+    coeffs : array-like
+        Coefficients ordered by total degree then by power of the second variable.
+    """
+
+    def __init__(self, order: int, coeffs) -> None:
         self.order = order
         self.coeffs = np.asarray(coeffs)
 
-    def __call__(self, x):
+    def __call__(self, x) -> float:
+        r"""Evaluate the polynomial at point ``x``.
+
+        Parameters
+        ----------
+        x : array-like of length 2
+            Evaluation point ``[x0, x1]``.
+
+        Returns
+        -------
+        float
+            Polynomial value at ``x``.
+        """
         basis = []
         for i in range(self.order+1):
             for j in range(i+1):
                 basis.append(x[0]**(i-j) * x[1]**j)
         basis = np.asarray(basis)
-
         return np.dot(self.coeffs, basis)
 
 
 
 
-class PolynomialFunction(object):
-    def __init__(self, coefficients=[], x=[], y=[]):
-        self.coefficients = coefficients
+class PolynomialFunction:
+    r"""1D polynomial function defined by coefficients or interpolation points.
+
+    If ``x`` and ``y`` are provided, the coefficients are determined by solving
+    the Vandermonde system so that the polynomial passes exactly through all
+    given points. Otherwise ``coefficients`` are used directly.
+
+    Parameters
+    ----------
+    coefficients : list, optional
+        Polynomial coefficients ``[c0, c1, ..., cn]`` such that
+        ``f(x) = c0 + c1*x + ... + cn*x**n``.
+    x : list, optional
+        x-coordinates of interpolation points.
+    y : list, optional
+        y-coordinates of interpolation points. Must have the same length as ``x``.
+    """
+
+    def __init__(self, coefficients=None, x=None, y=None) -> None:
+        self.coefficients = coefficients if coefficients is not None else []
         self.points = {}
+        x = x if x is not None else []
+        y = y if y is not None else []
         if len(x) > 0:
-            # points = np.asarray(points)
             ndof = len(x)
             A = np.zeros((ndof, ndof))
             for i in range(ndof):
                 self.points[x[i]] = y[i]
                 for j in range(ndof):
                     A[i, j] = x[i]**j
-            # print(A)
             self.coefficients = np.linalg.solve(A, y)
-            # print(self.coefficients)
 
-    def __call__(self, x):
+    def __call__(self, x: float) -> float:
+        r"""Evaluate the polynomial at ``x``.
+
+        Parameters
+        ----------
+        x : float
+            Evaluation point.
+
+        Returns
+        -------
+        float
+            Polynomial value at ``x``.
+        """
+        if x in self.points:
+            return self.points[x]
         f = 0.0
-        if x in self.points.keys():
-            f = self.points[x]
-        else:
-            for i, c in enumerate(self.coefficients):
-                f += c * x**i
+        for i, c in enumerate(self.coefficients):
+            f += c * x**i
         return f
 
-    def __str__(self):
-        terms = []
-        for i, c in enumerate(self.coefficients):
-            # terms.append(f'({c})*x^{i}')
-            terms.append('({})*x^{}'.format(c, i))
-        
+    def __str__(self) -> str:
+        terms = [f'({c})*x^{i}' for i, c in enumerate(self.coefficients)]
         return ' + '.join(terms)
 
 
@@ -601,66 +652,92 @@ class PolynomialFunction(object):
 
 
 
-def calcCoordsOnCylinder(X, r, axis=3):
-    """[summary]
+def calc_coords_on_cylinder(X: list, r: float) -> list:
+    r"""Map Cartesian coordinates to a cylindrical surface.
+
+    Given a point ``X`` in the global inertial frame, return arc-length and
+    axial coordinates on a cylinder of radius ``r`` whose axis is aligned with
+    the z-direction (index 2).
 
     Parameters
     ----------
     X : list
-        Coordinates in the global inertial frame
+        Coordinates ``[x, y, z]`` in the global inertial frame.
+    r : float
+        Radius of the cylinder.
 
     Returns
     -------
     list
-        Coordinates on the cylindrical surface
+        ``[arc_length, z]`` coordinates on the cylindrical surface.
     """
-    x = [0, 0]
-
     x1 = r * atan2(X[1], X[0])
     x2 = X[2]
-
-    x = [x1, x2]
-
-    return x
+    return [x1, x2]
 
 
-class FrameTransCylinder():
-    def __init__(self, r):
-        self.r = r
+class FrameTransCylinder:
+    r"""Callable that maps Cartesian coordinates to a cylindrical surface.
 
-    def __call__(self, X):
-        x1 = self.r * atan2(X[1], X[0])
-        x2 = X[2]
-
-        x = [x1, x2]
-
-        return x
-
-
-
-
-
-
-
-
-
-def transformRigid3D(v0, R=None, t=None):
-    """Transform a point/vector rigidly in 3D.
+    The cylinder axis is aligned with the z-direction (index 2). For a point
+    ``X = [x, y, z]``, the mapping is ``[r * atan2(y, x), z]``.
 
     Parameters
     ----------
-    R : list of shape (3, 3)
-        Rotation matrix.
-    t : list of shape (3,)
-        Translation vector.
+    r : float
+        Radius of the cylinder.
+    """
+
+    def __init__(self, r: float) -> None:
+        self.r = r
+
+    def __call__(self, X: list) -> list:
+        r"""Map ``X`` to cylindrical surface coordinates.
+
+        Parameters
+        ----------
+        X : list
+            Cartesian coordinates ``[x, y, z]``.
+
+        Returns
+        -------
+        list
+            ``[arc_length, z]`` on the cylinder.
+        """
+        return [self.r * atan2(X[1], X[0]), X[2]]
+
+
+
+
+
+
+
+
+
+def transform_rigid_3d(v0, R=None, t=None):
+    r"""Transform a point/vector rigidly in 3D.
+
+    Parameters
+    ----------
+    v0 : array-like of shape (3,)
+        Input point or vector.
+    R : array-like of shape (3, 3), optional
+        Rotation matrix. Defaults to identity.
+    t : array-like of shape (3,), optional
+        Translation vector. Defaults to zero.
+
+    Returns
+    -------
+    list
+        Transformed point as a list of three floats.
     """
     v = np.asarray(v0)
 
-    if not R:
+    if R is None:
         R = np.eye(3)
     else:
         R = np.asarray(R)
-    if not t:
+    if t is None:
         t = np.zeros(3)
     else:
         t = np.asarray(t)
@@ -672,13 +749,24 @@ def transformRigid3D(v0, R=None, t=None):
 
 
 
-def find_min_nonzero_abs(matrix):
-    """Find the non-zero value with the smallest absolute value in a matrix.
+def _nonzero_abs_values(matrix: np.ndarray) -> np.ndarray:
+    if matrix is None:
+        raise ValueError("Input matrix cannot be None.")
+    if not isinstance(matrix, np.ndarray):
+        raise TypeError("Input must be a numpy array.")
+    non_zero = matrix[matrix != 0]
+    if non_zero.size == 0:
+        raise ValueError("The matrix contains no non-zero values.")
+    return non_zero
+
+
+def find_min_nonzero_abs(matrix: np.ndarray) -> float:
+    r"""Find the non-zero value with the smallest absolute value in a matrix.
 
     Parameters
     ----------
     matrix : np.ndarray
-        A 2D numpy array.
+        A numpy array of any shape.
 
     Returns
     -------
@@ -692,37 +780,17 @@ def find_min_nonzero_abs(matrix):
     TypeError
         If the input is not a numpy array.
     """
-    if matrix is None:
-        raise ValueError("Input matrix cannot be None.")
-    
-    if not isinstance(matrix, np.ndarray):
-        raise TypeError("Input must be a numpy array.")
-    
-    non_zero_values = matrix[matrix != 0]
-    
-    if non_zero_values.size == 0:
-        raise ValueError("The matrix contains no non-zero values.")
-    
-    smallest_nonzero_abs = non_zero_values[np.argmin(np.abs(non_zero_values))]
-    
-    return smallest_nonzero_abs
+    non_zero = _nonzero_abs_values(matrix)
+    return non_zero[np.argmin(np.abs(non_zero))]
 
 
-
-
-
-
-
-
-
-def find_max_nonzero_abs(matrix):
-    """
-    Find the non-zero value in the matrix with the largest absolute value.
+def find_max_nonzero_abs(matrix: np.ndarray) -> float:
+    r"""Find the non-zero value with the largest absolute value in a matrix.
 
     Parameters
     ----------
     matrix : np.ndarray
-        A 2D numpy array.
+        A numpy array of any shape.
 
     Returns
     -------
@@ -732,19 +800,9 @@ def find_max_nonzero_abs(matrix):
     Raises
     ------
     ValueError
-        If the matrix contains no non-zero values.
+        If the matrix is None or contains no non-zero values.
     TypeError
         If the input is not a numpy array.
     """
-    if matrix is None:
-        raise ValueError("Input matrix cannot be None.")
-    
-    if not isinstance(matrix, np.ndarray):
-        raise TypeError("Input must be a numpy array.")
-    
-    non_zero_values = matrix[matrix != 0]
-    
-    if non_zero_values.size == 0:
-        raise ValueError("The matrix contains no non-zero values.")
-    
-    return non_zero_values[np.argmax(np.abs(non_zero_values))]
+    non_zero = _nonzero_abs_values(matrix)
+    return non_zero[np.argmax(np.abs(non_zero))]
