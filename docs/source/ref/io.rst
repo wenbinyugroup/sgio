@@ -17,6 +17,10 @@ I/O Functions
     read
     read_output_model
     read_output_state
+    merge_sections
+    merge_sections_from_csv
+    read_section_layout_csv
+    write_merged_sections
     write
     convert
 

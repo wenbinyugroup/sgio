@@ -9,9 +9,9 @@ Examples
     convert_gmsh_to_sc
     convert_vabs_to_gmsh
     load_cauchy_material_from_json
+    merge_section_meshes
     plot_cs
     read_vabs_input
     read_vabs_output_h
     read_vabs_output_d
     read_sc_output_state
-

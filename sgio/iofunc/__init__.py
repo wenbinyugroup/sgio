@@ -6,6 +6,12 @@ from . import (
 )
 
 from ._meshio import add_cell_dict_data_to_mesh, add_point_dict_data_to_mesh
+from .layout import (
+    merge_sections,
+    merge_sections_from_csv,
+    read_section_layout_csv,
+    write_merged_sections,
+)
 from .main import (
     convert,
     read, read_load_csv,
@@ -42,6 +48,10 @@ __all__ = [
     "read_output_model",
     "read_output_state",
     "read_load_csv",
+    "merge_sections",
+    "merge_sections_from_csv",
+    "read_section_layout_csv",
+    "write_merged_sections",
 
     # Base classes and registry
     "BaseFormatReader",

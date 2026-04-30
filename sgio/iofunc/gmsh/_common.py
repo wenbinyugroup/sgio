@@ -23,6 +23,14 @@ from sgio.iofunc._meshio import (
     WriteError
 )
 
+
+def _to_ascii_scalar(value):
+    """Convert NumPy/Python scalars to plain ASCII-safe values."""
+    if isinstance(value, np.generic):
+        return value.item()
+    return value
+
+
 def _write_data(fh, tag, name, data, binary):
     if binary:
         fh.write(f"${tag}\n".encode())
@@ -83,16 +91,13 @@ def _write_data(fh, tag, name, data, binary):
         # num data items
         fh.write(f"{data.shape[0]}\n")
         # actually write the data
-        fmt = " ".join(["{}"] + ["{!r}"] * num_components) + "\n"
-        # TODO unify
         if num_components == 1:
             for k, x in enumerate(data):
-                # fh.write(fmt.format(k + 1, x))
-                fh.write(fmt.format(k + 1, float(x)))
+                fh.write(f"{k + 1} {_to_ascii_scalar(x)}\n")
         else:
             for k, x in enumerate(data):
-                # fh.write(fmt.format(k + 1, *x))
-                fh.write(fmt.format(k + 1, *[float(i) for i in x]))
+                values = " ".join(str(_to_ascii_scalar(i)) for i in x)
+                fh.write(f"{k + 1} {values}\n")
         fh.write(f"$End{tag}\n")
 
 
@@ -118,4 +123,21 @@ def write_element_node_data(file, name, data):
         file.write('\n')
 
     file.write(f"$EndElementNodeData\n")
+
+
+def build_geometrical_tags(
+    mesh,
+    property_id: list[np.ndarray],
+) -> list[np.ndarray]:
+    """Create default geometrical tags for non-Gmsh section data."""
+    geometrical_data: list[np.ndarray] = []
+
+    for block_index, array in enumerate(property_id, start=1):
+        block_values = np.asarray(array, dtype=np.int32)
+        if np.any(block_values != 0):
+            geometrical_data.append(block_values.copy())
+        else:
+            geometrical_data.append(np.full(block_values.shape, block_index, dtype=np.int32))
+
+    return geometrical_data
 

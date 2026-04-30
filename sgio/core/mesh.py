@@ -153,50 +153,26 @@ class SGMesh(Mesh):
                 return _cb
         return None
 
-    #     # Additional SG-specific attributes
-    #     self.material_properties = {}
-    #     self.element_materials = {}  # Mapping of element IDs to material IDs
-    #     self.local_reference_systems = {}  # Local reference coordinate systems for materials
-    #     self.analysis_config = {}  # Other configurations for analysis
-        
-    # def add_material_property(self, material_id, property_name, value):
-    #     """Add a material property.
-        
-    #     Args:
-    #         material_id: Identifier for the material
-    #         property_name: Name of the property
-    #         value: Value of the property
-    #     """
-    #     if material_id not in self.material_properties:
-    #         self.material_properties[material_id] = {}
-    #     self.material_properties[material_id][property_name] = value
-        
-    # def assign_material_to_element(self, element_id, material_id):
-    #     """Assign a material to an element.
-        
-    #     Args:
-    #         element_id: Identifier for the element
-    #         material_id: Identifier for the material
-    #     """
-    #     self.element_materials[element_id] = material_id
-        
-    # def set_local_reference_system(self, element_id, reference_system):
-    #     """Set the local reference coordinate system for an element.
-        
-    #     Args:
-    #         element_id: Identifier for the element
-    #         reference_system: The reference coordinate system (e.g., a 3x3 matrix)
-    #     """
-    #     self.local_reference_systems[element_id] = reference_system
-        
-    # def set_analysis_config(self, config_name, config_value):
-    #     """Set analysis configuration.
-        
-    #     Args:
-    #         config_name: Name of the configuration
-    #         config_value: Value of the configuration
-    #     """
-    #     self.analysis_config[config_name] = config_value
+
+def get_cell_data_arrays(mesh: Union[SGMesh, Mesh], key: str, default_value: int) -> list[np.ndarray]:
+    """Return one integer cell-data array per cell block."""
+    if key in mesh.cell_data:
+        return [np.asarray(array, dtype=np.int32).copy() for array in mesh.cell_data[key]]
+
+    return [
+        np.full(len(cell_block.data), default_value, dtype=np.int32)
+        for cell_block in mesh.cells
+    ]
+
+
+def merge_field_data(
+    merged_field_data: dict[str, np.ndarray],
+    field_data: dict[str, np.ndarray],
+) -> None:
+    """Merge field-data dictionaries, keeping the first value per name."""
+    for name, value in field_data.items():
+        if name not in merged_field_data:
+            merged_field_data[name] = np.asarray(value).copy()
 
 
 

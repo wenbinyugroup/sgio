@@ -11,9 +11,17 @@ from .interface_parser import (
     read_sg_interface_pairs,
     read_sg_interface_nodes,
 )
+from .section_files import (
+    get_candidate_extensions,
+    infer_section_dimension,
+    resolve_section_path,
+)
 
 __all__ = [
     'read_load_csv',
     'read_sg_interface_pairs',
     'read_sg_interface_nodes',
+    'get_candidate_extensions',
+    'infer_section_dimension',
+    'resolve_section_path',
 ]
