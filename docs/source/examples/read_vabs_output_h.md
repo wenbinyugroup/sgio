@@ -6,7 +6,7 @@ After running VABS homogenization, read the `.K` output file to extract effectiv
 
 ## Solution
 
-```{literalinclude} ../../../examples/read_vabs_output_h/read_vabs_output_h.py
+```{literalinclude} ../../../examples/read_vabs_output_h/run.py
 :language: python
 ```
 
@@ -18,5 +18,5 @@ The script returns scalar beam property values that can be used directly in beam
 
 ## File List
 
-- [read_vabs_output_h.py](../../../examples/read_vabs_output_h/read_vabs_output_h.py): Main Python script
+- [run.py](../../../examples/read_vabs_output_h/run.py): Main Python script
 - [cs_box_t_vabs41.sg.K](../../../examples/read_vabs_output_h/cs_box_t_vabs41.sg.K): VABS homogenized beam properties output

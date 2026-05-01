@@ -6,7 +6,7 @@ Given a VABS cross-section input file, read it into a structure gene object to i
 
 ## Solution
 
-```{literalinclude} ../../../examples/read_vabs_input/read_vabs_input.py
+```{literalinclude} ../../../examples/read_vabs_input/run.py
 :language: python
 ```
 
@@ -18,5 +18,5 @@ The script prints the node count, element count, material count, and the full st
 
 ## File List
 
-- [read_vabs_input.py](../../../examples/read_vabs_input/read_vabs_input.py): Main Python script
+- [run.py](../../../examples/read_vabs_input/run.py): Main Python script
 - [sg21eb_tri3_vabs40.sg](../../../examples/read_vabs_input/sg21eb_tri3_vabs40.sg): VABS 4.0 cross-section input file

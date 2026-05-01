@@ -8,7 +8,7 @@ ParaView, or another mesh viewer.
 
 ## Explanation of the Solution
 
-```{literalinclude} ../../../examples/plot_css/merge_mesh.py
+```{literalinclude} ../../../examples/plot_css/run.py
 :language: python
 ```
 
@@ -54,5 +54,5 @@ or inspect it in ParaView.
 
 ## File List
 
-- [merge_mesh.py](../../../examples/plot_css/merge_mesh.py): Example script that calls the library API
+- [run.py](../../../examples/plot_css/run.py): Example script that calls the library API
 - [blade.csv](../../../examples/plot_css/blade.csv): Blade cross-section layout file

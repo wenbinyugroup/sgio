@@ -6,7 +6,7 @@ Given a VABS cross-section file, export the mesh to Gmsh format for geometry ins
 
 ## Solution
 
-```{literalinclude} ../../../examples/convert_vabs_to_gmsh/convert_mesh_data_vabs2gmsh.py
+```{literalinclude} ../../../examples/convert_vabs_to_gmsh/run.py
 :language: python
 ```
 
@@ -24,4 +24,4 @@ or inspect it in ParaView.
 
 ## File List
 
-- [convert_mesh_data_vabs2gmsh.py](../../../examples/convert_vabs_to_gmsh/convert_mesh_data_vabs2gmsh.py): Main Python script
+- [convert_mesh_data_vabs2gmsh.py](../../../examples/convert_vabs_to_gmsh/run.py): Main Python script

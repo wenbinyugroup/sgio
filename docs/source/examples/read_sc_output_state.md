@@ -6,7 +6,7 @@ After running SwiftComp dehomogenization analysis on a 3D solid structure gene, 
 
 ## Solution
 
-```{literalinclude} ../../../examples/read_sc_output_d/read_sc_output_d.py
+```{literalinclude} ../../../examples/read_sc_output_d/run.py
 :language: python
 ```
 
@@ -22,7 +22,7 @@ gmsh sg31t_hex20_sc21.msh
 
 ## File List
 
-- [read_sc_output_d.py](../../../examples/read_sc_output_d/read_sc_output_d.py): Main Python script
+- [run.py](../../../examples/read_sc_output_d/run.py): Main Python script
 - [sg31t_hex20_sc21.sg](../../../examples/read_sc_output_d/sg31t_hex20_sc21.sg): SwiftComp 3D input file
 - [sg31t_hex20_sc21.sg.sn](../../../examples/read_sc_output_d/sg31t_hex20_sc21.sg.sn): SwiftComp dehomogenization output (node data)
 - [sg31t_hex20_sc21.sg.snm](../../../examples/read_sc_output_d/sg31t_hex20_sc21.sg.snm): SwiftComp dehomogenization output (material-frame node data)

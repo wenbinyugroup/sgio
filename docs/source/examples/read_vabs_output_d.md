@@ -6,7 +6,7 @@ After running VABS dehomogenization analysis, read the element-level stress outp
 
 ## Solution
 
-```{literalinclude} ../../../examples/read_vabs_output_d/read_vabs_output_d.py
+```{literalinclude} ../../../examples/read_vabs_output_d/run.py
 :language: python
 ```
 
@@ -26,6 +26,6 @@ gmsh cs_box_t_vabs41_local.msh
 
 ## File List
 
-- [read_vabs_output_d.py](../../../examples/read_vabs_output_d/read_vabs_output_d.py): Main Python script
+- [run.py](../../../examples/read_vabs_output_d/run.py): Main Python script
 - [cs_box_t_vabs41.sg](../../../examples/read_vabs_output_d/cs_box_t_vabs41.sg): VABS cross-section input file
 - [cs_box_t_vabs41.sg.ELE](../../../examples/read_vabs_output_d/cs_box_t_vabs41.sg.ELE): VABS dehomogenization element output
