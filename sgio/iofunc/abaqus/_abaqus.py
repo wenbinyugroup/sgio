@@ -83,7 +83,7 @@ def read(filename, **kwargs):
         _submodel = int(model[2]) - 1
 
     sg.smdim = smdim
-    sg.model = _submodel
+    sg.analysis_config.model = _submodel
 
 
     # Process mesh
@@ -147,9 +147,6 @@ def read(filename, **kwargs):
         # Store material by name
         sg.materials[_mname] = m
         
-        # Add material name-ID pair
-        sg.add_material_name_id_pair(_mname, _mid)
-
     # Process material-orientation combinations - update to use material names
     sg.mocombos = mocombos
 

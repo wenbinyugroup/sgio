@@ -87,14 +87,14 @@ def read_materials(
     Returns
     -------
     tuple
-        (materials_dict, material_name_id_pairs)
+        (materials_dict, material_id_pairs)
         materials_dict: {material_name: MaterialModel}
-        material_name_id_pairs: [[name, id], ...]
+        material_id_pairs: [[name, id], ...]
     """
     logger.debug('reading materials...')
     
     materials = {}
-    material_name_id_pairs = []
+    material_id_pairs = []
     
     counter = 0
     while counter < nmate:
@@ -125,11 +125,11 @@ def read_materials(
         materials[mat_name] = material
         
         # Store name-ID pair
-        material_name_id_pairs.append([mat_name, mate_id])
+        material_id_pairs.append([mat_name, mate_id])
         
         counter += 1
     
-    return materials, material_name_id_pairs
+    return materials, material_id_pairs
 
 
 def read_material(

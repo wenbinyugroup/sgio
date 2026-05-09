@@ -86,7 +86,7 @@ def mesh_to_sg(mesh: Mesh, sgdim: int = 3, model_type: str = 'SD1') -> Structure
     """
     sg = StructureGene()
     sg.sgdim = sgdim
-    sg.smdim, sg.model = parse_model_type(model_type)
+    sg.smdim, sg.analysis_config.model = parse_model_type(model_type)
     sg.mesh = mesh
 
     _ensure_mesh_data(mesh)
@@ -111,13 +111,12 @@ def restore_sg_from_mesh_extras(sg: StructureGene, mesh) -> None:
     """
     sg_layer_defs = getattr(mesh, 'sg_layer_defs', {})
     if sg_layer_defs:
+        material_names_by_id = _build_material_name_map(mesh, sg.sgdim)
         # sg_layer_defs: {layer_id: (mat_id, angle)}
         # mocombos:      {property_id: (material_name, angle)}
         for layer_id, (mat_id, angle) in sg_layer_defs.items():
-            mat_name = sg.get_material_name_by_id(mat_id)
-            if mat_name is None:
-                mat_name = f'Material_{mat_id}'
-                sg.add_material_name_id_pair(mat_name, mat_id)
+            mat_name = _resolve_material_name(material_names_by_id, mat_id)
+            _ensure_material_exists(sg, mat_name)
             sg.mocombos[layer_id] = (mat_name, angle)
 
     sg_configs = getattr(mesh, 'sg_configs', {})
@@ -125,11 +124,11 @@ def restore_sg_from_mesh_extras(sg: StructureGene, mesh) -> None:
         if 'sgdim' in sg_configs:
             sg.sgdim = int(sg_configs['sgdim'])
         if 'model' in sg_configs:
-            sg.model = int(sg_configs['model'])
+            sg.analysis_config.model = int(sg_configs['model'])
         if 'do_damping' in sg_configs:
-            sg.do_damping = int(sg_configs['do_damping'])
+            sg.analysis_config.do_damping = int(sg_configs['do_damping'])
         if 'thermal' in sg_configs:
-            sg.physics = int(sg_configs['thermal'])
+            sg.analysis_config.physics = int(sg_configs['thermal'])
 
 
 def _ensure_mesh_data(mesh: Mesh) -> None:
@@ -179,10 +178,7 @@ def _process_materials_from_mesh(sg: StructureGene, mesh: Mesh, sgdim: int) -> N
     sgdim : int
         Structure gene dimension.
     """
-    if hasattr(mesh, 'field_data') and mesh.field_data:
-        for name, (phys_id, dim) in mesh.field_data.items():
-            if dim == sgdim:
-                sg.add_material_name_id_pair(name, phys_id)
+    material_names_by_id = _build_material_name_map(mesh, sgdim)
 
     if 'property_id' in mesh.cell_data:
         property_ids = set()
@@ -193,31 +189,53 @@ def _process_materials_from_mesh(sg: StructureGene, mesh: Mesh, sgdim: int) -> N
 
         for prop_id in property_ids:
             if prop_id not in sg.mocombos:
-                mat_name = _get_or_create_material_name(sg, prop_id)
+                mat_name = _resolve_material_name(material_names_by_id, prop_id)
                 _ensure_material_exists(sg, mat_name)
                 sg.mocombos[prop_id] = (mat_name, 0.0)
 
 
-def _get_or_create_material_name(sg: StructureGene, prop_id: int) -> str:
-    """Get material name by property ID or create a default name.
+def _build_material_name_map(mesh: Mesh, sgdim: int | None) -> dict[int, str]:
+    """Build material-name lookup from mesh field data.
 
     Parameters
     ----------
-    sg : StructureGene
-        Structure gene object.
+    mesh : Mesh
+        Mesh object containing field-data labels.
+    sgdim : int or None
+        Structure-gene section dimension.
+
+    Returns
+    -------
+    dict[int, str]
+        Mapping from physical/material ID to material name.
+    """
+    material_names_by_id: dict[int, str] = {}
+    if not hasattr(mesh, 'field_data') or not mesh.field_data:
+        return material_names_by_id
+
+    for name, values in mesh.field_data.items():
+        phys_id, dim = int(values[0]), int(values[1])
+        if sgdim is None or dim == sgdim:
+            material_names_by_id[phys_id] = name
+    return material_names_by_id
+
+
+def _resolve_material_name(material_names_by_id: dict[int, str], prop_id: int) -> str:
+    """Resolve material name for a property ID.
+
+    Parameters
+    ----------
+    material_names_by_id : dict[int, str]
+        Mapping from physical/material ID to material name.
     prop_id : int
         Property ID.
 
     Returns
     -------
     str
-        Material name.
+        Material name for the property.
     """
-    mat_name = sg.get_material_name_by_id(prop_id)
-    if mat_name is None:
-        mat_name = f'Material_{prop_id}'
-        sg.add_material_name_id_pair(mat_name, prop_id)
-    return mat_name
+    return material_names_by_id.get(prop_id, f'Material_{prop_id}')
 
 
 def _ensure_material_exists(sg: StructureGene, mat_name: str) -> None:

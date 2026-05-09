@@ -27,6 +27,7 @@ from ._output import (
 import sgio.model as smdl
 # import sgio.utils as sutl
 from sgio.core.sg import StructureGene
+from ..common import build_material_id_map
 logger = logging.getLogger(__name__)
 
 
@@ -46,12 +47,12 @@ def read_buffer(f, format_version:str):
     # print(f'configs: {configs}')
     format_flag = configs['format']
     sg.sgdim = configs['sgdim']
-    sg.physics = configs['physics']
-    sg.do_dampling = configs.get('do_damping', 0)
+    sg.analysis_config.physics = configs['physics']
+    sg.analysis_config.do_damping = configs.get('do_damping', 0)
     _use_elem_local_orient = configs.get('use_elem_local_orient', 0)
-    sg.is_temp_nonuniform = configs.get('is_temp_nonuniform', 0)
+    sg.analysis_config.is_temp_nonuniform = configs.get('is_temp_nonuniform', 0)
     # if smdim != 3:
-    sg.model = configs['model']
+    sg.analysis_config.model = configs['model']
         # if smdim == 1:
     init_curvs = configs.get('curvature', [0.0, 0.0, 0.0])
     sg.initial_twist = init_curvs[0]
@@ -70,14 +71,12 @@ def read_buffer(f, format_version:str):
 
     # Read materials (now returns materials and name-ID pairs)
     nmate = configs['num_materials']
-    materials_temp, material_name_id_pairs = _readMaterials(f, nmate)
-    
-    # Store materials and name-ID pairs
+    materials_temp, material_id_pairs = _readMaterials(f, nmate)
+
     sg.materials = materials_temp
-    sg.material_name_id_pairs = material_name_id_pairs
-    
-    # Create ID to name mapping from material_name_id_pairs
-    id_to_name = {mat_id: name for name, mat_id in material_name_id_pairs}
+
+    # Create ID to name mapping from local reader state.
+    id_to_name = {mat_id: name for name, mat_id in material_id_pairs}
     
     # Convert mocombos to use material names instead of IDs
     sg.mocombos = {}
@@ -138,9 +137,9 @@ def read_output_buffer(
     if analysis == 0 or analysis == 'h' or analysis == '':
         if not sg is None:
             # print(f'sg.model: {sg.model}')
-            if sg.model == 0:
+            if sg.analysis_config.model == 0:
                 return _readOutputH(file, model_type='bm1', **kwargs)
-            elif sg.model == 1:
+            elif sg.analysis_config.model == 1:
                 return _readOutputH(file, model_type='bm2', **kwargs)
         else:
             return _readOutputH(file, model_type=model_type, **kwargs)
@@ -243,15 +242,15 @@ def write_buffer(
         timoshenko_flag = 0
         trapeze_flag = 0
         vlasov_flag = 0
-        if sg.model == 1:
+        if sg.analysis_config.model == 1:
             timoshenko_flag = 1
-        elif sg.model == 2:
+        elif sg.analysis_config.model == 2:
             timoshenko_flag = 1
             vlasov_flag = 1
-        elif sg.model == 3:
+        elif sg.analysis_config.model == 3:
             trapeze_flag = 1
         thermal_flag = 0
-        if sg.physics == 1:
+        if sg.analysis_config.physics == 1:
             thermal_flag = 3
 
     if analysis == 'h':
@@ -328,7 +327,7 @@ def writeInputBuffer(
 
     _writeHeader(
         sg_fmt, nlayer,
-        timoshenko_flag, sg.do_damping, thermal_flag,
+        timoshenko_flag, sg.analysis_config.do_damping, thermal_flag,
         curve_flag, oblique_flag, trapeze_flag, vlasov_flag,
         initial_curvatures, sg.oblique,
         sg.nnodes, sg.nelems, sg.nmates,
@@ -341,9 +340,9 @@ def writeInputBuffer(
 
     # if not mesh_only:
     # Get material ID mapping for export
-    mat_id_map = sg.get_export_material_ids()
+    mat_id_map = build_material_id_map(sg.materials)
     
-    _writeMOCombos(sg, file, sfi, sff)
+    _writeMOCombos(sg, file, sfi, sff, mat_id_map=mat_id_map)
 
     # if not mesh_only:
     _writeMaterials(

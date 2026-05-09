@@ -169,12 +169,14 @@ def _writeMesh(
 
 
 
-def _writeMOCombos(sg, file, sfi:str='8d', sff:str='20.12e'):
+def _writeMOCombos(
+    sg, file, sfi: str = '8d', sff: str = '20.12e', mat_id_map=None
+):
     """Write material-orientation combinations (VABS format).
     
     Wrapper for common function with VABS-specific comment character.
     """
-    write_material_combos(sg, file, sfi, sff, comment_char='!')
+    write_material_combos(sg, file, sfi, sff, comment_char='!', mat_id_map=mat_id_map)
     return
 
 

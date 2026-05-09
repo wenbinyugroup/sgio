@@ -1,0 +1,679 @@
+[15:47:36] INFO     swiftcomp sg12_line5_sc2.1.sg 2D H                                                       execu.py:78
+           INFO     return code: 0                                                                          execu.py:100
+[15:47:36] INFO     Reading file...                                                                          main.py:145
+[15:49:05] INFO     Converting file format...                                                                main.py:498
+           INFO     Reading file...                                                                          main.py:145
+           INFO     Writing file...                                                                          main.py:359
+           INFO     File format converted.                                                                   main.py:538
+           INFO     Conversion completed successfully                                                         app.py:307
+[15:49:06] INFO     Converting file format...                                                                main.py:498
+           INFO     Reading file...                                                                          main.py:145
+           INFO     Writing file...                                                                          main.py:359
+           INFO     File format converted.                                                                   main.py:538
+           INFO     Conversion completed successfully                                                         app.py:307
+[15:49:07] INFO     Converting file format...                                                                main.py:498
+           INFO     Reading file...                                                                          main.py:145
+           INFO     Writing file...                                                                          main.py:359
+           INFO     File format converted.                                                                   main.py:538
+           INFO     Conversion completed successfully                                                         app.py:307
+[15:49:08] INFO     Converting file format...                                                                main.py:498
+           INFO     Reading file...                                                                          main.py:145
+           INFO     Writing file...                                                                          main.py:359
+           INFO     File format converted.                                                                   main.py:538
+           INFO     Conversion completed successfully                                                         app.py:307
+[15:49:09] INFO     Converting file format...                                                                main.py:498
+           INFO     Reading file...                                                                          main.py:145
+           INFO     Writing file...                                                                          main.py:359
+           INFO     File format converted.                                                                   main.py:538
+           INFO     Conversion completed successfully                                                         app.py:307
+[15:49:09] INFO     Converting file format...                                                                main.py:498
+[15:49:10] INFO     Reading file...                                                                          main.py:145
+           INFO     Writing file...                                                                          main.py:359
+           INFO     File format converted.                                                                   main.py:538
+           INFO     Conversion completed successfully                                                         app.py:307
+[15:49:10] INFO     Converting file format...                                                                main.py:498
+           INFO     Reading file...                                                                          main.py:145
+           INFO     Writing file...                                                                          main.py:359
+[15:49:11] INFO     File format converted.                                                                   main.py:538
+           INFO     Conversion completed successfully                                                         app.py:307
+[15:49:11] INFO     Converting file format...                                                                main.py:498
+           INFO     Reading file...                                                                          main.py:145
+           INFO     Writing file...                                                                          main.py:359
+           INFO     File format converted.                                                                   main.py:538
+           INFO     Conversion completed successfully                                                         app.py:307
+[15:49:12] INFO     Converting file format...                                                                main.py:498
+           INFO     Reading file...                                                                          main.py:145
+           INFO     Writing file...                                                                          main.py:359
+           INFO     File format converted.                                                                   main.py:538
+           INFO     Conversion completed successfully                                                         app.py:307
+[15:49:13] INFO     Converting file format...                                                                main.py:498
+           INFO     Reading file...                                                                          main.py:145
+[15:49:15] INFO     Writing file...                                                                          main.py:359
+           INFO     File format converted.                                                                   main.py:538
+           INFO     Conversion completed successfully                                                         app.py:307
+[15:49:16] INFO     Converting file format...                                                                main.py:498
+           INFO     Reading file...                                                                          main.py:145
+[15:49:17] INFO     Writing file...                                                                          main.py:359
+           INFO     File format converted.                                                                   main.py:538
+           INFO     Conversion completed successfully                                                         app.py:307
+[15:49:18] ERROR    Input file not found: C:\Users\tian50\work\dev\sgio\dummy.txt                             app.py:281
+[15:49:18] INFO     Converting C:\Users\tian50\work\dev\sgio\tests\fixtures\abaqus\sg33_cube.inp to test_sc_abaqus.py:64
+                    C:\Users\tian50\work\dev\sgio\tests\_temp\sg33_cube_sc21.sg...                                      
+           INFO     Converting file format...                                                                main.py:498
+           INFO     Reading file...                                                                          main.py:145
+[15:49:19] INFO     Writing file...                                                                          main.py:359
+           INFO     File format converted.                                                                   main.py:538
+           INFO     Converting file format...                                                                main.py:498
+           INFO     Reading file...                                                                          main.py:145
+           INFO     Writing file...                                                                          main.py:359
+           INFO     File format converted.                                                                   main.py:538
+           INFO     Converting file format...                                                                main.py:498
+           INFO     Reading file...                                                                          main.py:145
+[15:49:20] INFO     Writing file...                                                                          main.py:359
+[15:49:21] INFO     File format converted.                                                                   main.py:538
+           INFO     Converting file format...                                                                main.py:498
+           INFO     Reading file...                                                                          main.py:145
+[15:49:22] INFO     Writing file...                                                                          main.py:359
+           INFO     File format converted.                                                                   main.py:538
+           WARNING  Node IDs renumbered to meet SwiftComp format requirements (consecutive from 1)      numbering.py:510
+           WARNING  Node IDs renumbered to meet SwiftComp format requirements (consecutive from 1)      numbering.py:510
+           INFO     Converting                                                                    test_vabs_abaqus.py:66
+                    C:\Users\tian50\work\dev\sgio\tests\fixtures\abaqus\sg2_airfoil.inp to                              
+                    C:\Users\tian50\work\dev\sgio\tests\_temp\sg2_airfoil_vabs41.dat...                                 
+           INFO     Converting file format...                                                                main.py:498
+           INFO     Reading file...                                                                          main.py:145
+           INFO     Writing file...                                                                          main.py:359
+[15:49:23] INFO     File format converted.                                                                   main.py:538
+           INFO     Converting file format...                                                                main.py:498
+           INFO     Reading file...                                                                          main.py:145
+           INFO     Writing file...                                                                          main.py:359
+           INFO     File format converted.                                                                   main.py:538
+           INFO     Converting file format...                                                                main.py:498
+           INFO     Reading file...                                                                          main.py:145
+           INFO     Writing file...                                                                          main.py:359
+           INFO     File format converted.                                                                   main.py:538
+           INFO     Converting file format...                                                                main.py:498
+           INFO     Reading file...                                                                          main.py:145
+           INFO     Writing file...                                                                          main.py:359
+           INFO     File format converted.                                                                   main.py:538
+           INFO     Converting file format...                                                                main.py:498
+           INFO     Reading file...                                                                          main.py:145
+[15:49:24] INFO     Writing file...                                                                          main.py:359
+           INFO     File format converted.                                                                   main.py:538
+           WARNING  Node IDs renumbered to meet VABS format requirements (consecutive from 1)           numbering.py:510
+           WARNING  Node IDs renumbered to meet VABS format requirements (consecutive from 1)           numbering.py:510
+           INFO     Converting                                                                      test_vabs_gmsh.py:51
+                    C:\Users\tian50\work\dev\sgio\tests\fixtures\vabs\version_4_1\isorect.sg to                         
+                    C:\Users\tian50\work\dev\sgio\tests\_temp\isorect.msh...                                            
+           INFO     Converting file format...                                                                main.py:498
+           INFO     Reading file...                                                                          main.py:145
+           INFO     Writing file...                                                                          main.py:359
+           INFO     File format converted.                                                                   main.py:538
+           INFO     Converting                                                                      test_vabs_gmsh.py:51
+                    C:\Users\tian50\work\dev\sgio\tests\fixtures\vabs\version_4_1\uh60a.sg to                           
+                    C:\Users\tian50\work\dev\sgio\tests\_temp\uh60a.msh...                                              
+           INFO     Converting file format...                                                                main.py:498
+           INFO     Reading file...                                                                          main.py:145
+           INFO     Writing file...                                                                          main.py:359
+           INFO     File format converted.                                                                   main.py:538
+           INFO     Converting                                                                      test_vabs_gmsh.py:51
+                    C:\Users\tian50\work\dev\sgio\tests\fixtures\vabs\version_4_0\sg21eb_tri3_vabs4                     
+                    0.sg to C:\Users\tian50\work\dev\sgio\tests\_temp\sg21eb_tri3_vabs40.msh...                         
+           INFO     Converting file format...                                                                main.py:498
+           INFO     Reading file...                                                                          main.py:145
+           INFO     Writing file...                                                                          main.py:359
+           INFO     File format converted.                                                                   main.py:538
+           INFO     Converting                                                                      test_vabs_gmsh.py:51
+                    C:\Users\tian50\work\dev\sgio\tests\fixtures\vabs\version_4_0\sg21t_tri3_vabs40                     
+                    .sg to C:\Users\tian50\work\dev\sgio\tests\_temp\sg21t_tri3_vabs40.msh...                           
+           INFO     Converting file format...                                                                main.py:498
+           INFO     Reading file...                                                                          main.py:145
+           INFO     Writing file...                                                                          main.py:359
+           INFO     File format converted.                                                                   main.py:538
+           INFO     Converting file format...                                                                main.py:498
+           INFO     Reading file...                                                                          main.py:145
+           INFO     Writing file...                                                                          main.py:359
+           INFO     File format converted.                                                                   main.py:538
+           INFO     Converting file format...                                                                main.py:498
+           INFO     Reading file...                                                                          main.py:145
+           INFO     Writing file...                                                                          main.py:359
+[15:49:25] INFO     File format converted.                                                                   main.py:538
+           INFO     Converting file format...                                                                main.py:498
+           INFO     Reading file...                                                                          main.py:145
+           INFO     Writing file...                                                                          main.py:359
+           INFO     File format converted.                                                                   main.py:538
+           INFO     Converting file format...                                                                main.py:498
+           INFO     Reading file...                                                                          main.py:145
+           INFO     Writing file...                                                                          main.py:359
+           INFO     File format converted.                                                                   main.py:538
+           INFO     Converting                                                                        test_gmsh_io.py:49
+                    C:\Users\tian50\work\dev\sgio\tests\fixtures\vabs\version_4_1\isorect.sg to                         
+                    C:\Users\tian50\AppData\Local\Temp\pytest-of-tian50\pytest-201\test_vabs_to_gmsh_                   
+                    to_vabs_roun0\isorect.msh...                                                                        
+           INFO     Converting file format...                                                                main.py:498
+           INFO     Reading file...                                                                          main.py:145
+           INFO     Writing file...                                                                          main.py:359
+           INFO     File format converted.                                                                   main.py:538
+           INFO     Successfully created                                                              test_gmsh_io.py:62
+                    C:\Users\tian50\AppData\Local\Temp\pytest-of-tian50\pytest-201\test_vabs_to_gmsh_                   
+                    to_vabs_roun0\isorect.msh                                                                           
+           INFO     Converting C:\Users\tian50\work\dev\sgio\tests\fixtures\vabs\version_4_1\uh60a.sg test_gmsh_io.py:49
+                    to                                                                                                  
+                    C:\Users\tian50\AppData\Local\Temp\pytest-of-tian50\pytest-201\test_vabs_to_gmsh_                   
+                    to_vabs_roun0\uh60a.msh...                                                                          
+           INFO     Converting file format...                                                                main.py:498
+           INFO     Reading file...                                                                          main.py:145
+           INFO     Writing file...                                                                          main.py:359
+           INFO     File format converted.                                                                   main.py:538
+           INFO     Successfully created                                                              test_gmsh_io.py:62
+                    C:\Users\tian50\AppData\Local\Temp\pytest-of-tian50\pytest-201\test_vabs_to_gmsh_                   
+                    to_vabs_roun0\uh60a.msh                                                                             
+           INFO     Converting                                                                        test_gmsh_io.py:49
+                    C:\Users\tian50\work\dev\sgio\tests\fixtures\vabs\version_4_0\sg21eb_tri3_vabs40.                   
+                    sg to                                                                                               
+                    C:\Users\tian50\AppData\Local\Temp\pytest-of-tian50\pytest-201\test_vabs_to_gmsh_                   
+                    to_vabs_roun0\sg21eb_tri3_vabs40.msh...                                                             
+           INFO     Converting file format...                                                                main.py:498
+           INFO     Reading file...                                                                          main.py:145
+[15:49:26] INFO     Writing file...                                                                          main.py:359
+           INFO     File format converted.                                                                   main.py:538
+           INFO     Successfully created                                                              test_gmsh_io.py:62
+                    C:\Users\tian50\AppData\Local\Temp\pytest-of-tian50\pytest-201\test_vabs_to_gmsh_                   
+                    to_vabs_roun0\sg21eb_tri3_vabs40.msh                                                                
+           INFO     Converting                                                                        test_gmsh_io.py:49
+                    C:\Users\tian50\work\dev\sgio\tests\fixtures\vabs\version_4_0\sg21t_tri3_vabs40.s                   
+                    g to                                                                                                
+                    C:\Users\tian50\AppData\Local\Temp\pytest-of-tian50\pytest-201\test_vabs_to_gmsh_                   
+                    to_vabs_roun0\sg21t_tri3_vabs40.msh...                                                              
+           INFO     Converting file format...                                                                main.py:498
+           INFO     Reading file...                                                                          main.py:145
+           INFO     Writing file...                                                                          main.py:359
+           INFO     File format converted.                                                                   main.py:538
+           INFO     Successfully created                                                              test_gmsh_io.py:62
+                    C:\Users\tian50\AppData\Local\Temp\pytest-of-tian50\pytest-201\test_vabs_to_gmsh_                   
+                    to_vabs_roun0\sg21t_tri3_vabs40.msh                                                                 
+           INFO     Converting                                                                        test_gmsh_io.py:81
+                    C:\Users\tian50\AppData\Local\Temp\pytest-of-tian50\pytest-201\test_vabs_to_gmsh_                   
+                    to_vabs_roun0\uh60a.msh to                                                                          
+                    C:\Users\tian50\AppData\Local\Temp\pytest-of-tian50\pytest-201\test_vabs_to_gmsh_                   
+                    to_vabs_roun0\uh60a_from_gmsh.sg...                                                                 
+           INFO     Converting file format...                                                                main.py:498
+           INFO     Reading file...                                                                          main.py:145
+           INFO     Writing file...                                                                          main.py:359
+           INFO     File format converted.                                                                   main.py:538
+           INFO     Successfully created                                                              test_gmsh_io.py:94
+                    C:\Users\tian50\AppData\Local\Temp\pytest-of-tian50\pytest-201\test_vabs_to_gmsh_                   
+                    to_vabs_roun0\uh60a_from_gmsh.sg                                                                    
+           INFO     SG has 9719 points and 1 cell blocks                                             test_gmsh_io.py:102
+           INFO     Converting file format...                                                                main.py:498
+           INFO     Reading file...                                                                          main.py:145
+           INFO     Writing file...                                                                          main.py:359
+           INFO     File format converted.                                                                   main.py:538
+           INFO     Successfully read                                                                test_gmsh_io.py:201
+                    C:\Users\tian50\work\dev\sgio\tests\fixtures\gmsh\sg33_cube_tetra4_min_gmsh41.ms                    
+                    h                                                                                                   
+           INFO     Mesh has 8 points and 1 cell blocks                                              test_gmsh_io.py:202
+           INFO     property_id values: [np.int64(1)]                                                test_gmsh_io.py:203
+           INFO     Starting merge from layout file:                                                       layout.py:174
+                    C:\Users\tian50\AppData\Local\Temp\pytest-of-tian50\pytest-201\test_merge_section_mesh              
+                    es_from0\blade.csv                                                                                  
+           INFO     Reading section layout CSV:                                                             layout.py:35
+                    C:\Users\tian50\AppData\Local\Temp\pytest-of-tian50\pytest-201\test_merge_section_meshe             
+                    s_from0\blade.csv                                                                                   
+           INFO     Loaded 2 layout rows from                                                               layout.py:53
+                    C:\Users\tian50\AppData\Local\Temp\pytest-of-tian50\pytest-201\test_merge_section_meshe             
+                    s_from0\blade.csv                                                                                   
+           INFO     Merging 2 sections from                                                                 layout.py:71
+                    C:\Users\tian50\AppData\Local\Temp\pytest-of-tian50\pytest-201\test_merge_section_meshe             
+                    s_from0\cs with input_format=gmsh axis=0                                                            
+           INFO     Reading section 1/2: section_a from                                                     layout.py:93
+                    C:\Users\tian50\AppData\Local\Temp\pytest-of-tian50\pytest-201\test_merge_section_meshe             
+                    s_from0\cs\section_a.msh at location=0.0                                                            
+           INFO     Reading file...                                                                          main.py:145
+           INFO     Merged section 1/2: points=3 cell_blocks=1                                             layout.py:112
+           INFO     Reading section 2/2: section_b from                                                     layout.py:93
+                    C:\Users\tian50\AppData\Local\Temp\pytest-of-tian50\pytest-201\test_merge_section_meshe             
+                    s_from0\cs\section_b.msh at location=2.5                                                            
+           INFO     Reading file...                                                                          main.py:145
+           INFO     Merged section 2/2: points=3 cell_blocks=1                                             layout.py:112
+           INFO     Completed merge: total_points=6 total_cell_blocks=2                                    layout.py:152
+           INFO     Writing merged sections to                                                             layout.py:210
+                    C:\Users\tian50\AppData\Local\Temp\pytest-of-tian50\pytest-201\test_merge_section_mesh              
+                    es_from0\blade_merged.msh with output_format=gmsh22                                                 
+           INFO     Writing file...                                                                          main.py:359
+           INFO     Reading section layout CSV:                                                             layout.py:35
+                    C:\Users\tian50\AppData\Local\Temp\pytest-of-tian50\pytest-201\test_read_layout_and_res             
+                    olve_u0\blade.csv                                                                                   
+           INFO     Loaded 1 layout rows from                                                               layout.py:53
+                    C:\Users\tian50\AppData\Local\Temp\pytest-of-tian50\pytest-201\test_read_layout_and_res             
+                    olve_u0\blade.csv                                                                                   
+           INFO     Merging 1 sections from                                                                 layout.py:71
+                    C:\Users\tian50\AppData\Local\Temp\pytest-of-tian50\pytest-201\test_read_layout_and_res             
+                    olve_u0\cs with input_format=gmsh axis=0                                                            
+           INFO     Reading section 1/1: sta-01-0000 from                                                   layout.py:93
+                    C:\Users\tian50\AppData\Local\Temp\pytest-of-tian50\pytest-201\test_read_layout_and_res             
+                    olve_u0\cs\sta-01-0000-refined.msh at location=1.25                                                 
+           INFO     Reading file...                                                                          main.py:145
+           INFO     Merged section 1/1: points=3 cell_blocks=1                                             layout.py:112
+           INFO     Completed merge: total_points=3 total_cell_blocks=1                                    layout.py:152
+           INFO     Reading file...                                                                          main.py:145
+           INFO     Merging 2 sections from C:\Users\tian50\work\dev\sgio\tests\fixtures\vabs\version_4_0   layout.py:71
+                    with input_format=vabs axis=0                                                                       
+           INFO     Reading section 1/2: sg21eb_tri3_vabs40 from                                            layout.py:93
+                    C:\Users\tian50\work\dev\sgio\tests\fixtures\vabs\version_4_0\sg21eb_tri3_vabs40.sg at              
+                    location=0.0                                                                                        
+           INFO     Reading file...                                                                          main.py:145
+           INFO     Merged section 1/2: points=9713 cell_blocks=1                                          layout.py:112
+           INFO     Reading section 2/2: sg21eb_tri3_vabs40 from                                            layout.py:93
+                    C:\Users\tian50\work\dev\sgio\tests\fixtures\vabs\version_4_0\sg21eb_tri3_vabs40.sg at              
+                    location=3.0                                                                                        
+           INFO     Reading file...                                                                          main.py:145
+           INFO     Merged section 2/2: points=9713 cell_blocks=1                                          layout.py:112
+           INFO     Completed merge: total_points=19426 total_cell_blocks=2                                layout.py:152
+           INFO     Reading file...                                                                          main.py:145
+           INFO     Merging 2 sections from C:\Users\tian50\work\dev\sgio\tests\fixtures\swiftcomp with     layout.py:71
+                    input_format=swiftcomp axis=0                                                                       
+           INFO     Reading section 1/2: sg21eb_tri6_sc21 from                                              layout.py:93
+                    C:\Users\tian50\work\dev\sgio\tests\fixtures\swiftcomp\sg21eb_tri6_sc21.sg at                       
+                    location=0.0                                                                                        
+           INFO     Reading file...                                                                          main.py:145
+           INFO     Merged section 1/2: points=4816 cell_blocks=1                                          layout.py:112
+           INFO     Reading section 2/2: sg21eb_tri6_sc21 from                                              layout.py:93
+                    C:\Users\tian50\work\dev\sgio\tests\fixtures\swiftcomp\sg21eb_tri6_sc21.sg at                       
+                    location=1.0                                                                                        
+           INFO     Reading file...                                                                          main.py:145
+           INFO     Merged section 2/2: points=4816 cell_blocks=1                                          layout.py:112
+           INFO     Completed merge: total_points=9632 total_cell_blocks=2                                 layout.py:152
+           INFO     Merging 2 sections from C:\Users\tian50\work\dev\sgio\tests\fixtures\vabs\version_4_0   layout.py:71
+                    with input_format=vabs axis=0                                                                       
+           INFO     Reading section 1/2: sg21eb_tri3_vabs40 from                                            layout.py:93
+                    C:\Users\tian50\work\dev\sgio\tests\fixtures\vabs\version_4_0\sg21eb_tri3_vabs40.sg at              
+                    location=0.0                                                                                        
+           INFO     Reading file...                                                                          main.py:145
+           INFO     Merged section 1/2: points=9713 cell_blocks=1                                          layout.py:112
+           INFO     Reading section 2/2: sg21eb_tri3_vabs40 from                                            layout.py:93
+                    C:\Users\tian50\work\dev\sgio\tests\fixtures\vabs\version_4_0\sg21eb_tri3_vabs40.sg at              
+                    location=3.0                                                                                        
+           INFO     Reading file...                                                                          main.py:145
+           INFO     Merged section 2/2: points=9713 cell_blocks=1                                          layout.py:112
+[15:49:27] INFO     Completed merge: total_points=19426 total_cell_blocks=2                                layout.py:152
+           INFO     Writing merged sections to                                                             layout.py:210
+                    C:\Users\tian50\AppData\Local\Temp\pytest-of-tian50\pytest-201\test_write_merged_secti              
+                    ons_sup0\merged_sections.inp with output_format=abaqus                                              
+           INFO     Wrote merged sections to                                                               layout.py:253
+                    C:\Users\tian50\AppData\Local\Temp\pytest-of-tian50\pytest-201\test_write_merged_secti              
+                    ons_sup0\merged_sections.inp                                                                        
+           INFO     Writing merged sections to                                                             layout.py:210
+                    C:\Users\tian50\AppData\Local\Temp\pytest-of-tian50\pytest-201\test_write_merged_secti              
+                    ons_wri0\element_data_ascii.msh with output_format=gmsh22                                           
+           INFO     Writing file...                                                                          main.py:359
+           INFO     Wrote merged sections to                                                               layout.py:234
+                    C:\Users\tian50\AppData\Local\Temp\pytest-of-tian50\pytest-201\test_write_merged_secti              
+                    ons_wri0\element_data_ascii.msh                                                                     
+           INFO     Merging 2 sections from C:\Users\tian50\work\dev\sgio\tests\fixtures\vabs\version_4_0   layout.py:71
+                    with input_format=vabs axis=0                                                                       
+           INFO     Reading section 1/2: sg21eb_tri3_vabs40 from                                            layout.py:93
+                    C:\Users\tian50\work\dev\sgio\tests\fixtures\vabs\version_4_0\sg21eb_tri3_vabs40.sg at              
+                    location=0.0                                                                                        
+           INFO     Reading file...                                                                          main.py:145
+           INFO     Merged section 1/2: points=9713 cell_blocks=1                                          layout.py:112
+           INFO     Reading section 2/2: sg21eb_tri3_vabs40 from                                            layout.py:93
+                    C:\Users\tian50\work\dev\sgio\tests\fixtures\vabs\version_4_0\sg21eb_tri3_vabs40.sg at              
+                    location=3.0                                                                                        
+           INFO     Reading file...                                                                          main.py:145
+           INFO     Merged section 2/2: points=9713 cell_blocks=1                                          layout.py:112
+           INFO     Completed merge: total_points=19426 total_cell_blocks=2                                layout.py:152
+           INFO     Writing merged sections to                                                             layout.py:210
+                    C:\Users\tian50\AppData\Local\Temp\pytest-of-tian50\pytest-201\test_write_merged_secti              
+                    ons_sup1\merged_sections.sg with output_format=vabs                                                 
+           INFO     Writing file...                                                                          main.py:359
+           INFO     Wrote merged sections to                                                               layout.py:249
+                    C:\Users\tian50\AppData\Local\Temp\pytest-of-tian50\pytest-201\test_write_merged_secti              
+                    ons_sup1\merged_sections.sg                                                                         
+           INFO     Reading file...                                                                          main.py:145
+           INFO     Writing file...                                                                          main.py:359
+           INFO     Reading SwiftComp output model from:                                      test_sc_output_model.py:68
+                    C:\Users\tian50\work\dev\sgio\tests\fixtures\swiftcomp\sg21eb_tri6_sc21.s                           
+                    g.k                                                                                                 
+           INFO     ea = 749500.33                                                            test_sc_output_model.py:80
+           INFO     gj = 8743.8239                                                            test_sc_output_model.py:80
+           INFO     ei22 = 36181.035                                                          test_sc_output_model.py:80
+           INFO     ei33 = 91727.246                                                          test_sc_output_model.py:80
+[16:12:17] INFO     Converting file format...                                                                main.py:498
+           INFO     Reading file...                                                                          main.py:145
+           INFO     Writing file...                                                                          main.py:359
+           INFO     File format converted.                                                                   main.py:538
+           INFO     Conversion completed successfully                                                         app.py:307
+[16:12:18] INFO     Converting file format...                                                                main.py:498
+           INFO     Reading file...                                                                          main.py:145
+           INFO     Writing file...                                                                          main.py:359
+           INFO     File format converted.                                                                   main.py:538
+           INFO     Conversion completed successfully                                                         app.py:307
+[16:12:19] INFO     Converting file format...                                                                main.py:498
+           INFO     Reading file...                                                                          main.py:145
+           INFO     Writing file...                                                                          main.py:359
+           INFO     File format converted.                                                                   main.py:538
+           INFO     Conversion completed successfully                                                         app.py:307
+[16:12:20] INFO     Converting file format...                                                                main.py:498
+           INFO     Reading file...                                                                          main.py:145
+           INFO     Writing file...                                                                          main.py:359
+           INFO     File format converted.                                                                   main.py:538
+           INFO     Conversion completed successfully                                                         app.py:307
+[16:12:21] INFO     Converting file format...                                                                main.py:498
+           INFO     Reading file...                                                                          main.py:145
+           INFO     Writing file...                                                                          main.py:359
+           INFO     File format converted.                                                                   main.py:538
+           INFO     Conversion completed successfully                                                         app.py:307
+[16:12:22] INFO     Converting file format...                                                                main.py:498
+           INFO     Reading file...                                                                          main.py:145
+           INFO     Writing file...                                                                          main.py:359
+           INFO     File format converted.                                                                   main.py:538
+           INFO     Conversion completed successfully                                                         app.py:307
+[16:12:23] INFO     Converting file format...                                                                main.py:498
+           INFO     Reading file...                                                                          main.py:145
+           INFO     Writing file...                                                                          main.py:359
+           INFO     File format converted.                                                                   main.py:538
+           INFO     Conversion completed successfully                                                         app.py:307
+[16:12:24] INFO     Converting file format...                                                                main.py:498
+           INFO     Reading file...                                                                          main.py:145
+           INFO     Writing file...                                                                          main.py:359
+           INFO     File format converted.                                                                   main.py:538
+           INFO     Conversion completed successfully                                                         app.py:307
+[16:12:25] INFO     Converting file format...                                                                main.py:498
+           INFO     Reading file...                                                                          main.py:145
+           INFO     Writing file...                                                                          main.py:359
+           INFO     File format converted.                                                                   main.py:538
+           INFO     Conversion completed successfully                                                         app.py:307
+[16:12:26] INFO     Converting file format...                                                                main.py:498
+           INFO     Reading file...                                                                          main.py:145
+[16:12:27] INFO     Writing file...                                                                          main.py:359
+[16:12:28] INFO     File format converted.                                                                   main.py:538
+           INFO     Conversion completed successfully                                                         app.py:307
+[16:12:29] INFO     Converting file format...                                                                main.py:498
+           INFO     Reading file...                                                                          main.py:145
+           INFO     Writing file...                                                                          main.py:359
+[16:12:30] INFO     File format converted.                                                                   main.py:538
+           INFO     Conversion completed successfully                                                         app.py:307
+[16:12:31] ERROR    Input file not found: C:\Users\tian50\work\dev\sgio\dummy.txt                             app.py:281
+[16:12:31] INFO     Converting C:\Users\tian50\work\dev\sgio\tests\fixtures\abaqus\sg33_cube.inp to test_sc_abaqus.py:64
+                    C:\Users\tian50\work\dev\sgio\tests\_temp\sg33_cube_sc21.sg...                                      
+           INFO     Converting file format...                                                                main.py:498
+           INFO     Reading file...                                                                          main.py:145
+           INFO     Writing file...                                                                          main.py:359
+           INFO     File format converted.                                                                   main.py:538
+           INFO     Converting file format...                                                                main.py:498
+           INFO     Reading file...                                                                          main.py:145
+[16:12:32] INFO     Writing file...                                                                          main.py:359
+           INFO     File format converted.                                                                   main.py:538
+           INFO     Converting file format...                                                                main.py:498
+           INFO     Reading file...                                                                          main.py:145
+[16:12:34] INFO     Writing file...                                                                          main.py:359
+           INFO     File format converted.                                                                   main.py:538
+           INFO     Converting file format...                                                                main.py:498
+           INFO     Reading file...                                                                          main.py:145
+[16:12:35] INFO     Writing file...                                                                          main.py:359
+           INFO     File format converted.                                                                   main.py:538
+           WARNING  Node IDs renumbered to meet SwiftComp format requirements (consecutive from 1)      numbering.py:510
+           WARNING  Node IDs renumbered to meet SwiftComp format requirements (consecutive from 1)      numbering.py:510
+           INFO     Converting                                                                    test_vabs_abaqus.py:66
+                    C:\Users\tian50\work\dev\sgio\tests\fixtures\abaqus\sg2_airfoil.inp to                              
+                    C:\Users\tian50\work\dev\sgio\tests\_temp\sg2_airfoil_vabs41.dat...                                 
+           INFO     Converting file format...                                                                main.py:498
+           INFO     Reading file...                                                                          main.py:145
+[16:12:36] INFO     Writing file...                                                                          main.py:359
+           INFO     File format converted.                                                                   main.py:538
+           INFO     Converting file format...                                                                main.py:498
+           INFO     Reading file...                                                                          main.py:145
+           INFO     Writing file...                                                                          main.py:359
+[16:12:37] INFO     File format converted.                                                                   main.py:538
+           INFO     Converting file format...                                                                main.py:498
+           INFO     Reading file...                                                                          main.py:145
+           INFO     Writing file...                                                                          main.py:359
+           INFO     File format converted.                                                                   main.py:538
+           INFO     Converting file format...                                                                main.py:498
+           INFO     Reading file...                                                                          main.py:145
+           INFO     Writing file...                                                                          main.py:359
+           INFO     File format converted.                                                                   main.py:538
+           INFO     Converting file format...                                                                main.py:498
+           INFO     Reading file...                                                                          main.py:145
+           INFO     Writing file...                                                                          main.py:359
+           INFO     File format converted.                                                                   main.py:538
+           WARNING  Node IDs renumbered to meet VABS format requirements (consecutive from 1)           numbering.py:510
+           WARNING  Node IDs renumbered to meet VABS format requirements (consecutive from 1)           numbering.py:510
+           INFO     Converting                                                                      test_vabs_gmsh.py:51
+                    C:\Users\tian50\work\dev\sgio\tests\fixtures\vabs\version_4_1\isorect.sg to                         
+                    C:\Users\tian50\work\dev\sgio\tests\_temp\isorect.msh...                                            
+           INFO     Converting file format...                                                                main.py:498
+           INFO     Reading file...                                                                          main.py:145
+           INFO     Writing file...                                                                          main.py:359
+           INFO     File format converted.                                                                   main.py:538
+           INFO     Converting                                                                      test_vabs_gmsh.py:51
+                    C:\Users\tian50\work\dev\sgio\tests\fixtures\vabs\version_4_1\uh60a.sg to                           
+                    C:\Users\tian50\work\dev\sgio\tests\_temp\uh60a.msh...                                              
+           INFO     Converting file format...                                                                main.py:498
+           INFO     Reading file...                                                                          main.py:145
+           INFO     Writing file...                                                                          main.py:359
+           INFO     File format converted.                                                                   main.py:538
+           INFO     Converting                                                                      test_vabs_gmsh.py:51
+                    C:\Users\tian50\work\dev\sgio\tests\fixtures\vabs\version_4_0\sg21eb_tri3_vabs4                     
+                    0.sg to C:\Users\tian50\work\dev\sgio\tests\_temp\sg21eb_tri3_vabs40.msh...                         
+           INFO     Converting file format...                                                                main.py:498
+           INFO     Reading file...                                                                          main.py:145
+           INFO     Writing file...                                                                          main.py:359
+[16:12:38] INFO     File format converted.                                                                   main.py:538
+           INFO     Converting                                                                      test_vabs_gmsh.py:51
+                    C:\Users\tian50\work\dev\sgio\tests\fixtures\vabs\version_4_0\sg21t_tri3_vabs40                     
+                    .sg to C:\Users\tian50\work\dev\sgio\tests\_temp\sg21t_tri3_vabs40.msh...                           
+           INFO     Converting file format...                                                                main.py:498
+           INFO     Reading file...                                                                          main.py:145
+           INFO     Writing file...                                                                          main.py:359
+           INFO     File format converted.                                                                   main.py:538
+           INFO     Converting file format...                                                                main.py:498
+           INFO     Reading file...                                                                          main.py:145
+           INFO     Writing file...                                                                          main.py:359
+           INFO     File format converted.                                                                   main.py:538
+           INFO     Converting file format...                                                                main.py:498
+           INFO     Reading file...                                                                          main.py:145
+           INFO     Writing file...                                                                          main.py:359
+           INFO     File format converted.                                                                   main.py:538
+           INFO     Converting file format...                                                                main.py:498
+           INFO     Reading file...                                                                          main.py:145
+           INFO     Writing file...                                                                          main.py:359
+           INFO     File format converted.                                                                   main.py:538
+           INFO     Converting file format...                                                                main.py:498
+           INFO     Reading file...                                                                          main.py:145
+           INFO     Writing file...                                                                          main.py:359
+           INFO     File format converted.                                                                   main.py:538
+[16:12:39] INFO     Converting                                                                        test_gmsh_io.py:49
+                    C:\Users\tian50\work\dev\sgio\tests\fixtures\vabs\version_4_1\isorect.sg to                         
+                    C:\Users\tian50\AppData\Local\Temp\pytest-of-tian50\pytest-204\test_vabs_to_gmsh_                   
+                    to_vabs_roun0\isorect.msh...                                                                        
+           INFO     Converting file format...                                                                main.py:498
+           INFO     Reading file...                                                                          main.py:145
+           INFO     Writing file...                                                                          main.py:359
+           INFO     File format converted.                                                                   main.py:538
+           INFO     Successfully created                                                              test_gmsh_io.py:62
+                    C:\Users\tian50\AppData\Local\Temp\pytest-of-tian50\pytest-204\test_vabs_to_gmsh_                   
+                    to_vabs_roun0\isorect.msh                                                                           
+           INFO     Converting C:\Users\tian50\work\dev\sgio\tests\fixtures\vabs\version_4_1\uh60a.sg test_gmsh_io.py:49
+                    to                                                                                                  
+                    C:\Users\tian50\AppData\Local\Temp\pytest-of-tian50\pytest-204\test_vabs_to_gmsh_                   
+                    to_vabs_roun0\uh60a.msh...                                                                          
+           INFO     Converting file format...                                                                main.py:498
+           INFO     Reading file...                                                                          main.py:145
+           INFO     Writing file...                                                                          main.py:359
+           INFO     File format converted.                                                                   main.py:538
+           INFO     Successfully created                                                              test_gmsh_io.py:62
+                    C:\Users\tian50\AppData\Local\Temp\pytest-of-tian50\pytest-204\test_vabs_to_gmsh_                   
+                    to_vabs_roun0\uh60a.msh                                                                             
+           INFO     Converting                                                                        test_gmsh_io.py:49
+                    C:\Users\tian50\work\dev\sgio\tests\fixtures\vabs\version_4_0\sg21eb_tri3_vabs40.                   
+                    sg to                                                                                               
+                    C:\Users\tian50\AppData\Local\Temp\pytest-of-tian50\pytest-204\test_vabs_to_gmsh_                   
+                    to_vabs_roun0\sg21eb_tri3_vabs40.msh...                                                             
+           INFO     Converting file format...                                                                main.py:498
+           INFO     Reading file...                                                                          main.py:145
+           INFO     Writing file...                                                                          main.py:359
+           INFO     File format converted.                                                                   main.py:538
+           INFO     Successfully created                                                              test_gmsh_io.py:62
+                    C:\Users\tian50\AppData\Local\Temp\pytest-of-tian50\pytest-204\test_vabs_to_gmsh_                   
+                    to_vabs_roun0\sg21eb_tri3_vabs40.msh                                                                
+           INFO     Converting                                                                        test_gmsh_io.py:49
+                    C:\Users\tian50\work\dev\sgio\tests\fixtures\vabs\version_4_0\sg21t_tri3_vabs40.s                   
+                    g to                                                                                                
+                    C:\Users\tian50\AppData\Local\Temp\pytest-of-tian50\pytest-204\test_vabs_to_gmsh_                   
+                    to_vabs_roun0\sg21t_tri3_vabs40.msh...                                                              
+           INFO     Converting file format...                                                                main.py:498
+           INFO     Reading file...                                                                          main.py:145
+           INFO     Writing file...                                                                          main.py:359
+           INFO     File format converted.                                                                   main.py:538
+           INFO     Successfully created                                                              test_gmsh_io.py:62
+                    C:\Users\tian50\AppData\Local\Temp\pytest-of-tian50\pytest-204\test_vabs_to_gmsh_                   
+                    to_vabs_roun0\sg21t_tri3_vabs40.msh                                                                 
+           INFO     Converting                                                                        test_gmsh_io.py:81
+                    C:\Users\tian50\AppData\Local\Temp\pytest-of-tian50\pytest-204\test_vabs_to_gmsh_                   
+                    to_vabs_roun0\uh60a.msh to                                                                          
+                    C:\Users\tian50\AppData\Local\Temp\pytest-of-tian50\pytest-204\test_vabs_to_gmsh_                   
+                    to_vabs_roun0\uh60a_from_gmsh.sg...                                                                 
+           INFO     Converting file format...                                                                main.py:498
+           INFO     Reading file...                                                                          main.py:145
+           INFO     Writing file...                                                                          main.py:359
+[16:12:40] INFO     File format converted.                                                                   main.py:538
+           INFO     Successfully created                                                              test_gmsh_io.py:94
+                    C:\Users\tian50\AppData\Local\Temp\pytest-of-tian50\pytest-204\test_vabs_to_gmsh_                   
+                    to_vabs_roun0\uh60a_from_gmsh.sg                                                                    
+           INFO     SG has 9719 points and 1 cell blocks                                             test_gmsh_io.py:102
+           INFO     Converting file format...                                                                main.py:498
+           INFO     Reading file...                                                                          main.py:145
+           INFO     Writing file...                                                                          main.py:359
+           INFO     File format converted.                                                                   main.py:538
+           INFO     Successfully read                                                                test_gmsh_io.py:201
+                    C:\Users\tian50\work\dev\sgio\tests\fixtures\gmsh\sg33_cube_tetra4_min_gmsh41.ms                    
+                    h                                                                                                   
+           INFO     Mesh has 8 points and 1 cell blocks                                              test_gmsh_io.py:202
+           INFO     property_id values: [np.int64(1)]                                                test_gmsh_io.py:203
+           INFO     Starting merge from layout file:                                                       layout.py:174
+                    C:\Users\tian50\AppData\Local\Temp\pytest-of-tian50\pytest-204\test_merge_section_mesh              
+                    es_from0\blade.csv                                                                                  
+           INFO     Reading section layout CSV:                                                             layout.py:35
+                    C:\Users\tian50\AppData\Local\Temp\pytest-of-tian50\pytest-204\test_merge_section_meshe             
+                    s_from0\blade.csv                                                                                   
+           INFO     Loaded 2 layout rows from                                                               layout.py:53
+                    C:\Users\tian50\AppData\Local\Temp\pytest-of-tian50\pytest-204\test_merge_section_meshe             
+                    s_from0\blade.csv                                                                                   
+           INFO     Merging 2 sections from                                                                 layout.py:71
+                    C:\Users\tian50\AppData\Local\Temp\pytest-of-tian50\pytest-204\test_merge_section_meshe             
+                    s_from0\cs with input_format=gmsh axis=0                                                            
+           INFO     Reading section 1/2: section_a from                                                     layout.py:93
+                    C:\Users\tian50\AppData\Local\Temp\pytest-of-tian50\pytest-204\test_merge_section_meshe             
+                    s_from0\cs\section_a.msh at location=0.0                                                            
+           INFO     Reading file...                                                                          main.py:145
+           INFO     Merged section 1/2: points=3 cell_blocks=1                                             layout.py:112
+           INFO     Reading section 2/2: section_b from                                                     layout.py:93
+                    C:\Users\tian50\AppData\Local\Temp\pytest-of-tian50\pytest-204\test_merge_section_meshe             
+                    s_from0\cs\section_b.msh at location=2.5                                                            
+           INFO     Reading file...                                                                          main.py:145
+           INFO     Merged section 2/2: points=3 cell_blocks=1                                             layout.py:112
+           INFO     Completed merge: total_points=6 total_cell_blocks=2                                    layout.py:152
+           INFO     Writing merged sections to                                                             layout.py:210
+                    C:\Users\tian50\AppData\Local\Temp\pytest-of-tian50\pytest-204\test_merge_section_mesh              
+                    es_from0\blade_merged.msh with output_format=gmsh22                                                 
+           INFO     Writing file...                                                                          main.py:359
+           INFO     Reading section layout CSV:                                                             layout.py:35
+                    C:\Users\tian50\AppData\Local\Temp\pytest-of-tian50\pytest-204\test_read_layout_and_res             
+                    olve_u0\blade.csv                                                                                   
+           INFO     Loaded 1 layout rows from                                                               layout.py:53
+                    C:\Users\tian50\AppData\Local\Temp\pytest-of-tian50\pytest-204\test_read_layout_and_res             
+                    olve_u0\blade.csv                                                                                   
+           INFO     Merging 1 sections from                                                                 layout.py:71
+                    C:\Users\tian50\AppData\Local\Temp\pytest-of-tian50\pytest-204\test_read_layout_and_res             
+                    olve_u0\cs with input_format=gmsh axis=0                                                            
+           INFO     Reading section 1/1: sta-01-0000 from                                                   layout.py:93
+                    C:\Users\tian50\AppData\Local\Temp\pytest-of-tian50\pytest-204\test_read_layout_and_res             
+                    olve_u0\cs\sta-01-0000-refined.msh at location=1.25                                                 
+           INFO     Reading file...                                                                          main.py:145
+           INFO     Merged section 1/1: points=3 cell_blocks=1                                             layout.py:112
+           INFO     Completed merge: total_points=3 total_cell_blocks=1                                    layout.py:152
+           INFO     Reading file...                                                                          main.py:145
+           INFO     Merging 2 sections from C:\Users\tian50\work\dev\sgio\tests\fixtures\vabs\version_4_0   layout.py:71
+                    with input_format=vabs axis=0                                                                       
+           INFO     Reading section 1/2: sg21eb_tri3_vabs40 from                                            layout.py:93
+                    C:\Users\tian50\work\dev\sgio\tests\fixtures\vabs\version_4_0\sg21eb_tri3_vabs40.sg at              
+                    location=0.0                                                                                        
+           INFO     Reading file...                                                                          main.py:145
+           INFO     Merged section 1/2: points=9713 cell_blocks=1                                          layout.py:112
+           INFO     Reading section 2/2: sg21eb_tri3_vabs40 from                                            layout.py:93
+                    C:\Users\tian50\work\dev\sgio\tests\fixtures\vabs\version_4_0\sg21eb_tri3_vabs40.sg at              
+                    location=3.0                                                                                        
+           INFO     Reading file...                                                                          main.py:145
+           INFO     Merged section 2/2: points=9713 cell_blocks=1                                          layout.py:112
+           INFO     Completed merge: total_points=19426 total_cell_blocks=2                                layout.py:152
+           INFO     Reading file...                                                                          main.py:145
+           INFO     Merging 2 sections from C:\Users\tian50\work\dev\sgio\tests\fixtures\swiftcomp with     layout.py:71
+                    input_format=swiftcomp axis=0                                                                       
+           INFO     Reading section 1/2: sg21eb_tri6_sc21 from                                              layout.py:93
+                    C:\Users\tian50\work\dev\sgio\tests\fixtures\swiftcomp\sg21eb_tri6_sc21.sg at                       
+                    location=0.0                                                                                        
+           INFO     Reading file...                                                                          main.py:145
+           INFO     Merged section 1/2: points=4816 cell_blocks=1                                          layout.py:112
+           INFO     Reading section 2/2: sg21eb_tri6_sc21 from                                              layout.py:93
+                    C:\Users\tian50\work\dev\sgio\tests\fixtures\swiftcomp\sg21eb_tri6_sc21.sg at                       
+                    location=1.0                                                                                        
+           INFO     Reading file...                                                                          main.py:145
+           INFO     Merged section 2/2: points=4816 cell_blocks=1                                          layout.py:112
+           INFO     Completed merge: total_points=9632 total_cell_blocks=2                                 layout.py:152
+           INFO     Merging 2 sections from C:\Users\tian50\work\dev\sgio\tests\fixtures\vabs\version_4_0   layout.py:71
+                    with input_format=vabs axis=0                                                                       
+           INFO     Reading section 1/2: sg21eb_tri3_vabs40 from                                            layout.py:93
+                    C:\Users\tian50\work\dev\sgio\tests\fixtures\vabs\version_4_0\sg21eb_tri3_vabs40.sg at              
+                    location=0.0                                                                                        
+           INFO     Reading file...                                                                          main.py:145
+           INFO     Merged section 1/2: points=9713 cell_blocks=1                                          layout.py:112
+           INFO     Reading section 2/2: sg21eb_tri3_vabs40 from                                            layout.py:93
+                    C:\Users\tian50\work\dev\sgio\tests\fixtures\vabs\version_4_0\sg21eb_tri3_vabs40.sg at              
+                    location=3.0                                                                                        
+           INFO     Reading file...                                                                          main.py:145
+           INFO     Merged section 2/2: points=9713 cell_blocks=1                                          layout.py:112
+           INFO     Completed merge: total_points=19426 total_cell_blocks=2                                layout.py:152
+           INFO     Writing merged sections to                                                             layout.py:210
+                    C:\Users\tian50\AppData\Local\Temp\pytest-of-tian50\pytest-204\test_write_merged_secti              
+                    ons_sup0\merged_sections.inp with output_format=abaqus                                              
+           INFO     Wrote merged sections to                                                               layout.py:253
+                    C:\Users\tian50\AppData\Local\Temp\pytest-of-tian50\pytest-204\test_write_merged_secti              
+                    ons_sup0\merged_sections.inp                                                                        
+           INFO     Writing merged sections to                                                             layout.py:210
+                    C:\Users\tian50\AppData\Local\Temp\pytest-of-tian50\pytest-204\test_write_merged_secti              
+                    ons_wri0\element_data_ascii.msh with output_format=gmsh22                                           
+           INFO     Writing file...                                                                          main.py:359
+           INFO     Wrote merged sections to                                                               layout.py:234
+                    C:\Users\tian50\AppData\Local\Temp\pytest-of-tian50\pytest-204\test_write_merged_secti              
+                    ons_wri0\element_data_ascii.msh                                                                     
+           INFO     Merging 2 sections from C:\Users\tian50\work\dev\sgio\tests\fixtures\vabs\version_4_0   layout.py:71
+                    with input_format=vabs axis=0                                                                       
+           INFO     Reading section 1/2: sg21eb_tri3_vabs40 from                                            layout.py:93
+                    C:\Users\tian50\work\dev\sgio\tests\fixtures\vabs\version_4_0\sg21eb_tri3_vabs40.sg at              
+                    location=0.0                                                                                        
+           INFO     Reading file...                                                                          main.py:145
+           INFO     Merged section 1/2: points=9713 cell_blocks=1                                          layout.py:112
+           INFO     Reading section 2/2: sg21eb_tri3_vabs40 from                                            layout.py:93
+                    C:\Users\tian50\work\dev\sgio\tests\fixtures\vabs\version_4_0\sg21eb_tri3_vabs40.sg at              
+                    location=3.0                                                                                        
+           INFO     Reading file...                                                                          main.py:145
+           INFO     Merged section 2/2: points=9713 cell_blocks=1                                          layout.py:112
+           INFO     Completed merge: total_points=19426 total_cell_blocks=2                                layout.py:152
+           INFO     Writing merged sections to                                                             layout.py:210
+                    C:\Users\tian50\AppData\Local\Temp\pytest-of-tian50\pytest-204\test_write_merged_secti              
+                    ons_sup1\merged_sections.sg with output_format=vabs                                                 
+           INFO     Writing file...                                                                          main.py:359
+           INFO     Wrote merged sections to                                                               layout.py:249
+                    C:\Users\tian50\AppData\Local\Temp\pytest-of-tian50\pytest-204\test_write_merged_secti              
+                    ons_sup1\merged_sections.sg                                                                         
+           INFO     Reading file...                                                                          main.py:145
+[16:12:41] INFO     Writing file...                                                                          main.py:359
+           INFO     Reading SwiftComp output model from:                                      test_sc_output_model.py:68
+                    C:\Users\tian50\work\dev\sgio\tests\fixtures\swiftcomp\sg21eb_tri6_sc21.s                           
+                    g.k                                                                                                 
+           INFO     ea = 749500.33                                                            test_sc_output_model.py:80
+           INFO     gj = 8743.8239                                                            test_sc_output_model.py:80
+           INFO     ei22 = 36181.035                                                          test_sc_output_model.py:80
+           INFO     ei33 = 91727.246                                                          test_sc_output_model.py:80

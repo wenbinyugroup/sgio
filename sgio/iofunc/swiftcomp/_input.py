@@ -10,6 +10,7 @@ from ._mesh import (
     write_buffer,
 )
 from ..common import (
+    build_material_id_map,
     read_material_rotation_combinations,
     read_materials as common_read_materials,
     read_material as common_read_material,
@@ -189,10 +190,9 @@ def writeInputBuffer(
         int_fmt=sfi, float_fmt=sff
         )
 
-    # Get material ID mapping for export
-    mat_id_map = sg.get_export_material_ids()
+    mat_id_map = build_material_id_map(sg.materials)
     
-    _writeMOCombos(sg, file, sfi, sff)
+    _writeMOCombos(sg, file, sfi, sff, mat_id_map=mat_id_map)
 
     _writeMaterials(
         dict_materials=sg.materials,
@@ -302,12 +302,12 @@ def _writeMesh(
 
 
 
-def _writeMOCombos(sg, file, sfi, sff):
+def _writeMOCombos(sg, file, sfi, sff, mat_id_map=None):
     """Write material-orientation combinations (SwiftComp format).
     
     Wrapper for common function with SwiftComp-specific comment character.
     """
-    write_material_combos(sg, file, sfi, sff, comment_char='#')
+    write_material_combos(sg, file, sfi, sff, comment_char='#', mat_id_map=mat_id_map)
     return
 
 
@@ -375,8 +375,9 @@ def _writeHeader(sg:StructureGene, file, sfi, sff, version=None):
     if (sg.smdim == 1) or (sg.smdim == 2):
         # model (0: classical/kirchhoff-love, 1: shear refined/mindlin)
         _model_names = {1: {0: 'euler-bernoulli', 1: 'timoshenko'}, 2: {0: 'kirchhoff-love', 1: 'mindlin'}}
-        _model_name = _model_names.get(sg.smdim, {}).get(sg.model, str(sg.model))
-        file.write(ssfi.format(sg.model))
+        model = sg.analysis_config.model
+        _model_name = _model_names.get(sg.smdim, {}).get(model, str(model))
+        file.write(ssfi.format(model))
         file.write(f'  # model ({_model_name})')
         file.write('\n\n')
 
@@ -403,12 +404,12 @@ def _writeHeader(sg:StructureGene, file, sfi, sff, version=None):
 
     # Head
     nums = [
-        sg.physics, sg.ndim_degen_elem, sg.use_elem_local_orient,
-        sg.is_temp_nonuniform
+        sg.analysis_config.physics, sg.ndim_degen_elem, sg.use_elem_local_orient,
+        sg.analysis_config.is_temp_nonuniform
     ]
     cmt = '  # analysis, elem_flag, trans_flag, temp_flag'
     if version > '2.1':
-        nums += [sg.force_flag, sg.steer_flag]
+        nums += [sg.analysis_config.force_flag, sg.analysis_config.steer_flag]
         cmt = cmt + ', force_flag, steer_flag'
     sutl.writeFormatIntegers(file, nums, sfi, newline=False)
     file.write(cmt)

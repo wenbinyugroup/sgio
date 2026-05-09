@@ -18,6 +18,7 @@ from ._mesh_convert import (
     parse_model_type as _parse_model_type,
     restore_sg_from_mesh_extras as _restore_sg_from_mesh_extras,
 )
+from .common import build_material_id_map
 from ._read_output_swiftcomp import read_swiftcomp_output_state as _read_swiftcomp_output_state
 from ._read_output_vabs import read_vabs_output_state as _read_vabs_output_state
 from .utils import (
@@ -172,7 +173,7 @@ def read(
         # smdim must be int; model_type is a string like 'SD1' — parse it.
         smdim, submodel = _parse_model_type(model_type)
         sg = StructureGene(sgdim=sgdim, smdim=smdim)
-        sg.model = submodel
+        sg.analysis_config.model = submodel
     if not sg.mesh:
         sg.mesh, _, _ = _meshio.read(filename, file_format)
 
@@ -397,12 +398,12 @@ def write(
             )
 
         elif file_format.startswith('gmsh'):
-            material_id_map = sg.get_export_material_ids() if sg.mocombos else {}
+            material_id_map = build_material_id_map(sg.materials) if sg.mocombos else {}
             sg_configs = {'sgdim': infer_section_dimension(sg)}
             if sg.smdim is not None:
-                sg_configs['model'] = sg.model
-            sg_configs['do_damping'] = sg.do_damping
-            sg_configs['thermal'] = sg.physics
+                sg_configs['model'] = sg.analysis_config.model
+            sg_configs['do_damping'] = sg.analysis_config.do_damping
+            sg_configs['thermal'] = sg.analysis_config.physics
 
             _gmsh.write_buffer(
                 file,

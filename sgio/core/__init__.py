@@ -1,9 +1,11 @@
 from .builder import build_sg_1d
+from .fe_model import FEModel
 from .mesh import (
     SGMesh,
     check_isolated_nodes,
     renumber_elements,
 )
+from .section import Orientation, Section
 from .numbering import (
     validate_node_ids,
     validate_element_ids,
@@ -22,7 +24,7 @@ from .format_requirements import (
     normalize_format_name,
     get_numbering_requirements,
 )
+from .sg_analysis_config import SGAnalysisConfig
 from .sg import (
     StructureGene,
-    SGMacroModel,
 )

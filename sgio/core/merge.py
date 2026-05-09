@@ -63,7 +63,7 @@ def combine_sg(sg1:StructureGene, sg2:StructureGene) -> StructureGene:
 
     # Combine mocombos (now using material names)
     # --------------------------------------------
-    mocombo_c = copy.deepcopy(sg1.mocombos)
+    mocombo_c = copy.deepcopy(dict(sg1.mocombos.items()))
     cid_map_sg2 = {}  # old_combo_id: new_combo_id
     
     for _cid_old, _combo in sg2.mocombos.items():

@@ -15,6 +15,7 @@ from .material_readers import (
     read_thermal_property,
 )
 from .material_writers import (
+    build_material_id_map,
     write_material_combos,
     write_material,
     write_materials,
@@ -28,6 +29,7 @@ __all__ = [
     'read_material',
     'read_elastic_property',
     'read_thermal_property',
+    'build_material_id_map',
     'write_material_combos',
     'write_material',
     'write_materials',

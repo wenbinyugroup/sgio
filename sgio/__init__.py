@@ -13,6 +13,10 @@ from ._exceptions import (
 )
 
 from .core import (
+    FEModel,
+    Orientation,
+    SGAnalysisConfig,
+    Section,
     StructureGene,
     SGMesh,
     check_isolated_nodes,
@@ -91,7 +95,11 @@ __all__ = [
     # Core functions and classes
     "build_sg_1d",
     "combine_sg",
+    "FEModel",
+    "Orientation",
+    "SGAnalysisConfig",
     "SGMesh",
+    "Section",
     "StructureGene",
     "check_isolated_nodes",
     "renumber_elements",

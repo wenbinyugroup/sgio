@@ -60,12 +60,12 @@ def read_input_buffer(file, format_version:str, model:int|str):
     # Read head
     configs = _readHeader(file, format_version, smdim)
     sg.sgdim = configs['sgdim']
-    sg.physics = configs['physics']
-    sg.do_dampling = configs.get('do_damping', 0)
+    sg.analysis_config.physics = configs['physics']
+    sg.analysis_config.do_damping = configs.get('do_damping', 0)
     _use_elem_local_orient = configs.get('use_elem_local_orient', 0)
-    sg.is_temp_nonuniform = configs.get('is_temp_nonuniform', 0)
+    sg.analysis_config.is_temp_nonuniform = configs.get('is_temp_nonuniform', 0)
     if smdim != 3:
-        sg.model = configs['model']
+        sg.analysis_config.model = configs['model']
         if smdim == 1:
             init_curvs = configs.get('curvature', [0.0, 0.0, 0.0])
             sg.initial_twist = init_curvs[0]
@@ -85,14 +85,14 @@ def read_input_buffer(file, format_version:str, model:int|str):
 
     # Read materials (now returns materials and name-ID pairs)
     nmate = configs['num_materials']
-    materials_temp, material_name_id_pairs = _readMaterials(file, nmate, sg.physics)
-    
-    # Store materials and name-ID pairs
+    materials_temp, material_id_pairs = _readMaterials(
+        file, nmate, sg.analysis_config.physics
+    )
+
     sg.materials = materials_temp
-    sg.material_name_id_pairs = material_name_id_pairs
-    
-    # Create ID to name mapping from material_name_id_pairs
-    id_to_name = {mat_id: name for name, mat_id in material_name_id_pairs}
+
+    # Create ID to name mapping from local reader state.
+    id_to_name = {mat_id: name for name, mat_id in material_id_pairs}
     
     # Convert mocombos to use material names instead of IDs
     sg.mocombos = {}
@@ -252,7 +252,7 @@ def write_buffer(
 
     if analysis == 'h':
         writeInputBuffer(
-            sg, file, analysis, sg.physics,
+            sg, file, analysis, sg.analysis_config.physics,
             model_space, prop_ref_y,
             sfi=sfi, sff=sff, version=version)
 
@@ -266,7 +266,7 @@ def write_buffer(
             file=file,
             model=model,
             analysis=analysis,
-            physics=sg.physics,
+            physics=sg.analysis_config.physics,
             load_type=load_type,
             macro_responses=macro_responses,
             dict_materials=materials,

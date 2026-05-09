@@ -111,9 +111,12 @@ def build_sg_1d(
 
                 sg.materials[_lyr_m_name] = m
 
-            # Create new combo with material name
-            cid = len(sg.mocombos) + 1
-            sg.mocombos[cid] = (_lyr_m_name, _lyr_ipo)
+            section = sg.add_section(
+                name=f"section_{len(sg.sections) + 1}",
+                material=_lyr_m_name,
+                orientation=_lyr_ipo,
+            )
+            cid = int(section.property_id)
             
         layer['mocombo'] = cid
         lyr_thk = _lyr_ply_thk * _lyr_np
@@ -124,7 +127,7 @@ def build_sg_1d(
     # Global model settings
     # ----------------------------------------------------------------
     sg.smdim = smdl.getModelDim(model)
-    sg.model = int(model[2:]) - 1  # model (0: classical, 1: shear refined)
+    sg.analysis_config.model = int(model[2:]) - 1  # model (0: classical, 1: shear refined)
     sg.trans_element = 1  # Always include element orientation data
     # sg.geo_correct = geo_correct
     sg.initial_curvature = [k11, k22]
@@ -141,12 +144,12 @@ def build_sg_1d(
     # Analysis settings
     # ----------------------------------------------------------------
     if isinstance(physics, str):
-        sg.physics = {
+        sg.analysis_config.physics = {
             'elastic': 0,
             'thermoelastic': 1
         }[physics]
     else:
-        sg.physics = physics
+        sg.analysis_config.physics = physics
     # sg.degen_element = 0
     # sg.trans_element = 0
     # sg.nonuniform_temperature = 0

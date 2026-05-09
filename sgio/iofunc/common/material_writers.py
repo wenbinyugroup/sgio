@@ -17,12 +17,29 @@ from sgio.core.sg import StructureGene
 logger = logging.getLogger(__name__)
 
 
+def build_material_id_map(dict_materials: dict[str, smdl.CauchyContinuumModel]) -> dict[str, int]:
+    """Build a sequential export ID map for materials.
+
+    Parameters
+    ----------
+    dict_materials : dict[str, CauchyContinuumModel]
+        Materials indexed by material name.
+
+    Returns
+    -------
+    dict[str, int]
+        Mapping from material name to 1-based export ID.
+    """
+    return {name: idx + 1 for idx, name in enumerate(dict_materials)}
+
+
 def write_material_combos(
     sg: StructureGene,
     file: TextIO,
     sfi: str = '8d',
     sff: str = '20.12e',
-    comment_char: str = '!'
+    comment_char: str = '!',
+    mat_id_map: dict[str, int] | None = None,
 ) -> None:
     """Write material-orientation combinations to file.
     
@@ -38,12 +55,15 @@ def write_material_combos(
         String format for floats.
     comment_char : str
         Comment character ('!' for VABS, '#' for SwiftComp).
+    mat_id_map : dict[str, int], optional
+        Mapping from material name to numeric export ID. If omitted,
+        a sequential map is built from ``sg.materials``.
     """
     ssfi = '{:' + sfi + '}'
     ssff = '{:' + sff + '}'
-    
-    # Get material name -> ID mapping for export
-    mat_id_map = sg.get_export_material_ids()
+
+    if mat_id_map is None:
+        mat_id_map = build_material_id_map(sg.materials)
     
     count = 0
     for cid, combo in sg.mocombos.items():
@@ -219,7 +239,7 @@ def write_materials(
     
     # Use provided ID map or create default sequential mapping
     if mat_id_map is None:
-        mat_id_map = {name: idx + 1 for idx, name in enumerate(dict_materials.keys())}
+        mat_id_map = build_material_id_map(dict_materials)
     
     for mat_name, m in dict_materials.items():
         mid = mat_id_map[mat_name]
