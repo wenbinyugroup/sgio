@@ -28,7 +28,7 @@ from ._common import (
     _read_data,
     _read_physical_names,
     _write_data,
-    _write_physical_names,
+    _write_physical_names,  # binary path; ASCII uses _write_physical_names_ascii below
 )
 from meshio._common import warn, raw_from_cell_data
 
@@ -82,7 +82,10 @@ def write_buffer(file, mesh, float_fmt=".16e", binary=False, **kwargs):
         file.write("$EndMeshFormat\n")
 
     if mesh.field_data:
-        _write_physical_names(file, mesh.field_data)
+        if binary:
+            _write_physical_names(file, mesh.field_data)
+        else:
+            _write_physical_names_ascii(file, mesh.field_data)
 
     _write_nodes(file, mesh.points, float_fmt, binary)
     _write_elements(file, mesh.cells, tag_data, binary)
@@ -98,6 +101,34 @@ def write_buffer(file, mesh, float_fmt=".16e", binary=False, **kwargs):
     # Write cell_point_data (element nodal data) to ElementNodeData sections
     if hasattr(mesh, 'cell_point_data') and mesh.cell_point_data:
         _write_cell_point_data(file, mesh, binary)
+
+
+def _write_physical_names_ascii(fh, field_data: dict) -> None:
+    """Write ``$PhysicalNames`` block in ASCII (text) mode.
+
+    The meshio counterpart (``meshio.gmsh.common._write_physical_names``)
+    always writes bytes, which is incompatible with a text-mode file handle.
+    This local variant mirrors its semantics but emits plain strings.
+    """
+    entries: list[tuple[int, int, str]] = []
+    for phys_name in field_data:
+        try:
+            phys_num, phys_dim = field_data[phys_name]
+            phys_num, phys_dim = int(phys_num), int(phys_dim)
+        except (ValueError, TypeError):
+            warn("Field data contains entry that cannot be processed.")
+            continue
+        entries.append((phys_dim, phys_num, phys_name))
+
+    if not entries:
+        return
+
+    entries.sort()
+    fh.write("$PhysicalNames\n")
+    fh.write(f"{len(entries)}\n")
+    for dim, num, name in entries:
+        fh.write(f'{dim} {num} "{name}"\n')
+    fh.write("$EndPhysicalNames\n")
 
 
 def _write_nodes(fh, points, float_fmt, binary):
