@@ -7,18 +7,13 @@ and BaseFormatWriter abstract base classes for VABS format I/O operations.
 from __future__ import annotations
 
 from typing import Any, Optional
-import io
-
 from ..base import BaseFormatReader, BaseFormatWriter
 from sgio.core.sg import StructureGene
 import sgio._global as GLOBAL
 import sgio.model as smdl
 
-from .main import (
-    read_buffer,
-    read_output_buffer,
-    write_buffer,
-)
+from .main import read_buffer, write_buffer
+from .output import read_output_buffer
 
 
 class VABSReader(BaseFormatReader):

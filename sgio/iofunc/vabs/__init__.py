@@ -23,9 +23,9 @@ from ._output import (
 )
 from .main import (
     read_buffer,
-    read_output_buffer,
     write_buffer,
 )
+from .output import read_output_buffer
 from .adapter import (
     VABSReader,
     VABSWriter,
