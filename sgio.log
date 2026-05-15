@@ -1317,3 +1317,19 @@
            INFO     File format converted.                                                                   main.py:524
            WARNING  Node IDs renumbered to meet SwiftComp format requirements (consecutive from 1)      numbering.py:510
            WARNING  Node IDs renumbered to meet SwiftComp format requirements (consecutive from 1)      numbering.py:510
+[18:21:08] INFO     Converting file format...                                                                main.py:484
+           INFO     Reading file...                                                                          main.py:141
+           INFO     Writing file...                                                                          main.py:355
+           INFO     File format converted.                                                                   main.py:524
+           INFO     Converting file format...                                                                main.py:484
+           INFO     Reading file...                                                                          main.py:141
+           INFO     Writing file...                                                                          main.py:355
+[18:21:09] INFO     File format converted.                                                                   main.py:524
+           INFO     Converting file format...                                                                main.py:484
+           INFO     Reading file...                                                                          main.py:141
+           INFO     Writing file...                                                                          main.py:355
+[18:21:10] INFO     File format converted.                                                                   main.py:524
+           INFO     Converting file format...                                                                main.py:484
+           INFO     Reading file...                                                                          main.py:141
+[18:21:11] INFO     Writing file...                                                                          main.py:355
+[18:21:12] INFO     File format converted.                                                                   main.py:524

@@ -7,32 +7,23 @@ The conversion extracts only the mesh data (nodes and elements) without
 material properties, making it suitable for quick visualization.
 """
 import sgio
-from pathlib import Path
 
-# Define file paths
-files_dir = Path(__file__).parent / 'files'
-input_file = files_dir / 'cs_box_t_vabs41.sg'
-output_file = files_dir / 'cs_box_t_vabs41.msh'
-
-# Check if input file exists
-if not input_file.exists():
-    print(f"Error: Input file not found: {input_file}")
-    print("Please ensure the file exists in the examples/files/ directory")
-    exit(1)
+input_file = 'cs_box_t_vabs41.sg'
+output_file = 'cs_box_t_vabs41.msh'
 
 print("=" * 60)
 print("Converting VABS Mesh to Gmsh Format")
 print("=" * 60)
-print(f"Input:  {input_file.name}")
-print(f"Output: {output_file.name}")
+print(f"Input:  {input_file}")
+print(f"Output: {output_file}")
 print("=" * 60)
 
 # Convert VABS file to Gmsh format
 # - mesh_only=True: Only convert mesh data (no materials)
 # - model_type='BM2': Timoshenko beam model (required for VABS reading)
 sg = sgio.convert(
-    str(input_file),
-    str(output_file),
+    input_file,
+    output_file,
     file_format_in='vabs',
     file_format_out='gmsh',
     model_type='BM2',

@@ -8,6 +8,10 @@ import logging
 import numpy as np
 
 import sgio.utils as sutl
+from sgio.core.property_ref_csys import (
+    property_ref_value_to_vabs_theta,
+    vabs_theta_to_property_ref_csys,
+)
 
 from sgio.core.mesh import SGMesh
 from sgio.iofunc._meshio import (
@@ -192,7 +196,7 @@ def _read_property_id_ref_csys(file, nelem, cells, elem_id_to_cell_id, format_fl
 
         elem_id = int(line[0])
         prop_id = int(line[1])
-        elem_csys = sutl.fortran_float(line[2])
+        elem_csys = vabs_theta_to_property_ref_csys(sutl.fortran_float(line[2]))
 
         cell_block_id, cell_id = elem_id_to_cell_id[elem_id]
 
@@ -200,7 +204,7 @@ def _read_property_id_ref_csys(file, nelem, cells, elem_id_to_cell_id, format_fl
             _ncell = len(cells[cell_block_id][1])
             # print('_ncell =', _ncell)
             cell_prop_id.append(np.zeros(_ncell, dtype=int))
-            cell_csys.append(np.zeros(_ncell))
+            cell_csys.append(np.zeros((_ncell, 9), dtype=float))
 
         # print(cell_csys[cell_block_id][cell_id])
 
@@ -481,33 +485,8 @@ def _write_property_id_ref_csys(
             elem_id = int(elem_ids[i][j])
 
             try:
-                theta_1 = cell_csys[i][j]
-                if not isinstance(theta_1, float):
-                    # Calculate theta_1 from the csys
-                    _csys = theta_1
-                    # _vx2 = np.array([1, 0, 0])
-
-                    _vy2 = np.array(_csys[:3])
-                    # logger.debug(f'_vy2 = {_vy2}')
-
-                    # Method 1
-                    # _cos_theta_1 = np.dot(_vx2, _vy2) / (np.linalg.norm(_vx2) * np.linalg.norm(_vy2))
-                    # print(f'_cos_theta_1 = {_cos_theta_1}')
-                    # theta_1 = np.rad2deg(np.arccos(_cos_theta_1))
-                    # print(f'theta_1 = {theta_1}')
-
-                    # Method 2
-                    if model_space == 'xy':
-                        theta_1 = np.rad2deg(np.arctan2(_vy2[1], _vy2[0]))
-                    elif model_space == 'yz':
-                        theta_1 = np.rad2deg(np.arctan2(_vy2[2], _vy2[1]))
-                    elif model_space == 'zx':
-                        theta_1 = np.rad2deg(np.arctan2(_vy2[0], _vy2[2]))
-                    else:
-                        raise ValueError(f'Invalid model space: {model_space}')
-                    # print(f'theta_1 = {theta_1}')
-
-            except TypeError:
+                theta_1 = property_ref_value_to_vabs_theta(cell_csys[i][j])
+            except (IndexError, TypeError, ValueError):
                 theta_1 = 0
 
             _nums = [elem_id, prop_id, theta_1]
