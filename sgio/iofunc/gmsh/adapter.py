@@ -7,17 +7,14 @@ and BaseFormatWriter abstract base classes for Gmsh format I/O operations.
 from __future__ import annotations
 
 from typing import Any, Optional
-import io
 
 from ..base import BaseFormatReader, BaseFormatWriter
 from sgio.core.sg import StructureGene
 
-from ._gmsh import (
-    read_buffer,
-    write_buffer,
-)
-from ..common import build_material_id_map
-from ..utils import infer_section_dimension
+from .mapper_in import map_input_to_mesh
+from .mapper_out import map_model_to_write_payload
+from .parser import parse_input_buffer
+from .writer import write_input_payload
 
 
 class GmshReader(BaseFormatReader):
@@ -61,9 +58,10 @@ class GmshReader(BaseFormatReader):
         """
         if isinstance(file_path_or_buffer, str):
             with open(file_path_or_buffer, 'rb') as f:
-                return read_buffer(f, format_version=format_version, **kwargs)
+                parsed = parse_input_buffer(f, format_version=format_version)
         else:
-            return read_buffer(file_path_or_buffer, format_version=format_version, **kwargs)
+            parsed = parse_input_buffer(file_path_or_buffer, format_version=format_version)
+        return map_input_to_mesh(parsed)
     
     def read_output(
         self,
@@ -174,53 +172,22 @@ class GmshWriter(BaseFormatWriter):
         binary : bool, optional
             Write in binary format, by default True.
         """
-        mesh, gmsh_kwargs = self._unpack_model(model_obj, sgdim, kwargs)
+        payload = map_model_to_write_payload(
+            model_obj,
+            format_version=format_version,
+            float_fmt=float_fmt,
+            sgdim=sgdim,
+            mesh_only=mesh_only,
+            binary=binary,
+            **kwargs,
+        )
 
         if isinstance(destination, str):
             open_mode = 'wb' if binary else 'w'
             with open(destination, open_mode) as f:
-                write_buffer(
-                    f, mesh, format_version=format_version,
-                    float_fmt=float_fmt,
-                    mesh_only=mesh_only, binary=binary, **gmsh_kwargs
-                )
+                write_input_payload(f, payload)
         else:
-            write_buffer(
-                destination, mesh, format_version=format_version,
-                float_fmt=float_fmt,
-                mesh_only=mesh_only, binary=binary, **gmsh_kwargs
-            )
-
-    @staticmethod
-    def _unpack_model(model_obj, sgdim, extra_kwargs):
-        """Extract mesh + Gmsh-specific configs from a model object.
-
-        Returns a ``(mesh, kwargs)`` tuple where ``kwargs`` is a merged
-        dictionary forwarded to :func:`write_buffer`.
-        """
-        gmsh_kwargs = dict(extra_kwargs)
-
-        # Bare mesh path: nothing to unpack.
-        if not isinstance(model_obj, StructureGene):
-            gmsh_kwargs.setdefault('sgdim', sgdim if sgdim is not None else 2)
-            return model_obj, gmsh_kwargs
-
-        sg = model_obj
-        material_id_map = build_material_id_map(sg.materials) if sg.mocombos else {}
-        resolved_sgdim = sgdim if sgdim is not None else infer_section_dimension(sg)
-        sg_configs = {'sgdim': resolved_sgdim}
-        if sg.smdim is not None:
-            sg_configs['model'] = sg.analysis_config.model
-        sg_configs['do_damping'] = sg.analysis_config.do_damping
-        sg_configs['thermal'] = sg.analysis_config.physics
-
-        gmsh_kwargs.setdefault('sgdim', resolved_sgdim)
-        gmsh_kwargs.setdefault(
-            'mocombos', sg.mocombos if sg.mocombos else None
-        )
-        gmsh_kwargs.setdefault('material_id_map', material_id_map)
-        gmsh_kwargs.setdefault('sg_configs', sg_configs)
-        return sg.mesh, gmsh_kwargs
+            write_input_payload(destination, payload)
     
     def write_output(
         self,
