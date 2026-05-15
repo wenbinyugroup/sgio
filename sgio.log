@@ -1270,3 +1270,50 @@
            WARNING  Node IDs renumbered to meet SwiftComp format requirements (consecutive from 1)      numbering.py:510
            WARNING  Node IDs renumbered to meet VABS format requirements (consecutive from 1)           numbering.py:510
            WARNING  Node IDs renumbered to meet SwiftComp format requirements (consecutive from 1)      numbering.py:510
+[14:22:24] INFO     Reading file...                                                                          main.py:141
+           INFO     Writing file...                                                                          main.py:355
+           INFO     Converting                                                                    test_vabs_abaqus.py:66
+                    C:\Users\tian50\work\dev\sgio\tests\fixtures\abaqus\sg2_airfoil.inp to                              
+                    C:\Users\tian50\work\dev\sgio\tests\_temp\sg2_airfoil_vabs41.dat...                                 
+           INFO     Converting file format...                                                                main.py:484
+           INFO     Reading file...                                                                          main.py:141
+[14:22:25] INFO     Writing file...                                                                          main.py:355
+           INFO     File format converted.                                                                   main.py:524
+           INFO     Converting file format...                                                                main.py:484
+           INFO     Reading file...                                                                          main.py:141
+           INFO     Writing file...                                                                          main.py:355
+           INFO     File format converted.                                                                   main.py:524
+           INFO     Converting file format...                                                                main.py:484
+           INFO     Reading file...                                                                          main.py:141
+           INFO     Writing file...                                                                          main.py:355
+           INFO     File format converted.                                                                   main.py:524
+           INFO     Converting file format...                                                                main.py:484
+           INFO     Reading file...                                                                          main.py:141
+           INFO     Writing file...                                                                          main.py:355
+           INFO     File format converted.                                                                   main.py:524
+           INFO     Converting file format...                                                                main.py:484
+           INFO     Reading file...                                                                          main.py:141
+[14:22:26] INFO     Writing file...                                                                          main.py:355
+           INFO     File format converted.                                                                   main.py:524
+           WARNING  Node IDs renumbered to meet VABS format requirements (consecutive from 1)           numbering.py:510
+           WARNING  Node IDs renumbered to meet VABS format requirements (consecutive from 1)           numbering.py:510
+           INFO     Converting C:\Users\tian50\work\dev\sgio\tests\fixtures\abaqus\sg33_cube.inp to test_sc_abaqus.py:64
+                    C:\Users\tian50\work\dev\sgio\tests\_temp\sg33_cube_sc21.sg...                                      
+           INFO     Converting file format...                                                                main.py:484
+           INFO     Reading file...                                                                          main.py:141
+           INFO     Writing file...                                                                          main.py:355
+           INFO     File format converted.                                                                   main.py:524
+           INFO     Converting file format...                                                                main.py:484
+           INFO     Reading file...                                                                          main.py:141
+           INFO     Writing file...                                                                          main.py:355
+           INFO     File format converted.                                                                   main.py:524
+           INFO     Converting file format...                                                                main.py:484
+           INFO     Reading file...                                                                          main.py:141
+[14:22:28] INFO     Writing file...                                                                          main.py:355
+           INFO     File format converted.                                                                   main.py:524
+           INFO     Converting file format...                                                                main.py:484
+           INFO     Reading file...                                                                          main.py:141
+[14:22:29] INFO     Writing file...                                                                          main.py:355
+           INFO     File format converted.                                                                   main.py:524
+           WARNING  Node IDs renumbered to meet SwiftComp format requirements (consecutive from 1)      numbering.py:510
+           WARNING  Node IDs renumbered to meet SwiftComp format requirements (consecutive from 1)      numbering.py:510
