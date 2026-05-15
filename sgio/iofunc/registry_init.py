@@ -62,6 +62,9 @@ def register_all_formats():
     registry.register_reader('abaqus', abaqus_reader)
     registry.register_writer('abaqus', abaqus_writer)
 
+    # Aliases (short / alternate spellings).
+    registry.register_alias('sc', 'swiftcomp')
+
 
 # Automatically register all formats when this module is imported
 register_all_formats()

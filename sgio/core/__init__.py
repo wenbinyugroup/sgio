@@ -3,7 +3,6 @@ from .fe_model import FEModel
 from .mesh import (
     SGMesh,
     check_isolated_nodes,
-    renumber_elements,
 )
 from .section import Orientation, Section
 from .numbering import (
@@ -15,6 +14,7 @@ from .numbering import (
     auto_renumber_for_format,
     check_duplicate_ids,
     check_forbidden_ids,
+    renumber_elements,
 )
 
 from .format_requirements import (

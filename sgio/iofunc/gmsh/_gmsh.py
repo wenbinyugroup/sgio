@@ -9,7 +9,7 @@ from . import _gmsh22
 # from . import _gmsh40
 from . import _gmsh41
 from ._common import _fast_forward_to_end_block
-from sgio.iofunc._meshio import ReadError
+from meshio._exceptions import ReadError
 
 logger = logging.getLogger(__name__)
 

@@ -11,6 +11,7 @@ import io
 
 from ..base import BaseFormatReader, BaseFormatWriter
 from sgio.core.sg import StructureGene
+import sgio._global as GLOBAL
 import sgio.model as smdl
 
 from .main import (
@@ -180,12 +181,12 @@ class VABSWriter(BaseFormatWriter):
     
     def __init__(self):
         """Initialize VABS writer."""
-        super().__init__('vabs')
-    
+        super().__init__('vabs', default_version=GLOBAL.VABS_VERSION_DEFAULT)
+
     def write_input(
         self,
-        file_path_or_buffer,
-        sg: StructureGene,
+        destination,
+        model_obj,
         analysis: str = 'h',
         sg_fmt: int = 1,
         model: int = 0,
@@ -195,6 +196,7 @@ class VABSWriter(BaseFormatWriter):
         sfi: str = '8d',
         sff: str = '20.12e',
         version: Optional[str] = None,
+        mesh_only: bool = False,
         **kwargs
     ) -> None:
         """Write VABS input file.
@@ -228,21 +230,25 @@ class VABSWriter(BaseFormatWriter):
         """
         if macro_responses is None:
             macro_responses = []
-        
-        if isinstance(file_path_or_buffer, str):
-            with open(file_path_or_buffer, 'w') as f:
+        if not version:
+            version = self.default_version
+
+        if isinstance(destination, str):
+            with open(destination, 'w', encoding='utf-8') as f:
                 write_buffer(
-                    sg, f, analysis=analysis, sg_fmt=sg_fmt, model=model,
+                    model_obj, f, analysis=analysis, sg_fmt=sg_fmt, model=model,
                     model_space=model_space, prop_ref_y=prop_ref_y,
                     macro_responses=macro_responses,
-                    sfi=sfi, sff=sff, version=version, **kwargs
+                    sfi=sfi, sff=sff, version=version,
+                    mesh_only=mesh_only, **kwargs
                 )
         else:
             write_buffer(
-                sg, file_path_or_buffer, analysis=analysis, sg_fmt=sg_fmt, model=model,
+                model_obj, destination, analysis=analysis, sg_fmt=sg_fmt, model=model,
                 model_space=model_space, prop_ref_y=prop_ref_y,
                 macro_responses=macro_responses,
-                sfi=sfi, sff=sff, version=version, **kwargs
+                sfi=sfi, sff=sff, version=version,
+                mesh_only=mesh_only, **kwargs
             )
     
     def write_output(

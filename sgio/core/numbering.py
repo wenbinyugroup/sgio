@@ -609,6 +609,49 @@ def _renumber_elements_sequential(mesh, requirements: FormatNumberingRequirement
         eid += count
 
 
+def renumber_elements(mesh) -> None:
+    """Renumber elements sequentially starting from 1.
+
+    Renumbers all element IDs in the mesh to consecutive integers starting
+    from 1, ordered by cell block. Modifies the mesh in-place.
+
+    Parameters
+    ----------
+    mesh : SGMesh
+        Mesh object to renumber. Must have ``cell_data['element_id']``.
+
+    Raises
+    ------
+    ValueError
+        If mesh does not have cell_data or cell_data['element_id'].
+
+    Examples
+    --------
+    >>> mesh = SGMesh(points, cells, cell_data={'element_id': [[10, 20, 30]]})
+    >>> renumber_elements(mesh)
+    >>> print(mesh.cell_data['element_id'])
+    [[1, 2, 3]]
+    """
+    if not hasattr(mesh, 'cell_data') or mesh.cell_data is None:
+        raise ValueError(
+            "Mesh does not have cell_data. Cannot renumber elements without cell_data."
+        )
+
+    if 'element_id' not in mesh.cell_data:
+        raise ValueError(
+            "Mesh cell_data does not contain 'element_id'. "
+            "Element IDs must exist before renumbering. "
+            "Consider using ensure_element_ids() to generate element IDs first."
+        )
+
+    eid = 0
+    for cb_id, _cb in enumerate(mesh.cell_data['element_id']):
+        count = np.asarray(_cb).shape[0]
+        element_ids = np.arange(eid + 1, eid + 1 + count, dtype=int)
+        mesh.cell_data['element_id'][cb_id] = element_ids
+        eid += count
+
+
 def check_duplicate_ids(ids: Union[List[int], ArrayLike], id_type: str = 'ID') -> List[int]:
     """Check for duplicate IDs in a list.
     

@@ -2,7 +2,8 @@ from __future__ import annotations
 
 import logging
 import numpy as np
-from meshio import CellBlock
+
+from sgio.core.mesh import CellBlock
 from meshio.gmsh._gmsh22 import (
     c_int,
     c_double,
@@ -29,10 +30,7 @@ from ._common import (
     _write_data,
     _write_physical_names,
 )
-from sgio.iofunc._meshio import (
-    warn,
-    raw_from_cell_data,
-)
+from meshio._common import warn, raw_from_cell_data
 
 
 def write_buffer(file, mesh, float_fmt=".16e", binary=False, **kwargs):

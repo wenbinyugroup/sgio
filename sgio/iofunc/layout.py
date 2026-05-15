@@ -9,10 +9,15 @@ from typing import Any, Iterable
 
 import meshio
 import numpy as np
-from meshio import CellBlock, Mesh
 
 from sgio.core import StructureGene
-from sgio.core.mesh import SGMesh, get_cell_data_arrays, merge_field_data
+from sgio.core.mesh import (
+    CellBlock,
+    Mesh,
+    SGMesh,
+    get_cell_data_arrays,
+    merge_field_data,
+)
 from sgio.iofunc.gmsh._common import build_geometrical_tags
 from sgio.iofunc.utils import infer_section_dimension, resolve_section_path
 

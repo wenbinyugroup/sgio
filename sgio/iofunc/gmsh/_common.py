@@ -18,10 +18,7 @@ from meshio._common import (
     num_nodes_per_cell,
     cell_data_from_raw,
 )
-
-from sgio.iofunc._meshio import (
-    WriteError
-)
+from meshio._exceptions import WriteError
 
 
 def _to_ascii_scalar(value):

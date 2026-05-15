@@ -16,6 +16,8 @@ from ._gmsh import (
     read_buffer,
     write_buffer,
 )
+from ..common import build_material_id_map
+from ..utils import infer_section_dimension
 
 
 class GmshReader(BaseFormatReader):
@@ -139,50 +141,86 @@ class GmshWriter(BaseFormatWriter):
     
     def write_input(
         self,
-        file_path_or_buffer,
-        mesh: Any,
+        destination,
+        model_obj,
         format_version: str = '4.1',
         float_fmt: str = '.16e',
-        sgdim: int = 2,
+        sgdim: Optional[int] = None,
         mesh_only: bool = True,
         binary: bool = True,
         **kwargs
     ) -> None:
         """Write Gmsh mesh file.
-        
+
+        Accepts either a bare mesh object (``SGMesh`` / ``meshio.Mesh``) or a
+        ``StructureGene`` — for the latter the writer extracts mesh, mocombos
+        and analysis configs itself.
+
         Parameters
         ----------
-        file_path_or_buffer : str or file-like
-            Path to file or file buffer to write to.
-            Note: File must be opened in binary mode ('wb').
-        mesh : meshio.Mesh
-            Mesh object to write.
+        destination : str or file-like
+            Path to file or file buffer to write to. Binary mode required for
+            file objects.
+        model_obj : StructureGene or SGMesh or meshio.Mesh
+            IR object to write.
         format_version : str, optional
             Format version ('2.2' or '4.1'), by default '4.1'.
         float_fmt : str, optional
             Float format string, by default '.16e'.
         sgdim : int, optional
-            Structure gene dimension, by default 2.
+            Structure gene dimension. If ``None``, inferred from the SG.
         mesh_only : bool, optional
             Write mesh data only, by default True.
         binary : bool, optional
             Write in binary format, by default True.
-        **kwargs
-            Additional keyword arguments.
         """
-        if isinstance(file_path_or_buffer, str):
-            with open(file_path_or_buffer, 'wb') as f:
+        mesh, gmsh_kwargs = self._unpack_model(model_obj, sgdim, kwargs)
+
+        if isinstance(destination, str):
+            open_mode = 'wb' if binary else 'w'
+            with open(destination, open_mode) as f:
                 write_buffer(
                     f, mesh, format_version=format_version,
-                    float_fmt=float_fmt, sgdim=sgdim,
-                    mesh_only=mesh_only, binary=binary, **kwargs
+                    float_fmt=float_fmt,
+                    mesh_only=mesh_only, binary=binary, **gmsh_kwargs
                 )
         else:
             write_buffer(
-                file_path_or_buffer, mesh, format_version=format_version,
-                float_fmt=float_fmt, sgdim=sgdim,
-                mesh_only=mesh_only, binary=binary, **kwargs
+                destination, mesh, format_version=format_version,
+                float_fmt=float_fmt,
+                mesh_only=mesh_only, binary=binary, **gmsh_kwargs
             )
+
+    @staticmethod
+    def _unpack_model(model_obj, sgdim, extra_kwargs):
+        """Extract mesh + Gmsh-specific configs from a model object.
+
+        Returns a ``(mesh, kwargs)`` tuple where ``kwargs`` is a merged
+        dictionary forwarded to :func:`write_buffer`.
+        """
+        gmsh_kwargs = dict(extra_kwargs)
+
+        # Bare mesh path: nothing to unpack.
+        if not isinstance(model_obj, StructureGene):
+            gmsh_kwargs.setdefault('sgdim', sgdim if sgdim is not None else 2)
+            return model_obj, gmsh_kwargs
+
+        sg = model_obj
+        material_id_map = build_material_id_map(sg.materials) if sg.mocombos else {}
+        resolved_sgdim = sgdim if sgdim is not None else infer_section_dimension(sg)
+        sg_configs = {'sgdim': resolved_sgdim}
+        if sg.smdim is not None:
+            sg_configs['model'] = sg.analysis_config.model
+        sg_configs['do_damping'] = sg.analysis_config.do_damping
+        sg_configs['thermal'] = sg.analysis_config.physics
+
+        gmsh_kwargs.setdefault('sgdim', resolved_sgdim)
+        gmsh_kwargs.setdefault(
+            'mocombos', sg.mocombos if sg.mocombos else None
+        )
+        gmsh_kwargs.setdefault('material_id_map', material_id_map)
+        gmsh_kwargs.setdefault('sg_configs', sg_configs)
+        return sg.mesh, gmsh_kwargs
     
     def write_output(
         self,

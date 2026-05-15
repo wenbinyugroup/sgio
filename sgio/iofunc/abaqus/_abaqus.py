@@ -9,12 +9,12 @@ import numpy as np
 # from meshio._files import is_buffer, open_file
 from sgio._vendors.inprw.inpRW import inpRW
 from sgio._vendors.inprw.misc_functions import rsl
-from meshio import Mesh, CellBlock
 from meshio.abaqus._abaqus import (
     abaqus_to_meshio_type,
     )
 
 import sgio.model as smdl
+from sgio.core.mesh import SGMesh, CellBlock
 from sgio.core.sg import StructureGene
 
 logger = logging.getLogger(__name__)
@@ -462,7 +462,7 @@ def process_mesh(inprw:inpRW):
                 _.append(str(_cb[_i]).strip())
             logger.debug(', '.join(_))
 
-    mesh = Mesh(
+    mesh = SGMesh(
         points=points,
         cells=cells,
         point_data=point_data,

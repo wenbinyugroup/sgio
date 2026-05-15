@@ -6,10 +6,10 @@ These helpers are used by :func:`sgio.iofunc.main.read` for the Gmsh path
 from __future__ import annotations
 
 import numpy as np
-from meshio import Mesh
 
 import sgio.model.solid as smdl
 from sgio.core import StructureGene
+from sgio.core.mesh import Mesh
 from sgio.core.numbering import ensure_node_ids
 
 

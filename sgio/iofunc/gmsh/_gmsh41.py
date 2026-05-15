@@ -4,7 +4,8 @@ import logging
 from functools import partial
 
 import numpy as np
-from meshio import CellBlock, Mesh
+
+from sgio.core.mesh import SGMesh, CellBlock
 
 
 from ._common import (
@@ -21,12 +22,8 @@ from ._common import (
     num_nodes_per_cell,
     cell_data_from_raw,
 )
-from sgio.iofunc._meshio import (
-    warn,
-    raw_from_cell_data,
-    WriteError,
-    ReadError,
-)
+from meshio._common import warn, raw_from_cell_data
+from meshio._exceptions import WriteError, ReadError
 
 logger = logging.getLogger(__name__)
 
@@ -125,7 +122,7 @@ def read_buffer(f, is_ascii: bool, data_size):
     # Add node entity information to the point data
     point_data.update({"gmsh:dim_tags": point_entities})
 
-    mesh = Mesh(
+    mesh = SGMesh(
         points,
         cells,
         point_data=point_data,

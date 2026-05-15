@@ -145,8 +145,8 @@ class AbaqusWriter(BaseFormatWriter):
     
     def write_input(
         self,
-        file_path_or_buffer,
-        sg: StructureGene,
+        destination,
+        model_obj,
         sgdim: int = 2,
         **kwargs
     ) -> None:

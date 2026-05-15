@@ -6,7 +6,6 @@ from collections.abc import Mapping, MutableMapping
 from typing import Any, Optional
 
 import numpy as np
-from meshio import Mesh
 
 from .fe_model import FEModel
 from .mesh import SGMesh
@@ -123,7 +122,7 @@ class StructureGene:
     mocombos : dict[int, tuple[str, float]]
         Backward-compatible mapping view derived from ``sections``.
         Maps property_id to (material_name, orientation_angle).
-    mesh : SGMesh or Mesh or None
+    mesh : SGMesh or None
         Mesh of the SG.
     ndim_degen_elem : int
         Number of degenerate elements.
@@ -195,12 +194,12 @@ class StructureGene:
         self._fe.name = value
 
     @property
-    def mesh(self) -> SGMesh | Mesh | None:
+    def mesh(self) -> SGMesh | None:
         """Finite element mesh."""
         return self._fe.mesh
 
     @mesh.setter
-    def mesh(self, value: SGMesh | Mesh | None) -> None:
+    def mesh(self, value: SGMesh | None) -> None:
         self._fe.mesh = value
 
     @property

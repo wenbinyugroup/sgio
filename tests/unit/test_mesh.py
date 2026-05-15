@@ -7,7 +7,8 @@ from pathlib import Path
 import numpy as np
 
 import sgio
-from sgio.core.mesh import check_cell_ordering, fix_cell_ordering, renumber_elements
+from sgio.core.mesh import check_cell_ordering, fix_cell_ordering
+from sgio.core.numbering import renumber_elements
 
 
 @pytest.mark.unit

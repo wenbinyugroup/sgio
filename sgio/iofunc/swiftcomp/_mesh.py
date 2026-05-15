@@ -6,11 +6,10 @@ import logging
 from typing import TextIO, List, Dict, Tuple, Optional, Union
 
 import numpy as np
-from meshio._files import is_buffer
 
 from sgio.core.mesh import SGMesh
 from sgio.iofunc._meshio import (
-    register_sgmesh_format,
+    is_buffer,
     _meshio_to_sg_order,
     _sg_to_meshio_order,
     _read_nodes,
@@ -652,6 +651,3 @@ def _write_property_ref_csys(file: TextIO, cell_csys: List, cell_id_to_elem_id: 
 
     file.write('\n')
     return
-
-
-register_sgmesh_format('swiftcomp', ['.sc', '.dat', '.sg'], read_buffer, write_buffer)

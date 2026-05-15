@@ -1,88 +1,83 @@
-"""Mesh data structures and utilities for Structure Genome I/O.
+"""Mesh data structures for Structure Genome I/O.
 
-This module provides the SGMesh class and related utilities for handling mesh data
-with a dual numbering system that enables round-trip preservation of node and element
-IDs across different file formats.
+Provides the ``SGMesh`` class (a ``meshio.Mesh`` extension that adds
+``cell_point_data`` for element-nodal fields) plus a few mesh-level helpers
+(isolated-node detection, cell-ordering checks).
 
-Dual Numbering System
-----------------------
-SGIO implements two levels of numbering for nodes and elements:
+``SGMesh`` itself stores only geometry and standard meshio-style data.
+The optional ``point_data['node_id']`` / ``cell_data['element_id']`` fields
+that enable round-trip preservation of original node/element IDs are
+operated on by :mod:`sgio.core.numbering` (validation, mapping,
+renumbering, format-specific requirements).
 
-1. **Internal (0-based array indices)**: All connectivity arrays use 0-based indexing
-   for direct access to node coordinates and efficient array operations.
-   
-2. **External (format-specific IDs)**: Original node and element IDs are preserved
-   in ``point_data['node_id']`` and ``cell_data['element_id']`` to support formats
-   with arbitrary numbering schemes.
-
-Data Structure Contract
------------------------
-The mesh data structure follows strict conventions:
-
-**Points (Nodes)**:
-    - ``mesh.points``: NumPy array of shape (n_nodes, 3) containing node coordinates
-    - Accessed using 0-based array indices: ``mesh.points[0]``, ``mesh.points[1]``, etc.
-    - ``mesh.point_data['node_id']``: List of original node IDs from file (optional)
-    - IDs can be arbitrary integers (e.g., [100, 200, 300])
-
-**Cells (Elements)**:
-    - ``mesh.cells``: List of CellBlock objects (type and connectivity data)
-    - ``mesh.cells[i].data``: NumPy array where values are 0-based node indices
-    - **CRITICAL**: Connectivity MUST use array indices, NOT original node IDs
-    - ``mesh.cell_data['element_id']``: List of lists with original element IDs (optional)
-    
-**Example**:
-    >>> # File has nodes: ID=100 at [0,0,0], ID=200 at [1,0,0], ID=300 at [0,1,0]
-    >>> mesh.points = np.array([[0,0,0], [1,0,0], [0,1,0]])
-    >>> mesh.point_data['node_id'] = [100, 200, 300]
-    >>>
-    >>> # File has element: ID=5000 with nodes [100, 200, 300]
-    >>> # Connectivity uses 0-based indices into mesh.points
-    >>> mesh.cells[0].data = np.array([[0, 1, 2]])  # NOT [[100, 200, 300]]
-    >>> mesh.cell_data['element_id'] = [[5000]]
-
-Format Requirements
--------------------
-Different formats have different numbering requirements:
-
-- **Abaqus**: Arbitrary non-consecutive IDs allowed, no ID=0
-- **VABS/SwiftComp**: Consecutive IDs from 1 required
-- **Gmsh**: 1-based entity tags
-- **Internal (meshio)**: 0-based array indices
-
-Reading Workflow
-----------------
-When reading files, readers must:
-
-1. Parse nodes with original IDs
-2. Create ``point_ids`` mapping: ``{original_id: 0-based_index}``
-3. Convert element connectivity from node IDs to array indices
-4. Store original IDs in ``point_data['node_id']`` and ``cell_data['element_id']``
-
-Writing Workflow
-----------------
-When writing files, writers must:
-
-1. Check if renumbering is requested (``use_sequential_node_ids`` parameter)
-2. If True: Use sequential IDs (1, 2, 3, ...)
-3. If False: Use stored IDs from ``point_data['node_id']``
-4. Validate that numbering meets format requirements
-5. Convert connectivity from array indices to node IDs
-
-Common Pitfalls
----------------
-1. **Using original IDs in connectivity**: Element connectivity must use 0-based indices
-2. **Forgetting format validation**: VABS/SwiftComp require consecutive numbering
-3. **Not preserving IDs on read**: Round-trip conversion requires storing original IDs
-4. **ID vs Index confusion**: Always distinguish between external IDs and internal indices
-
-See Also
+See also
 --------
-sgio.core.numbering : Validation and numbering utilities
+sgio.core.numbering : Dual numbering validation / renumbering utilities.
+dev-notes/architecture/io.md : Background on the dual numbering contract.
 """
 from meshio import Mesh, CellBlock
 from typing import Dict, Tuple, Union
 import numpy as np
+
+
+def _is_element_node_data(dict_data: dict) -> bool:
+    """Check if dict represents element-node data (nested) or element data (flat)."""
+    first_eid = next(iter(dict_data))
+    first_data = dict_data[first_eid]
+    return (
+        isinstance(first_data, list)
+        and len(first_data) > 0
+        and isinstance(first_data[0], list)
+    )
+
+
+def _build_single_component_cell_data(dict_data, cell_data_eid):
+    """Group {eid: value} into cell-block-major list, single component."""
+    out = []
+    for typei_ids in cell_data_eid:
+        typei_data = [dict_data[eid] for eid in typei_ids]
+        out.append(typei_data)
+    return out
+
+
+def _build_multi_component_cell_data(names, dict_data, cell_data_eid):
+    """Group {eid: [c0, c1, ...]} into per-component cell-block-major lists."""
+    ncomps = len(names)
+    by_comp = [[] for _ in range(ncomps)]
+    for typei_ids in cell_data_eid:
+        typei_by_comp = [[] for _ in range(ncomps)]
+        for eid in typei_ids:
+            data_all = dict_data[eid]
+            for k, data in enumerate(data_all):
+                typei_by_comp[k].append(data)
+        for k in range(ncomps):
+            by_comp[k].append(typei_by_comp[k])
+    return {name: by_comp[i] for i, name in enumerate(names)}
+
+
+def _build_single_component_cell_point_data(dict_data, cell_data_eid):
+    """Group {eid: [v_node0, v_node1, ...]} into cell-block-major arrays."""
+    out = []
+    for typei_ids in cell_data_eid:
+        typei_data = [dict_data[eid] for eid in typei_ids]
+        out.append(np.array(typei_data))
+    return out
+
+
+def _build_multi_component_cell_point_data(names, dict_data, cell_data_eid):
+    """Group {eid: [[c0,c1,...]_node0, ...]} into per-component arrays."""
+    result = {}
+    for comp_idx, comp_name in enumerate(names):
+        per_block = []
+        for typei_ids in cell_data_eid:
+            typei_data = []
+            for eid in typei_ids:
+                elem_node_data = dict_data[eid]
+                comp_values = [node_data[comp_idx] for node_data in elem_node_data]
+                typei_data.append(comp_values)
+            per_block.append(np.array(typei_data))
+        result[comp_name] = per_block
+    return result
 
 class SGMesh(Mesh):
     """Extended mesh class that inherits from meshio.Mesh.
@@ -153,8 +148,103 @@ class SGMesh(Mesh):
                 return _cb
         return None
 
+    def add_point_data_from_dict(
+        self,
+        name: Union[str, list],
+        dict_data: Dict[int, list],
+    ) -> None:
+        """Attach per-node data (given as ``{node_id: value}``) to ``point_data``.
 
-def get_cell_data_arrays(mesh: Union[SGMesh, Mesh], key: str, default_value: int) -> list[np.ndarray]:
+        Parameters
+        ----------
+        name : str or list of str
+            Field name(s). A list activates the multi-component path where
+            ``dict_data[nid]`` must be a list of ``len(name)`` components.
+        dict_data : dict[int, list or float]
+            Mapping from 1-based node ID to value(s). Node IDs are converted
+            to 0-based positions internally (``nid - 1``).
+
+        Examples
+        --------
+        >>> mesh.add_point_data_from_dict('temperature', {1: 1.5, 2: 2.5})
+        >>> mesh.add_point_data_from_dict(['u', 'v'], {1: [1.0, 2.0], 2: [3.0, 4.0]})
+        """
+        npoints = len(self.points)
+
+        if isinstance(name, str):
+            data = [dict_data[i + 1] for i in range(npoints)]
+            self.point_data[name] = np.array(data)
+            return
+
+        ncomps = len(name)
+        per_comp = [[] for _ in range(ncomps)]
+        for i in range(npoints):
+            values = dict_data[i + 1]
+            for j in range(ncomps):
+                per_comp[j].append(values[j])
+        for j, field_name in enumerate(name):
+            self.point_data[field_name] = np.array(per_comp[j])
+
+    def add_cell_data_from_dict(
+        self,
+        name: Union[str, list],
+        dict_data: Dict[int, list],
+    ) -> None:
+        """Attach per-element data (given as ``{element_id: value}``) to the mesh.
+
+        Routes to ``cell_data`` for flat-list values, or ``cell_point_data``
+        for nested-list values (element-node data). Detection is automatic
+        based on ``dict_data`` shape.
+
+        Requires ``self.cell_data['element_id']`` to be populated.
+
+        Parameters
+        ----------
+        name : str or list of str
+            Field name(s). A list activates the multi-component path.
+        dict_data : dict[int, list]
+            Element data:
+
+            * Element-level (flat): ``{eid: [c0, c1, ...]}`` → ``cell_data``
+            * Element-node (nested): ``{eid: [[c0,...]_node0, ...]}``
+              → ``cell_point_data``
+
+        Examples
+        --------
+        >>> mesh.add_cell_data_from_dict('material_id', {1: [100.0], 2: [200.0]})
+        >>> mesh.add_cell_data_from_dict(
+        ...     ['stress_x', 'stress_y'],
+        ...     {1: [[1.0, 2.0], [3.0, 4.0]], 2: [[5.0, 6.0], [7.0, 8.0]]},
+        ... )
+        """
+        cell_data_eid = self.cell_data['element_id']
+
+        if _is_element_node_data(dict_data):
+            if isinstance(name, str):
+                self.cell_point_data[name] = _build_single_component_cell_point_data(
+                    dict_data, cell_data_eid
+                )
+            elif isinstance(name, list):
+                result = _build_multi_component_cell_point_data(
+                    name, dict_data, cell_data_eid
+                )
+                for field_name, data in result.items():
+                    self.cell_point_data[field_name] = data
+            return
+
+        if isinstance(name, str):
+            self.cell_data[name] = _build_single_component_cell_data(
+                dict_data, cell_data_eid
+            )
+        elif isinstance(name, list):
+            result = _build_multi_component_cell_data(
+                name, dict_data, cell_data_eid
+            )
+            for field_name, data in result.items():
+                self.cell_data[field_name] = data
+
+
+def get_cell_data_arrays(mesh: SGMesh, key: str, default_value: int) -> list[np.ndarray]:
     """Return one integer cell-data array per cell block."""
     if key in mesh.cell_data:
         return [np.asarray(array, dtype=np.int32).copy() for array in mesh.cell_data[key]]
@@ -177,7 +267,7 @@ def merge_field_data(
 
 
 
-def check_isolated_nodes(mesh: Union[SGMesh, Mesh]):
+def check_isolated_nodes(mesh: SGMesh):
     """
     Check if there are isolated/unconnected nodes in the mesh.
 
@@ -253,12 +343,12 @@ def _check_cell_ordering_placeholder(
     return np.array([], dtype=int)
 
 
-def check_cell_ordering(mesh: Union[SGMesh, Mesh]) -> Dict[Tuple[int, str], np.ndarray]:
+def check_cell_ordering(mesh: SGMesh) -> Dict[Tuple[int, str], np.ndarray]:
     """Check node ordering for supported cell types.
 
     Parameters
     ----------
-    mesh : SGMesh or meshio.Mesh
+    mesh : SGMesh
         Mesh containing cell blocks to validate.
 
     Returns
@@ -309,13 +399,13 @@ def check_cell_ordering(mesh: Union[SGMesh, Mesh]) -> Dict[Tuple[int, str], np.n
 
 
 def get_invalid_cell_ordering_element_ids(
-    mesh: Union[SGMesh, Mesh]
+    mesh: SGMesh
 ) -> Dict[Tuple[int, str], np.ndarray]:
     """Return invalid element IDs for supported cell types.
 
     Parameters
     ----------
-    mesh : SGMesh or meshio.Mesh
+    mesh : SGMesh
         Mesh containing cell blocks to validate.
 
     Returns
@@ -371,12 +461,12 @@ def get_invalid_cell_ordering_element_ids(
     return invalid_element_ids
 
 
-def fix_cell_ordering(mesh: Union[SGMesh, Mesh]) -> Dict[Tuple[int, str], np.ndarray]:
+def fix_cell_ordering(mesh: SGMesh) -> Dict[Tuple[int, str], np.ndarray]:
     """Fix node ordering for supported cell types.
 
     Parameters
     ----------
-    mesh : SGMesh or meshio.Mesh
+    mesh : SGMesh
         Mesh containing cell blocks to validate and fix.
 
     Returns
@@ -413,57 +503,3 @@ def fix_cell_ordering(mesh: Union[SGMesh, Mesh]) -> Dict[Tuple[int, str], np.nda
     return fixed_cells
 
 
-# def renumber_nodes(mesh: Union[SGMesh, Mesh]):
-#     """
-#     """
-
-
-def renumber_elements(mesh: Union[SGMesh, Mesh]):
-    """Renumber elements sequentially starting from 1.
-    
-    Renumbers all element IDs in the mesh to consecutive integers starting from 1,
-    ordered by cell block. Modifies the mesh in-place.
-    
-    Parameters
-    ----------
-    mesh : SGMesh or Mesh
-        Mesh object to renumber. Must have cell_data['element_id'].
-        
-    Raises
-    ------
-    ValueError
-        If mesh does not have cell_data or cell_data['element_id'].
-        
-    Examples
-    --------
-    >>> mesh = SGMesh(points, cells, cell_data={'element_id': [[10, 20, 30]]})
-    >>> renumber_elements(mesh)
-    >>> print(mesh.cell_data['element_id'])
-    [[1, 2, 3]]
-    
-    Notes
-    -----
-    This function modifies the mesh in-place. Element IDs are renumbered
-    consecutively starting from 1, across all cell blocks in order.
-    """
-    # Check if mesh has cell_data
-    if not hasattr(mesh, 'cell_data') or mesh.cell_data is None:
-        raise ValueError(
-            "Mesh does not have cell_data. Cannot renumber elements without cell_data."
-        )
-    
-    # Check if element_id exists in cell_data
-    if 'element_id' not in mesh.cell_data:
-        raise ValueError(
-            "Mesh cell_data does not contain 'element_id'. "
-            "Element IDs must exist before renumbering. "
-            "Consider using ensure_element_ids() to generate element IDs first."
-        )
-    
-    # Renumber elements consecutively
-    eid = 0
-    for cb_id, _cb in enumerate(mesh.cell_data['element_id']):
-        count = np.asarray(_cb).shape[0]
-        element_ids = np.arange(eid + 1, eid + 1 + count, dtype=int)
-        mesh.cell_data['element_id'][cb_id] = element_ids
-        eid += count

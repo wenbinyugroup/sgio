@@ -6,13 +6,12 @@ from __future__ import annotations
 import logging
 
 import numpy as np
-from meshio._files import is_buffer
 
 import sgio.utils as sutl
 
 from sgio.core.mesh import SGMesh
 from sgio.iofunc._meshio import (
-    register_sgmesh_format,
+    is_buffer,
     _meshio_to_sg_order,
     _sg_to_meshio_order,
     _read_nodes,
@@ -519,8 +518,3 @@ def _write_property_id_ref_csys(
 
     file.write('\n')
     return
-
-
-
-register_sgmesh_format('vabs', ['.vabs', '.dat', '.sg'], read_buffer, write_buffer)
-

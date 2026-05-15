@@ -4,25 +4,20 @@ import logging
 
 import meshio
 
-import sgio._global as GLOBAL
-import sgio.iofunc._meshio as _meshio
-import sgio.iofunc.abaqus as _abaqus
-import sgio.iofunc.gmsh as _gmsh
 import sgio.iofunc.swiftcomp as _swiftcomp
 import sgio.iofunc.vabs as _vabs
 import sgio.model as sgmodel
 from sgio.core import StructureGene
 
+from .base import get_format_registry
 from ._mesh_convert import (
     mesh_to_sg as _mesh_to_sg,
     parse_model_type as _parse_model_type,
     restore_sg_from_mesh_extras as _restore_sg_from_mesh_extras,
 )
-from .common import build_material_id_map
 from ._read_output_swiftcomp import read_swiftcomp_output_state as _read_swiftcomp_output_state
 from ._read_output_vabs import read_vabs_output_state as _read_vabs_output_state
 from .utils import (
-    infer_section_dimension,
     read_load_csv,
     read_sg_interface_pairs,
     read_sg_interface_nodes,
@@ -146,36 +141,36 @@ def read(
     logger.info('Reading file...')
     logger.debug(locals())
 
-    file_format = file_format.lower()
-    if file_format == 'sc' or file_format == 'swiftcomp':
-        with open(filename, 'r') as file:
-            sg = _swiftcomp.read_input_buffer(
-                file, format_version, model_type
-            )
-    elif file_format == 'vabs':
-        with open(filename, 'r') as file:
-            sg = _vabs.read_buffer(
-                file, format_version
-            )
-    elif file_format == 'abaqus':
-        sg = _abaqus.read(
-            filename, sgdim=sgdim, model=model_type
-        )
-    elif file_format == 'gmsh':
-        with open(filename, 'rb') as file:
-            mesh = _gmsh.read_buffer(file, format_version=format_version)
-        sg = _mesh_to_sg(mesh, sgdim=sgdim, model_type=model_type)
-        _restore_sg_from_mesh_extras(sg, mesh)
-    else:
+    registry = get_format_registry()
+    canonical_format = registry.normalize(file_format)
+    reader = registry.get_reader(canonical_format)
+    if reader is None:
         raise ValueError(f"Unknown file format: {file_format}")
+
+    adapter_kwargs = dict(kwargs)
+    if format_version:
+        adapter_kwargs.setdefault('format_version', format_version)
+    adapter_kwargs.setdefault('model_type', model_type)
+    adapter_kwargs.setdefault('model', model_type)
+    adapter_kwargs.setdefault('sgdim', sgdim)
+    result = reader.read_input(filename, **adapter_kwargs)
+
+    # SG-specific adapters return ``StructureGene``; mesh-only adapters (Gmsh)
+    # return a raw mesh that we wrap into a StructureGene so callers receive a
+    # consistent type.
+    if isinstance(result, StructureGene):
+        sg = result
+    elif result is not None:
+        sg = _mesh_to_sg(result, sgdim=sgdim, model_type=model_type)
+        _restore_sg_from_mesh_extras(sg, result)
+    else:
+        sg = None
 
     if not sg:
         # smdim must be int; model_type is a string like 'SD1' — parse it.
         smdim, submodel = _parse_model_type(model_type)
         sg = StructureGene(sgdim=sgdim, smdim=smdim)
         sg.analysis_config.model = submodel
-    if not sg.mesh:
-        sg.mesh, _, _ = _meshio.read(filename, file_format)
 
     return sg
 
@@ -362,67 +357,57 @@ def write(
 
     if macro_responses is None:
         macro_responses = []
-    if file_format not in ['sc', 'swiftcomp', 'vabs']:
-        mesh_only = True
 
     if sg is None:
         raise ValueError('structure_gene is None')
     if sg.mesh is None:
         raise ValueError('structure_gene.mesh is None')
 
-    with open(filename, 'w', encoding='utf-8') as file:
-        if file_format.startswith('s'):
-            if format_version == '':
-                format_version = GLOBAL.SC_VERSION_DEFAULT
+    registry = get_format_registry()
+    canonical_format = registry.normalize(file_format)
+    writer = registry.get_writer(canonical_format)
 
-            _swiftcomp.write_buffer(
-                sg, file,
-                analysis=analysis, model=model_type,
-                macro_responses=macro_responses,
-                model_space=model_space, prop_ref_y=prop_ref_y,
-                load_type=load_type,
-                sfi=sfi, sff=sff, version=format_version
-            )
+    # Formats other than SG-specific solvers (VABS / SwiftComp) get mesh-only
+    # output by default — preserves prior behaviour.
+    if canonical_format not in ('swiftcomp', 'vabs'):
+        mesh_only = True
 
-        elif file_format.startswith('v'):
-            if format_version == '':
-                format_version = GLOBAL.VABS_VERSION_DEFAULT
-
-            _vabs.write_buffer(
-                sg, file,
-                analysis=analysis, sg_format=sg_format,
-                macro_responses=macro_responses, model=model_type,
-                model_space=model_space, prop_ref_y=prop_ref_y,
-                sfi=sfi, sff=sff, version=format_version,
-                mesh_only=mesh_only
-            )
-
-        elif file_format.startswith('gmsh'):
-            material_id_map = build_material_id_map(sg.materials) if sg.mocombos else {}
-            sg_configs = {'sgdim': infer_section_dimension(sg)}
-            if sg.smdim is not None:
-                sg_configs['model'] = sg.analysis_config.model
-            sg_configs['do_damping'] = sg.analysis_config.do_damping
-            sg_configs['thermal'] = sg.analysis_config.physics
-
-            _gmsh.write_buffer(
-                file,
-                sg.mesh,
-                format_version=format_version,
-                float_fmt=sff,
-                sgdim=sg_configs['sgdim'],
-                mesh_only=mesh_only,
-                binary=binary,
-                mocombos=sg.mocombos if sg.mocombos else None,
-                material_id_map=material_id_map,
-                sg_configs=sg_configs,
-            )
-
-        else:
+    if writer is None:
+        # Fallback: defer to meshio for formats sgio does not own.
+        with open(filename, 'w', encoding='utf-8') as file:
             meshio.write(
                 file, sg.mesh, file_format=file_format,
-                int_fmt=sfi, float_fmt=sff)
+                int_fmt=sfi, float_fmt=sff,
+            )
+        return filename
 
+    common_kwargs = dict(
+        analysis=analysis,
+        macro_responses=macro_responses,
+        model=model_type,
+        model_space=model_space,
+        prop_ref_y=prop_ref_y,
+        sfi=sfi,
+        sff=sff,
+    )
+    if format_version:
+        common_kwargs['version'] = format_version
+
+    if canonical_format == 'swiftcomp':
+        common_kwargs['load_type'] = load_type
+    elif canonical_format == 'vabs':
+        common_kwargs['sg_fmt'] = sg_format
+        common_kwargs['mesh_only'] = mesh_only
+    elif canonical_format == 'gmsh':
+        # Gmsh writer pulls mesh/configs out of the SG itself; tighter kwargs.
+        common_kwargs = dict(
+            format_version=format_version,
+            float_fmt=sff,
+            mesh_only=mesh_only,
+            binary=binary,
+        )
+
+    writer.write_input(filename, sg, **common_kwargs)
     return filename
 
 

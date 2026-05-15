@@ -11,6 +11,7 @@ import io
 
 from ..base import BaseFormatReader, BaseFormatWriter
 from sgio.core.sg import StructureGene
+import sgio._global as GLOBAL
 import sgio.model as smdl
 
 from ._swiftcomp import (
@@ -190,18 +191,18 @@ class SwiftCompWriter(BaseFormatWriter):
     
     def __init__(self):
         """Initialize SwiftComp writer."""
-        super().__init__('swiftcomp')
-    
+        super().__init__('swiftcomp', default_version=GLOBAL.SC_VERSION_DEFAULT)
+
     def write_input(
         self,
-        file_path_or_buffer,
-        sg: StructureGene,
+        destination,
+        model_obj,
         analysis: str = 'h',
-        sg_fmt: int = 1,
         model: int = 0,
         model_space: str = '',
         prop_ref_y: str = 'x',
         macro_responses: list[smdl.StateCase] = None,
+        load_type: int = 0,
         sfi: str = '8d',
         sff: str = '20.12e',
         version: Optional[str] = None,
@@ -238,20 +239,22 @@ class SwiftCompWriter(BaseFormatWriter):
         """
         if macro_responses is None:
             macro_responses = []
-        
-        if isinstance(file_path_or_buffer, str):
-            with open(file_path_or_buffer, 'w') as f:
+        if not version:
+            version = self.default_version
+
+        if isinstance(destination, str):
+            with open(destination, 'w', encoding='utf-8') as f:
                 write_buffer(
-                    sg, f, analysis=analysis, sg_fmt=sg_fmt, model=model,
+                    model_obj, f, analysis=analysis, model=model,
                     model_space=model_space, prop_ref_y=prop_ref_y,
-                    macro_responses=macro_responses,
+                    macro_responses=macro_responses, load_type=load_type,
                     sfi=sfi, sff=sff, version=version, **kwargs
                 )
         else:
             write_buffer(
-                sg, file_path_or_buffer, analysis=analysis, sg_fmt=sg_fmt, model=model,
+                model_obj, destination, analysis=analysis, model=model,
                 model_space=model_space, prop_ref_y=prop_ref_y,
-                macro_responses=macro_responses,
+                macro_responses=macro_responses, load_type=load_type,
                 sfi=sfi, sff=sff, version=version, **kwargs
             )
     

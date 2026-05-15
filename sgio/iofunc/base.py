@@ -2,14 +2,17 @@
 
 This module defines abstract base classes for format readers and writers,
 providing a consistent interface across different file formats.
+
+The IR object accepted/produced by adapters is intentionally typed broadly
+(``Any``) to span ``StructureGene`` (SG-specific solvers), ``FEModel``
+(generic FE solvers, future), and ``SGMesh`` (mesh-only formats). See
+``dev-notes/architecture/io.md`` §3.1.
 """
 
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from typing import Any, Optional, TextIO, Union
-
-from sgio.core import StructureGene
 
 
 class BaseFormatReader(ABC):
@@ -45,20 +48,22 @@ class BaseFormatReader(ABC):
         self,
         source: Union[str, TextIO],
         **kwargs: Any
-    ) -> StructureGene:
-        """Read input file and create StructureGene object.
-        
+    ) -> Any:
+        """Read input file and create IR object.
+
         Parameters
         ----------
         source : str or TextIO
             File path or file object to read from
         **kwargs : dict
             Format-specific keyword arguments
-            
+
         Returns
         -------
-        StructureGene
-            The parsed structure gene object
+        StructureGene | FEModel | SGMesh
+            The parsed IR object. The concrete type depends on the adapter:
+            SG-specific solvers return ``StructureGene``; generic FE solvers
+            return ``FEModel``; mesh-only formats return ``SGMesh``.
             
         Raises
         ------
@@ -149,25 +154,30 @@ class BaseFormatWriter(ABC):
     @abstractmethod
     def write_input(
         self,
-        sg: StructureGene,
         destination: Union[str, TextIO],
+        model: Any,
         **kwargs: Any
     ) -> None:
-        """Write StructureGene to input file.
-        
+        """Write IR object to input file.
+
+        The IR object can be ``StructureGene``, ``FEModel``, ``StructuralModel``
+        or ``SGMesh`` depending on the adapter. Each adapter is responsible
+        for extracting the fields it needs; fields the format cannot represent
+        are dropped silently (or routed to ``extras``).
+
         Parameters
         ----------
-        sg : StructureGene
-            Structure gene object to write
         destination : str or TextIO
             File path or file object to write to
+        model : Any
+            IR object to write (``StructureGene`` / ``FEModel`` / ``SGMesh``)
         **kwargs : dict
             Format-specific keyword arguments
-            
+
         Raises
         ------
         ValueError
-            If the StructureGene object is invalid
+            If the IR object is invalid
         IOError
             If the file cannot be written
         """
@@ -203,15 +213,36 @@ class FormatRegistry:
     """
     
     _instance: Optional['FormatRegistry'] = None
-    
+
     def __new__(cls):
         """Ensure only one instance exists (singleton pattern)."""
         if cls._instance is None:
             cls._instance = super().__new__(cls)
             cls._instance._readers = {}
             cls._instance._writers = {}
+            cls._instance._aliases = {}
         return cls._instance
-    
+
+    def register_alias(self, alias: str, target: str) -> None:
+        """Register an alias for a format name.
+
+        Aliases let callers use short or alternate spellings
+        (e.g. ``'sc'`` for ``'swiftcomp'``).
+
+        Parameters
+        ----------
+        alias : str
+            Alias name (lowercase).
+        target : str
+            Canonical format name (lowercase).
+        """
+        self._aliases[alias.lower()] = target.lower()
+
+    def normalize(self, format_name: str) -> str:
+        """Resolve a possibly-aliased format name to its canonical form."""
+        name = format_name.lower()
+        return self._aliases.get(name, name)
+
     def register_reader(self, format_name: str, reader: BaseFormatReader) -> None:
         """Register a format reader.
         
@@ -223,7 +254,7 @@ class FormatRegistry:
             Reader instance to register
         """
         self._readers[format_name.lower()] = reader
-    
+
     def register_writer(self, format_name: str, writer: BaseFormatWriter) -> None:
         """Register a format writer.
         
@@ -249,8 +280,8 @@ class FormatRegistry:
         BaseFormatReader or None
             The registered reader, or None if not found
         """
-        return self._readers.get(format_name.lower())
-    
+        return self._readers.get(self.normalize(format_name))
+
     def get_writer(self, format_name: str) -> Optional[BaseFormatWriter]:
         """Get a registered writer for the format.
         
@@ -264,8 +295,8 @@ class FormatRegistry:
         BaseFormatWriter or None
             The registered writer, or None if not found
         """
-        return self._writers.get(format_name.lower())
-    
+        return self._writers.get(self.normalize(format_name))
+
     def list_formats(self) -> dict[str, dict[str, bool]]:
         """List all registered formats.
         
