@@ -18,6 +18,7 @@ from .core import (
     SGAnalysisConfig,
     Section,
     StructureGene,
+    StructuralModel,
     SGMesh,
     check_isolated_nodes,
     renumber_elements,
@@ -101,6 +102,7 @@ __all__ = [
     "SGMesh",
     "Section",
     "StructureGene",
+    "StructuralModel",
     "check_isolated_nodes",
     "renumber_elements",
     # Numbering validation and utilities

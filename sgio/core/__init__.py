@@ -5,6 +5,7 @@ from .mesh import (
     check_isolated_nodes,
 )
 from .section import Orientation, Section
+from .structural_model import StructuralModel
 from .numbering import (
     validate_node_ids,
     validate_element_ids,
