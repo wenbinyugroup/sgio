@@ -18,7 +18,8 @@ components ({math}`\varepsilon_{11}`, {math}`\varepsilon_{22}`,
 
 - Pydantic validation on construction and assignment (`validate_assignment=True`)
 - Explicit support for isotropic, orthotropic, and fully anisotropic materials
-- Backward-compatible `get`/`set` helpers mirroring the legacy API
+- Typed material queries via `get_matrix_component()` and `get_thermal_expansion()`
+- Explicit setters `set_isotropy()`, `set_elastic()`, and `set_strength_constants()`
 - First-class JSON serialization via {py:meth}`model_dump` and
   {py:meth}`model_dump_json`
 
@@ -53,12 +54,20 @@ carbon_ud = CauchyContinuumModel(
 )
 ```
 
-Legacy setter helpers remain available and run through the same validators:
+The preferred mutation path uses explicit typed setters:
 
 ```python
-carbon_ud.set('isotropy', 'orthotropic')
-carbon_ud.set('elastic', [210e9, 0.29])  # switches to isotropic input
+from sgio.model import ElasticInputType, MatrixKind, TensorComponent
+
+carbon_ud.set_isotropy('orthotropic')
+carbon_ud.set_elastic([210e9, 0.29], input_type=ElasticInputType.ISOTROPIC)
+
+c11 = carbon_ud.get_matrix_component(MatrixKind.STIFFNESS, TensorComponent(1, 1))
 ```
+
+Legacy `get()` / `set()` helpers remain only as migration shims. New examples
+should not depend on them; see {ref}`guide_model_migration_compat` for the
+compatibility mapping and removal roadmap.
 
 ## Loading from JSON
 
@@ -79,4 +88,3 @@ print(material.model_dump_json(indent=2))
 This pattern works equally well when the JSON document comes from a database or
 an API response, making it easy to integrate SGIO materials into external
 pipelines.
-

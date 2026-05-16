@@ -20,11 +20,11 @@ model = sgio.read_output_model(
     model_type='BM2'
 )
 
-# Extract beam properties using the .get() method
-ea = model.get('ea')      # Axial stiffness
-gj = model.get('gj')      # Torsional stiffness
-ei22 = model.get('ei22')  # Bending stiffness about axis 2
-ei33 = model.get('ei33')  # Bending stiffness about axis 3
+# Extract beam properties using direct typed attributes
+ea = model.ea      # Axial stiffness
+gj = model.gj      # Torsional stiffness
+ei22 = model.ei22  # Bending stiffness about axis 2
+ei33 = model.ei33  # Bending stiffness about axis 3
 
 # Print the extracted beam properties
 print(f"Axial Stiffness (EA): {ea:.3e} N")

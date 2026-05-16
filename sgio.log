@@ -1845,3 +1845,63 @@
            INFO     Successfully wrote output to                                             test_sc_output_state.py:133
                     C:\Users\foxta\AppData\Local\Temp\pytest-of-foxta\pytest-28\test_swiftco                            
                     mp_output_state_de0\sg31t_hex20_sc21_out_d.msh                                                      
+[17:45:45] INFO     Reading VABS output model from:                                         test_vabs_output_model.py:57
+                    C:\Users\tian50\work\dev\sgio\tests\fixtures\vabs\version_4_0\sg21t_tri                             
+                    3_vabs40.sg.K                                                                                       
+           INFO     ea = 307204143.06                                                       test_vabs_output_model.py:69
+           INFO     gj = 194297525.55                                                       test_vabs_output_model.py:69
+           INFO     ei22 = 208881953.16                                                     test_vabs_output_model.py:69
+           INFO     ei33 = 3653057819.8                                                     test_vabs_output_model.py:69
+           INFO     ga22 = 10877130.747                                                     test_vabs_output_model.py:95
+           INFO     ga33 = 22004856.405                                                     test_vabs_output_model.py:95
+[17:59:20] INFO     Converting                                                                     test_vabs_input.py:53
+                    C:\Users\tian50\work\dev\sgio\tests\fixtures\vabs\version_4_1\3cells.sg to                          
+                    C:\Users\tian50\work\dev\sgio\pytest-temp-phase6\test_vabs_format_conversion_c                      
+                    a0\3cells.sg...                                                                                     
+           INFO     Converting file format...                                                                main.py:484
+           INFO     Reading file...                                                                          main.py:141
+           INFO     Writing file...                                                                          main.py:355
+           INFO     File format converted.                                                                   main.py:524
+           INFO     Successfully converted                                                         test_vabs_input.py:69
+                    C:\Users\tian50\work\dev\sgio\tests\fixtures\vabs\version_4_1\3cells.sg to                          
+                    C:\Users\tian50\work\dev\sgio\pytest-temp-phase6\test_vabs_format_conversion_c                      
+                    a0\3cells.sg                                                                                        
+           INFO     Converting                                                                    test_vabs_input.py:105
+                    C:\Users\tian50\work\dev\sgio\tests\fixtures\vabs\version_4_1\3cells.sg to                          
+                    C:\Users\tian50\work\dev\sgio\pytest-temp-phase6\test_vabs_format_conversion_                       
+                    mu0\0_3cells.sg...                                                                                  
+           INFO     Converting file format...                                                                main.py:484
+           INFO     Reading file...                                                                          main.py:141
+           INFO     Writing file...                                                                          main.py:355
+           INFO     File format converted.                                                                   main.py:524
+           INFO     Converting file format...                                                                main.py:484
+           INFO     Reading file...                                                                          main.py:141
+           INFO     Writing file...                                                                          main.py:355
+           INFO     File format converted.                                                                   main.py:524
+           INFO     Running solver vabs on                                                        test_vabs_input.py:173
+                    C:\Users\tian50\work\dev\sgio\pytest-temp-phase6\test_vabs_solver_execution0\                       
+                    0_3cells.sg...                                                                                      
+           INFO     vabs                                                                                     execu.py:78
+                    C:\Users\tian50\work\dev\sgio\pytest-temp-phase6\test_vabs_solver_execution0\0_3cells.sg            
+           INFO     return code: 0                                                                          execu.py:100
+           INFO     Reading file...                                                                          main.py:141
+           INFO     Reading file...                                                                          main.py:141
+           INFO     Writing file...                                                                          main.py:355
+           INFO     Reading VABS output model from:                                         test_vabs_output_model.py:57
+                    C:\Users\tian50\work\dev\sgio\tests\fixtures\vabs\version_4_0\sg21t_tri                             
+                    3_vabs40.sg.K                                                                                       
+           INFO     ea = 307204143.06                                                       test_vabs_output_model.py:69
+           INFO     gj = 194297525.55                                                       test_vabs_output_model.py:69
+           INFO     ei22 = 208881953.16                                                     test_vabs_output_model.py:69
+           INFO     ei33 = 3653057819.8                                                     test_vabs_output_model.py:69
+           INFO     ga22 = 10877130.747                                                     test_vabs_output_model.py:95
+           INFO     ga33 = 22004856.405                                                     test_vabs_output_model.py:95
+[18:18:13] INFO     Reading VABS output model from:                                         test_vabs_output_model.py:57
+                    C:\Users\tian50\work\dev\sgio\tests\fixtures\vabs\version_4_0\sg21t_tri                             
+                    3_vabs40.sg.K                                                                                       
+           INFO     ea = 307204143.06                                                       test_vabs_output_model.py:69
+           INFO     gj = 194297525.55                                                       test_vabs_output_model.py:69
+           INFO     ei22 = 208881953.16                                                     test_vabs_output_model.py:69
+           INFO     ei33 = 3653057819.8                                                     test_vabs_output_model.py:69
+           INFO     ga22 = 10877130.747                                                     test_vabs_output_model.py:95
+           INFO     ga33 = 22004856.405                                                     test_vabs_output_model.py:95

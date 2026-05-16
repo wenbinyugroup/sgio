@@ -250,6 +250,6 @@ def _ensure_material_exists(sg: StructureGene, mat_name: str) -> None:
     """
     if mat_name not in sg.materials:
         mat = smdl.CauchyContinuumModel(name=mat_name)
-        mat.set('isotropy', 0)
-        mat.set('elastic', DEFAULT_MATERIAL_PROPERTIES['elastic'])
+        mat.set_isotropy(0)
+        mat.set_elastic(DEFAULT_MATERIAL_PROPERTIES['elastic'])
         sg.materials[mat_name] = mat

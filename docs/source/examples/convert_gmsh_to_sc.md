@@ -10,7 +10,9 @@ Given a 3D tetrahedral mesh generated in Gmsh (`.msh` format) and a JSON materia
 :language: python
 ```
 
-`sgio.read_materials_from_json()` loads the material definitions from `materials.json` and assigns them to the structure gene. `model_type='sd1'` selects the 3D solid model.
+`sgio.iofunc.common.material_json.read_materials_from_json()` loads the
+material definitions from `materials.json` and assigns them to the structure
+gene. `model_type='sd1'` selects the 3D solid model.
 
 ## Result
 

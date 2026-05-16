@@ -10,11 +10,12 @@ import json
 import tempfile
 from pathlib import Path
 
-from sgio.model.solid import (
-    CauchyContinuumModel,
+from sgio.iofunc.common.material_json import (
     read_material_from_json,
-    read_materials_from_json
+    read_materials_from_json,
+    write_material_to_json,
 )
+from sgio.model.solid import CauchyContinuumModel
 
 
 @pytest.mark.unit
@@ -129,6 +130,12 @@ class TestReadMaterialFromJson:
         assert mat.name == 'Empty Material'
         assert mat.density == 0
         assert mat.isotropy == 0
+
+    def test_legacy_wrapper_matches_new_codec(self, steel_isotropic_path):
+        """Legacy model-level wrapper should delegate to the new codec module."""
+        from sgio.model.solid import read_material_from_json as legacy_reader
+
+        assert legacy_reader(steel_isotropic_path) == read_material_from_json(steel_isotropic_path)
 
 
 @pytest.mark.unit
@@ -322,7 +329,7 @@ class TestWriteMaterialToJson:
         
         # Write to JSON
         json_file = tmp_path / "steel_write.json"
-        mat.write_to_json(str(json_file))
+        write_material_to_json(mat, str(json_file))
         
         # Verify file exists and can be read
         assert json_file.exists()
@@ -346,7 +353,7 @@ class TestWriteMaterialToJson:
         
         # Write to JSON
         json_file = tmp_path / "carbon_write.json"
-        mat.write_to_json(str(json_file), indent=2)
+        write_material_to_json(mat, str(json_file), indent=2)
         
         # Read back
         restored_dict = read_material_from_json(str(json_file))
@@ -367,7 +374,7 @@ class TestWriteMaterialToJson:
         
         # Write to JSON
         json_file = tmp_path / "thermal_write.json"
-        mat.write_to_json(str(json_file))
+        write_material_to_json(mat, str(json_file))
         
         # Read back
         restored_dict = read_material_from_json(str(json_file))
@@ -387,7 +394,7 @@ class TestWriteMaterialToJson:
         
         # Write to JSON
         json_file = tmp_path / "strength_write.json"
-        mat.write_to_json(str(json_file))
+        write_material_to_json(mat, str(json_file))
         
         # Read back
         restored_dict = read_material_from_json(str(json_file))
@@ -416,7 +423,7 @@ class TestWriteMaterialToJson:
         
         # Write with exclude_none=True (default)
         json_file = tmp_path / "minimal_write.json"
-        mat.write_to_json(str(json_file))
+        write_material_to_json(mat, str(json_file))
         
         with open(json_file, 'r') as f:
             data = json.load(f)
@@ -431,7 +438,7 @@ class TestWriteMaterialToJson:
         
         # Write with exclude_none=False
         json_file_none = tmp_path / "minimal_with_none.json"
-        mat.write_to_json(str(json_file_none), exclude_none=False)
+        write_material_to_json(mat, str(json_file_none), exclude_none=False)
         
         with open(json_file_none, 'r') as f:
             data_none = json.load(f)
@@ -458,7 +465,7 @@ class TestWriteMaterialToJson:
         
         # Write with indentation
         json_file = tmp_path / "pretty.json"
-        mat.write_to_json(str(json_file), indent=4)
+        write_material_to_json(mat, str(json_file), indent=4)
         
         # Read the raw content to verify formatting
         with open(json_file, 'r') as f:
@@ -481,7 +488,7 @@ class TestWriteMaterialToJson:
         nested_dir = tmp_path / "materials" / "metals"
         json_file = nested_dir / "nested.json"
         
-        mat.write_to_json(str(json_file))
+        write_material_to_json(mat, str(json_file))
         
         # Verify file was created
         assert json_file.exists()
@@ -498,7 +505,7 @@ class TestWriteMaterialToJson:
         
         # Write to file
         json_file = tmp_path / "roundtrip.json"
-        original.write_to_json(str(json_file))
+        write_material_to_json(original, str(json_file))
         
         # Read back
         restored_dict = read_material_from_json(str(json_file))
@@ -506,3 +513,18 @@ class TestWriteMaterialToJson:
         
         # Should be equal
         assert original == restored
+
+    def test_legacy_write_wrapper_delegates_to_codec(self, tmp_path):
+        """Legacy model method should remain available as a compatibility wrapper."""
+        mat = CauchyContinuumModel(
+            name="Wrapper Material",
+            isotropy=0,
+            e=200e9,
+            nu=0.3,
+        )
+
+        json_file = tmp_path / "wrapper.json"
+        mat.write_to_json(str(json_file))
+
+        restored = read_material_from_json(str(json_file))
+        assert "Wrapper Material" in restored

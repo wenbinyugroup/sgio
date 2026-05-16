@@ -6,6 +6,7 @@ from matplotlib.collections import PatchCollection
 from sgio.utils import math as sgmath
 
 from sgio.core.mesh import SGMesh
+from sgio.model.query_types import SectionAxis, SectionCenter
 
 
 
@@ -206,7 +207,7 @@ def plot_sg_2d(
     # labels.append('Origin')
 
     # Plot the principal bending axes
-    phi_pba_2 = model.get('phi_pba')
+    phi_pba_2 = model.get_axis_angle(SectionAxis.BENDING)
     if phi_pba_2 is None:
         raise ValueError("Model must contain 'phi_pba'")
     phi_pba_3 = phi_pba_2 + 90
@@ -217,18 +218,18 @@ def plot_sg_2d(
 
     # Plot the centers
 
-    mass_center = (model.get('mc2'), model.get('mc3'))
+    mass_center = model.get_center(SectionCenter.MASS)
     mc, = ax.plot(*mass_center, ls='none', marker='s', mec='C0', mfc='none', markersize=5)
     handlers.append(mc)
     labels.append('Mass center')
 
-    tension_center = (model.get('tc2'), model.get('tc3'))
+    tension_center = model.get_center(SectionCenter.TENSION)
     tc, = ax.plot(*tension_center, ls='none', marker='p', mec='C4', mfc='none', markersize=5)
     handlers.append(tc)
     labels.append('Tension center')
 
     if model.label == 'bm2':
-        shear_center = (model.get('sc2'), model.get('sc3'))
+        shear_center = model.get_center(SectionCenter.SHEAR)
         sc, = ax.plot(*shear_center, ls='none', marker='d', mec='C8', mfc='none', markersize=5)
         handlers.append(sc)
         labels.append('Shear center')

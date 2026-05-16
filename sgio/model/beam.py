@@ -1,13 +1,22 @@
 from __future__ import annotations
 
 import math
-from typing import Optional, List
+from typing import ClassVar, List, Optional
+
 from pydantic import BaseModel, Field, field_validator, computed_field
+
+from ._deprecations import warn_model_deprecation
+from .query_types import SectionAxis, SectionCenter, SectionMatrixKind
+from .section_common import (
+    EULER_BERNOULLI_BEAM_SCHEMA,
+    StructuralSectionSupport,
+    TIMOSHENKO_BEAM_SCHEMA,
+)
 
 # from dataclasses import dataclass
 
 # @dataclass
-class EulerBernoulliBeamModel(BaseModel):
+class EulerBernoulliBeamModel(StructuralSectionSupport, BaseModel):
     """Euler-Bernoulli Beam Model
     """
 
@@ -15,6 +24,57 @@ class EulerBernoulliBeamModel(BaseModel):
     dim: int = 1
     label: str = 'bm1'
     model_name: str = 'Euler-Bernoulli beam model'
+    theory_schema: ClassVar = EULER_BERNOULLI_BEAM_SCHEMA
+    _SCALAR_ALIASES: ClassVar[dict[str, str]] = {
+        'mu': 'mu',
+        'mmoi1': 'i11',
+        'mmoi2': 'i22',
+        'mmoi3': 'i33',
+        'gyr1': 'gyr1',
+        'gyrx': 'gyr1',
+        'gyr2': 'gyr2',
+        'gyry': 'gyr2',
+        'gyr3': 'gyr3',
+        'gyrz': 'gyr3',
+        'ea': 'ea',
+        'gj': 'gj',
+        'ei22': 'ei22',
+        'eiyy': 'ei22',
+        'ei2': 'ei22',
+        'eiy': 'ei22',
+        'ei33': 'ei33',
+        'eizz': 'ei33',
+        'ei3': 'ei33',
+        'eiz': 'ei33',
+    }
+    _CENTER_ALIASES: ClassVar[dict[str, str]] = {
+        'mcy': 'xm2',
+        'mc2': 'xm2',
+        'mcz': 'xm3',
+        'mc3': 'xm3',
+        'tcy': 'xt2',
+        'tc2': 'xt2',
+        'tcz': 'xt3',
+        'tc3': 'xt3',
+    }
+    _AXIS_ALIASES: ClassVar[dict[str, str]] = {
+        'phi_pia': 'phi_pia',
+        'phi_pba': 'phi_pba',
+    }
+    _SECTION_CENTER_ATTRS: ClassVar[dict[SectionCenter, tuple[str, ...]]] = {
+        SectionCenter.MASS: ('xm2', 'xm3'),
+        SectionCenter.TENSION: ('xt2', 'xt3'),
+    }
+    _SECTION_AXIS_ATTRS: ClassVar[dict[SectionAxis, str]] = {
+        SectionAxis.INERTIAL: 'phi_pia',
+        SectionAxis.BENDING: 'phi_pba',
+    }
+    _SECTION_MATRIX_ATTRS: ClassVar[dict[SectionMatrixKind, str]] = {
+        SectionMatrixKind.MASS: 'mass',
+        SectionMatrixKind.MASS_CENTER: 'mass_mc',
+        SectionMatrixKind.STIFFNESS: 'stff',
+        SectionMatrixKind.COMPLIANCE: 'cmpl',
+    }
 
     # Basic properties
     name: str = Field(default='', description="Beam name")
@@ -121,101 +181,32 @@ class EulerBernoulliBeamModel(BaseModel):
 
 
     def __repr__(self):
-        s = [
-            self.model_name,
-        ]
-
-        s.append('-'*16)
-        s.append('mass matrix')
-        if not self.mass is None:
-            for i in range(6):
-                _row = []
-                for j in range(6):
-                    _row.append(f'{self.mass[i][j]:14e}')
-                s.append(', '.join(_row))
-        else:
-            s.append('NONE')
-
+        s = [self.model_name]
+        s.append('-' * 16)
+        s.extend(self._format_matrix_block('mass matrix', self.mass))
         s.append('')
-        s.append('mass center = ({}, {})'.format(
-            f'{self.xm2:14e}' if not self.xm2 is None else 'NONE',
-            f'{self.xm3:14e}' if not self.xm3 is None else 'NONE'
-        ))
+        s.append(self._format_center_line('mass center', self.xm2, self.xm3))
         s.append('')
-        s.append('mass matrix w.r.t. mass center')
-        if not self.mass_mc is None:
-            for i in range(6):
-                _row = []
-                for j in range(6):
-                    _row.append(f'{self.mass_mc[i][j]:14e}')
-                s.append(', '.join(_row))
-        else:
-            s.append('NONE')
-
+        s.extend(self._format_matrix_block('mass matrix w.r.t. mass center', self.mass_mc))
         s.append('')
-        s.append('mass per unit span = {}'.format(
-            f'{self.mu:14e}' if not self.mu is None else 'NONE'
-        ))
+        s.append(self._format_scalar_line('mass per unit span', self.mu))
         s.append('mass moment of inertia')
-        s.append('  i11 = {}'.format(
-            f'{self.i11:14e}' if not self.i11 is None else 'NONE'
-        ))
-        s.append('  i22 = {}'.format(
-            f'{self.i22:14e}' if not self.i22 is None else 'NONE'
-        ))
-        s.append('  i33 = {}'.format(
-            f'{self.i33:14e}' if not self.i33 is None else 'NONE'
-        ))
-        s.append('principal inertial axes rotation angle = {}'.format(
-            f'{self.phi_pia:14e}' if not self.phi_pia is None else 'NONE'
-        ))
-        s.append('mass-weighted radius of gyration = {}'.format(
-            f'{self.rg:14e}' if not self.rg is None else 'NONE'
-        ))
-
-        s.append('-'*16)
-        s.append('stiffness matrix')
-        if not self.stff is None:
-            for i in range(4):
-                _row = []
-                for j in range(4):
-                    _row.append(f'{self.stff[i][j]:14e}')
-                s.append(', '.join(_row))
-        else:
-            s.append('NONE')
-
+        s.append(self._format_scalar_line('  i11', self.i11))
+        s.append(self._format_scalar_line('  i22', self.i22))
+        s.append(self._format_scalar_line('  i33', self.i33))
+        s.append(self._format_scalar_line('principal inertial axes rotation angle', self.phi_pia))
+        s.append(self._format_scalar_line('mass-weighted radius of gyration', self.rg))
+        s.append('-' * 16)
+        s.extend(self._format_matrix_block('stiffness matrix', self.stff))
         s.append('')
-        s.append('compliance matrix')
-        if not self.cmpl is None:
-            for i in range(4):
-                _row = []
-                for j in range(4):
-                    _row.append(f'{self.cmpl[i][j]:14e}')
-                s.append(', '.join(_row))
-        else:
-            s.append('NONE')
-
+        s.extend(self._format_matrix_block('compliance matrix', self.cmpl))
         s.append('')
-        s.append('tension center = ({}, {})'.format(
-            f'{self.xt2:14e}' if not self.xt2 is None else 'NONE',
-            f'{self.xt3:14e}' if not self.xt3 is None else 'NONE'
-        ))
-        s.append('extension stiffness EA = {}'.format(
-            f'{self.ea:14e}' if not self.ea is None else 'NONE',
-        ))
-        s.append('torsional stiffness GJ = {}'.format(
-            f'{self.gj:14e}' if not self.gj is None else 'NONE',
-        ))
-        s.append('principal bending stiffness EI22 = {}'.format(
-            f'{self.ei22:14e}' if not self.ei22 is None else 'NONE',
-        ))
-        s.append('principal bending stiffness EI33 = {}'.format(
-            f'{self.ei33:14e}' if not self.ei33 is None else 'NONE',
-        ))
-        s.append('principal bending axes rotation angle = {}'.format(
-            f'{self.phi_pba:14e}' if not self.phi_pba is None else 'NONE',
-        ))
-
+        s.append(self._format_center_line('tension center', self.xt2, self.xt3))
+        s.append(self._format_scalar_line('extension stiffness EA', self.ea))
+        s.append(self._format_scalar_line('torsional stiffness GJ', self.gj))
+        s.append(self._format_scalar_line('principal bending stiffness EI22', self.ei22))
+        s.append(self._format_scalar_line('principal bending stiffness EI33', self.ei33))
+        s.append(self._format_scalar_line('principal bending axes rotation angle', self.phi_pba))
         return '\n'.join(s)
 
 
@@ -224,11 +215,13 @@ class EulerBernoulliBeamModel(BaseModel):
 
 
     def set(self, name, value, **kwargs):
+        """Compatibility setter retained for legacy string callers."""
+        warn_model_deprecation('EulerBernoulliBeamModel.set')
         return
 
 
     def get(self, name):
-        """Get beam properties using specific names.
+        """Compatibility query API retained for legacy string callers.
 
         Parameters
         ----------
@@ -288,66 +281,34 @@ class EulerBernoulliBeamModel(BaseModel):
               - z (or x3) component of the tension center
 
         """
+        warn_model_deprecation('EulerBernoulliBeamModel.get')
 
         if isinstance(name, str):
             name = name.lower()
 
             # Mass
             if name.startswith('ms'):
-                if self.mass is not None:
-                    return self.mass[int(name[2])-1][int(name[3])-1]
-                return None
-            if name == 'mu':
-                return self.mu
-            if name == 'mmoi1':
-                return self.i11
-            if name == 'mmoi2':
-                return self.i22
-            if name == 'mmoi3':
-                return self.i33
-            if name in ['gyr1', 'gyrx']:
-                return self.gyr1
-            if name in ['gyr2', 'gyry']:
-                return self.gyr2
-            if name in ['gyr3', 'gyrz']:
-                return self.gyr3
+                return self._get_matrix_value(name, 2, self.mass)
 
             # Stiffness
             if name.startswith('stf'):
-                if self.stff is not None:
-                    return self.stff[int(name[3])-1][int(name[4])-1]
-                return None
+                return self._get_matrix_value(name, 3, self.stff)
 
             # Compliance
             if name.startswith('cmp'):
-                if self.cmpl is not None:
-                    return self.cmpl[int(name[3])-1][int(name[4])-1]
-                return None
+                return self._get_matrix_value(name, 3, self.cmpl)
 
-            if name == 'ea':
-                return self.ea
-            if name == 'gj':
-                return self.gj
-            if name in ['ei22', 'eiyy', 'ei2', 'eiy']:
-                return self.ei22
-            if name in ['ei33', 'eizz', 'ei3', 'eiz']:
-                return self.ei33
+            found, value = self._get_aliased_value(self, name, self._SCALAR_ALIASES)
+            if found:
+                return value
 
-            # Various centers
-            if name == 'mcy' or name == 'mc2':
-                return self.xm2
-            if name == 'mcz' or name == 'mc3':
-                return self.xm3
-            if name == 'tcy' or name == 'tc2':
-                return self.xt2
-            if name == 'tcz' or name == 'tc3':
-                return self.xt3
+            found, value = self._get_aliased_value(self, name, self._CENTER_ALIASES)
+            if found:
+                return value
 
-            # Principal axes
-            if name == 'phi_pia':
-                return self.phi_pia
-            if name == 'phi_pba':
-                return self.phi_pba
+            found, value = self._get_aliased_value(self, name, self._AXIS_ALIASES)
+            if found:
+                return value
 
             # Return None for unrecognized properties (e.g., ga22, ga33 which are Timoshenko-only)
             return None
@@ -380,6 +341,7 @@ class EulerBernoulliBeamModel(BaseModel):
         - stfij, cmpij
 
         """
+        warn_model_deprecation('EulerBernoulliBeamModel.getAll')
         names = [
             'mu', 'mmoi1', 'mmoi2', 'mmoi3',
             'ea', 'ga22', 'ga33', 'gj', 'ei22', 'ei33',
@@ -404,13 +366,81 @@ class EulerBernoulliBeamModel(BaseModel):
 
 
 
-class TimoshenkoBeamModel:
+class TimoshenkoBeamModel(StructuralSectionSupport):
     """Timoshenko Beam Model
     """
 
     dim = 1
     label = 'bm2'
     model_name = 'Timoshenko beam model'
+    theory_schema: ClassVar = TIMOSHENKO_BEAM_SCHEMA
+    _SCALAR_ALIASES: ClassVar[dict[str, str]] = {
+        'mu': 'mu',
+        'mmoi1': 'i11',
+        'mmoi2': 'i22',
+        'mmoi3': 'i33',
+        'gyr1': 'gyr1',
+        'gyrx': 'gyr1',
+        'gyr2': 'gyr2',
+        'gyry': 'gyr2',
+        'gyr3': 'gyr3',
+        'gyrz': 'gyr3',
+        'ea': 'ea',
+        'ga22': 'ga22',
+        'gayy': 'ga22',
+        'ga2': 'ga22',
+        'gay': 'ga22',
+        'ga33': 'ga33',
+        'gazz': 'ga33',
+        'ga3': 'ga33',
+        'gaz': 'ga33',
+        'gj': 'gj',
+        'ei22': 'ei22',
+        'eiyy': 'ei22',
+        'ei2': 'ei22',
+        'eiy': 'ei22',
+        'ei33': 'ei33',
+        'eizz': 'ei33',
+        'ei3': 'ei33',
+        'eiz': 'ei33',
+    }
+    _CENTER_ALIASES: ClassVar[dict[str, str]] = {
+        'mcy': 'xm2',
+        'mc2': 'xm2',
+        'mcz': 'xm3',
+        'mc3': 'xm3',
+        'tcy': 'xt2',
+        'tc2': 'xt2',
+        'tcz': 'xt3',
+        'tc3': 'xt3',
+        'scy': 'xs2',
+        'sc2': 'xs2',
+        'scz': 'xs3',
+        'sc3': 'xs3',
+    }
+    _AXIS_ALIASES: ClassVar[dict[str, str]] = {
+        'phi_pia': 'phi_pia',
+        'phi_pba': 'phi_pba',
+        'phi_psa': 'phi_psa',
+    }
+    _SECTION_CENTER_ATTRS: ClassVar[dict[SectionCenter, tuple[str, ...]]] = {
+        SectionCenter.MASS: ('xm2', 'xm3'),
+        SectionCenter.TENSION: ('xt2', 'xt3'),
+        SectionCenter.SHEAR: ('xs2', 'xs3'),
+    }
+    _SECTION_AXIS_ATTRS: ClassVar[dict[SectionAxis, str]] = {
+        SectionAxis.INERTIAL: 'phi_pia',
+        SectionAxis.BENDING: 'phi_pba',
+        SectionAxis.SHEAR: 'phi_psa',
+    }
+    _SECTION_MATRIX_ATTRS: ClassVar[dict[SectionMatrixKind, str]] = {
+        SectionMatrixKind.MASS: 'mass',
+        SectionMatrixKind.MASS_CENTER: 'mass_mc',
+        SectionMatrixKind.STIFFNESS: 'stff',
+        SectionMatrixKind.COMPLIANCE: 'cmpl',
+        SectionMatrixKind.CLASSICAL_STIFFNESS: 'stff_c',
+        SectionMatrixKind.CLASSICAL_COMPLIANCE: 'cmpl_c',
+    }
 
     def __init__(self):
         self.name = ''
@@ -502,152 +532,51 @@ class TimoshenkoBeamModel:
     @property
     def gyr1(self): return self.rg
     @property
-    def gyr2(self): return math.sqrt(self.i22/self.mu)
+    def gyr2(self):
+        if self.i22 is None or self.mu in (None, 0):
+            return None
+        return math.sqrt(self.i22 / self.mu)
     @property
-    def gyr3(self): return math.sqrt(self.i33/self.mu)
-
-    @staticmethod
-    def _get_matrix_entry(matrix, i: int, j: int):
-        """Safely get a matrix entry, returning None when unavailable."""
-        if matrix is None:
+    def gyr3(self):
+        if self.i33 is None or self.mu in (None, 0):
             return None
-        if len(matrix) <= i:
-            return None
-        row = matrix[i]
-        if row is None or len(row) <= j:
-            return None
-        return row[j]
+        return math.sqrt(self.i33 / self.mu)
 
 
     def __repr__(self):
-        s = [
-            self.model_name,
-        ]
-
-        s.append('-'*16)
-        s.append('mass matrix')
-        if not self.mass is None:
-            for i in range(6):
-                _row = []
-                for j in range(6):
-                    _row.append(f'{self.mass[i][j]:14e}')
-                s.append(', '.join(_row))
-        else:
-            s.append('NONE')
+        s = [self.model_name]
+        s.append('-' * 16)
+        s.extend(self._format_matrix_block('mass matrix', self.mass))
         s.append('')
-        s.append('mass matrix w.r.t. mass center')
-        if not self.mass_mc is None:
-            for i in range(6):
-                _row = []
-                for j in range(6):
-                    _row.append(f'{self.mass_mc[i][j]:14e}')
-                s.append(', '.join(_row))
-        else:
-            s.append('NONE')
-
+        s.extend(self._format_matrix_block('mass matrix w.r.t. mass center', self.mass_mc))
         s.append('')
-        s.append('mass center = ({}, {})'.format(
-            f'{self.xm2:14e}' if not self.xm2 is None else 'NONE',
-            f'{self.xm3:14e}' if not self.xm3 is None else 'NONE'
-        ))
-        s.append('mass per unit span = {}'.format(
-            f'{self.mu:14e}' if not self.mu is None else 'NONE'
-        ))
+        s.append(self._format_center_line('mass center', self.xm2, self.xm3))
+        s.append(self._format_scalar_line('mass per unit span', self.mu))
         s.append('mass moment of inertia')
-        s.append('  i11 = {}'.format(
-            f'{self.i11:14e}' if not self.i11 is None else 'NONE'
-        ))
-        s.append('  i22 = {}'.format(
-            f'{self.i22:14e}' if not self.i22 is None else 'NONE'
-        ))
-        s.append('  i33 = {}'.format(
-            f'{self.i33:14e}' if not self.i33 is None else 'NONE'
-        ))
-        s.append('principal inertial axes rotation angle = {}'.format(
-            f'{self.phi_pia:14e}' if not self.phi_pia is None else 'NONE'
-        ))
-        s.append('mass-weighted radius of gyration = {}'.format(
-            f'{self.rg:14e}' if not self.rg is None else 'NONE'
-        ))
-
-        s.append('-'*16)
-        s.append('stiffness matrix')
-        if not self.stff is None:
-            for i in range(6):
-                _row = []
-                for j in range(6):
-                    _row.append(f'{self.stff[i][j]:14e}')
-                s.append(', '.join(_row))
-        else:
-            s.append('NONE')
-
+        s.append(self._format_scalar_line('  i11', self.i11))
+        s.append(self._format_scalar_line('  i22', self.i22))
+        s.append(self._format_scalar_line('  i33', self.i33))
+        s.append(self._format_scalar_line('principal inertial axes rotation angle', self.phi_pia))
+        s.append(self._format_scalar_line('mass-weighted radius of gyration', self.rg))
+        s.append('-' * 16)
+        s.extend(self._format_matrix_block('stiffness matrix', self.stff))
         s.append('')
-        s.append('compliance matrix')
-        if not self.cmpl is None:
-            for i in range(6):
-                _row = []
-                for j in range(6):
-                    _row.append(f'{self.cmpl[i][j]:14e}')
-                s.append(', '.join(_row))
-        else:
-            s.append('NONE')
-
+        s.extend(self._format_matrix_block('compliance matrix', self.cmpl))
         s.append('')
-        s.append('tension center = ({}, {})'.format(
-            f'{self.xt2:14e}' if not self.xt2 is None else 'NONE',
-            f'{self.xt3:14e}' if not self.xt3 is None else 'NONE'
-        ))
-        s.append('extension stiffness EA = {}'.format(
-            f'{self.ea:14e}' if not self.ea is None else 'NONE',
-        ))
-        s.append('torsional stiffness GJ = {}'.format(
-            f'{self.gj:14e}' if not self.gj is None else 'NONE',
-        ))
-        s.append('principal bending stiffness EI22 = {}'.format(
-            f'{self.ei22:14e}' if not self.ei22 is None else 'NONE',
-        ))
-        s.append('principal bending stiffness EI33 = {}'.format(
-            f'{self.ei33:14e}' if not self.ei33 is None else 'NONE',
-        ))
-        s.append('principal bending axes rotation angle = {}'.format(
-            f'{self.phi_pba:14e}' if not self.phi_pba is None else 'NONE',
-        ))
-        s.append('shear center = ({}, {})'.format(
-            f'{self.xs2:14e}' if not self.xs2 is None else 'NONE',
-            f'{self.xs3:14e}' if not self.xs3 is None else 'NONE'
-        ))
-        s.append('principal shear stiffness GA22 = {}'.format(
-            f'{self.ga22:14e}' if not self.ga22 is None else 'NONE',
-        ))
-        s.append('principal shear stiffness GA33 = {}'.format(
-            f'{self.ga33:14e}' if not self.ga33 is None else 'NONE',
-        ))
-        s.append('principal shear axes rotation angle = {}'.format(
-            f'{self.phi_psa:14e}' if not self.phi_psa is None else 'NONE',
-        ))
-
-        s.append('-'*16)
-        s.append('stiffness matrix (classical)')
-        if not self.stff_c is None:
-            for i in range(4):
-                _row = []
-                for j in range(4):
-                    _row.append(f'{self.stff_c[i][j]:14e}')
-                s.append(', '.join(_row))
-        else:
-            s.append('NONE')
-
+        s.append(self._format_center_line('tension center', self.xt2, self.xt3))
+        s.append(self._format_scalar_line('extension stiffness EA', self.ea))
+        s.append(self._format_scalar_line('torsional stiffness GJ', self.gj))
+        s.append(self._format_scalar_line('principal bending stiffness EI22', self.ei22))
+        s.append(self._format_scalar_line('principal bending stiffness EI33', self.ei33))
+        s.append(self._format_scalar_line('principal bending axes rotation angle', self.phi_pba))
+        s.append(self._format_center_line('shear center', self.xs2, self.xs3))
+        s.append(self._format_scalar_line('principal shear stiffness GA22', self.ga22))
+        s.append(self._format_scalar_line('principal shear stiffness GA33', self.ga33))
+        s.append(self._format_scalar_line('principal shear axes rotation angle', self.phi_psa))
+        s.append('-' * 16)
+        s.extend(self._format_matrix_block('stiffness matrix (classical)', self.stff_c))
         s.append('')
-        s.append('compliance matrix (classical)')
-        if not self.cmpl_c is None:
-            for i in range(4):
-                _row = []
-                for j in range(4):
-                    _row.append(f'{self.cmpl_c[i][j]:14e}')
-                s.append(', '.join(_row))
-        else:
-            s.append('NONE')
-
+        s.extend(self._format_matrix_block('compliance matrix (classical)', self.cmpl_c))
         return '\n'.join(s)
 
 
@@ -656,11 +585,13 @@ class TimoshenkoBeamModel:
 
 
     def set(self, name, value, **kwargs):
+        """Compatibility setter retained for legacy string callers."""
+        warn_model_deprecation('TimoshenkoBeamModel.set')
         return
 
 
     def get(self, name):
-        """Get beam properties using specific names.
+        """Compatibility query API retained for legacy string callers.
 
         Parameters
         ----------
@@ -732,84 +663,38 @@ class TimoshenkoBeamModel:
         .
 
         """
+        warn_model_deprecation('TimoshenkoBeamModel.get')
 
         if isinstance(name, str):
             name = name.lower()
 
             # Mass
             if name.startswith('ms'):
-                return self._get_matrix_entry(self.mass, int(name[2])-1, int(name[3])-1)
-            if name == 'mu':
-                return self.mu
-            if name == 'mmoi1':
-                return self.i11
-            if name == 'mmoi2':
-                return self.i22
-            if name == 'mmoi3':
-                return self.i33
-            if name in ['gyr1', 'gyrx']:
-                return self.gyr1
-            if name in ['gyr2', 'gyry']:
-                return self.gyr2
-            if name in ['gyr3', 'gyrz']:
-                return self.gyr3
+                return self._get_matrix_value(name, 2, self.mass)
 
             # Stiffness
             if name.startswith('stf'):
                 if name[-1] == 'c':
-                    return self._get_matrix_entry(
-                        self.stff_c, int(name[3])-1, int(name[4])-1
-                    )
-                else:
-                    return self._get_matrix_entry(
-                        self.stff, int(name[3])-1, int(name[4])-1
-                    )
+                    return self._get_matrix_value(name, 3, self.stff_c)
+                return self._get_matrix_value(name, 3, self.stff)
 
             # Compliance
             if name.startswith('cmp'):
                 if name[-1] == 'c':
-                    return self._get_matrix_entry(
-                        self.cmpl_c, int(name[3])-1, int(name[4])-1
-                    )
-                else:
-                    return self._get_matrix_entry(
-                        self.cmpl, int(name[3])-1, int(name[4])-1
-                    )
+                    return self._get_matrix_value(name, 3, self.cmpl_c)
+                return self._get_matrix_value(name, 3, self.cmpl)
 
-            if name == 'ea':
-                return self.ea
-            if name in ['ga22', 'gayy', 'ga2', 'gay']:
-                return self.ga22
-            if name in ['ga33', 'gazz', 'ga3', 'gaz']:
-                return self.ga33
-            if name == 'gj':
-                return self.gj
-            if name in ['ei22', 'eiyy', 'ei2', 'eiy']:
-                return self.ei22
-            if name in ['ei33', 'eizz', 'ei3', 'eiz']:
-                return self.ei33
+            found, value = self._get_aliased_value(self, name, self._SCALAR_ALIASES)
+            if found:
+                return value
 
-            # Various centers
-            if name == 'mcy' or name == 'mc2':
-                return self.xm2
-            if name == 'mcz' or name == 'mc3':
-                return self.xm3
-            if name == 'tcy' or name == 'tc2':
-                return self.xt2
-            if name == 'tcz' or name == 'tc3':
-                return self.xt3
-            if name == 'scy' or name == 'sc2':
-                return self.xs2
-            if name == 'scz' or name == 'sc3':
-                return self.xs3
+            found, value = self._get_aliased_value(self, name, self._CENTER_ALIASES)
+            if found:
+                return value
 
-            # Principal axes
-            if name == 'phi_pia':
-                return self.phi_pia
-            if name == 'phi_pba':
-                return self.phi_pba
-            if name == 'phi_psa':
-                return self.phi_psa
+            found, value = self._get_aliased_value(self, name, self._AXIS_ALIASES)
+            if found:
+                return value
 
         elif isinstance(name, list) or isinstance(name, tuple):
             props = []
@@ -837,6 +722,7 @@ class TimoshenkoBeamModel:
         - msij, stfijc, cmpijc, stfijr, cmpijr
 
         """
+        warn_model_deprecation('TimoshenkoBeamModel.getAll')
         names = [
             'mu', 'mmoi1', 'mmoi2', 'mmoi3',
             'ea', 'ga22', 'ga33', 'gj', 'ei22', 'ei33',

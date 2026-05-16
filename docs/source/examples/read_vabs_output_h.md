@@ -10,7 +10,10 @@ After running VABS homogenization, read the `.K` output file to extract effectiv
 :language: python
 ```
 
-`model_type='BM2'` selects the Timoshenko beam model output layout. Use `model.get('<key>')` to retrieve individual properties by name (e.g. `'ea'`, `'gj'`, `'ei22'`, `'ei33'`).
+`model_type='BM2'` selects the Timoshenko beam model output layout. For named
+beam properties such as `ea`, `gj`, `ei22`, and `ei33`, use the direct model
+attributes. Use the typed section-query methods only when you need matrix or
+theory-bound quantities.
 
 ## Result
 

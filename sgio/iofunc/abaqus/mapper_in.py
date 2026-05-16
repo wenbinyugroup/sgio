@@ -188,31 +188,29 @@ def _build_material_models(materials: Mapping[str, Mapping[str, Any]]) -> dict[s
 
         model = smdl.CauchyContinuumModel(material_name)
         model.temperature = material_data.get("temperature", 0)
-        model.set("density", material_data.get("density", 0))
+        model.density = material_data.get("density", 0)
 
         material_type = material_data["type"]
         elastic = material_data["elastic"]
         if material_type == "isotropic":
-            model.set("isotropy", 0)
-            model.set("elastic", elastic)
+            model.set_isotropy(0)
+            model.set_elastic(elastic)
         elif material_type == "engineering constants":
-            model.set("isotropy", 1)
+            model.set_isotropy(1)
             e1, e2, e3 = elastic[:3]
             g12, g13, g23 = elastic[6:9]
             nu12, nu13, nu23 = elastic[3:6]
-            model.set(
-                "elastic",
+            model.set_elastic(
                 [e1, e2, e3, g12, g13, g23, nu12, nu13, nu23],
                 input_type="engineering",
             )
         elif material_type == "lamina":
-            model.set("isotropy", 1)
+            model.set_isotropy(1)
             e1, e2, e3 = [elastic[0], elastic[1], elastic[1]]
             g12, g13, g23 = [elastic[3], elastic[4], elastic[5]]
             nu12, nu13 = [elastic[2], elastic[2]]
             nu23 = e3 / (2 * g23) - 1
-            model.set(
-                "elastic",
+            model.set_elastic(
                 [e1, e2, e3, g12, g13, g23, nu12, nu13, nu23],
                 input_type="engineering",
             )
@@ -225,8 +223,8 @@ def _build_material_models(materials: Mapping[str, Mapping[str, Any]]) -> dict[s
                 [elastic[10], elastic[11], elastic[12], elastic[13], elastic[14], elastic[19]],
                 [elastic[15], elastic[16], elastic[17], elastic[18], elastic[19], elastic[20]],
             ]
-            model.set("isotropy", 2)
-            model.set("elastic", stiffness, input_type="stiffness")
+            model.set_isotropy(2)
+            model.set_elastic(stiffness, input_type="stiffness")
 
         mapped_materials[material_name] = model
     return mapped_materials

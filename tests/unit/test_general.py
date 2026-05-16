@@ -1,9 +1,33 @@
 """Unit tests for general model containers."""
 
+import sgio
+import sgio.model as sgmodel
 import numpy as np
 import pytest
 
-from sgio.model.general import SectionResponse, State, StructureResponseCase, StructureResponseCases
+from sgio.model.general import (
+    SectionResponse,
+    State,
+    StateCase,
+    StructureResponseCase,
+    StructureResponseCases,
+)
+from sgio.model.protocols import getModelDim
+from sgio.model.response import StructureResponseCases as ResponseCasesFromModule
+from sgio.model.state import StateCase as StateCaseFromModule
+
+
+class TestGeneralModuleCompatibility:
+    """Test phase-1 compatibility shells and explicit re-exports."""
+
+    def test_compatibility_shell_and_new_modules_export_same_objects(self):
+        """Legacy and new import paths should resolve to the same objects."""
+        assert StateCase is StateCaseFromModule
+        assert StructureResponseCases is ResponseCasesFromModule
+        assert sgmodel.StateCase is StateCase
+        assert sgmodel.getModelDim is getModelDim
+        assert sgio.StateCase is StateCase
+        assert sgio.getModelDim is getModelDim
 
 
 class TestState:
@@ -53,6 +77,46 @@ class TestState:
         assert state.is_field_data() is False
         assert state.entity_ids is None
         assert state.data == [7.0, 8.0]
+
+
+class TestStateCase:
+    """Test load-case container semantics."""
+
+    def test_add_state_exposes_convenience_accessors(self):
+        """Named states should be available through convenience properties."""
+        state_case = StateCase(case={'load_case': 3}, states={})
+        state_case.addState(
+            name='load',
+            state=State(name='load', data=[1.0, 2.0, 3.0], label=['f1', 'f2', 'f3']),
+        )
+        state_case.addState(
+            name='displacement',
+            state=State(name='displacement', data=[0.1, 0.2, 0.3], label=['u1', 'u2', 'u3']),
+        )
+
+        assert state_case.case['load_case'] == 3
+        assert state_case.load is not None
+        assert state_case.displacement is not None
+        assert state_case.load.data == [1.0, 2.0, 3.0]
+        assert state_case.displacement.label == ['u1', 'u2', 'u3']
+
+    def test_to_dictionary_preserves_case_and_states(self):
+        """StateCase serialization should preserve metadata and state payloads."""
+        state_case = StateCase(case={'station': 9, 'mode': 2}, states={})
+        state_case.addState(
+            name='rotation',
+            state=State(
+                name='rotation',
+                data=[[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]],
+                label=['c11', 'c12', 'c13', 'c21', 'c22', 'c23', 'c31', 'c32', 'c33'],
+            ),
+        )
+
+        payload = state_case.toDictionary()
+
+        assert payload['case'] == {'station': 9, 'mode': 2}
+        assert payload['states']['rotation']['data'][0] == [1.0, 0.0, 0.0]
+        assert payload['states']['rotation']['label'][0] == 'c11'
 
 
 class TestStructureResponseCases:

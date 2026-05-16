@@ -160,7 +160,7 @@ def read_material(
         Material model with properties.
     """
     mp = smdl.CauchyContinuumModel()
-    mp.set('isotropy', isotropy)
+    mp.set_isotropy(isotropy)
     
     temp_counter = 0
     while temp_counter < ntemp:
@@ -176,7 +176,7 @@ def read_material(
         
         # Read elastic properties
         elastic_props = read_elastic_property(file, isotropy, comment_char)
-        mp.setElastic(elastic_props, isotropy)
+        mp.set_elastic(elastic_props, isotropy)
         
         # Read density (VABS format)
         if comment_char == '!':  # VABS format
@@ -185,13 +185,13 @@ def read_material(
                 line = file.readline().split(comment_char)[0].strip()
             density = sutl.fortran_float(line)
         
-        mp.set('density', density)
+        mp.density = density
         
         # Read thermal properties if needed
         if physics in [1, 4, 6] and comment_char == '#':  # SwiftComp
             cte, specific_heat = read_thermal_property(file, isotropy)
-            mp.set('cte', cte)
-            mp.set('specific_heat', specific_heat)
+            mp.cte = cte
+            mp.specific_heat = specific_heat
         
         temp_counter += 1
     

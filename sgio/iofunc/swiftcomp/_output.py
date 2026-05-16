@@ -753,7 +753,7 @@ def _readOutputCauchyContinuumModel(file):
 
     # Always set the homogenizated material as general anisotropic
     # mp.isotropy = 2
-    mp.set('isotropy', 2)
+    mp.set_isotropy(2)
 
     linesRead = []
     keywordsIndex = {}
@@ -799,7 +799,7 @@ def _readOutputCauchyContinuumModel(file):
         elif '2alpha12' in line:
             _2a12 = float(line.split('=')[-1])
             _cte = [_a11, _a22, _a33, _2a23, _2a13, _2a12]
-            mp.set('cte', _cte)
+            mp.cte = _cte
 
         elif 'Dthetatheta' in line:
             mp.d_thetatheta = float(line.split('=')[-1])
@@ -809,19 +809,19 @@ def _readOutputCauchyContinuumModel(file):
             _tm = 1
             _t = _t1 + _tm
             _specific_heat = mp.d_thetatheta - _t * mp.f_eff
-            mp.set('specific_heat', _specific_heat)
+            mp.specific_heat = _specific_heat
 
     try:
         ln = keywordsIndex['stff']
         _stff = sutl.textToMatrix(linesRead[ln + 2:ln + 8])
-        mp.set('elastic', _stff, input_type='stiffness')
+        mp.set_elastic(_stff, input_type='stiffness')
     except KeyError:
         logger.debug('No classical stiffness matrix found.')
 
     try:
         ln = keywordsIndex['cmpl']
         _cmpl = sutl.textToMatrix(linesRead[ln + 2:ln + 8])
-        mp.set('elastic', _cmpl, input_type='compliance')
+        mp.set_elastic(_cmpl, input_type='compliance')
     except KeyError:
         logger.debug('No classical flexibility matrix found.')
 
@@ -832,14 +832,13 @@ def _readOutputCauchyContinuumModel(file):
             line = line.split('=')
             label = line[0].strip().lower()
             value = float(line[-1].strip())
-            # mp.constants[label] = value
-            mp.set(label, value)
+            setattr(mp, label, value)
     except KeyError:
         logger.debug('No engineering constants found.')
 
     line = linesRead[keywordsIndex['density']]
     line = line.strip().split('=')
-    mp.set('density', float(line[-1].strip()))
+    mp.density = float(line[-1].strip())
     # mp.density = float(line[-1].strip())
 
 

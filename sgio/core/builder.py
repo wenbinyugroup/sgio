@@ -375,24 +375,24 @@ def add_material(mname, mprop):
 
     # m.density = float(mprop['density'])
     _density = float(mprop['density'])
-    m.set('density', _density)
+    m.density = _density
     m.temperature = float(mprop.get('temperature', 0))
 
     # Constitutive model
     # ------------------
     _isotropy = mprop.get('type', 'isotropic')
-    m.set('isotropy', _isotropy)
+    m.set_isotropy(_isotropy)
 
     # Elastic property
     _elastic = mprop.get('elasticity')
-    m.set('elastic', _elastic, input_type=_isotropy)
+    m.set_elastic(_elastic, input_type=_isotropy)
 
     # Thermal property
     _cte = list(map(float, mprop.get('cte', [])))
     if _cte:  # Only set if non-empty (validator requires None or 6 components)
-        m.set('cte', _cte)
+        m.cte = _cte
     _specific_heat = float(mprop.get('specific_heat', 0))
-    m.set('specific_heat', _specific_heat)
+    m.specific_heat = _specific_heat
 
     # Strength properties
     # -------------------
@@ -400,8 +400,8 @@ def add_material(mname, mprop):
 
     _strength_constants = list(map(float, mprop.get('strength', [])))
     # print('strength_constants:', _strength_constants)
-    m.set('strength_constants', _strength_constants)
+    m.set_strength_constants(_strength_constants)
     _char_len = float(mprop.get('char_len', 0))
-    m.set('char_len', _char_len)
+    m.char_len = _char_len
 
     return m

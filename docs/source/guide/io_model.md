@@ -1,12 +1,12 @@
 # Read Structural Model Data (.k file)
 
 To get the data (effective properties) from the output file (`.k`), use the
-{func}`sgio.readOutputModel` function.
+{func}`sgio.read_output_model` function.
 
 ```python
 import sgio
 
-model = sgio.readOutputModel(
+model = sgio.read_output_model(
     file_name,    # Name of the output file.
     file_format,  # Format of the output file.
     model_type,   # Type of the structural model.
@@ -45,5 +45,6 @@ EI22 = 79466.796504
 EI33 = 200742.66655
 ```
 
-Check out {func}`sgio.model.TimoshenkoBeamModel.get` for more information on
-the properties that can be retrieved.
+For named beam properties such as `ea`, `gj`, `ei22`, and `ei33`, prefer the
+direct model attributes. Use the typed section-query methods only when you need
+matrix or theory-schema quantities.
