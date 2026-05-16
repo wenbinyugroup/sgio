@@ -401,7 +401,9 @@ class CauchyContinuumModel(BaseModel):
         aniso_consts = data.pop('anisotropic_constants', None)
         
         super().__init__(**data)
-        
+
+        self._sync_stiffness_from_compliance()
+
         # Auto-build stiffness matrix based on isotropy and provided constants
         self._auto_build_stiffness(aniso_consts)
     
@@ -507,6 +509,11 @@ class CauchyContinuumModel(BaseModel):
             if aniso_consts is not None:
                 self.stff = _build_anisotropic_stiffness(aniso_consts)
             # else: user must provide stff matrix directly
+
+    def _sync_stiffness_from_compliance(self) -> None:
+        """Populate stiffness from compliance when only compliance is available."""
+        if self.stff is None and self.cmpl is not None:
+            self.stff = _invert_compliance_matrix(self.cmpl)
 
     # Field validators
     @field_validator('stff', 'cmpl')
@@ -781,10 +788,68 @@ class CauchyContinuumModel(BaseModel):
 
         return
 
+    @staticmethod
+    def _normalize_elastic_input_type(input_type: str | int) -> str:
+        """Normalize legacy elastic input type aliases.
+
+        Parameters
+        ----------
+        input_type : str or int
+            Elastic input type label or legacy isotropy integer.
+
+        Returns
+        -------
+        str
+            Normalized input type token used by ``setElastic``.
+        """
+        if isinstance(input_type, int):
+            legacy_map = {
+                0: 'isotropic',
+                1: 'engineering',
+                2: 'anisotropic',
+                3: 'transverse_isotropic',
+            }
+            try:
+                return legacy_map[input_type]
+            except KeyError as exc:
+                raise ValueError(f'Unsupported legacy elastic input type: {input_type}') from exc
+
+        normalized = input_type.strip().lower()
+        if normalized in {
+            '',
+            'isotropic',
+            'engineering',
+            'engineering constants',
+            'orthotropic',
+            'lamina',
+            'anisotropic',
+            'constants',
+            'stiffness',
+            'compliance',
+            'transverse',
+            'transverse_isotropic',
+        }:
+            return normalized
+
+        if normalized.startswith('eng'):
+            return 'engineering'
+        if normalized.startswith('ortho'):
+            return 'orthotropic'
+        if normalized.startswith('lam'):
+            return 'lamina'
+        if normalized.startswith('aniso'):
+            return 'anisotropic'
+        if normalized.startswith(('trans', 'ti')):
+            return 'transverse_isotropic'
+        if normalized.startswith('iso'):
+            return 'isotropic'
+
+        return normalized
+
     def setElastic(
         self,
         consts: ElasticInput,
-        input_type: str = '',
+        input_type: str | int = '',
         **kwargs,
     ):
         """Set elastic properties based on isotropy type.
@@ -812,8 +877,14 @@ class CauchyContinuumModel(BaseModel):
         C11, C12, C13, C14, C15, C16, C22, C23, C24, C25, C26, C33, C34, C35, C36,
         C44, C45, C46, C55, C56, C66
         """
+        normalized_input_type = self._normalize_elastic_input_type(input_type)
+
         if self.isotropy == 0:
             # Isotropic: [E, nu]
+            if normalized_input_type not in ('', 'isotropic'):
+                raise ValueError(
+                    f"Unsupported isotropic elastic input type: '{input_type}'"
+                )
             seq = list(cast(FloatSequence, consts))
             if len(seq) < 2:
                 raise ValueError('Isotropic elastic input requires [E, nu]')
@@ -824,7 +895,7 @@ class CauchyContinuumModel(BaseModel):
         elif self.isotropy == 3:
             # Transverse Isotropic: [E1, E2, G12, nu12, nu23]
             seq = list(cast(FloatSequence, consts))
-            if input_type in ('transverse_isotropic', 'transverse', ''):
+            if normalized_input_type in ('transverse_isotropic', 'transverse', ''):
                 if len(seq) < 5:
                     raise ValueError('Transverse isotropic input requires [E1, E2, G12, nu12, nu23]')
                 self.e1 = float(seq[0])
@@ -836,11 +907,15 @@ class CauchyContinuumModel(BaseModel):
                 self.g13 = self.g12
                 self.nu13 = self.nu12
                 self._auto_build_stiffness()
+            else:
+                raise ValueError(
+                    f"Unsupported transverse isotropic elastic input type: '{input_type}'"
+                )
 
         elif self.isotropy == 1:
             # Orthotropic
             seq = list(cast(FloatSequence, consts))
-            if input_type == 'lamina':
+            if normalized_input_type == 'lamina':
                 # [E1, E2, G12, nu12]
                 if len(seq) < 4:
                     raise ValueError('Lamina input requires 4 values [E1, E2, G12, nu12]')
@@ -854,7 +929,7 @@ class CauchyContinuumModel(BaseModel):
                 self.nu23 = 0.3
                 self.g23 = self.e3 / (2.0 * (1 + self.nu23))
                 self._auto_build_stiffness()
-            elif input_type in ('engineering', 'orthotropic', ''):
+            elif normalized_input_type in ('engineering', 'engineering constants', 'orthotropic', ''):
                 # [E1, E2, E3, G12, G13, G23, nu12, nu13, nu23]
                 if len(seq) < 9:
                     raise ValueError('Engineering input requires 9 values')
@@ -862,29 +937,38 @@ class CauchyContinuumModel(BaseModel):
                 self.g12, self.g13, self.g23 = list(map(float, seq[3:6]))
                 self.nu12, self.nu13, self.nu23 = list(map(float, seq[6:9]))
                 self._auto_build_stiffness()
+            else:
+                raise ValueError(
+                    f"Unsupported orthotropic elastic input type: '{input_type}'"
+                )
 
         elif self.isotropy == 2:
             # Anisotropic
-            if input_type in ('anisotropic', 'constants', ''):
+            if normalized_input_type in ('anisotropic', 'constants', ''):
                 # Provide 21 constants for upper triangle
                 seq = list(cast(FloatSequence, consts))
                 if len(seq) != 21:
                     raise ValueError(f'Anisotropic input requires 21 constants, got {len(seq)}')
                 self.stff = _build_anisotropic_stiffness(seq)
-            elif input_type == 'stiffness':
+            elif normalized_input_type == 'stiffness':
                 # Provide full 6x6 matrix
                 matrix_input = cast(MatrixSequence, consts)
                 rows: List[List[float]] = []
                 for row in matrix_input:
                     rows.append([float(value) for value in row])
                 self.stff = rows
-            elif input_type == 'compliance':
+            elif normalized_input_type == 'compliance':
                 # Provide full 6x6 compliance matrix
                 matrix_input = cast(MatrixSequence, consts)
                 rows: List[List[float]] = []
                 for row in matrix_input:
                     rows.append([float(value) for value in row])
                 self.cmpl = rows
+                self._sync_stiffness_from_compliance()
+            else:
+                raise ValueError(
+                    f"Unsupported anisotropic elastic input type: '{input_type}'"
+                )
 
         return
 

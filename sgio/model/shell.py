@@ -118,6 +118,18 @@ class KirchhoffLovePlateShellModel():
     def set(self, name, value, **kwargs):
         ...
 
+    @staticmethod
+    def _get_matrix_entry(matrix, i: int, j: int):
+        """Safely get a matrix entry, returning None when unavailable."""
+        if matrix is None:
+            return None
+        if len(matrix) <= i:
+            return None
+        row = matrix[i]
+        if row is None or len(row) <= j:
+            return None
+        return row[j]
+
 
     def get(self, name):
         r"""
@@ -126,16 +138,23 @@ class KirchhoffLovePlateShellModel():
         # Stiffness
         if name.startswith('stf'):
             if name[-1] == 'c':
-                return self.stff[int(name[3])-1][int(name[4])-1]
+                return self._get_matrix_entry(
+                    self.stff, int(name[3])-1, int(name[4])-1
+                )
             elif name[-1] == 'r':
                 if name[-2] == 'g':
-                    if len(self.stff_geo) > 0:
-                        return self.stff_geo[int(name[3])-1][int(name[4])-1]
+                    entry = self._get_matrix_entry(
+                        self.stff_geo, int(name[3])-1, int(name[4])-1
+                    )
+                    if entry is not None:
+                        return entry
                     else:
-                        return self.stff[int(name[3])-1][int(name[4])-1]
+                        return self._get_matrix_entry(
+                            self.stff, int(name[3])-1, int(name[4])-1
+                        )
 
         elif name.startswith('mass'):
-            return self.mass[int(name[4])-1][int(name[5])-1]
+            return self._get_matrix_entry(self.mass, int(name[4])-1, int(name[5])-1)
 
         return
 

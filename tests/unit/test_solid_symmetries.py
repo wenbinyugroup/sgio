@@ -283,6 +283,50 @@ class TestBackwardCompatibility:
         mat.set('isotropy', 'transverse')
         assert mat.isotropy == 3
 
+    def test_legacy_integer_input_type_for_orthotropic_elastic(self):
+        """Legacy integer isotropy values should still drive orthotropic parsing."""
+        mat = CauchyContinuumModel(name='LegacyOrtho', isotropy=1)
+
+        mat.setElastic(
+            [150e9, 10e9, 10e9, 5e9, 5e9, 3e9, 0.3, 0.3, 0.4],
+            1,
+        )
+
+        assert mat.e1 == 150e9
+        assert mat.e2 == 10e9
+        assert mat.e3 == 10e9
+        assert mat.stff is not None
+
+    def test_legacy_integer_input_type_for_anisotropic_elastic(self):
+        """Legacy integer isotropy values should still drive anisotropic parsing."""
+        constants = [
+            100e9, 50e9, 50e9, 0, 0, 0,
+            100e9, 50e9, 0, 0, 0,
+            100e9, 0, 0, 0,
+            25e9, 0, 0,
+            25e9, 0,
+            25e9
+        ]
+        mat = CauchyContinuumModel(name='LegacyAniso', isotropy=2)
+
+        mat.setElastic(constants, 2)
+
+        assert mat.stff is not None
+        assert mat.stff[0][0] == 100e9
+
+    def test_engineering_constants_string_alias_for_orthotropic_elastic(self):
+        """Older descriptive input labels should map to engineering constants."""
+        mat = CauchyContinuumModel(name='BuilderOrtho', isotropy=1)
+
+        mat.setElastic(
+            [150e9, 10e9, 10e9, 5e9, 5e9, 3e9, 0.3, 0.3, 0.4],
+            input_type='engineering constants',
+        )
+
+        assert mat.e1 == 150e9
+        assert mat.g23 == 3e9
+        assert mat.stff is not None
+
 
 class TestParameterAliases:
     """Test parameter alias functionality."""

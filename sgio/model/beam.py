@@ -460,17 +460,17 @@ class TimoshenkoBeamModel:
 
         #: list of lists of floats:
         #: Classical stiffness matrix (1-extension; 2-twist; 3,4-bending)
-        self.stff_c = []
+        self.stff_c = None
         #: list of lists of floats:
         #: Classical compliance matrix (1-extension; 2-twist; 3,4-bending)
-        self.cmpl_c = []
+        self.cmpl_c = None
 
         #: list of lists of floats:
         #: Timoshenko stiffness matrix (1-extension; 2,3-shear, 4-twist; 5,6-bending)
-        self.stff = []
+        self.stff = None
         #: list of lists of floats:
         #: Timoshenko compliance matrix (1-extension; 2,3-shear, 4-twist; 5,6-bending)
-        self.cmpl = []
+        self.cmpl = None
 
         #: float: Tension center location in x2 direction
         self.xt2 = None
@@ -505,6 +505,18 @@ class TimoshenkoBeamModel:
     def gyr2(self): return math.sqrt(self.i22/self.mu)
     @property
     def gyr3(self): return math.sqrt(self.i33/self.mu)
+
+    @staticmethod
+    def _get_matrix_entry(matrix, i: int, j: int):
+        """Safely get a matrix entry, returning None when unavailable."""
+        if matrix is None:
+            return None
+        if len(matrix) <= i:
+            return None
+        row = matrix[i]
+        if row is None or len(row) <= j:
+            return None
+        return row[j]
 
 
     def __repr__(self):
@@ -726,7 +738,7 @@ class TimoshenkoBeamModel:
 
             # Mass
             if name.startswith('ms'):
-                return self.mass[int(name[2])-1][int(name[3])-1]
+                return self._get_matrix_entry(self.mass, int(name[2])-1, int(name[3])-1)
             if name == 'mu':
                 return self.mu
             if name == 'mmoi1':
@@ -745,16 +757,24 @@ class TimoshenkoBeamModel:
             # Stiffness
             if name.startswith('stf'):
                 if name[-1] == 'c':
-                    return self.stff_c[int(name[3])-1][int(name[4])-1]
+                    return self._get_matrix_entry(
+                        self.stff_c, int(name[3])-1, int(name[4])-1
+                    )
                 else:
-                    return self.stff[int(name[3])-1][int(name[4])-1]
+                    return self._get_matrix_entry(
+                        self.stff, int(name[3])-1, int(name[4])-1
+                    )
 
             # Compliance
             if name.startswith('cmp'):
                 if name[-1] == 'c':
-                    return self.cmpl_c[int(name[3])-1][int(name[4])-1]
+                    return self._get_matrix_entry(
+                        self.cmpl_c, int(name[3])-1, int(name[4])-1
+                    )
                 else:
-                    return self.cmpl[int(name[3])-1][int(name[4])-1]
+                    return self._get_matrix_entry(
+                        self.cmpl, int(name[3])-1, int(name[4])-1
+                    )
 
             if name == 'ea':
                 return self.ea

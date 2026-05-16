@@ -6,11 +6,14 @@ This module tests the Pydantic-based model classes for:
 - Solid models (SD1: Cauchy continuum)
 """
 
+from io import StringIO
 import pytest
 import math
 from pydantic import ValidationError
 
-from sgio.model.beam import EulerBernoulliBeamModel
+from sgio.iofunc.common.material_writers import write_material
+from sgio.model.beam import EulerBernoulliBeamModel, TimoshenkoBeamModel
+from sgio.model.shell import KirchhoffLovePlateShellModel
 from sgio.model.solid import CauchyContinuumModel
 
 
@@ -261,6 +264,52 @@ class TestEulerBernoulliBeamModelSerialization:
 
 
 @pytest.mark.unit
+class TestTimoshenkoBeamModelSafety:
+    """Test safe access behavior for the Timoshenko beam model (BM2)."""
+
+    def test_default_get_returns_none_for_missing_matrix_entries(self):
+        """Default objects should not raise when matrix-backed properties are missing."""
+        beam = TimoshenkoBeamModel()
+
+        assert beam.get('ms11') is None
+        assert beam.get('stf11') is None
+        assert beam.get('stf11c') is None
+        assert beam.get('cmp11') is None
+        assert beam.get('cmp11c') is None
+
+    def test_default_repr_does_not_crash(self):
+        """Default repr should handle absent matrices cleanly."""
+        beam = TimoshenkoBeamModel()
+
+        output = repr(beam)
+
+        assert 'Timoshenko beam model' in output
+        assert 'NONE' in output
+
+
+@pytest.mark.unit
+class TestKirchhoffLovePlateShellModelSafety:
+    """Test safe access behavior for the Kirchhoff-Love shell model (PL1)."""
+
+    def test_default_get_returns_none_for_missing_matrix_entries(self):
+        """Default shell objects should not raise when matrix-backed properties are missing."""
+        shell = KirchhoffLovePlateShellModel()
+
+        assert shell.get('stf11c') is None
+        assert shell.get('stf11gr') is None
+        assert shell.get('mass11') is None
+
+    def test_get_uses_geometric_stiffness_when_available(self):
+        """Geometric corrected refined stiffness should be preferred when present."""
+        shell = KirchhoffLovePlateShellModel()
+        shell.stff = [[1.0] * 6 for _ in range(6)]
+        shell.stff_geo = [[2.0] * 6 for _ in range(6)]
+
+        assert shell.get('stf11gr') == 2.0
+        assert shell.get('stf11c') == 1.0
+
+
+@pytest.mark.unit
 class TestCauchyContinuumModel:
     """Tests for the Cauchy continuum solid model (SD1)."""
 
@@ -374,6 +423,62 @@ class TestCauchyContinuumModel:
         good_matrix = [[0.0] * 6 for _ in range(6)]
         solid.set('elastic', good_matrix, input_type='stiffness')
         assert solid.stff == good_matrix
+
+    def test_constructor_builds_stiffness_from_compliance(self):
+        """Compliance-only anisotropic inputs should also populate stiffness."""
+        compliance = [
+            [0.01, 0.0, 0.0, 0.0, 0.0, 0.0],
+            [0.0, 0.02, 0.0, 0.0, 0.0, 0.0],
+            [0.0, 0.0, 0.04, 0.0, 0.0, 0.0],
+            [0.0, 0.0, 0.0, 0.05, 0.0, 0.0],
+            [0.0, 0.0, 0.0, 0.0, 0.1, 0.0],
+            [0.0, 0.0, 0.0, 0.0, 0.0, 0.2],
+        ]
+        solid = CauchyContinuumModel(isotropy=2, cmpl=compliance)
+
+        assert solid.cmpl == compliance
+        assert solid.stff is not None
+        assert solid.get('s11') == pytest.approx(0.01)
+        assert solid.get('c11') == pytest.approx(100.0)
+        assert solid.get('c22') == pytest.approx(50.0)
+
+    def test_set_elastic_compliance_populates_stiffness(self):
+        """Compliance assignment should keep stiffness/compliance views consistent."""
+        compliance = [
+            [0.01, 0.0, 0.0, 0.0, 0.0, 0.0],
+            [0.0, 0.02, 0.0, 0.0, 0.0, 0.0],
+            [0.0, 0.0, 0.04, 0.0, 0.0, 0.0],
+            [0.0, 0.0, 0.0, 0.05, 0.0, 0.0],
+            [0.0, 0.0, 0.0, 0.0, 0.1, 0.0],
+            [0.0, 0.0, 0.0, 0.0, 0.0, 0.2],
+        ]
+        solid = CauchyContinuumModel(isotropy=2)
+
+        solid.set('elastic', compliance, input_type='compliance')
+
+        assert solid.cmpl == compliance
+        assert solid.stff is not None
+        assert solid.get('c11') == pytest.approx(100.0)
+
+    def test_write_material_supports_compliance_only_anisotropic_input(self):
+        """Material writing should not fail after compliance-only anisotropic initialization."""
+        compliance = [
+            [0.01, 0.0, 0.0, 0.0, 0.0, 0.0],
+            [0.0, 0.02, 0.0, 0.0, 0.0, 0.0],
+            [0.0, 0.0, 0.04, 0.0, 0.0, 0.0],
+            [0.0, 0.0, 0.0, 0.05, 0.0, 0.0],
+            [0.0, 0.0, 0.0, 0.0, 0.1, 0.0],
+            [0.0, 0.0, 0.0, 0.0, 0.0, 0.2],
+        ]
+        solid = CauchyContinuumModel(isotropy=2)
+        solid.set('elastic', compliance, input_type='compliance')
+
+        buffer = StringIO()
+        write_material(mid=1, material=solid, file=buffer, analysis='h')
+
+        content = buffer.getvalue()
+        assert content
+        assert '1.000000000000e+02' in content
 
     def test_strength_constants_assignment(self):
         """set('strength_constants', ...) distributes values to properties."""

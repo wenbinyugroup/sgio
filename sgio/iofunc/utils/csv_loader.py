@@ -135,18 +135,22 @@ def read_load_csv(
                 continue
             
             else:
-                resp_case = {}
-                
                 sect_resp = sgmodel.SectionResponse()
                 
                 sect_resp.load_type = load_type
                 sect_resp.load_tags = load_tags
                 
+                loc_values = []
                 for tag, vtype in zip(loc_tags, loc_vtypes):
-                    sect_resp.loc[tag] = eval(vtype)(row[tags_idx[tag]])
+                    value = eval(vtype)(row[tags_idx[tag]])
+                    sect_resp.loc[tag] = value
+                    loc_values.append(value)
                 
+                cond_values = []
                 for tag, vtype in zip(cond_tags, cond_vtypes):
-                    sect_resp.cond[tag] = eval(vtype)(row[tags_idx[tag]])
+                    value = eval(vtype)(row[tags_idx[tag]])
+                    sect_resp.cond[tag] = value
+                    cond_values.append(value)
                 
                 sect_resp.load = [float(row[tags_idx[tag]]) for tag in load_tags]
                 sect_resp.displacement = [float(row[tags_idx[tag]]) for tag in disp_tags]
@@ -155,8 +159,6 @@ def read_load_csv(
                     [float(row[tags_idx[tag]]) for tag in rot_tags[3:6]],
                     [float(row[tags_idx[tag]]) for tag in rot_tags[6:9]]
                 ]
-                
-                resp_case['response'] = sect_resp
-                struct_resp_cases.responses.append(resp_case)
+                struct_resp_cases.addResponseCase(loc_values, cond_values, sect_resp)
     
     return struct_resp_cases

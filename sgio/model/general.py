@@ -146,14 +146,7 @@ class State():
             self._entity_ids = None
         elif isinstance(data, np.ndarray):
             # Direct NumPy array
-            self._data = data
-            if entity_ids is not None:
-                self._entity_ids = entity_ids
-            elif len(data) > 0:
-                # Default to sequential IDs
-                self._entity_ids = np.arange(len(data))
-            else:
-                self._entity_ids = np.array([], dtype=int)
+            self._set_array_data(data, entity_ids)
         else:
             raise TypeError(
                 f"data must be list, dict, np.ndarray, or None, got {type(data)}"
@@ -189,9 +182,11 @@ class State():
             self._data = np.array(value)
             self._entity_ids = None
         elif isinstance(value, np.ndarray):
-            self._data = value
-            if len(value) > 0 and self._entity_ids is None:
-                self._entity_ids = np.arange(len(value))
+            entity_ids = None
+            if value.ndim > 1 and self._entity_ids is not None:
+                if len(self._entity_ids) == value.shape[0]:
+                    entity_ids = self._entity_ids
+            self._set_array_data(value, entity_ids)
         else:
             raise TypeError(f"data must be dict, list, or np.ndarray, got {type(value)}")
 
@@ -248,6 +243,42 @@ class State():
 
         self._entity_ids = np.array(entity_ids, dtype=int)
         self._data = np.array(values)
+
+    def _set_array_data(
+        self,
+        data: np.ndarray,
+        entity_ids: Optional[np.ndarray],
+    ) -> None:
+        """Set data from a NumPy array with explicit point/field semantics.
+
+        Parameters
+        ----------
+        data : np.ndarray
+            Array storing point or field data.
+        entity_ids : np.ndarray or None
+            Entity IDs for field data. If omitted, only 2D arrays default to
+            field data with sequential IDs. 1D arrays are treated as point data.
+        """
+        self._data = data
+
+        if entity_ids is not None:
+            entity_ids_array = np.asarray(entity_ids, dtype=int)
+            expected_length = data.shape[0] if data.ndim > 0 else 1
+            if len(entity_ids_array) != expected_length:
+                raise ValueError(
+                    'entity_ids length must match the first dimension of data'
+                )
+            self._entity_ids = entity_ids_array
+            return
+
+        if data.ndim <= 1:
+            # Match list semantics: a flat array is point data unless
+            # entity_ids were explicitly supplied.
+            self._entity_ids = None
+        elif data.shape[0] > 0:
+            self._entity_ids = np.arange(data.shape[0], dtype=int)
+        else:
+            self._entity_ids = np.array([], dtype=int)
 
     def _to_dict(self) -> Union[dict, list]:
         """Convert NumPy arrays to dict/list format for backward compatibility.
@@ -870,12 +901,46 @@ class SectionResponse():
 class StructureResponseCase():
     """
     """
-    def __init__(self):
+    def __init__(
+        self,
+        loc: Optional[dict] = None,
+        cond: Optional[dict] = None,
+        response: Optional[SectionResponse] = None,
+    ):
         self._loc_tags = []
         self._loc_values = []
         self._cond_tags = []
         self._cond_values = []
-        self._response:SectionResponse = None
+        self._response: Optional[SectionResponse] = response
+
+        if loc is not None:
+            for tag, value in loc.items():
+                self._loc_tags.append(tag)
+                self._loc_values.append(value)
+
+        if cond is not None:
+            for tag, value in cond.items():
+                self._cond_tags.append(tag)
+                self._cond_values.append(value)
+
+    @property
+    def loc(self) -> dict:
+        """Return location tags and values as a dictionary."""
+        return dict(zip(self._loc_tags, self._loc_values))
+
+    @property
+    def cond(self) -> dict:
+        """Return condition tags and values as a dictionary."""
+        return dict(zip(self._cond_tags, self._cond_values))
+
+    @property
+    def response(self) -> Optional[SectionResponse]:
+        """Return the sectional response payload."""
+        return self._response
+
+    @response.setter
+    def response(self, value: Optional[SectionResponse]) -> None:
+        self._response = value
 
     def __repr__(self):
         lines = []
@@ -916,6 +981,24 @@ class StructureResponseCase():
             value = self.getCondition(tag)
         return value
 
+    def __contains__(self, key: str) -> bool:
+        """Support legacy dictionary-style membership checks."""
+        if key == 'response':
+            return True
+        return key in self._loc_tags or key in self._cond_tags
+
+    def __getitem__(self, key: str):
+        """Support legacy dictionary-style access."""
+        if key == 'response':
+            return self._response
+
+        if key in self._loc_tags:
+            return self.getLocation(key)
+        if key in self._cond_tags:
+            return self.getCondition(key)
+
+        raise KeyError(key)
+
 
 
 
@@ -938,6 +1021,7 @@ class StructureResponseCases():
     def __repr__(self):
         lines = []
         for _resp in self.responses:
+            _resp = self._coerce_response_case(_resp)
             lines.append('-'*20)
             lines.append(str(_resp))
             # lines.append('Location:')
@@ -956,10 +1040,9 @@ class StructureResponseCases():
         resps = []
 
         for _resp in self.responses:
-            # resp = _resp
+            _resp = self._coerce_response_case(_resp)
             found = True
             for _k, _v in kwargs.items():
-                # if _v != _resp[_k]:
                 if _v != _resp.getLocationOrCondition(_k):
                     found = False
                     break
@@ -968,49 +1051,26 @@ class StructureResponseCases():
 
         return resps
 
+    def _coerce_response_case(self, resp) -> StructureResponseCase:
+        """Convert legacy dictionary payloads to ``StructureResponseCase``."""
+        if isinstance(resp, StructureResponseCase):
+            return resp
+
+        if isinstance(resp, dict):
+            loc = {tag: resp[tag] for tag in self.loc_tags if tag in resp}
+            cond = {tag: resp[tag] for tag in self.cond_tags if tag in resp}
+            response = resp.get('response')
+            return StructureResponseCase(loc=loc, cond=cond, response=response)
+
+        raise TypeError(
+            f'response case must be StructureResponseCase or dict, got {type(resp)}'
+        )
 
     def addResponseCase(self, loc, cond, sect_resp:SectionResponse):
-        resp_case = {}
-
-        # sect_resp = SectionResponse()
-
-        # sect_resp.load_type = load_type
-        # sect_resp.load_tags = load_tags
-
-        # Read location ids
-        for _tag, _value in zip(self.loc_tags, loc):
-            # _i = tags_idx[_tag]
-            resp_case[_tag] = _value
-
-        # Read case ids
-        for _tag, _value in zip(self.cond_tags, cond):
-            # _i = tags_idx[_tag]
-            resp_case[_tag] = _value
-
-        # # Read loads
-        # _load = []
-        # for _tag in load_tags:
-        #     _i = tags_idx[_tag]
-        #     _load.append(float(row[_i]))
-        # sect_resp.load = _load
-
-        # # Read displacements
-        # _disp = []
-        # for _tag in disp_tags:
-        #     _i = tags_idx[_tag]
-        #     _disp.append(float(row[_i]))
-        # sect_resp.displacement = _disp
-
-        # # Read rotations
-        # _rot = []
-        # for _tag in rot_tags:
-        #     _i = tags_idx[_tag]
-        #     _rot.append(float(row[_i]))
-        # sect_resp.directional_cosine = [
-        #     _rot[:3], _rot[3:6], _rot[6:]
-        # ]
-
-        resp_case['response'] = sect_resp
-
+        resp_case = StructureResponseCase(
+            loc={_tag: _value for _tag, _value in zip(self.loc_tags, loc)},
+            cond={_tag: _value for _tag, _value in zip(self.cond_tags, cond)},
+            response=sect_resp,
+        )
         self.responses.append(resp_case)
 
