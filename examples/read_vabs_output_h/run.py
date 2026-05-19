@@ -5,11 +5,17 @@ the effective beam properties (stiffness matrix, mass matrix, etc.).
 
 The example reads a VABS 4.1 output file (.K file) for a Timoshenko beam model.
 """
+import logging
+from pathlib import Path
+
 import sgio
+
+logging.basicConfig(level=logging.INFO)
+cwd = Path(__file__).resolve().parent
 
 # Define the output file path
 # Note: The .K file contains homogenized beam properties
-output_file = 'cs_box_t_vabs41.sg.K'
+output_file = str(cwd / 'cs_box_t_vabs41.sg.K')
 
 # Read the VABS homogenized output
 # - file_format='vabs': Specifies VABS format

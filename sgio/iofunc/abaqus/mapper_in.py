@@ -39,14 +39,17 @@ def map_input_to_structure_gene(parsed: Mapping[str, Any]) -> StructureGene:
     sg.sgdim = int(parsed["sgdim"])
     sg.smdim, sg.analysis_config.model = parse_model_type(parsed["model"])
 
-    mesh, materials, mocombos = process_mesh(parsed["inprw"])
+    mesh, materials, mocombos = process_mesh(parsed["inprw"], sgdim=sg.sgdim)
     sg.mesh = mesh
     sg.materials = _build_material_models(materials)
     sg.mocombos = mocombos
     return sg
 
 
-def process_mesh(inprw: inpRW) -> tuple[SGMesh, dict[str, dict[str, Any]], dict[int, tuple[str, float]]]:
+def process_mesh(
+    inprw: inpRW,
+    sgdim: int,
+) -> tuple[SGMesh, dict[str, dict[str, Any]], dict[int, tuple[str, float]]]:
     """Build SG mesh, raw materials, and material combos from ``inpRW`` data."""
     points = []
     node_ids = []
@@ -166,7 +169,9 @@ def process_mesh(inprw: inpRW) -> tuple[SGMesh, dict[str, dict[str, Any]], dict[
         distribution_name = orientations[orient_name]
         for elem_id, coords in distributions[distribution_name].items():
             cell_block_index, cell_index = eid2cid[elem_id]
-            cell_data["property_ref_csys"][cell_block_index][cell_index] = coords + [0, 0, 0]
+            cell_data["property_ref_csys"][cell_block_index][cell_index] = (
+                _map_distribution_coords_to_property_ref_csys(coords, sgdim)
+            )
 
     mesh = SGMesh(
         points=points,
@@ -233,6 +238,65 @@ def _build_material_models(materials: Mapping[str, Mapping[str, Any]]) -> dict[s
 def _init_cell_data_list(cells: list[CellBlock], default_value: Any = None) -> list[list[Any]]:
     """Initialize one cell-data list per cell block."""
     return [[default_value] * len(cell_block.data) for cell_block in cells]
+
+
+def _map_distribution_coords_to_property_ref_csys(
+    coords: list[float],
+    sgdim: int,
+) -> list[float]:
+    """Map one Abaqus discrete-orientation record into ``property_ref_csys``.
+
+    Parameters
+    ----------
+    coords : list of float
+        Abaqus ``coord3D, coord3D`` payload: two direction vectors.
+    sgdim : int
+        Structure-gene dimension.
+
+    Returns
+    -------
+    list of float
+        Internal 9-value ``(a, b, c)`` representation.
+
+    Notes
+    -----
+    For 2D cross-sections, Abaqus directions lie in the model ``x-y`` plane,
+    while SG stores the section in the global ``x2-x3`` plane. The local
+    sectional ``y1`` axis is therefore always the section normal ``x1`` and the
+    first Abaqus direction becomes the local ``y2`` direction used by VABS
+    ``theta_1``.
+    """
+    if len(coords) != 6:
+        raise ValueError(
+            "Abaqus discrete orientation must contain 6 values "
+            f"(got {len(coords)})."
+        )
+
+    axis_1 = _map_abaqus_vector_to_sg(coords[:3], sgdim)
+    axis_2 = _map_abaqus_vector_to_sg(coords[3:6], sgdim)
+    point_c = np.zeros(3, dtype=float)
+
+    if sgdim == 2:
+        point_a = np.array([1.0, 0.0, 0.0], dtype=float)
+        point_b = axis_1
+        return list(np.concatenate((point_a, point_b, point_c)))
+
+    return list(np.concatenate((axis_1, axis_2, point_c)))
+
+
+def _map_abaqus_vector_to_sg(vector: list[float], sgdim: int) -> np.ndarray:
+    """Map an Abaqus global direction vector into SG coordinates."""
+    direction = np.asarray(vector, dtype=float)
+    if direction.shape != (3,):
+        raise ValueError(
+            "Abaqus direction vector must contain 3 values "
+            f"(got shape {direction.shape})."
+        )
+
+    if sgdim == 2:
+        return np.array([direction[2], direction[0], direction[1]], dtype=float)
+
+    return direction
 
 
 def _process_material(material_block: Any, inprw: inpRW, materials: dict[str, dict[str, Any]]) -> None:

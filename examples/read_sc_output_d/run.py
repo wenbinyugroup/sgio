@@ -1,7 +1,13 @@
+import logging
+from pathlib import Path
+
 import sgio
 
-input_file = 'sg31t_hex20_sc21.sg'
-output_file = 'sg31t_hex20_sc21.sg.sn'
+logging.basicConfig(level=logging.INFO)
+cwd = Path(__file__).resolve().parent
+
+input_file = str(cwd / 'sg31t_hex20_sc21.sg')
+output_file = str(cwd / 'sg31t_hex20_sc21.sg.sn')
 
 # Read the SwiftComp input file
 sg = sgio.read(

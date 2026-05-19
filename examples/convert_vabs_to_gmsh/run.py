@@ -6,17 +6,16 @@ Gmsh format for visualization purposes.
 The conversion extracts only the mesh data (nodes and elements) without
 material properties, making it suitable for quick visualization.
 """
+import logging
+from pathlib import Path
+
 import sgio
 
-input_file = 'cs_box_t_vabs41.sg'
-output_file = 'cs_box_t_vabs41.msh'
+logging.basicConfig(level=logging.INFO)
+cwd = Path(__file__).resolve().parent
 
-print("=" * 60)
-print("Converting VABS Mesh to Gmsh Format")
-print("=" * 60)
-print(f"Input:  {input_file}")
-print(f"Output: {output_file}")
-print("=" * 60)
+input_file = str(cwd / 'cs_box_t_vabs41.sg')
+output_file = str(cwd / 'cs_box_t_vabs41.msh')
 
 # Convert VABS file to Gmsh format
 # - mesh_only=True: Only convert mesh data (no materials)
@@ -30,12 +29,4 @@ sg = sgio.convert(
     mesh_only=True
 )
 
-print("\n✓ Conversion complete!")
-print(f"  Nodes: {len(sg.mesh.points)}")
-print(f"  Elements: {len(sg.mesh.cells)}")
-print("=" * 60)
-print(f"\nYou can now visualize the mesh in Gmsh:")
-print(f"  gmsh {output_file}")
-print("\nOr use ParaView to view the geometry.")
-print("=" * 60)
-
+print(sg)

@@ -8,6 +8,7 @@ from __future__ import annotations
 
 from typing import Any
 
+import numpy as np
 import sgio.model as smdl
 from sgio.core.sg import StructureGene
 
@@ -125,11 +126,97 @@ def _build_material_combo_records(
     """Convert SG material-orientation combinations to raw writer records."""
     records: list[dict[str, float | int]] = []
     for combo_id, (material_name, angle) in sg.mocombos.items():
+        resolved_material_name = _resolve_combo_material_name(
+            sg,
+            combo_id=int(combo_id),
+            material_name=material_name,
+            material_id_map=material_id_map,
+        )
         records.append(
             {
                 "combo_id": int(combo_id),
-                "material_id": int(material_id_map[material_name]),
+                "material_id": int(material_id_map[resolved_material_name]),
                 "angle": float(angle),
             }
         )
     return records
+
+
+def _resolve_combo_material_name(
+    sg: StructureGene,
+    combo_id: int,
+    material_name: str,
+    material_id_map: dict[str, int],
+) -> str:
+    """Resolve one combo material name against the current material table.
+
+    Parameters
+    ----------
+    sg : StructureGene
+        Structure gene being written.
+    combo_id : int
+        Property/combo identifier.
+    material_name : str
+        Material name stored in ``sg.mocombos``.
+    material_id_map : dict[str, int]
+        Export material-ID mapping built from ``sg.materials``.
+
+    Returns
+    -------
+    str
+        Material name that exists in ``material_id_map``.
+
+    Raises
+    ------
+    KeyError
+        If the combo material cannot be resolved against current materials.
+    """
+    if material_name in material_id_map:
+        return material_name
+
+    fallback_name = _resolve_material_name_from_mesh_field_data(sg, combo_id)
+    if fallback_name is not None and fallback_name in material_id_map:
+        return fallback_name
+
+    raise KeyError(
+        f"Material combo {combo_id} references unknown material {material_name!r}. "
+        f"Available materials: {sorted(material_id_map)}."
+    )
+
+
+def _resolve_material_name_from_mesh_field_data(
+    sg: StructureGene,
+    combo_id: int,
+) -> str | None:
+    """Resolve a combo material name from mesh ``field_data``.
+
+    Parameters
+    ----------
+    sg : StructureGene
+        Structure gene being written.
+    combo_id : int
+        Property/combo identifier.
+
+    Returns
+    -------
+    str or None
+        Material/physical-group name if a matching field-data entry exists.
+    """
+    mesh = sg.mesh
+    if mesh is None or not getattr(mesh, "field_data", None):
+        return None
+
+    fallback_name: str | None = None
+    for name, values in mesh.field_data.items():
+        array = np.asarray(values, dtype=int).reshape(-1)
+        if array.size < 2:
+            continue
+        physical_id, dimension = int(array[0]), int(array[1])
+        if physical_id != combo_id:
+            continue
+        if sg.sgdim is None or dimension == int(sg.sgdim):
+            return name
+        if fallback_name is None:
+            fallback_name = name
+
+    return fallback_name

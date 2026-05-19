@@ -8,11 +8,17 @@ This example demonstrates how to:
 
 The example uses VABS 4.1 output files for a box cross-section.
 """
+import logging
+from pathlib import Path
+
 import sgio
 
+logging.basicConfig(level=logging.INFO)
+cwd = Path(__file__).resolve().parent
+
 # Define file paths
-input_file = 'cs_box_t_vabs41.sg'
-output_file = 'cs_box_t_vabs41_local.msh'
+input_file = str(cwd / 'cs_box_t_vabs41.sg')
+output_file = str(cwd / 'cs_box_t_vabs41_local.msh')
 
 # [step1]
 # Read the mesh from VABS input file

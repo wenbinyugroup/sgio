@@ -6,10 +6,16 @@ the structure gene data.
 The example reads a VABS 4.0 format file for an Euler-Bernoulli beam
 cross-section model.
 """
+import logging
+from pathlib import Path
+
 import sgio
 
+logging.basicConfig(level=logging.INFO)
+cwd = Path(__file__).resolve().parent
+
 # Define the input file path
-input_file = 'sg21eb_tri3_vabs40.sg'
+input_file = str(cwd / 'sg21eb_tri3_vabs40.sg')
 
 # Read the VABS input file
 # - file_format='vabs': Specifies VABS format
@@ -20,18 +26,5 @@ sg = sgio.read(
     model_type='BM1'
 )
 
-# Display basic information about the structure gene
-print("=" * 60)
-print("VABS Input File Information")
-print("=" * 60)
-print(f"File: {input_file}")
-print(f"Model Type: {sg.model.label if sg.model else 'Not specified'}")
-print(f"Number of nodes: {len(sg.mesh.points)}")
-print(f"Number of elements: {len(sg.mesh.cells)}")
-print(f"Number of materials: {len(sg.materials) if sg.materials else 0}")
-print("=" * 60)
-
-# Display the full structure gene object
-print("\nFull Structure Gene Object:")
 print(sg)
 
