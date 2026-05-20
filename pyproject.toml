@@ -11,7 +11,7 @@ authors = [
     { name = "Su Tian", email = "sutian@analyswift.com" }
 ]
 readme = { file = "README.md", content-type = "text/markdown" }
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 dependencies = [
     "meshio",
     # "importlib_metadata; python_version<'3.8'",

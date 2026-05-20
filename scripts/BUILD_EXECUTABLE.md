@@ -24,7 +24,7 @@ python3 build_executable.py
 
 ## Prerequisites
 
-- Python 3.9 or higher
+- Python 3.10 or higher
 - pip (Python package installer)
 - All project dependencies (will be installed automatically)
 

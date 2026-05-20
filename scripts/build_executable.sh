@@ -8,7 +8,7 @@ echo "============================================================"
 # Check if Python is available
 if ! command -v python3 &> /dev/null; then
     echo "Error: Python 3 is not installed or not in PATH"
-    echo "Please install Python 3.9+ and try again"
+    echo "Please install Python 3.10+ and try again"
     exit 1
 fi
 
