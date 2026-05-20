@@ -12,7 +12,7 @@ from sgio.core.sg import StructureGene
 logger = logging.getLogger(__name__)
 
 
-def buildSG1D(
+def build_sg_1d(
     name, layup, sgdb, model, mesh_size=0,
     k11=0, k22=0, lame1=1, lame2=1,
     load_cases=[], analysis='', physics=0,
@@ -71,7 +71,7 @@ def buildSG1D(
     # ----------------------------------------------------------------
 
     # Generate complete layup data from design inputs
-    layers = generateLayerList(layup)
+    layers = generate_layer_list(layup)
     # nsym = layup.get('symmetry', 0)
     # layers = layup['layers']
     # print(f'layers: {layers}')
@@ -107,13 +107,16 @@ def buildSG1D(
                 if isinstance(mprop, smdl.CauchyContinuumModel):
                     m = mprop
                 else:
-                    m = addMaterial(_lyr_m_name, mprop['property'])
+                    m = add_material(_lyr_m_name, mprop['property'])
 
                 sg.materials[_lyr_m_name] = m
 
-            # Create new combo with material name
-            cid = len(sg.mocombos) + 1
-            sg.mocombos[cid] = (_lyr_m_name, _lyr_ipo)
+            section = sg.add_section(
+                name=f"section_{len(sg.sections) + 1}",
+                material=_lyr_m_name,
+                orientation=_lyr_ipo,
+            )
+            cid = int(section.property_id)
             
         layer['mocombo'] = cid
         lyr_thk = _lyr_ply_thk * _lyr_np
@@ -124,7 +127,7 @@ def buildSG1D(
     # Global model settings
     # ----------------------------------------------------------------
     sg.smdim = smdl.getModelDim(model)
-    sg.model = int(model[2:]) - 1  # model (0: classical, 1: shear refined)
+    sg.analysis_config.model = int(model[2:]) - 1  # model (0: classical, 1: shear refined)
     sg.trans_element = 1  # Always include element orientation data
     # sg.geo_correct = geo_correct
     sg.initial_curvature = [k11, k22]
@@ -141,12 +144,12 @@ def buildSG1D(
     # Analysis settings
     # ----------------------------------------------------------------
     if isinstance(physics, str):
-        sg.physics = {
+        sg.analysis_config.physics = {
             'elastic': 0,
             'thermoelastic': 1
         }[physics]
     else:
-        sg.physics = physics
+        sg.analysis_config.physics = physics
     # sg.degen_element = 0
     # sg.trans_element = 0
     # sg.nonuniform_temperature = 0
@@ -291,7 +294,7 @@ def buildSG1D(
 
 
 
-def generateLayerList(layup_design):
+def generate_layer_list(layup_design):
     """Generate the list of layers from the layup design input
     """
 
@@ -361,7 +364,7 @@ def generateLayerList(layup_design):
 
 
 
-def addMaterial(mname, mprop):
+def add_material(mname, mprop):
     """
     """
 
@@ -372,24 +375,24 @@ def addMaterial(mname, mprop):
 
     # m.density = float(mprop['density'])
     _density = float(mprop['density'])
-    m.set('density', _density)
+    m.density = _density
     m.temperature = float(mprop.get('temperature', 0))
 
     # Constitutive model
     # ------------------
     _isotropy = mprop.get('type', 'isotropic')
-    m.set('isotropy', _isotropy)
+    m.set_isotropy(_isotropy)
 
     # Elastic property
     _elastic = mprop.get('elasticity')
-    m.set('elastic', _elastic, input_type=_isotropy)
+    m.set_elastic(_elastic, input_type=_isotropy)
 
     # Thermal property
     _cte = list(map(float, mprop.get('cte', [])))
     if _cte:  # Only set if non-empty (validator requires None or 6 components)
-        m.set('cte', _cte)
+        m.cte = _cte
     _specific_heat = float(mprop.get('specific_heat', 0))
-    m.set('specific_heat', _specific_heat)
+    m.specific_heat = _specific_heat
 
     # Strength properties
     # -------------------
@@ -397,8 +400,8 @@ def addMaterial(mname, mprop):
 
     _strength_constants = list(map(float, mprop.get('strength', [])))
     # print('strength_constants:', _strength_constants)
-    m.set('strength_constants', _strength_constants)
+    m.set_strength_constants(_strength_constants)
     _char_len = float(mprop.get('char_len', 0))
-    m.set('char_len', _char_len)
+    m.char_len = _char_len
 
     return m

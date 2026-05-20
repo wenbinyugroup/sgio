@@ -53,7 +53,7 @@ def read_material_rotation_combinations(
         line = line.split()
         comb_id = int(line[0])
         mate_id = int(line[1])
-        ip_rotation = float(line[2])
+        ip_rotation = sutl.fortran_float(line[2])
         
         combinations[comb_id] = [mate_id, ip_rotation]
         
@@ -87,14 +87,14 @@ def read_materials(
     Returns
     -------
     tuple
-        (materials_dict, material_name_id_pairs)
+        (materials_dict, material_id_pairs)
         materials_dict: {material_name: MaterialModel}
-        material_name_id_pairs: [[name, id], ...]
+        material_id_pairs: [[name, id], ...]
     """
     logger.debug('reading materials...')
     
     materials = {}
-    material_name_id_pairs = []
+    material_id_pairs = []
     
     counter = 0
     while counter < nmate:
@@ -125,11 +125,11 @@ def read_materials(
         materials[mat_name] = material
         
         # Store name-ID pair
-        material_name_id_pairs.append([mat_name, mate_id])
+        material_id_pairs.append([mat_name, mate_id])
         
         counter += 1
     
-    return materials, material_name_id_pairs
+    return materials, material_id_pairs
 
 
 def read_material(
@@ -160,7 +160,7 @@ def read_material(
         Material model with properties.
     """
     mp = smdl.CauchyContinuumModel()
-    mp.set('isotropy', isotropy)
+    mp.set_isotropy(isotropy)
     
     temp_counter = 0
     while temp_counter < ntemp:
@@ -171,27 +171,27 @@ def read_material(
             while line == '':
                 line = file.readline().strip()
             line = line.split()
-            temperature, density = list(map(float, line))
+            temperature, density = list(map(sutl.fortran_float, line))
             mp.temperature = temperature
         
         # Read elastic properties
         elastic_props = read_elastic_property(file, isotropy, comment_char)
-        mp.setElastic(elastic_props, isotropy)
+        mp.set_elastic(elastic_props, isotropy)
         
         # Read density (VABS format)
         if comment_char == '!':  # VABS format
             line = file.readline().split(comment_char)[0].strip()
             while line == '':
                 line = file.readline().split(comment_char)[0].strip()
-            density = float(line)
+            density = sutl.fortran_float(line)
         
-        mp.set('density', density)
+        mp.density = density
         
         # Read thermal properties if needed
         if physics in [1, 4, 6] and comment_char == '#':  # SwiftComp
             cte, specific_heat = read_thermal_property(file, isotropy)
-            mp.set('cte', cte)
-            mp.set('specific_heat', specific_heat)
+            mp.cte = cte
+            mp.specific_heat = specific_heat
         
         temp_counter += 1
     
@@ -234,7 +234,7 @@ def read_elastic_property(
         line = file.readline().split(comment_char)[0].strip()
         while line == '':
             line = file.readline().split(comment_char)[0].strip()
-        constants.extend(list(map(float, line.split())))
+        constants.extend(list(map(sutl.fortran_float, line.split())))
     
     return constants
 
@@ -261,7 +261,7 @@ def read_thermal_property(
     specific_heat = 0.0
     
     line = sutl.readNextNonEmptyLine(file)
-    line = list(map(float, line.split()))
+    line = list(map(sutl.fortran_float, line.split()))
     
     if isotropy == 0:
         cte = line[:1]

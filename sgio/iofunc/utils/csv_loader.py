@@ -14,14 +14,14 @@ import sgio.model as sgmodel
 logger = logging.getLogger(__name__)
 
 
-def readLoadCsv(
-    fn: str, smdim: int, model: int, load_tags: list = [],
+def read_load_csv(
+    fn: str, smdim: int, model: str | int, load_tags: list = [],
     load_type: int = 0, disp_tags: list = ['u1', 'u2', 'u3'],
     rot_tags: list = ['c11', 'c12', 'c13', 'c21', 'c22', 'c23', 'c31', 'c32', 'c33'],
     loc_tags: list = ['loc',], cond_tags: list = [],
     loc_vtypes: list = [], cond_vtypes: list = [],
     delimiter: str = ',', nhead: int = 1, encoding: str = 'utf-8-sig'
-) -> sgmodel.StructureResponseCases:
+) -> list[sgmodel.StateCase]:
     """Read a CSV file containing load data for a given structure.
     
     The file should have the following format:
@@ -35,7 +35,7 @@ def readLoadCsv(
         The filename of the CSV file to read.
     smdim : int
         The dimension of the structure model.
-    model : int
+    model : str or int
         The model type of the structure.
     load_tags : list, optional
         The tags of the loads to be read. Defaults to an empty list.
@@ -62,8 +62,10 @@ def readLoadCsv(
     
     Returns
     -------
-    struct_resp_cases : StructureResponseCases
-        The structure response cases.
+    list[StateCase]
+        State cases read from the CSV file. Each case stores location and
+        condition metadata in ``StateCase.case`` and the macro response fields
+        in ``StateCase.states``.
     """
     
     if len(load_tags) == 0:
@@ -94,9 +96,7 @@ def readLoadCsv(
         elif len(cond_vtypes) == 1:
             cond_vtypes = cond_vtypes * len(cond_tags)
     
-    struct_resp_cases = sgmodel.StructureResponseCases()
-    struct_resp_cases.loc_tags = loc_tags
-    struct_resp_cases.cond_tags = cond_tags
+    state_cases: list[sgmodel.StateCase] = []
     
     with open(fn, 'r', encoding=encoding) as file:
         cr = csv.reader(file, delimiter=delimiter)
@@ -135,28 +135,49 @@ def readLoadCsv(
                 continue
             
             else:
-                resp_case = {}
-                
-                sect_resp = sgmodel.SectionResponse()
-                
-                sect_resp.load_type = load_type
-                sect_resp.load_tags = load_tags
-                
+                case_data = {'load_type': load_type}
+
                 for tag, vtype in zip(loc_tags, loc_vtypes):
-                    sect_resp.loc[tag] = eval(vtype)(row[tags_idx[tag]])
-                
+                    value = eval(vtype)(row[tags_idx[tag]])
+                    case_data[tag] = value
+
                 for tag, vtype in zip(cond_tags, cond_vtypes):
-                    sect_resp.cond[tag] = eval(vtype)(row[tags_idx[tag]])
-                
-                sect_resp.load = [float(row[tags_idx[tag]]) for tag in load_tags]
-                sect_resp.displacement = [float(row[tags_idx[tag]]) for tag in disp_tags]
-                sect_resp.directional_cosine = [
+                    value = eval(vtype)(row[tags_idx[tag]])
+                    case_data[tag] = value
+
+                load = [float(row[tags_idx[tag]]) for tag in load_tags]
+                displacement = [float(row[tags_idx[tag]]) for tag in disp_tags]
+                rotation = [
                     [float(row[tags_idx[tag]]) for tag in rot_tags[0:3]],
                     [float(row[tags_idx[tag]]) for tag in rot_tags[3:6]],
                     [float(row[tags_idx[tag]]) for tag in rot_tags[6:9]]
                 ]
-                
-                resp_case['response'] = sect_resp
-                struct_resp_cases.responses.append(resp_case)
-    
-    return struct_resp_cases
+
+                state_case = sgmodel.StateCase(case=case_data, states={})
+                state_case.addState(
+                    name='displacement',
+                    state=sgmodel.State(
+                        name='displacement',
+                        data=displacement,
+                        label=disp_tags,
+                    ),
+                )
+                state_case.addState(
+                    name='rotation',
+                    state=sgmodel.State(
+                        name='rotation',
+                        data=rotation,
+                        label=rot_tags,
+                    ),
+                )
+                state_case.addState(
+                    name='load',
+                    state=sgmodel.State(
+                        name='load',
+                        data=load,
+                        label=load_tags,
+                    ),
+                )
+                state_cases.append(state_case)
+
+    return state_cases

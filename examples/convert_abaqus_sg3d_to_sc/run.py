@@ -1,4 +1,11 @@
+import logging
+from pathlib import Path
+
 import sgio
+
+logging.basicConfig(level=logging.INFO)
+
+cwd = Path(__file__).resolve().parent
 
 # sgio.convert(
 #     'sg33_cube.inp',
@@ -13,9 +20,8 @@ import sgio
 # )
 
 sg = sgio.read(
-    'sg33_cube.inp',
+    str(cwd / 'sg33_cube.inp'),
     'abaqus',
-    model_type='sd1',
     sgdim=3,
 )
 
@@ -24,7 +30,7 @@ print(sg.mesh.point_data)
 
 sgio.write(
     sg=sg,
-    fn='sg33_cube_sc21.sg',
+    filename=str(cwd / 'sg33_cube_sc21.sg'),
     file_format='sc',
     format_version='2.1',
     model_type='sd1',

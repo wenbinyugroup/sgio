@@ -7,15 +7,14 @@ and BaseFormatWriter abstract base classes for Gmsh format I/O operations.
 from __future__ import annotations
 
 from typing import Any, Optional
-import io
 
 from ..base import BaseFormatReader, BaseFormatWriter
 from sgio.core.sg import StructureGene
 
-from ._gmsh import (
-    read_buffer,
-    write_buffer,
-)
+from .mapper_in import map_input_to_mesh
+from .mapper_out import map_model_to_write_payload
+from .parser import parse_input_buffer
+from .writer import write_input_payload
 
 
 class GmshReader(BaseFormatReader):
@@ -59,9 +58,10 @@ class GmshReader(BaseFormatReader):
         """
         if isinstance(file_path_or_buffer, str):
             with open(file_path_or_buffer, 'rb') as f:
-                return read_buffer(f, format_version=format_version, **kwargs)
+                parsed = parse_input_buffer(f, format_version=format_version)
         else:
-            return read_buffer(file_path_or_buffer, format_version=format_version, **kwargs)
+            parsed = parse_input_buffer(file_path_or_buffer, format_version=format_version)
+        return map_input_to_mesh(parsed)
     
     def read_output(
         self,
@@ -139,50 +139,55 @@ class GmshWriter(BaseFormatWriter):
     
     def write_input(
         self,
-        file_path_or_buffer,
-        mesh: Any,
+        destination,
+        model_obj,
         format_version: str = '4.1',
         float_fmt: str = '.16e',
-        sgdim: int = 2,
+        sgdim: Optional[int] = None,
         mesh_only: bool = True,
         binary: bool = True,
         **kwargs
     ) -> None:
         """Write Gmsh mesh file.
-        
+
+        Accepts either a bare mesh object (``SGMesh`` / ``meshio.Mesh``) or a
+        ``StructureGene`` — for the latter the writer extracts mesh, mocombos
+        and analysis configs itself.
+
         Parameters
         ----------
-        file_path_or_buffer : str or file-like
-            Path to file or file buffer to write to.
-            Note: File must be opened in binary mode ('wb').
-        mesh : meshio.Mesh
-            Mesh object to write.
+        destination : str or file-like
+            Path to file or file buffer to write to. Binary mode required for
+            file objects.
+        model_obj : StructureGene or SGMesh or meshio.Mesh
+            IR object to write.
         format_version : str, optional
             Format version ('2.2' or '4.1'), by default '4.1'.
         float_fmt : str, optional
             Float format string, by default '.16e'.
         sgdim : int, optional
-            Structure gene dimension, by default 2.
+            Structure gene dimension. If ``None``, inferred from the SG.
         mesh_only : bool, optional
             Write mesh data only, by default True.
         binary : bool, optional
             Write in binary format, by default True.
-        **kwargs
-            Additional keyword arguments.
         """
-        if isinstance(file_path_or_buffer, str):
-            with open(file_path_or_buffer, 'wb') as f:
-                write_buffer(
-                    f, mesh, format_version=format_version,
-                    float_fmt=float_fmt, sgdim=sgdim,
-                    mesh_only=mesh_only, binary=binary, **kwargs
-                )
+        payload = map_model_to_write_payload(
+            model_obj,
+            format_version=format_version,
+            float_fmt=float_fmt,
+            sgdim=sgdim,
+            mesh_only=mesh_only,
+            binary=binary,
+            **kwargs,
+        )
+
+        if isinstance(destination, str):
+            open_mode = 'wb' if binary else 'w'
+            with open(destination, open_mode) as f:
+                write_input_payload(f, payload)
         else:
-            write_buffer(
-                file_path_or_buffer, mesh, format_version=format_version,
-                float_fmt=float_fmt, sgdim=sgdim,
-                mesh_only=mesh_only, binary=binary, **kwargs
-            )
+            write_input_payload(destination, payload)
     
     def write_output(
         self,

@@ -7,6 +7,7 @@ build*/
 dist/
 .agents-memory/
 local/
+settings.local.json
 
 .venv/Lib/
 .venv/Scripts/

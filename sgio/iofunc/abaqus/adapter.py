@@ -7,12 +7,12 @@ and BaseFormatWriter abstract base classes for Abaqus format I/O operations.
 from __future__ import annotations
 
 from typing import Any, Optional
-import io
 
 from ..base import BaseFormatReader, BaseFormatWriter
 from sgio.core.sg import StructureGene
 
-from ._abaqus import read
+from .mapper_in import map_input_to_structure_gene
+from .parser import parse_input_file
 
 
 class AbaqusReader(BaseFormatReader):
@@ -59,7 +59,8 @@ class AbaqusReader(BaseFormatReader):
         if not isinstance(file_path_or_buffer, str):
             raise ValueError("Abaqus reader currently only supports file paths, not buffers")
         
-        return read(file_path_or_buffer, sgdim=sgdim, model=model, **kwargs)
+        parsed = parse_input_file(file_path_or_buffer, sgdim=sgdim, model=model, **kwargs)
+        return map_input_to_structure_gene(parsed)
     
     def read_output(
         self,
@@ -145,8 +146,8 @@ class AbaqusWriter(BaseFormatWriter):
     
     def write_input(
         self,
-        file_path_or_buffer,
-        sg: StructureGene,
+        destination,
+        model_obj,
         sgdim: int = 2,
         **kwargs
     ) -> None:

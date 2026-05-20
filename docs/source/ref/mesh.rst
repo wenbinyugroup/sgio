@@ -43,6 +43,7 @@ Utility Functions
    ensure_element_ids
    check_duplicate_ids
    check_forbidden_ids
+   renumber_elements
 
 
 Mesh Validation Functions
@@ -56,4 +57,3 @@ Mesh Validation Functions
    check_cell_ordering
    fix_cell_ordering
    check_isolated_nodes
-   renumber_elements

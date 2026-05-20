@@ -1,13 +1,26 @@
 from __future__ import annotations
 
-import json
-from pathlib import Path
 from typing import Iterable, Optional, List, Literal, Sequence, Union, cast
 
 FloatSequence = Sequence[float]
 MatrixSequence = Sequence[Sequence[float]]
 ElasticInput = Union[FloatSequence, MatrixSequence]
-from pydantic import BaseModel, Field, field_validator, ConfigDict
+from pydantic import BaseModel, Field, field_validator, ConfigDict, PrivateAttr
+
+from ._deprecations import warn_model_deprecation
+from .constitutive import (
+    ConstitutiveBehaviorProtocol,
+    MaterialBehaviorMap,
+    PhysicsChannel,
+    build_default_behavior_map,
+)
+from .material_components import (
+    LinearElasticBehavior,
+    MaterialDefinition,
+    StrengthProperties,
+    ThermalProperties,
+)
+from .query_types import ElasticInputType, MatrixKind, TensorComponent
 
 
 # Helper functions for building stiffness matrices
@@ -189,18 +202,45 @@ def _invert_compliance_matrix(cmpl: List[List[float]]) -> List[List[float]]:
     List[List[float]]
         6x6 stiffness matrix
     """
-    # Simple matrix inversion for 6x6 (could use numpy if available)
-    # For now, return identity as placeholder - should implement proper inversion
-    # or use engineering constants to build stiffness directly
+    import numpy as np
+
+    cmpl_array = np.array(cmpl, dtype=float)
     try:
-        import numpy as np
-        cmpl_array = np.array(cmpl)
         stff_array = np.linalg.inv(cmpl_array)
-        return stff_array.tolist()
-    except ImportError:
-        # Fallback: return identity (not correct, but prevents crash)
-        # User should provide stiffness directly or install numpy
-        return [[1.0 if i == j else 0.0 for j in range(6)] for i in range(6)]
+    except np.linalg.LinAlgError as exc:
+        raise ValueError('Compliance matrix must be invertible') from exc
+    return stff_array.tolist()
+
+
+def _invert_stiffness_matrix(stff: List[List[float]]) -> List[List[float]]:
+    """Invert stiffness matrix to get compliance matrix."""
+    import numpy as np
+
+    stff_array = np.array(stff, dtype=float)
+    try:
+        cmpl_array = np.linalg.inv(stff_array)
+    except np.linalg.LinAlgError as exc:
+        raise ValueError('Stiffness matrix must be invertible') from exc
+    return cmpl_array.tolist()
+
+
+def _normalize_matrix_rows(matrix_input: MatrixSequence) -> List[List[float]]:
+    """Normalize an arbitrary matrix-like input to a nested float list."""
+    rows: List[List[float]] = []
+    for row in matrix_input:
+        rows.append([float(value) for value in row])
+    return rows
+
+
+def _get_matrix_entry(matrix: Sequence[Sequence[float]] | None, i: int, j: int) -> float | None:
+    """Safely return one matrix entry."""
+
+    if matrix is None or len(matrix) <= i:
+        return None
+    row = matrix[i]
+    if row is None or len(row) <= j:
+        return None
+    return row[j]
 
 class CauchyContinuumModel(BaseModel):
     """Cauchy continuum model with Pydantic validation.
@@ -344,6 +384,7 @@ class CauchyContinuumModel(BaseModel):
         arbitrary_types_allowed=True,
         validate_assignment=True,
     )
+    _behavior_overrides: MaterialBehaviorMap = PrivateAttr(default_factory=MaterialBehaviorMap)
 
     def __init__(self, name: str = '', **data):
         """Initialize model with optional positional name argument for backward compatibility.
@@ -401,9 +442,180 @@ class CauchyContinuumModel(BaseModel):
         aniso_consts = data.pop('anisotropic_constants', None)
         
         super().__init__(**data)
-        
-        # Auto-build stiffness matrix based on isotropy and provided constants
-        self._auto_build_stiffness(aniso_consts)
+        self._finalize_linear_elastic_views(aniso_consts)
+
+    @property
+    def definition(self) -> MaterialDefinition:
+        """Grouped view of material identity and inertial metadata."""
+        return MaterialDefinition(
+            name=self.name,
+            id=self.id,
+            density=self.density,
+            temperature=self.temperature,
+        )
+
+    @definition.setter
+    def definition(self, value: MaterialDefinition) -> None:
+        self.name = value.name
+        self.id = value.id
+        self.density = value.density
+        self.temperature = value.temperature
+
+    @property
+    def elastic(self) -> LinearElasticBehavior:
+        """Grouped view of the linear-elastic behavior payload."""
+        return LinearElasticBehavior(
+            isotropy=self.isotropy,
+            e1=self.e1,
+            e2=self.e2,
+            e3=self.e3,
+            g12=self.g12,
+            g13=self.g13,
+            g23=self.g23,
+            nu12=self.nu12,
+            nu13=self.nu13,
+            nu23=self.nu23,
+            stff=self.stff,
+            cmpl=self.cmpl,
+        )
+
+    @elastic.setter
+    def elastic(self, value: LinearElasticBehavior) -> None:
+        self.isotropy = cast(Literal[0, 1, 2, 3], value.isotropy)
+        self.e1 = value.e1
+        self.e2 = value.e2
+        self.e3 = value.e3
+        self.g12 = value.g12
+        self.g13 = value.g13
+        self.g23 = value.g23
+        self.nu12 = value.nu12
+        self.nu13 = value.nu13
+        self.nu23 = value.nu23
+        self.stff = value.stff
+        self.cmpl = value.cmpl
+        self._finalize_linear_elastic_views()
+
+    @property
+    def thermal(self) -> ThermalProperties:
+        """Grouped view of thermal properties."""
+        return ThermalProperties(
+            cte=self.cte,
+            specific_heat=self.specific_heat,
+            d_thetatheta=self.d_thetatheta,
+            f_eff=self.f_eff,
+        )
+
+    @thermal.setter
+    def thermal(self, value: ThermalProperties) -> None:
+        self.cte = value.cte
+        self.specific_heat = value.specific_heat
+        self.d_thetatheta = value.d_thetatheta
+        self.f_eff = value.f_eff
+
+    @property
+    def strength(self) -> StrengthProperties:
+        """Grouped view of strength and failure properties."""
+        return StrengthProperties(
+            x1t=self.x1t,
+            x2t=self.x2t,
+            x3t=self.x3t,
+            x1c=self.x1c,
+            x2c=self.x2c,
+            x3c=self.x3c,
+            x23=self.x23,
+            x13=self.x13,
+            x12=self.x12,
+            strength_measure=self.strength_measure,
+            strength_constants=self.strength_constants,
+            char_len=self.char_len,
+            failure_criterion=self.failure_criterion,
+        )
+
+    @strength.setter
+    def strength(self, value: StrengthProperties) -> None:
+        self.x1t = value.x1t
+        self.x2t = value.x2t
+        self.x3t = value.x3t
+        self.x1c = value.x1c
+        self.x2c = value.x2c
+        self.x3c = value.x3c
+        self.x23 = value.x23
+        self.x13 = value.x13
+        self.x12 = value.x12
+        self.strength_measure = value.strength_measure
+        self.strength_constants = value.strength_constants
+        self.char_len = value.char_len
+        self.failure_criterion = value.failure_criterion
+
+    @property
+    def constitutive_channels(self) -> MaterialBehaviorMap:
+        """Merged constitutive behavior map for current and future channels.
+
+        Returns
+        -------
+        MaterialBehaviorMap
+            Per-channel behavior slots. Current linear elasticity populates the
+            default mechanical slot, thermal properties populate the thermal
+            auxiliary slot, and future custom behaviors can override any slot.
+        """
+
+        default_map = build_default_behavior_map(self.elastic, self.thermal)
+
+        merged = MaterialBehaviorMap(
+            mechanical=default_map.mechanical,
+            thermal=default_map.thermal,
+            electrical=default_map.electrical,
+            magnetic=default_map.magnetic,
+            optical=default_map.optical,
+            couplings=self._behavior_overrides.couplings,
+        )
+
+        for channel in PhysicsChannel:
+            override_slot = self._behavior_overrides.get_slot(channel)
+            target_slot = merged.get_slot(channel)
+            if override_slot.behavior is not None:
+                target_slot.behavior = override_slot.behavior
+            if override_slot.properties is not None:
+                target_slot.properties = override_slot.properties
+
+        return merged
+
+    def attach_behavior(
+        self,
+        channel: PhysicsChannel,
+        behavior: ConstitutiveBehaviorProtocol | None,
+        *,
+        properties: object | None = None,
+    ) -> None:
+        """Attach or override one future constitutive behavior slot.
+
+        Parameters
+        ----------
+        channel : PhysicsChannel
+            Target physics channel.
+        behavior : ConstitutiveBehaviorProtocol or None
+            Behavior implementation to attach. ``None`` clears the behavior
+            override while preserving any explicit auxiliary properties.
+        properties : object or None, optional
+            Auxiliary channel properties to store alongside the behavior.
+        """
+
+        slot = self._behavior_overrides.get_slot(channel)
+        slot.behavior = behavior
+        if properties is not None:
+            slot.properties = properties
+
+    def clear_behavior(self, channel: PhysicsChannel) -> None:
+        """Clear one channel behavior override and auxiliary properties."""
+
+        slot = self._behavior_overrides.get_slot(channel)
+        slot.behavior = None
+        slot.properties = None
+
+    def get_behavior(self, channel: PhysicsChannel) -> ConstitutiveBehaviorProtocol | None:
+        """Return one channel behavior using the merged constitutive view."""
+
+        return self.constitutive_channels.get_slot(channel).behavior
     
     @staticmethod
     def _resolve_aliases(data: dict) -> dict:
@@ -453,13 +665,11 @@ class CauchyContinuumModel(BaseModel):
         aniso_consts : Optional[Sequence[float]]
             21 constants for anisotropic material
         """
-        # Skip if stiffness already provided
-        if self.stff is not None:
-            return
-            
+        built: Optional[List[List[float]]] = None
+
         if self.isotropy == 0:  # Isotropic
             if self.e1 is not None and self.nu12 is not None:
-                self.stff = _build_isotropic_stiffness(self.e1, self.nu12)
+                built = _build_isotropic_stiffness(self.e1, self.nu12)
                 
         elif self.isotropy == 3:  # Transverse Isotropic
             if all(x is not None for x in [self.e1, self.e2, self.g12, self.nu12, self.nu23]):
@@ -470,7 +680,7 @@ class CauchyContinuumModel(BaseModel):
                 nu12 = cast(float, self.nu12)
                 nu23 = cast(float, self.nu23)
                 
-                self.stff = _build_transverse_isotropic_stiffness(e1, e2, g12, nu12, nu23)
+                built = _build_transverse_isotropic_stiffness(e1, e2, g12, nu12, nu23)
                 
                 # Set remaining constants for consistency
                 if self.e3 is None:
@@ -499,14 +709,47 @@ class CauchyContinuumModel(BaseModel):
                 nu13 = cast(float, self.nu13)
                 nu23 = cast(float, self.nu23)
                 
-                self.stff = _build_orthotropic_stiffness(
+                built = _build_orthotropic_stiffness(
                     e1, e2, e3, g12, g13, g23, nu12, nu13, nu23
                 )
                 
         elif self.isotropy == 2:  # Anisotropic
             if aniso_consts is not None:
-                self.stff = _build_anisotropic_stiffness(aniso_consts)
+                built = _build_anisotropic_stiffness(aniso_consts)
             # else: user must provide stff matrix directly
+
+        if built is not None:
+            self._set_canonical_stiffness(built)
+
+    def _sync_stiffness_from_compliance(self) -> None:
+        """Populate canonical stiffness from a compliance input."""
+        if self.cmpl is not None:
+            self._set_canonical_stiffness(_invert_compliance_matrix(self.cmpl))
+
+    def _sync_compliance_from_stiffness(self) -> None:
+        """Populate compliance as a derived view of the canonical stiffness."""
+        if self.stff is not None:
+            self.cmpl = _invert_stiffness_matrix(self.stff)
+
+    def _set_canonical_stiffness(self, stff: MatrixSequence) -> None:
+        """Set canonical stiffness and derive all matrix views from it."""
+        self.stff = _normalize_matrix_rows(stff)
+        self._sync_compliance_from_stiffness()
+
+    def _finalize_linear_elastic_views(
+        self,
+        aniso_consts: Optional[Sequence[float]] = None,
+    ) -> None:
+        """Finalize the linear-elastic state using a single canonical stiffness source."""
+        if self.stff is not None:
+            self._set_canonical_stiffness(self.stff)
+            return
+
+        if self.cmpl is not None:
+            self._sync_stiffness_from_compliance()
+            return
+
+        self._auto_build_stiffness(aniso_consts)
 
     # Field validators
     @field_validator('stff', 'cmpl')
@@ -628,9 +871,92 @@ class CauchyContinuumModel(BaseModel):
     def nu(self, value: float) -> None:
         self.nu12 = float(value)
 
+    def get_matrix(self, kind: MatrixKind) -> List[List[float]] | None:
+        """Return one typed linear-elastic matrix view."""
+
+        matrix_map = {
+            MatrixKind.STIFFNESS: self.stff,
+            MatrixKind.COMPLIANCE: self.cmpl,
+        }
+        return matrix_map[kind]
+
+    def get_matrix_component(self, kind: MatrixKind, component: TensorComponent) -> float | None:
+        """Return one typed material matrix component."""
+
+        row, column = component.to_matrix_indices()
+        return _get_matrix_entry(self.get_matrix(kind), row, column)
+
+    def get_thermal_expansion(
+        self,
+        component: TensorComponent | None = None,
+    ) -> List[float] | float | None:
+        """Return thermal expansion data in typed form."""
+
+        if component is None:
+            return self.cte
+        if self.cte is None:
+            return None
+        return self.cte[component.to_voigt_index()]
+
+    def set_isotropy(self, value: str | int) -> None:
+        """Set isotropy using the typed main API."""
+
+        iso_value: Optional[int] = None
+        if isinstance(value, str):
+            value_lower = value.lower()
+            if value_lower.startswith('aniso'):
+                iso_value = 2
+            elif value_lower.startswith(('trans', 'ti')):
+                iso_value = 3
+            elif value_lower.startswith(('ortho', 'eng', 'lam')):
+                iso_value = 1
+            elif value_lower.startswith('iso'):
+                iso_value = 0
+            else:
+                try:
+                    iso_value = int(value)
+                except ValueError as exc:
+                    raise ValueError(f'Invalid isotropy value: {value}') from exc
+        elif isinstance(value, int):
+            iso_value = value
+        else:
+            raise TypeError('Isotropy must be provided as string or integer')
+
+        if iso_value not in (0, 1, 2, 3):
+            raise ValueError('Isotropy value must be 0, 1, 2, or 3')
+
+        self.isotropy = cast(Literal[0, 1, 2, 3], iso_value)
+
+    def set_strength_constants(self, values: Iterable[float]) -> None:
+        """Set the grouped strength constants using the typed main API."""
+
+        normalized = list(values)
+        if len(normalized) == 9:
+            self.x1t = normalized[0]
+            self.x2t = normalized[1]
+            self.x3t = normalized[2]
+            self.x1c = normalized[3]
+            self.x2c = normalized[4]
+            self.x3c = normalized[5]
+            self.x23 = normalized[6]
+            self.x13 = normalized[7]
+            self.x12 = normalized[8]
+
+        self.strength_constants = normalized
+
+    def set_elastic(
+        self,
+        consts: ElasticInput,
+        input_type: ElasticInputType | str | int = ElasticInputType.AUTO,
+        **kwargs,
+    ) -> None:
+        """Typed main API for updating elastic properties."""
+
+        self._set_elastic_impl(consts, input_type=input_type, **kwargs)
+
     # Backward compatibility methods
     def get(self, name: str):
-        """Get material properties (backward compatibility with old API).
+        """Compatibility query API retained for legacy string callers.
 
         Parameters
         ----------
@@ -656,6 +982,7 @@ class CauchyContinuumModel(BaseModel):
         - cte, alpha, alphaij (thermal expansion)
         - specific_heat
         """
+        warn_model_deprecation('CauchyContinuumModel.get')
         v = None
 
         if name == 'density':
@@ -674,9 +1001,9 @@ class CauchyContinuumModel(BaseModel):
             v = getattr(self, name)
 
         elif name == 'c':
-            v = self.stff
+            v = self.get_matrix(MatrixKind.STIFFNESS)
         elif name == 's':
-            v = self.cmpl
+            v = self.get_matrix(MatrixKind.COMPLIANCE)
 
         # Strength
         elif name == 'x':
@@ -698,26 +1025,26 @@ class CauchyContinuumModel(BaseModel):
 
         elif name.startswith('alpha'):
             if name == 'alpha':
-                v = self.cte[0] if self.cte is not None else None
+                v = self.get_thermal_expansion(TensorComponent(1, 1))
             else:
-                _ij = name[-2:]
-                for _k, __ij in enumerate(['11', '22', '33', '23', '13', '12']):
-                    if _ij == __ij:
-                        v = self.cte[_k] if self.cte is not None else None
-                        break
+                v = self.get_thermal_expansion(
+                    TensorComponent(int(name[-2]), int(name[-1]))
+                )
         elif name.startswith('c') and len(name) == 3:
-            _i = int(name[1]) - 1
-            _j = int(name[2]) - 1
-            v = self.stff[_i][_j] if self.stff is not None else None
+            v = self.get_matrix_component(
+                MatrixKind.STIFFNESS,
+                TensorComponent(int(name[1]), int(name[2])),
+            )
         elif name.startswith('s') and len(name) == 3:
-            _i = int(name[1]) - 1
-            _j = int(name[2]) - 1
-            v = self.cmpl[_i][_j] if self.cmpl is not None else None
+            v = self.get_matrix_component(
+                MatrixKind.COMPLIANCE,
+                TensorComponent(int(name[1]), int(name[2])),
+            )
 
         return v
 
     def set(self, name: str, value, **kwargs):
-        """Set material properties (backward compatibility with old API).
+        """Compatibility setter retained for legacy string callers.
 
         Parameters
         ----------
@@ -728,52 +1055,15 @@ class CauchyContinuumModel(BaseModel):
         **kwargs
             Additional keyword arguments (e.g., input_type for elastic)
         """
+        warn_model_deprecation('CauchyContinuumModel.set')
         if name == 'isotropy':
-            iso_value: Optional[int] = None
-            if isinstance(value, str):
-                value_lower = value.lower()
-                # Check for specific patterns first
-                if value_lower.startswith('aniso'):
-                    iso_value = 2
-                elif value_lower.startswith(('trans', 'ti')):
-                    iso_value = 3
-                elif value_lower.startswith(('ortho', 'eng', 'lam')):
-                    iso_value = 1
-                elif value_lower.startswith('iso'):
-                    iso_value = 0
-                else:
-                    # Try to parse as integer
-                    try:
-                        iso_value = int(value)
-                    except ValueError:
-                        raise ValueError(f'Invalid isotropy value: {value}')
-            elif isinstance(value, int):
-                iso_value = value
-            else:
-                raise TypeError('Isotropy must be provided as string or integer')
-
-            if iso_value not in (0, 1, 2, 3):
-                raise ValueError('Isotropy value must be 0, 1, 2, or 3')
-
-            self.isotropy = cast(Literal[0, 1, 2, 3], iso_value)
+            self.set_isotropy(value)
 
         elif name == 'elastic':
-            self.setElastic(value, **kwargs)
+            self.set_elastic(value, **kwargs)
 
         elif name == 'strength_constants':
-            values = list(value)
-            if len(values) == 9:
-                self.x1t = values[0]
-                self.x2t = values[1]
-                self.x3t = values[2]
-                self.x1c = values[3]
-                self.x2c = values[4]
-                self.x3c = values[5]
-                self.x23 = values[6]
-                self.x13 = values[7]
-                self.x12 = values[8]
-
-            self.strength_constants = values
+            self.set_strength_constants(value)
 
         else:
             # Direct attribute setting
@@ -781,12 +1071,28 @@ class CauchyContinuumModel(BaseModel):
 
         return
 
-    def setElastic(
+    @staticmethod
+    def _normalize_elastic_input_type(input_type: ElasticInputType | str | int) -> str:
+        """Normalize legacy elastic input type aliases.
+
+        Parameters
+        ----------
+        input_type : str or int
+            Elastic input type label or legacy isotropy integer.
+
+        Returns
+        -------
+        str
+            Normalized input type token used by ``setElastic``.
+        """
+        return ElasticInputType.from_value(input_type).value
+
+    def _set_elastic_impl(
         self,
         consts: ElasticInput,
-        input_type: str = '',
+        input_type: ElasticInputType | str | int = ElasticInputType.AUTO,
         **kwargs,
-    ):
+    ) -> None:
         """Set elastic properties based on isotropy type.
 
         Parameters
@@ -812,19 +1118,27 @@ class CauchyContinuumModel(BaseModel):
         C11, C12, C13, C14, C15, C16, C22, C23, C24, C25, C26, C33, C34, C35, C36,
         C44, C45, C46, C55, C56, C66
         """
+        normalized_input_type = self._normalize_elastic_input_type(input_type)
+
         if self.isotropy == 0:
             # Isotropic: [E, nu]
+            if normalized_input_type not in ('', 'isotropic'):
+                raise ValueError(
+                    f"Unsupported isotropic elastic input type: '{input_type}'"
+                )
             seq = list(cast(FloatSequence, consts))
             if len(seq) < 2:
                 raise ValueError('Isotropic elastic input requires [E, nu]')
             self.e1 = float(seq[0])
             self.nu12 = float(seq[1])
-            self.stff = _build_isotropic_stiffness(self.e1, self.nu12)
+            self.stff = None
+            self.cmpl = None
+            self._auto_build_stiffness()
 
         elif self.isotropy == 3:
             # Transverse Isotropic: [E1, E2, G12, nu12, nu23]
             seq = list(cast(FloatSequence, consts))
-            if input_type in ('transverse_isotropic', 'transverse', ''):
+            if normalized_input_type in ('transverse_isotropic', 'transverse', ''):
                 if len(seq) < 5:
                     raise ValueError('Transverse isotropic input requires [E1, E2, G12, nu12, nu23]')
                 self.e1 = float(seq[0])
@@ -835,12 +1149,18 @@ class CauchyContinuumModel(BaseModel):
                 self.e3 = self.e2
                 self.g13 = self.g12
                 self.nu13 = self.nu12
+                self.stff = None
+                self.cmpl = None
                 self._auto_build_stiffness()
+            else:
+                raise ValueError(
+                    f"Unsupported transverse isotropic elastic input type: '{input_type}'"
+                )
 
         elif self.isotropy == 1:
             # Orthotropic
             seq = list(cast(FloatSequence, consts))
-            if input_type == 'lamina':
+            if normalized_input_type == 'lamina':
                 # [E1, E2, G12, nu12]
                 if len(seq) < 4:
                     raise ValueError('Lamina input requires 4 values [E1, E2, G12, nu12]')
@@ -853,40 +1173,60 @@ class CauchyContinuumModel(BaseModel):
                 self.nu13 = self.nu12
                 self.nu23 = 0.3
                 self.g23 = self.e3 / (2.0 * (1 + self.nu23))
+                self.stff = None
+                self.cmpl = None
                 self._auto_build_stiffness()
-            elif input_type in ('engineering', 'orthotropic', ''):
+            elif normalized_input_type in ('engineering', 'engineering constants', 'orthotropic', ''):
                 # [E1, E2, E3, G12, G13, G23, nu12, nu13, nu23]
                 if len(seq) < 9:
                     raise ValueError('Engineering input requires 9 values')
                 self.e1, self.e2, self.e3 = list(map(float, seq[:3]))
                 self.g12, self.g13, self.g23 = list(map(float, seq[3:6]))
                 self.nu12, self.nu13, self.nu23 = list(map(float, seq[6:9]))
+                self.stff = None
+                self.cmpl = None
                 self._auto_build_stiffness()
+            else:
+                raise ValueError(
+                    f"Unsupported orthotropic elastic input type: '{input_type}'"
+                )
 
         elif self.isotropy == 2:
             # Anisotropic
-            if input_type in ('anisotropic', 'constants', ''):
+            if normalized_input_type in ('anisotropic', 'constants', ''):
                 # Provide 21 constants for upper triangle
                 seq = list(cast(FloatSequence, consts))
                 if len(seq) != 21:
                     raise ValueError(f'Anisotropic input requires 21 constants, got {len(seq)}')
-                self.stff = _build_anisotropic_stiffness(seq)
-            elif input_type == 'stiffness':
+                self.stff = None
+                self.cmpl = None
+                self._auto_build_stiffness(seq)
+            elif normalized_input_type == 'stiffness':
                 # Provide full 6x6 matrix
                 matrix_input = cast(MatrixSequence, consts)
-                rows: List[List[float]] = []
-                for row in matrix_input:
-                    rows.append([float(value) for value in row])
-                self.stff = rows
-            elif input_type == 'compliance':
+                self._set_canonical_stiffness(matrix_input)
+            elif normalized_input_type == 'compliance':
                 # Provide full 6x6 compliance matrix
                 matrix_input = cast(MatrixSequence, consts)
-                rows: List[List[float]] = []
-                for row in matrix_input:
-                    rows.append([float(value) for value in row])
-                self.cmpl = rows
+                self.cmpl = _normalize_matrix_rows(matrix_input)
+                self._sync_stiffness_from_compliance()
+            else:
+                raise ValueError(
+                    f"Unsupported anisotropic elastic input type: '{input_type}'"
+                )
 
         return
+
+    def setElastic(
+        self,
+        consts: ElasticInput,
+        input_type: ElasticInputType | str | int = ElasticInputType.AUTO,
+        **kwargs,
+    ):
+        """Compatibility wrapper for the legacy elastic setter."""
+
+        warn_model_deprecation('CauchyContinuumModel.setElastic')
+        self._set_elastic_impl(consts, input_type=input_type, **kwargs)
 
     def write_to_json(self, file_path: str, *, exclude_none: bool = True, indent: Optional[int] = None) -> None:
         """Write the material model to a JSON file.
@@ -914,16 +1254,15 @@ class CauchyContinuumModel(BaseModel):
         >>> mat.write_to_json("steel.json")
         >>> mat.write_to_json("steel_pretty.json", indent=2)
         """
-        path = Path(file_path)
-        
-        # Create parent directories if they don't exist
-        path.parent.mkdir(parents=True, exist_ok=True)
-        
-        # Convert model to dictionary, excluding None values by default
-        data = self.model_dump(exclude_none=exclude_none)
-        
-        with open(path, 'w', encoding='utf-8') as f:
-            json.dump(data, f, indent=indent, ensure_ascii=False)
+        warn_model_deprecation('CauchyContinuumModel.write_to_json')
+        from ..iofunc.common.material_json import write_material_to_json
+
+        write_material_to_json(
+            material=self,
+            file_path=file_path,
+            exclude_none=exclude_none,
+            indent=indent,
+        )
 
 
 # Backward-compatible alias retained for downstream imports
@@ -965,23 +1304,10 @@ def read_material_from_json(file_path: str) -> dict[str, CauchyContinuumModel]:
     This function now returns a dictionary to align with the name-based material
     storage architecture. The material's name field is used as the dictionary key.
     """
-    path = Path(file_path)
-    
-    if not path.exists():
-        raise FileNotFoundError(f'File not found: {file_path}')
-    
-    with open(path, 'r', encoding='utf-8') as f:
-        data = json.load(f)
-    
-    if not isinstance(data, dict):
-        raise TypeError(f'Expected JSON dictionary for single material, got {type(data).__name__}')
-    
-    material = CauchyContinuumModel(**data)
-    
-    if not material.name:
-        raise ValueError('Material must have a non-empty name field')
-    
-    return {material.name: material}
+    warn_model_deprecation('read_material_from_json')
+    from ..iofunc.common.material_json import read_material_from_json as _read_material_from_json
+
+    return _read_material_from_json(file_path)
 
 
 def read_materials_from_json(file_path: str) -> dict[str, CauchyContinuumModel]:
@@ -1025,31 +1351,10 @@ def read_materials_from_json(file_path: str) -> dict[str, CauchyContinuumModel]:
     storage architecture. Each material's name field is used as the dictionary key.
     Duplicate names will raise a ValueError.
     """
-    path = Path(file_path)
-    
-    if not path.exists():
-        raise FileNotFoundError(f'File not found: {file_path}')
-    
-    with open(path, 'r', encoding='utf-8') as f:
-        data = json.load(f)
-    
-    if not isinstance(data, list):
-        raise TypeError(f'Expected JSON list for multiple materials, got {type(data).__name__}')
-    
-    materials = {}
-    for i, mat_data in enumerate(data):
-        if not isinstance(mat_data, dict):
-            raise TypeError(f'Material at index {i} is not a dictionary: {type(mat_data).__name__}')
-        
-        material = CauchyContinuumModel(**mat_data)
-        
-        if not material.name:
-            raise ValueError(f'Material at index {i} must have a non-empty name field')
-        
-        if material.name in materials:
-            raise ValueError(f'Duplicate material name found: {material.name}')
-        
-        materials[material.name] = material
-    
-    return materials
+    warn_model_deprecation('read_materials_from_json')
+    from ..iofunc.common.material_json import (
+        read_materials_from_json as _read_materials_from_json,
+    )
+
+    return _read_materials_from_json(file_path)
 

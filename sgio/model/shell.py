@@ -1,20 +1,49 @@
 from __future__ import annotations
 
-class KirchhoffLovePlateShellModel():
+from typing import ClassVar
+
+from ._deprecations import warn_model_deprecation
+from .query_types import SectionCenter, SectionMatrixKind
+from .section_common import (
+    KIRCHHOFF_LOVE_SHELL_SCHEMA,
+    REISSNER_MINDLIN_SHELL_SCHEMA,
+    StructuralSectionSupport,
+)
+
+
+class KirchhoffLovePlateShellModel(StructuralSectionSupport):
     """Kirchhoff-Love Plate/Shell Model
     """
 
     dim = 2
+    label = 'pl1'
     model_name = 'Kirchhoff-Love plate/shell model'
-
-    constant_name_inplane = [
-        'e1_i', 'e2_i', 'g12_i', 'nu12_i', 'eta121_i', 'eta122_i']
-    constant_label_inplane = [
-        'E1', 'E2', 'G12', 'nu12', 'eta121', 'eta122']
-    constant_name_flexural = [
-        'e1_o', 'e2_o', 'g12_o', 'nu12_o', 'eta121_o', 'eta122_o']
-    constant_label_flexural = [
-        'E1', 'E2', 'G12', 'nu12', 'eta121', 'eta122']
+    theory_schema: ClassVar = KIRCHHOFF_LOVE_SHELL_SCHEMA
+    _IN_PLANE_PROPERTIES: ClassVar[dict[str, str]] = {
+        'E1': 'e1_i',
+        'E2': 'e2_i',
+        'G12': 'g12_i',
+        'nu12': 'nu12_i',
+        'eta121': 'eta121_i',
+        'eta122': 'eta122_i',
+    }
+    _FLEXURAL_PROPERTIES: ClassVar[dict[str, str]] = {
+        'E1': 'e1_o',
+        'E2': 'e2_o',
+        'G12': 'g12_o',
+        'nu12': 'nu12_o',
+        'eta121': 'eta121_o',
+        'eta122': 'eta122_o',
+    }
+    _SECTION_CENTER_ATTRS: ClassVar[dict[SectionCenter, tuple[str, ...]]] = {
+        SectionCenter.MASS: ('xm3',),
+    }
+    _SECTION_MATRIX_ATTRS: ClassVar[dict[SectionMatrixKind, str]] = {
+        SectionMatrixKind.MASS: 'mass',
+        SectionMatrixKind.STIFFNESS: 'stff',
+        SectionMatrixKind.COMPLIANCE: 'cmpl',
+        SectionMatrixKind.GEOMETRIC_STIFFNESS: 'stff_geo',
+    }
 
     def __init__(self):
 
@@ -61,53 +90,23 @@ class KirchhoffLovePlateShellModel():
 
 
     def __repr__(self) -> str:
-        s = [
-            self.model_name,
-        ]
-
+        s = [self.model_name]
         s.append('----------------')
-        s.append('mass matrix')
-        if not self.mass is None:
-            for i in range(6):
-                _row = []
-                for j in range(6):
-                    _row.append(f'{self.mass[i][j]:14e}')
-                s.append(', '.join(_row))
-        else:
-            s.append('NONE')
-
+        s.extend(self._format_matrix_block('mass matrix', self.mass))
         s.append('----------------')
-        s.append('stiffness matrix')
-        if not self.stff is None:
-            for i in range(6):
-                _row = []
-                for j in range(6):
-                    _row.append(f'{self.stff[i][j]:14e}')
-                s.append(', '.join(_row))
-        else:
-            s.append('NONE')
-
-        s.append('\ncompliance matrix')
-        if not self.cmpl is None:
-            for i in range(6):
-                _row = []
-                for j in range(6):
-                    _row.append(f'{self.cmpl[i][j]:14e}')
-                s.append(', '.join(_row))
-        else:
-            s.append('NONE')
-
+        s.extend(self._format_matrix_block('stiffness matrix', self.stff))
+        s.append('')
+        s.extend(self._format_matrix_block('compliance matrix', self.cmpl))
         s.append('-------------------')
-        s.append('in-plane properties')
-        for _label, _name in zip(self.constant_label_inplane, self.constant_name_inplane):
-            _value = eval(f'self.{_name}')
-            s.append(f'  {_label} = {_value}')
-
-        s.append('\nflexural properties')
-        for _label, _name in zip(self.constant_label_flexural, self.constant_name_flexural):
-            _value = eval(f'self.{_name}')
-            s.append(f'  {_label} = {_value}')
-
+        s.extend(self._format_named_attribute_block('in-plane properties', self, self._IN_PLANE_PROPERTIES))
+        s.append('')
+        s.extend(
+            self._format_named_attribute_block(
+                'flexural properties',
+                self,
+                self._FLEXURAL_PROPERTIES,
+            )
+        )
         return '\n'.join(s)
 
 
@@ -116,26 +115,28 @@ class KirchhoffLovePlateShellModel():
 
 
     def set(self, name, value, **kwargs):
+        """Compatibility setter retained for legacy string callers."""
+        warn_model_deprecation('KirchhoffLovePlateShellModel.set')
         ...
 
-
     def get(self, name):
-        r"""
-        """
+        """Compatibility query API retained for legacy string callers."""
+        warn_model_deprecation('KirchhoffLovePlateShellModel.get')
 
         # Stiffness
         if name.startswith('stf'):
             if name[-1] == 'c':
-                return self.stff[int(name[3])-1][int(name[4])-1]
+                return self._get_matrix_value(name, 3, self.stff)
             elif name[-1] == 'r':
                 if name[-2] == 'g':
-                    if len(self.stff_geo) > 0:
-                        return self.stff_geo[int(name[3])-1][int(name[4])-1]
+                    entry = self._get_matrix_value(name, 3, self.stff_geo)
+                    if entry is not None:
+                        return entry
                     else:
-                        return self.stff[int(name[3])-1][int(name[4])-1]
+                        return self._get_matrix_value(name, 3, self.stff)
 
         elif name.startswith('mass'):
-            return self.mass[int(name[4])-1][int(name[5])-1]
+            return self._get_matrix_value(name, 4, self.mass)
 
         return
 
@@ -147,12 +148,19 @@ class KirchhoffLovePlateShellModel():
 
 
 
-class ReissnerMindlinPlateShellModel():
+class ReissnerMindlinPlateShellModel(StructuralSectionSupport):
     """Reissner-Mindlin Plate/Shell Model
     """
-    
+
     dim = 2
+    label = 'pl2'
     model_name = 'Reissner-Mindlin plate/shell model'
+    theory_schema: ClassVar = REISSNER_MINDLIN_SHELL_SCHEMA
+
+    def __init__(self):
+        raise NotImplementedError(
+            'ReissnerMindlinPlateShellModel is not implemented yet.'
+        )
 
 
 

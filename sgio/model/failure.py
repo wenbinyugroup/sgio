@@ -168,22 +168,33 @@ class TsaiWuFailureCriterion:
         # Coefficient c
         c = -1.0
 
-        # Solve quadratic equation: SR = (-b + sqrt(b² - 4ac)) / (2a)
-        # We take the positive root
-        discriminant = b**2 - 4*a*c
-
         # Handle edge cases - initialize with infinity
         strength_ratio = np.full_like(a, np.inf)
 
-        # For valid discriminant (should always be >= 0 for physical problems)
-        valid_discriminant = discriminant >= 0
+        # Linear/zero-stress edge cases:
+        # - a == 0 and b == 0: zero stress, SR = inf
+        # - a == 0 and b != 0: linear equation b*SR - 1 = 0
+        zero_a = np.isclose(a, 0.0)
+        nonzero_b = ~np.isclose(b, 0.0)
+        linear_mask = zero_a & nonzero_b
+        if np.any(linear_mask):
+            linear_sr = -c / b[linear_mask]
+            strength_ratio[linear_mask] = np.where(linear_sr > 0, linear_sr, np.inf)
 
-        # Calculate strength ratio using the positive root
-        temp_sr = (-b[valid_discriminant] + np.sqrt(discriminant[valid_discriminant])) / (2*a[valid_discriminant])
+        # Solve quadratic equation: SR = (-b + sqrt(b² - 4ac)) / (2a)
+        # We take the positive root only for genuine quadratic cases.
+        quadratic_mask = ~zero_a
+        if np.any(quadratic_mask):
+            discriminant = b[quadratic_mask]**2 - 4*a[quadratic_mask]*c
+            valid_discriminant = discriminant >= 0
+            if np.any(valid_discriminant):
+                a_q = a[quadratic_mask][valid_discriminant]
+                b_q = b[quadratic_mask][valid_discriminant]
+                sr_q = (-b_q + np.sqrt(discriminant[valid_discriminant])) / (2 * a_q)
+                valid_sr = sr_q > 0
 
-        # Only keep positive strength ratios, set others to infinity
-        valid_sr = temp_sr > 0
-        strength_ratio[valid_discriminant] = np.where(valid_sr, temp_sr, np.inf)
+                quadratic_indices = np.where(quadratic_mask)[0][valid_discriminant]
+                strength_ratio[quadratic_indices] = np.where(valid_sr, sr_q, np.inf)
 
         # Return scalar if input was 1D
         if strength_ratio.shape[0] == 1:

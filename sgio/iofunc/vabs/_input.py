@@ -57,12 +57,12 @@ def _readHeader(file):
     if configs['is_curve'] == 1:
         line = sutl.readNextNonEmptyLine(file)
         line = line.split()
-        configs['curvature'] = list(map(float, line[:3]))
+        configs['curvature'] = list(map(sutl.fortran_float, line[:3]))
 
     if configs['is_oblique'] == 1:
         line = sutl.readNextNonEmptyLine(file)
         line = line.split()
-        configs['oblique'] = list(map(float, line[:2]))
+        configs['oblique'] = list(map(sutl.fortran_float, line[:2]))
 
     line = sutl.readNextNonEmptyLine(file)
     line = line.split()
@@ -169,12 +169,14 @@ def _writeMesh(
 
 
 
-def _writeMOCombos(sg, file, sfi:str='8d', sff:str='20.12e'):
+def _writeMOCombos(
+    sg, file, sfi: str = '8d', sff: str = '20.12e', mat_id_map=None
+):
     """Write material-orientation combinations (VABS format).
     
     Wrapper for common function with VABS-specific comment character.
     """
-    write_material_combos(sg, file, sfi, sff, comment_char='!')
+    write_material_combos(sg, file, sfi, sff, comment_char='!', mat_id_map=mat_id_map)
     return
 
 

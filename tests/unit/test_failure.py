@@ -2,6 +2,7 @@
 
 import numpy as np
 import pytest
+import warnings
 from sgio.model.failure import TsaiWuFailureCriterion
 
 
@@ -86,6 +87,35 @@ class TestTsaiWuFailureCriterion:
         sr = typical_composite.strength_ratio(stress)
         # Should be very large for very small stress
         assert sr > 1000.0
+
+    def test_strength_ratio_exact_zero_stress_no_warning(self, typical_composite):
+        """Exact zero stress should return infinity without runtime warnings."""
+        stress = np.zeros(6)
+
+        with warnings.catch_warnings(record=True) as caught:
+            warnings.simplefilter("always")
+            sr = typical_composite.strength_ratio(stress)
+
+        assert sr == pytest.approx(np.inf)
+        runtime_warnings = [w for w in caught if issubclass(w.category, RuntimeWarning)]
+        assert runtime_warnings == []
+
+    def test_strength_ratio_batch_with_zero_stress_no_warning(self, typical_composite):
+        """Batch evaluation should handle zero-stress rows without warnings."""
+        stresses = np.array([
+            np.zeros(6),
+            [100.0, 10.0, 10.0, 5.0, 5.0, 5.0],
+        ])
+
+        with warnings.catch_warnings(record=True) as caught:
+            warnings.simplefilter("always")
+            sr = typical_composite.strength_ratio(stresses)
+
+        assert sr.shape == (2,)
+        assert sr[0] == pytest.approx(np.inf)
+        assert sr[1] > 0.0
+        runtime_warnings = [w for w in caught if issubclass(w.category, RuntimeWarning)]
+        assert runtime_warnings == []
 
     def test_strength_ratio_single_stress(self, typical_composite):
         """Test strength ratio with a single stress vector."""

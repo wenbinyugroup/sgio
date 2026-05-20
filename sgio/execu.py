@@ -7,7 +7,7 @@ from typing import Union, Literal
 
 import sgio.utils.execu as sue
 import sgio.utils as sutl
-from .model.general import getModelDim
+from .model.protocols import getModelDim
 
 logger = logging.getLogger(__name__)
 

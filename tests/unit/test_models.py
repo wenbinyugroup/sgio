@@ -6,11 +6,31 @@ This module tests the Pydantic-based model classes for:
 - Solid models (SD1: Cauchy continuum)
 """
 
+from io import StringIO
 import pytest
 import math
 from pydantic import ValidationError
 
-from sgio.model.beam import EulerBernoulliBeamModel
+from sgio.iofunc.common.material_writers import write_material
+from sgio.model.beam import EulerBernoulliBeamModel, TimoshenkoBeamModel
+from sgio.model.material_components import (
+    LinearElasticBehavior,
+    MaterialDefinition,
+    StrengthProperties,
+    ThermalProperties,
+)
+from sgio.model.query_types import (
+    ElasticInputType,
+    MatrixKind,
+    SectionAxis,
+    SectionCenter,
+    SectionMatrixKind,
+    TensorComponent,
+)
+from sgio.model.shell import (
+    KirchhoffLovePlateShellModel,
+    ReissnerMindlinPlateShellModel,
+)
 from sgio.model.solid import CauchyContinuumModel
 
 
@@ -163,6 +183,14 @@ class TestEulerBernoulliBeamModelComputedProperties:
 class TestEulerBernoulliBeamModelBackwardCompatibility:
     """Test backward compatibility with existing API."""
 
+    def test_default_get_returns_none_for_missing_matrix_entries(self):
+        """Default objects should not raise when matrix-backed properties are missing."""
+        beam = EulerBernoulliBeamModel()
+
+        assert beam.get('ms11') is None
+        assert beam.get('stf11') is None
+        assert beam.get('cmp11') is None
+
     def test_get_method_basic_properties(self):
         """Test the get() method for basic properties."""
         beam = EulerBernoulliBeamModel(
@@ -220,6 +248,22 @@ class TestEulerBernoulliBeamModelBackwardCompatibility:
         assert isinstance(repr_str, str)
         assert len(repr_str) > 0
 
+    def test_typed_section_queries(self):
+        """Typed section queries should expose centers, axes, and matrices."""
+        beam = EulerBernoulliBeamModel(
+            xm2=0.1,
+            xm3=-0.05,
+            xt2=0.2,
+            xt3=-0.1,
+            phi_pba=12.0,
+            stff=[[1.0] * 4 for _ in range(4)],
+        )
+
+        assert beam.get_center(SectionCenter.MASS) == (0.1, -0.05)
+        assert beam.get_center(SectionCenter.TENSION) == (0.2, -0.1)
+        assert beam.get_axis_angle(SectionAxis.BENDING) == 12.0
+        assert beam.get_section_matrix_component(SectionMatrixKind.STIFFNESS, 1, 1) == 1.0
+
 
 @pytest.mark.unit
 class TestEulerBernoulliBeamModelSerialization:
@@ -258,6 +302,134 @@ class TestEulerBernoulliBeamModelSerialization:
         json_str = beam.model_dump_json()
         assert isinstance(json_str, str)
         assert '"name":"JSON Test"' in json_str or '"name": "JSON Test"' in json_str
+
+
+@pytest.mark.unit
+class TestTimoshenkoBeamModelSafety:
+    """Test safe access behavior for the Timoshenko beam model (BM2)."""
+
+    def test_default_get_returns_none_for_missing_matrix_entries(self):
+        """Default objects should not raise when matrix-backed properties are missing."""
+        beam = TimoshenkoBeamModel()
+
+        assert beam.get('ms11') is None
+        assert beam.get('stf11') is None
+        assert beam.get('stf11c') is None
+        assert beam.get('cmp11') is None
+        assert beam.get('cmp11c') is None
+
+    def test_default_repr_does_not_crash(self):
+        """Default repr should handle absent matrices cleanly."""
+        beam = TimoshenkoBeamModel()
+
+        output = repr(beam)
+
+        assert 'Timoshenko beam model' in output
+        assert 'NONE' in output
+
+    def test_theory_schema_exposes_refined_and_classical_semantics(self):
+        """Theory schema should describe both classical and refined matrix orders."""
+        schema = TimoshenkoBeamModel.theory_schema
+
+        assert 'stff' in schema.matrices
+        assert 'stff_c' in schema.matrices
+        assert schema.matrices['stff'].column_quantities == (
+            'gamma11',
+            'gamma12',
+            'gamma13',
+            'kappa11',
+            'kappa12',
+            'kappa13',
+        )
+        assert 'shear_center' in schema.centers
+        assert 'principal_shear_axes' in schema.principal_axes
+
+    def test_typed_center_and_axis_queries(self):
+        """Typed section queries should expose Timoshenko-specific centers and axes."""
+        beam = TimoshenkoBeamModel()
+        beam.xs2 = 0.3
+        beam.xs3 = -0.2
+        beam.phi_psa = 18.0
+
+        assert beam.get_center(SectionCenter.SHEAR) == (0.3, -0.2)
+        assert beam.get_axis_angle(SectionAxis.SHEAR) == 18.0
+
+
+@pytest.mark.unit
+class TestKirchhoffLovePlateShellModelSafety:
+    """Test safe access behavior for the Kirchhoff-Love shell model (PL1)."""
+
+    def test_default_get_returns_none_for_missing_matrix_entries(self):
+        """Default shell objects should not raise when matrix-backed properties are missing."""
+        shell = KirchhoffLovePlateShellModel()
+
+        assert shell.get('stf11c') is None
+        assert shell.get('stf11gr') is None
+        assert shell.get('mass11') is None
+
+    def test_get_uses_geometric_stiffness_when_available(self):
+        """Geometric corrected refined stiffness should be preferred when present."""
+        shell = KirchhoffLovePlateShellModel()
+        shell.stff = [[1.0] * 6 for _ in range(6)]
+        shell.stff_geo = [[2.0] * 6 for _ in range(6)]
+
+        assert shell.get('stf11gr') == 2.0
+        assert shell.get('stf11c') == 1.0
+
+    def test_default_repr_does_not_crash(self):
+        """Default shell repr should handle absent matrices and constants cleanly."""
+        shell = KirchhoffLovePlateShellModel()
+
+        output = repr(shell)
+
+        assert 'Kirchhoff-Love plate/shell model' in output
+        assert 'NONE' in output
+
+    def test_theory_schema_exposes_plate_resultant_order(self):
+        """Theory schema should encode the Kirchhoff-Love A/B/D variable order."""
+        schema = KirchhoffLovePlateShellModel.theory_schema
+
+        assert schema.matrices['stff'].row_quantities == (
+            'N11',
+            'N22',
+            'N12',
+            'M11',
+            'M22',
+            'M12',
+        )
+        assert schema.matrices['stff'].column_quantities == (
+            'epsilon11',
+            'epsilon22',
+            '2epsilon12',
+            'kappa11',
+            'kappa22',
+            '2kappa12',
+        )
+
+    def test_typed_shell_matrix_queries(self):
+        """Typed shell matrix access should work without legacy string tokens."""
+        shell = KirchhoffLovePlateShellModel()
+        shell.stff_geo = [[3.0] * 6 for _ in range(6)]
+
+        assert shell.get_section_matrix_component(SectionMatrixKind.GEOMETRIC_STIFFNESS, 1, 1) == 3.0
+
+
+@pytest.mark.unit
+class TestReissnerMindlinPlateShellModelBoundary:
+    """Test explicit boundary behavior for the not-yet-implemented PL2 model."""
+
+    def test_instantiation_is_explicitly_blocked(self):
+        """PL2 should fail loudly instead of exposing a silent empty shell."""
+        with pytest.raises(NotImplementedError):
+            ReissnerMindlinPlateShellModel()
+
+    def test_theory_schema_is_declared_for_future_implementation(self):
+        """Even the blocked type should declare its intended matrix semantics."""
+        schema = ReissnerMindlinPlateShellModel.theory_schema
+
+        assert schema.matrices['stff'].shape == (8, 8)
+        assert schema.matrices['stff'].row_quantities[-2:] == ('N13', 'N23')
+        assert schema.matrices['stff'].column_quantities[-2:] == ('gamma13', 'gamma23')
 
 
 @pytest.mark.unit
@@ -320,38 +492,38 @@ class TestCauchyContinuumModel:
             CauchyContinuumModel(cmpl=[[0.0] * 6 for _ in range(5)])
 
     def test_set_method_isotropy_parsing(self):
-        """set('isotropy', value) accepts string shorthands."""
+        """set_isotropy() accepts string shorthands."""
         solid = CauchyContinuumModel()
 
-        solid.set('isotropy', 'orthotropic')
+        solid.set_isotropy('orthotropic')
         assert solid.isotropy == 1
 
-        solid.set('isotropy', 'anisotropic')
+        solid.set_isotropy('anisotropic')
         assert solid.isotropy == 2
 
-        solid.set('isotropy', 'iso')
+        solid.set_isotropy('iso')
         assert solid.isotropy == 0
 
     def test_set_elastic_validation(self):
-        """set('elastic', ...) respects field validators under assignment."""
+        """set_elastic() respects field validators under assignment."""
         solid = CauchyContinuumModel(isotropy=0)
 
-        solid.set('elastic', [210e9, 0.3])
+        solid.set_elastic([210e9, 0.3])
         assert solid.e1 == pytest.approx(210e9)
         assert solid.nu12 == pytest.approx(0.3)
 
         with pytest.raises(ValidationError):
-            solid.set('elastic', [-1.0, 0.25])
+            solid.set_elastic([-1.0, 0.25])
 
         with pytest.raises(ValidationError):
-            solid.set('elastic', [100e9, 0.7])
+            solid.set_elastic([100e9, 0.7])
 
     def test_set_elastic_orthotropic(self):
         """Orthotropic elastic input populates the nine engineering constants."""
         solid = CauchyContinuumModel(isotropy=1)
         engineering = [120e9, 10e9, 10e9, 5e9, 4e9, 3e9, 0.25, 0.23, 0.21]
 
-        solid.set('elastic', engineering, input_type='engineering')
+        solid.set_elastic(engineering, input_type='engineering')
 
         assert solid.e1 == pytest.approx(engineering[0])
         assert solid.e2 == pytest.approx(engineering[1])
@@ -369,18 +541,102 @@ class TestCauchyContinuumModel:
         bad_matrix = [[0.0] * 5 for _ in range(6)]
 
         with pytest.raises(ValidationError):
-            solid.set('elastic', bad_matrix, input_type='stiffness')
+            solid.set_elastic(bad_matrix, input_type='stiffness')
 
-        good_matrix = [[0.0] * 6 for _ in range(6)]
-        solid.set('elastic', good_matrix, input_type='stiffness')
+        good_matrix = [[1.0 if i == j else 0.0 for j in range(6)] for i in range(6)]
+        solid.set_elastic(good_matrix, input_type='stiffness')
         assert solid.stff == good_matrix
+        assert solid.cmpl is not None
+        assert solid.cmpl[0][0] == pytest.approx(1.0)
+
+    def test_constructor_builds_stiffness_from_compliance(self):
+        """Compliance-only anisotropic inputs should also populate stiffness."""
+        compliance = [
+            [0.01, 0.0, 0.0, 0.0, 0.0, 0.0],
+            [0.0, 0.02, 0.0, 0.0, 0.0, 0.0],
+            [0.0, 0.0, 0.04, 0.0, 0.0, 0.0],
+            [0.0, 0.0, 0.0, 0.05, 0.0, 0.0],
+            [0.0, 0.0, 0.0, 0.0, 0.1, 0.0],
+            [0.0, 0.0, 0.0, 0.0, 0.0, 0.2],
+        ]
+        solid = CauchyContinuumModel(isotropy=2, cmpl=compliance)
+
+        assert solid.cmpl is not None
+        assert solid.cmpl[0][0] == pytest.approx(0.01)
+        assert solid.cmpl[1][1] == pytest.approx(0.02)
+        assert solid.stff is not None
+        assert solid.get_matrix_component(
+            MatrixKind.COMPLIANCE,
+            TensorComponent(1, 1),
+        ) == pytest.approx(0.01)
+        assert solid.get_matrix_component(
+            MatrixKind.STIFFNESS,
+            TensorComponent(1, 1),
+        ) == pytest.approx(100.0)
+        assert solid.get_matrix_component(
+            MatrixKind.STIFFNESS,
+            TensorComponent(2, 2),
+        ) == pytest.approx(50.0)
+
+    def test_set_elastic_compliance_populates_stiffness(self):
+        """Compliance assignment should keep stiffness/compliance views consistent."""
+        compliance = [
+            [0.01, 0.0, 0.0, 0.0, 0.0, 0.0],
+            [0.0, 0.02, 0.0, 0.0, 0.0, 0.0],
+            [0.0, 0.0, 0.04, 0.0, 0.0, 0.0],
+            [0.0, 0.0, 0.0, 0.05, 0.0, 0.0],
+            [0.0, 0.0, 0.0, 0.0, 0.1, 0.0],
+            [0.0, 0.0, 0.0, 0.0, 0.0, 0.2],
+        ]
+        solid = CauchyContinuumModel(isotropy=2)
+
+        solid.set_elastic(compliance, input_type='compliance')
+
+        assert solid.cmpl is not None
+        assert solid.cmpl[0][0] == pytest.approx(0.01)
+        assert solid.cmpl[5][5] == pytest.approx(0.2)
+        assert solid.stff is not None
+        assert solid.get_matrix_component(
+            MatrixKind.STIFFNESS,
+            TensorComponent(1, 1),
+        ) == pytest.approx(100.0)
+
+    def test_engineering_input_populates_compliance_view(self):
+        """Engineering-constant inputs should also derive compliance."""
+        solid = CauchyContinuumModel(isotropy=0)
+
+        solid.set_elastic([210e9, 0.3], input_type='isotropic')
+
+        assert solid.stff is not None
+        assert solid.cmpl is not None
+        assert solid.cmpl[0][0] == pytest.approx(1 / 210e9)
+
+    def test_write_material_supports_compliance_only_anisotropic_input(self):
+        """Material writing should not fail after compliance-only anisotropic initialization."""
+        compliance = [
+            [0.01, 0.0, 0.0, 0.0, 0.0, 0.0],
+            [0.0, 0.02, 0.0, 0.0, 0.0, 0.0],
+            [0.0, 0.0, 0.04, 0.0, 0.0, 0.0],
+            [0.0, 0.0, 0.0, 0.05, 0.0, 0.0],
+            [0.0, 0.0, 0.0, 0.0, 0.1, 0.0],
+            [0.0, 0.0, 0.0, 0.0, 0.0, 0.2],
+        ]
+        solid = CauchyContinuumModel(isotropy=2)
+        solid.set_elastic(compliance, input_type='compliance')
+
+        buffer = StringIO()
+        write_material(mid=1, material=solid, file=buffer, analysis='h')
+
+        content = buffer.getvalue()
+        assert content
+        assert '1.000000000000e+02' in content
 
     def test_strength_constants_assignment(self):
-        """set('strength_constants', ...) distributes values to properties."""
+        """set_strength_constants() distributes values to properties."""
         solid = CauchyContinuumModel()
         strength = [1500.0, 1200.0, 900.0, 800.0, 600.0, 500.0, 200.0, 180.0, 160.0]
 
-        solid.set('strength_constants', strength)
+        solid.set_strength_constants(strength)
 
         assert solid.strength_constants == strength
         assert solid.x1t == pytest.approx(1500.0)
@@ -394,7 +650,7 @@ class TestCauchyContinuumModel:
             isotropy=1,
             e1=100e9,
             nu12=0.3,
-            stff=[[1.0] * 6 for _ in range(6)],
+            stff=[[1.0 if i == j else 0.0 for j in range(6)] for i in range(6)],
             cte=[1e-6] * 6,
         )
 
@@ -404,5 +660,98 @@ class TestCauchyContinuumModel:
         assert solid.get('nu') == pytest.approx(0.3)
         assert solid.get('c11') == 1.0
         assert solid.get('alpha') == pytest.approx(1e-6)
+
+    def test_typed_material_queries_and_setters(self):
+        """Typed material API should cover matrix, thermal, and setter flows."""
+        solid = CauchyContinuumModel()
+        solid.set_isotropy('iso')
+        solid.set_elastic([210e9, 0.3], input_type=ElasticInputType.ISOTROPIC)
+        solid.cte = [1e-6, 2e-6, 3e-6, 4e-6, 5e-6, 6e-6]
+
+        assert solid.isotropy == 0
+        assert solid.get_matrix_component(
+            MatrixKind.STIFFNESS,
+            TensorComponent(1, 1),
+        ) is not None
+        assert solid.get_thermal_expansion(TensorComponent(1, 2)) == pytest.approx(6e-6)
+
+    def test_grouped_views_reflect_current_fields(self):
+        """Grouped composition views should expose the current field partitions."""
+        solid = CauchyContinuumModel(
+            name='Grouped',
+            density=1234.0,
+            temperature=45.0,
+            isotropy=1,
+            e1=100e9,
+            nu12=0.25,
+            x1t=800.0,
+            char_len=0.5,
+            cte=[1e-6] * 6,
+            specific_heat=900.0,
+            failure_criterion=4,
+        )
+
+        assert solid.definition == MaterialDefinition(
+            name='Grouped',
+            id=None,
+            density=1234.0,
+            temperature=45.0,
+        )
+        assert solid.elastic.isotropy == 1
+        assert solid.elastic.e1 == pytest.approx(100e9)
+        assert solid.thermal.cte == [1e-6] * 6
+        assert solid.thermal.specific_heat == pytest.approx(900.0)
+        assert solid.strength.x1t == pytest.approx(800.0)
+        assert solid.strength.failure_criterion == 4
+
+    def test_assigning_grouped_components_updates_outer_fields(self):
+        """Assigning grouped components should update the legacy outer shell."""
+        solid = CauchyContinuumModel()
+
+        solid.definition = MaterialDefinition(
+            name='Updated',
+            id=7,
+            density=2222.0,
+            temperature=80.0,
+        )
+        solid.elastic = LinearElasticBehavior(
+            isotropy=0,
+            e1=210e9,
+            nu12=0.3,
+        )
+        solid.thermal = ThermalProperties(
+            cte=[2e-6] * 6,
+            specific_heat=500.0,
+            d_thetatheta=10.0,
+            f_eff=0.25,
+        )
+        solid.strength = StrengthProperties(
+            x1t=1000.0,
+            x1c=900.0,
+            x23=120.0,
+            strength_measure=1,
+            strength_constants=[1000.0, 0.0, 0.0, 900.0, 0.0, 0.0, 120.0, 0.0, 0.0],
+            char_len=0.2,
+            failure_criterion=4,
+        )
+
+        assert solid.name == 'Updated'
+        assert solid.id == 7
+        assert solid.density == pytest.approx(2222.0)
+        assert solid.temperature == pytest.approx(80.0)
+        assert solid.isotropy == 0
+        assert solid.e1 == pytest.approx(210e9)
+        assert solid.nu12 == pytest.approx(0.3)
+        assert solid.stff is not None
+        assert solid.cte == [2e-6] * 6
+        assert solid.specific_heat == pytest.approx(500.0)
+        assert solid.d_thetatheta == pytest.approx(10.0)
+        assert solid.f_eff == pytest.approx(0.25)
+        assert solid.x1t == pytest.approx(1000.0)
+        assert solid.x1c == pytest.approx(900.0)
+        assert solid.x23 == pytest.approx(120.0)
+        assert solid.strength_measure == 1
+        assert solid.char_len == pytest.approx(0.2)
+        assert solid.failure_criterion == 4
 
 

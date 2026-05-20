@@ -7,6 +7,10 @@ Reference
     :caption: Contents
 
     sg
+    sg_analysis_config
+    fe_model
+    structural_model
+    section
     mesh
     model/index
     io

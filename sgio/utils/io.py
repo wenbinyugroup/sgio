@@ -6,6 +6,21 @@ def convertToPrettyString(v):
     return pprint.pformat(v)
 
 
+def fortran_float(s: str) -> float:
+    """Convert a string to float, handling Fortran-style 'd'/'D' exponent notation.
+
+    Parameters
+    ----------
+    s : str
+        Numeric string, e.g. ``'1.0d0'`` or ``'3.14D-2'``.
+
+    Returns
+    -------
+    float
+    """
+    return float(s.replace('d', 'e').replace('D', 'E'))
+
+
 def readNextNonEmptyLine(file):
     line = file.readline().split('!')[0].strip()
     while line == '':

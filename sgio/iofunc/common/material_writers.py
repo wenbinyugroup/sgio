@@ -12,9 +12,26 @@ from typing import TextIO
 import sgio.model as smdl
 import sgio.utils as sutl
 from sgio.core.sg import StructureGene
+from sgio.model.query_types import MatrixKind, TensorComponent
 
 
 logger = logging.getLogger(__name__)
+
+
+def build_material_id_map(dict_materials: dict[str, smdl.CauchyContinuumModel]) -> dict[str, int]:
+    """Build a sequential export ID map for materials.
+
+    Parameters
+    ----------
+    dict_materials : dict[str, CauchyContinuumModel]
+        Materials indexed by material name.
+
+    Returns
+    -------
+    dict[str, int]
+        Mapping from material name to 1-based export ID.
+    """
+    return {name: idx + 1 for idx, name in enumerate(dict_materials)}
 
 
 def write_material_combos(
@@ -22,7 +39,8 @@ def write_material_combos(
     file: TextIO,
     sfi: str = '8d',
     sff: str = '20.12e',
-    comment_char: str = '!'
+    comment_char: str = '!',
+    mat_id_map: dict[str, int] | None = None,
 ) -> None:
     """Write material-orientation combinations to file.
     
@@ -38,12 +56,15 @@ def write_material_combos(
         String format for floats.
     comment_char : str
         Comment character ('!' for VABS, '#' for SwiftComp).
+    mat_id_map : dict[str, int], optional
+        Mapping from material name to numeric export ID. If omitted,
+        a sequential map is built from ``sg.materials``.
     """
     ssfi = '{:' + sfi + '}'
     ssff = '{:' + sff + '}'
-    
-    # Get material name -> ID mapping for export
-    mat_id_map = sg.get_export_material_ids()
+
+    if mat_id_map is None:
+        mat_id_map = build_material_id_map(sg.materials)
     
     count = 0
     for cid, combo in sg.mocombos.items():
@@ -91,7 +112,10 @@ def write_material(
     has_ntemp : bool
         Whether to include ntemp in output (SwiftComp format).
     """
-    anisotropy = material.get('isotropy')
+    anisotropy = material.isotropy
+    definition = material.definition
+    thermal = material.thermal
+    strength_props = material.strength
     
     if analysis == 'h':
         # Write material properties for homogenization
@@ -103,7 +127,7 @@ def write_material(
             
             # Temperature and density (SwiftComp format)
             sutl.writeFormatFloats(
-                file, (material.get('temperature'), material.get('density')), sff)
+                file, (definition.temperature, definition.density), sff)
         else:
             sutl.writeFormatIntegers(file, (mid, anisotropy), sfi, newline=False)
             file.write(f'  {comment_char} material id, anisotropy\n')
@@ -113,54 +137,68 @@ def write_material(
             # Isotropic material
             if has_ntemp:  # SwiftComp format uses e1, nu12
                 sutl.writeFormatFloats(
-                    file, [material.get('e1'), material.get('nu12')], sff)
+                    file, [material.e1, material.nu12], sff)
             else:  # VABS format uses e, nu
                 sutl.writeFormatFloats(
-                    file, [material.get('e'), material.get('nu')], sff)
+                    file, [material.e1, material.nu12], sff)
             
             if physics == 3 and not has_ntemp:  # VABS thermal
-                sutl.writeFormatFloats(file, [material.get('alpha'),], sff)
+                sutl.writeFormatFloats(
+                    file,
+                    [material.get_thermal_expansion(TensorComponent(1, 1))],
+                    sff,
+                )
         
         elif anisotropy == 1:
             # Orthotropic material
             sutl.writeFormatFloats(
-                file, [material.get('e1'), material.get('e2'), material.get('e3')], sff)
+                file, [material.e1, material.e2, material.e3], sff)
             sutl.writeFormatFloats(
-                file, [material.get('g12'), material.get('g13'), material.get('g23')], sff)
+                file, [material.g12, material.g13, material.g23], sff)
             sutl.writeFormatFloats(
-                file, [material.get('nu12'), material.get('nu13'), material.get('nu23')], sff)
+                file, [material.nu12, material.nu13, material.nu23], sff)
             
             if physics == 3 and not has_ntemp:  # VABS thermal
                 sutl.writeFormatFloats(
-                    file, [material.get('alpha11'), material.get('alpha22'), material.get('alpha33')], sff)
+                    file,
+                    [
+                        material.get_thermal_expansion(TensorComponent(1, 1)),
+                        material.get_thermal_expansion(TensorComponent(2, 2)),
+                        material.get_thermal_expansion(TensorComponent(3, 3)),
+                    ],
+                    sff,
+                )
         
         elif anisotropy == 2:
             # Anisotropic material
             for i in range(6):
                 for j in range(i, 6):
-                    _v = material.get(f'c{i+1}{j+1}')
+                    _v = material.get_matrix_component(
+                        MatrixKind.STIFFNESS,
+                        TensorComponent(i + 1, j + 1),
+                    )
                     file.write(f'{_v:{sff}}')
                 file.write('\n')
             
             if physics == 3 and not has_ntemp:  # VABS thermal
                 sutl.writeFormatFloats(
                     file, [
-                        material.get('alpha11'),
-                        material.get('alpha12')*2,
-                        material.get('alpha13')*2,
-                        material.get('alpha22'),
-                        material.get('alpha23')*2,
-                        material.get('alpha33')
+                        material.get_thermal_expansion(TensorComponent(1, 1)),
+                        material.get_thermal_expansion(TensorComponent(1, 2)) * 2,
+                        material.get_thermal_expansion(TensorComponent(1, 3)) * 2,
+                        material.get_thermal_expansion(TensorComponent(2, 2)),
+                        material.get_thermal_expansion(TensorComponent(2, 3)) * 2,
+                        material.get_thermal_expansion(TensorComponent(3, 3)),
                     ], sff)
         
         # Density (VABS format only)
         if not has_ntemp:
-            sutl.writeFormatFloats(file, [material.get('density'),], sff)
+            sutl.writeFormatFloats(file, [definition.density,], sff)
         
         # Thermal properties (SwiftComp format)
         if physics in [1, 4, 6] and has_ntemp:
             sutl.writeFormatFloats(
-                file, material.get('cte')+[material.get('specific_heat'),], sff)
+                file, thermal.cte + [thermal.specific_heat], sff)
     
     elif analysis == 'f' or analysis.startswith('f'):
         # Write material properties for failure analysis
@@ -168,12 +206,12 @@ def write_material(
         
         sutl.writeFormatIntegers(
             file,
-            [material.failure_criterion, len(strength)],
+            [strength_props.failure_criterion, len(strength)],
             sfi
         )
         
         if has_ntemp:  # SwiftComp format
-            sutl.writeFormatFloats(file, [material.get('char_len'),], sff)
+            sutl.writeFormatFloats(file, [strength_props.char_len,], sff)
         
         sutl.writeFormatFloats(file, strength, sff)
     
@@ -219,7 +257,7 @@ def write_materials(
     
     # Use provided ID map or create default sequential mapping
     if mat_id_map is None:
-        mat_id_map = {name: idx + 1 for idx, name in enumerate(dict_materials.keys())}
+        mat_id_map = build_material_id_map(dict_materials)
     
     for mat_name, m in dict_materials.items():
         mid = mat_id_map[mat_name]
@@ -337,13 +375,14 @@ def _get_strength_constants(
         Strength constants based on failure criterion.
     """
     strength = []
+    strength_props = material.strength
     
-    if material.failure_criterion == 4:  # Tsai-Wu
+    if strength_props.failure_criterion == 4:  # Tsai-Wu
         if anisotropy != 0:
             strength = [
-                material.get('x1t'), material.get('x2t'), material.get('x3t'),
-                material.get('x1c'), material.get('x2c'), material.get('x3c'),
-                material.get('x23'), material.get('x13'), material.get('x12'),
+                strength_props.x1t, strength_props.x2t, strength_props.x3t,
+                strength_props.x1c, strength_props.x2c, strength_props.x3c,
+                strength_props.x23, strength_props.x13, strength_props.x12,
             ]
     
     return strength

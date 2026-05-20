@@ -12,7 +12,7 @@ import yaml
 
 from sgio import (
     read,
-    readOutputState,
+    read_output_state,
     add_cell_dict_data_to_mesh,
     write,
     configure_logging,
@@ -83,7 +83,7 @@ def test_vabs_output_state_dehomogenization(fn_test_cases, test_data_dir, tmp_pa
         sg = read(fn_in, ff_in)
 
         # Read the output state
-        state_cases = readOutputState(
+        state_cases = read_output_state(
             fn_in, ff_in, 'd', sg=sg, tool_version=version_in, num_cases=num_cases)
         logger.info(state_cases)
         logger.info(f'{len(state_cases)} state cases')
@@ -178,7 +178,7 @@ def test_vabs_output_state_failure(fn_test_cases, test_data_dir, tmp_path):
         sg = read(fn_in, ff_in)
 
         # Read the output state (failure indices)
-        state_cases = readOutputState(
+        state_cases = read_output_state(
             fn_in, ff_in, 'fi', sg=sg, tool_version=version_in, num_cases=num_cases)
         logger.info(state_cases)
 

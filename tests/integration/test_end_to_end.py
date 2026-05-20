@@ -56,7 +56,7 @@ def test_build_sg_1d_from_yaml(test_data_dir, legacy_files_dir, tmp_path):
     assert len(mdb) > 0, "Material database should not be empty"
     
     # Build 1D structure gene
-    sg = sgio.buildSG1D(
+    sg = sgio.build_sg_1d(
         name=sg_name,
         layup=sg_design_input,
         sgdb=mdb,
@@ -116,7 +116,7 @@ def test_build_sg_1d_layup_symmetry(test_data_dir, legacy_files_dir, tmp_path):
     for _m in raw_input['material']:
         mdb[_m['name']] = {'property': _m['property']}
     
-    sg = sgio.buildSG1D(
+    sg = sgio.build_sg_1d(
         name='test_symmetry',
         layup=sg_design_input,
         sgdb=mdb,
@@ -159,7 +159,7 @@ def test_build_sg_1d_mesh_generation(test_data_dir, legacy_files_dir, tmp_path):
     
     elem_type = sg_input['model'].get('element_type', 2)
     
-    sg = sgio.buildSG1D(
+    sg = sgio.build_sg_1d(
         name='test_mesh',
         layup=sg_input['design'],
         sgdb=mdb,

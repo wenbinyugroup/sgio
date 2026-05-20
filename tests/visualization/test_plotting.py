@@ -41,7 +41,7 @@ def test_plot_sg_2d_basic(test_data_dir):
     assert hasattr(cs, 'mesh'), "Cross-section should have mesh attribute"
     
     # Read the output model
-    model = sgio.readOutputModel(str(fn_out), 'vabs', sg=cs)
+    model = sgio.read_output_model(str(fn_out), 'vabs', sg=cs)
     assert model is not None, "Failed to read output model"
     
     # Create figure and axes
@@ -82,7 +82,7 @@ def test_plot_sg_2d_with_properties(test_data_dir):
         pytest.skip(f"Output file not found: {fn_out}")
     
     cs = sgio.read(str(fn), 'vabs')
-    model = sgio.readOutputModel(str(fn_out), 'vabs', sg=cs)
+    model = sgio.read_output_model(str(fn_out), 'vabs', sg=cs)
     
     fig, ax = plt.subplots()
     
@@ -144,7 +144,7 @@ def test_plot_sg_2d_euler_bernoulli(test_data_dir):
     cs = sgio.read(str(fn), 'vabs')
 
     # Read the model
-    model = sgio.readOutputModel(str(fn_out), 'vabs', sg=cs)
+    model = sgio.read_output_model(str(fn_out), 'vabs', sg=cs)
 
     fig, ax = plt.subplots()
     plot_sg_2d(cs, model, ax)

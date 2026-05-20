@@ -12,7 +12,7 @@ import os
 from pathlib import Path
 import pytest
 
-from sgio import readOutputModel, logger, configure_logging
+from sgio import read_output_model, logger, configure_logging
 
 configure_logging(cout_level='info')
 
@@ -68,7 +68,7 @@ def test_swiftcomp_output_model(test_case, test_data_dir):
     logger.info(f"Reading SwiftComp output model from: {fn_in}")
     
     # Read the output model
-    model = readOutputModel(str(fn_in), file_format, model_type=model_type)
+    model = read_output_model(str(fn_in), file_format, model_type=model_type)
     
     # Verify model was read
     assert model is not None, "Model should not be None"
@@ -149,7 +149,7 @@ def test_swiftcomp_output_model_properties_access(test_data_dir):
         pytest.skip(f"Test file not found: {fn_in}")
     
     # Read the model
-    model = readOutputModel(str(fn_in), 'sc', model_type='BM2')
+    model = read_output_model(str(fn_in), 'sc', model_type='BM2')
     
     # Test .get() method
     ea_get = model.get('ea')
