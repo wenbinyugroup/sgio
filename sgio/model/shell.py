@@ -7,6 +7,7 @@ from .query_types import SectionCenter, SectionMatrixKind
 from .section_common import (
     KIRCHHOFF_LOVE_SHELL_SCHEMA,
     REISSNER_MINDLIN_SHELL_SCHEMA,
+    StructuralTheorySchema,
     StructuralSectionSupport,
 )
 
@@ -18,7 +19,7 @@ class KirchhoffLovePlateShellModel(StructuralSectionSupport):
     dim = 2
     label = 'pl1'
     model_name = 'Kirchhoff-Love plate/shell model'
-    theory_schema: ClassVar = KIRCHHOFF_LOVE_SHELL_SCHEMA
+    theory_schema: ClassVar[StructuralTheorySchema] = KIRCHHOFF_LOVE_SHELL_SCHEMA
     _IN_PLANE_PROPERTIES: ClassVar[dict[str, str]] = {
         'E1': 'e1_i',
         'E2': 'e2_i',
@@ -155,7 +156,7 @@ class ReissnerMindlinPlateShellModel(StructuralSectionSupport):
     dim = 2
     label = 'pl2'
     model_name = 'Reissner-Mindlin plate/shell model'
-    theory_schema: ClassVar = REISSNER_MINDLIN_SHELL_SCHEMA
+    theory_schema: ClassVar[StructuralTheorySchema] = REISSNER_MINDLIN_SHELL_SCHEMA
 
     def __init__(self):
         raise NotImplementedError(

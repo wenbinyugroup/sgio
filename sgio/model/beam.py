@@ -9,6 +9,7 @@ from ._deprecations import warn_model_deprecation
 from .query_types import SectionAxis, SectionCenter, SectionMatrixKind
 from .section_common import (
     EULER_BERNOULLI_BEAM_SCHEMA,
+    StructuralTheorySchema,
     StructuralSectionSupport,
     TIMOSHENKO_BEAM_SCHEMA,
 )
@@ -24,7 +25,7 @@ class EulerBernoulliBeamModel(StructuralSectionSupport, BaseModel):
     dim: int = 1
     label: str = 'bm1'
     model_name: str = 'Euler-Bernoulli beam model'
-    theory_schema: ClassVar = EULER_BERNOULLI_BEAM_SCHEMA
+    theory_schema: ClassVar[StructuralTheorySchema] = EULER_BERNOULLI_BEAM_SCHEMA
     _SCALAR_ALIASES: ClassVar[dict[str, str]] = {
         'mu': 'mu',
         'mmoi1': 'i11',
@@ -373,7 +374,7 @@ class TimoshenkoBeamModel(StructuralSectionSupport):
     dim = 1
     label = 'bm2'
     model_name = 'Timoshenko beam model'
-    theory_schema: ClassVar = TIMOSHENKO_BEAM_SCHEMA
+    theory_schema: ClassVar[StructuralTheorySchema] = TIMOSHENKO_BEAM_SCHEMA
     _SCALAR_ALIASES: ClassVar[dict[str, str]] = {
         'mu': 'mu',
         'mmoi1': 'i11',
