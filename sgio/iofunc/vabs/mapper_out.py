@@ -10,9 +10,15 @@ from typing import Any
 
 import numpy as np
 import sgio.model as smdl
+from sgio.core.mesh import CellBlock, SGMesh
 from sgio.core.sg import StructureGene
 
 from ..common import build_material_id_map
+
+
+VABS_SUPPORTED_CELL_TYPES = frozenset(
+    {"triangle", "triangle6", "quad", "quad8", "quad9"}
+)
 
 
 def map_structure_gene_to_write_payload(
@@ -35,6 +41,7 @@ def map_structure_gene_to_write_payload(
         if sg is None:
             raise ValueError("StructureGene is required for VABS homogenization input.")
 
+        export_mesh = _build_vabs_export_mesh(sg.mesh)
         material_id_map = build_material_id_map(sg.materials)
         material_combos = _build_material_combo_records(sg, material_id_map)
         curve_flag, initial_curvatures = _build_curvature_payload(sg)
@@ -44,7 +51,7 @@ def map_structure_gene_to_write_payload(
             "mode": "homogenization",
             "version": version,
             "sg_fmt": sg_fmt,
-            "mesh": sg.mesh,
+            "mesh": export_mesh,
             "materials": sg.materials,
             "material_combos": material_combos,
             "material_id_map": material_id_map,
@@ -64,8 +71,10 @@ def map_structure_gene_to_write_payload(
                 "vlasov_flag": analysis_flags["vlasov_flag"],
                 "initial_curvatures": initial_curvatures,
                 "obliqueness": sg.oblique,
-                "nnode": sg.nnodes,
-                "nelem": sg.nelems,
+                "nnode": len(export_mesh.points),
+                "nelem": sum(
+                    len(cell_block.data) for cell_block in export_mesh.cells
+                ),
                 "nmate": sg.nmates,
             },
         }
@@ -220,3 +229,63 @@ def _resolve_material_name_from_mesh_field_data(
             fallback_name = name
 
     return fallback_name
+
+
+def _build_vabs_export_mesh(mesh: SGMesh | None) -> SGMesh:
+    """Create a VABS-compatible mesh containing only supported section cells."""
+    if mesh is None:
+        raise ValueError("StructureGene.mesh is required for VABS export.")
+
+    supported_indices = [
+        index for index, cell_block in enumerate(mesh.cells)
+        if cell_block.type in VABS_SUPPORTED_CELL_TYPES
+    ]
+    if not supported_indices:
+        raise ValueError(
+            "VABS export requires supported section cells "
+            f"{sorted(VABS_SUPPORTED_CELL_TYPES)}."
+        )
+
+    used_point_ids = np.unique(
+        np.concatenate(
+            [
+                np.asarray(mesh.cells[index].data, dtype=int).reshape(-1)
+                for index in supported_indices
+            ]
+        )
+    )
+    old_to_new = np.full(len(mesh.points), -1, dtype=int)
+    old_to_new[used_point_ids] = np.arange(len(used_point_ids), dtype=int)
+
+    cells = [
+        CellBlock(
+            mesh.cells[index].type,
+            old_to_new[np.asarray(mesh.cells[index].data, dtype=int)],
+        )
+        for index in supported_indices
+    ]
+    point_data = {
+        name: np.asarray(values)[used_point_ids].copy()
+        for name, values in mesh.point_data.items()
+    }
+    cell_data = {
+        name: [np.asarray(values[index]).copy() for index in supported_indices]
+        for name, values in mesh.cell_data.items()
+    }
+    field_data = {
+        name: np.asarray(values).copy()
+        for name, values in mesh.field_data.items()
+    }
+    cell_point_data = {
+        name: [np.asarray(values[index]).copy() for index in supported_indices]
+        for name, values in getattr(mesh, "cell_point_data", {}).items()
+    }
+
+    return SGMesh(
+        points=np.asarray(mesh.points, dtype=float)[used_point_ids].copy(),
+        cells=cells,
+        point_data=point_data,
+        cell_data=cell_data,
+        field_data=field_data,
+        cell_point_data=cell_point_data,
+    )

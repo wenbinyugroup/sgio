@@ -1,0 +1,30 @@
+{
+  "sections": [
+    {
+      "kind": "material",
+      "theory": "cauchy_continuum",
+      "payload": {
+        "name": "Material_1",
+        "model": "sd1",
+        "isotropy": 1,
+        "density": 0.057,
+        "temperature": 0,
+        "elastic": {
+          "e1": 23000000.0,
+          "e2": 1300000.0,
+          "e3": 1300000.0,
+          "g12": 680000.0,
+          "g13": 680000.0,
+          "g23": 500000.0,
+          "nu12": 0.316,
+          "nu13": 0.316,
+          "nu23": 0.3
+        }
+      },
+      "name": "layer_1",
+      "id": 1,
+      "material": "Material_1",
+      "orientation": 4.5
+    }
+  ]
+}

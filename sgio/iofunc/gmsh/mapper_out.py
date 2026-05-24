@@ -6,7 +6,6 @@ from typing import Any
 
 from sgio.core.sg import StructureGene
 
-from ..common import build_material_id_map
 from ..utils.section_files import infer_section_dimension
 
 
@@ -35,16 +34,8 @@ def map_model_to_write_payload(
 
     sg = model_obj
     resolved_sgdim = sgdim if sgdim is not None else infer_section_dimension(sg)
-    material_id_map = build_material_id_map(sg.materials) if sg.mocombos else {}
-    sg_configs = {"sgdim": resolved_sgdim}
-    if sg.smdim is not None:
-        sg_configs["model"] = sg.analysis_config.model
-    sg_configs["do_damping"] = sg.analysis_config.do_damping
-    sg_configs["thermal"] = sg.analysis_config.physics
 
     payload.setdefault("sgdim", resolved_sgdim)
     payload.setdefault("mocombos", sg.mocombos if sg.mocombos else None)
-    payload.setdefault("material_id_map", material_id_map)
-    payload.setdefault("sg_configs", sg_configs)
     payload["mesh"] = sg.mesh
     return payload

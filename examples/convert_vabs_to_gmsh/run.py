@@ -1,32 +1,33 @@
-"""Example: Convert VABS Mesh to Gmsh Format for Visualization
-
-This example demonstrates how to convert a VABS cross-section file to
-Gmsh format for visualization purposes.
-
-The conversion extracts only the mesh data (nodes and elements) without
-material properties, making it suitable for quick visualization.
-"""
+"""Example: Export one VABS section as a SG-on-Gmsh bundle."""
 import logging
+import sys
 from pathlib import Path
 
 import sgio
 
 logging.basicConfig(level=logging.INFO)
 cwd = Path(__file__).resolve().parent
+sys.path.insert(0, str(cwd.parent))
+
+from _bundle_helpers import write_gmsh_bundle_sidecars
 
 input_file = str(cwd / 'cs_box_t_vabs41.sg')
-output_file = str(cwd / 'cs_box_t_vabs41.msh')
+main_msh = cwd / 'main.msh'
 
-# Convert VABS file to Gmsh format
-# - mesh_only=True: Only convert mesh data (no materials)
-# - model_type='BM2': Timoshenko beam model (required for VABS reading)
-sg = sgio.convert(
+sg = sgio.read(
     input_file,
-    output_file,
-    file_format_in='vabs',
-    file_format_out='gmsh',
+    file_format='vabs',
+    format_version='4.1',
     model_type='BM2',
-    mesh_only=True
 )
+sgio.write(
+    sg=sg,
+    filename=str(main_msh),
+    file_format='gmsh',
+    format_version='4.1',
+    model_type='BM2',
+    binary=False,
+)
+write_gmsh_bundle_sidecars(sg, cwd)
 
 print(sg)

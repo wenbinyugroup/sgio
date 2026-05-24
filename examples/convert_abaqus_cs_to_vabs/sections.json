@@ -1,0 +1,172 @@
+{
+  "sections": [
+    {
+      "kind": "material",
+      "theory": "cauchy_continuum",
+      "payload": {
+        "name": "cfrp",
+        "model": "sd1",
+        "isotropy": 1,
+        "density": 3.10451,
+        "temperature": 0.0,
+        "elastic": {
+          "e1": 2822400000.0,
+          "e2": 192960000.0,
+          "e3": 192960000.0,
+          "g12": 131040000.0,
+          "g13": 131040000.0,
+          "g23": 74220000.0,
+          "nu12": 0.348,
+          "nu13": 0.348,
+          "nu23": 0.3
+        }
+      },
+      "name": "layer_1",
+      "id": 1,
+      "material": "cfrp",
+      "orientation": 0.0
+    },
+    {
+      "kind": "material",
+      "theory": "cauchy_continuum",
+      "payload": {
+        "name": "cfrp",
+        "model": "sd1",
+        "isotropy": 1,
+        "density": 3.10451,
+        "temperature": 0.0,
+        "elastic": {
+          "e1": 2822400000.0,
+          "e2": 192960000.0,
+          "e3": 192960000.0,
+          "g12": 131040000.0,
+          "g13": 131040000.0,
+          "g23": 74220000.0,
+          "nu12": 0.348,
+          "nu13": 0.348,
+          "nu23": 0.3
+        }
+      },
+      "name": "layer_2",
+      "id": 2,
+      "material": "cfrp",
+      "orientation": 45.0
+    },
+    {
+      "kind": "material",
+      "theory": "cauchy_continuum",
+      "payload": {
+        "name": "coat",
+        "model": "sd1",
+        "isotropy": 0,
+        "density": 1.0,
+        "temperature": 0.0,
+        "elastic": {
+          "e1": 1.0,
+          "nu12": 0.3
+        }
+      },
+      "name": "layer_3",
+      "id": 3,
+      "material": "coat",
+      "orientation": 0.0
+    },
+    {
+      "kind": "material",
+      "theory": "cauchy_continuum",
+      "payload": {
+        "name": "al",
+        "model": "sd1",
+        "isotropy": 0,
+        "density": 5.6393,
+        "temperature": 0.0,
+        "elastic": {
+          "e1": 1886400000.0,
+          "nu12": 0.33
+        }
+      },
+      "name": "layer_4",
+      "id": 4,
+      "material": "al",
+      "orientation": 0.0
+    },
+    {
+      "kind": "material",
+      "theory": "cauchy_continuum",
+      "payload": {
+        "name": "foam",
+        "model": "sd1",
+        "isotropy": 1,
+        "density": 0.146,
+        "temperature": 0.0,
+        "elastic": {
+          "e1": 1890000.0,
+          "e2": 1890000.0,
+          "e3": 1890000.0,
+          "g12": 593000.0,
+          "g13": 593000.0,
+          "g23": 593000.0,
+          "nu12": 0.315,
+          "nu13": 0.315,
+          "nu23": 0.3
+        }
+      },
+      "name": "layer_5",
+      "id": 5,
+      "material": "foam",
+      "orientation": 0.0
+    },
+    {
+      "kind": "material",
+      "theory": "cauchy_continuum",
+      "payload": {
+        "name": "cfrp",
+        "model": "sd1",
+        "isotropy": 1,
+        "density": 3.10451,
+        "temperature": 0.0,
+        "elastic": {
+          "e1": 2822400000.0,
+          "e2": 192960000.0,
+          "e3": 192960000.0,
+          "g12": 131040000.0,
+          "g13": 131040000.0,
+          "g23": 74220000.0,
+          "nu12": 0.348,
+          "nu13": 0.348,
+          "nu23": 0.3
+        }
+      },
+      "name": "layer_6",
+      "id": 6,
+      "material": "cfrp",
+      "orientation": -45.0
+    },
+    {
+      "kind": "material",
+      "theory": "cauchy_continuum",
+      "payload": {
+        "name": "honeycomb",
+        "model": "sd1",
+        "isotropy": 1,
+        "density": 0.0935,
+        "temperature": 0.0,
+        "elastic": {
+          "e1": 144000.0,
+          "e2": 144000.0,
+          "e3": 2880000.0,
+          "g12": 144000.0,
+          "g13": 835000.0,
+          "g23": 504000.0,
+          "nu12": 0.3,
+          "nu13": 0.01,
+          "nu23": 0.01
+        }
+      },
+      "name": "layer_7",
+      "id": 7,
+      "material": "honeycomb",
+      "orientation": 0.0
+    }
+  ]
+}

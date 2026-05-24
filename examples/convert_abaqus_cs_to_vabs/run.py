@@ -1,4 +1,5 @@
 import logging
+import sys
 from pathlib import Path
 
 import sgio
@@ -6,12 +7,11 @@ import sgio
 logging.basicConfig(level=logging.INFO)
 
 cwd = Path(__file__).resolve().parent
+sys.path.insert(0, str(cwd.parent))
 
-# There are two ways to call functions to convert the data.
+from _bundle_helpers import write_gmsh_bundle_sidecars
 
-# Method 1: Use the `convert` function to do this in one step.
-
-sgio.convert(
+sg = sgio.convert(
     str(cwd / 'sg2_airfoil.inp'),  # Name of the Abaqus inp file.
     str(cwd / 'sg2_airfoil.sg'),  # Name of the VABS file.
     'abaqus', # Format of the CS data converted from.
@@ -20,28 +20,16 @@ sgio.convert(
     model_type='bm2', # Structural model: Timoshenko.
 )
 
-# Visualize
-sgio.convert(
-    str(cwd / 'sg2_airfoil.sg'),  # Name of the Abaqus inp file.
-    str(cwd / 'sg2_airfoil.msh'),  # Name of the VABS file.
-    'vabs', # Format of the CS data converted from.
-    'gmsh', # Format of the CS data converted to.
-    model_type='bm2', # Structural model: Timoshenko.
+# Export the converted section to a SG-on-Gmsh bundle for visualization or
+# downstream bundle-based workflows.
+sgio.write(
+    sg=sg,
+    filename=str(cwd / 'main.msh'),
+    file_format='gmsh',
+    format_version='4.1',
+    model_type='BM2',
+    binary=False,
 )
-
-
-# Method 2: Use the `read` and `write` functions to do this in two steps.
-
-# sg = sgio.read(
-#     'sg2_airfoil.inp',  # Name of the SG file.
-#     'abaqus', # Format of the SG data. See doc for more info.
-#     model='bm2', # Structural model: Timoshenko.
-# )
-
-# sgio.write(
-#     sg,  # SG data
-#     'sg2_airfoil.sg',  # Name of the SG file.
-#     'vabs', # Format of the SG data. See doc for more info.
-# )
+write_gmsh_bundle_sidecars(sg, cwd)
 
 

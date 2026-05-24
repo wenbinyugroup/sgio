@@ -4,7 +4,7 @@
 
        0       0       0       0  ! curve_flag, oblique_flag, trapeze_flag, vlasov_flag
 
-       8       4       2  ! nnode, nelem, nmate
+       8       4       1  ! nnode, nelem, nmate
 
        1  5.000000000000e-01  5.000000000000e-01  ! nodal coordinates
        2 -5.000000000000e-01  5.000000000000e-01
@@ -30,9 +30,5 @@
        1       0  ! material id, anisotropy
   1.000000000000e+09  3.000000000000e-01
   1.000000000000e+03
-
-       2       0  ! material id, anisotropy
-  1.000000000000e+11  2.500000000000e-01
-  2.500000000000e+03
 
 

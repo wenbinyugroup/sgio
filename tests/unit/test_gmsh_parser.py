@@ -10,7 +10,7 @@ from sgio.iofunc.gmsh.parser import parse_input_buffer
 @pytest.mark.unit
 def test_parse_input_buffer_reads_gmsh41_fixture(gmsh_test_files):
     """Parser should return raw header metadata and the parsed mesh."""
-    fixture = gmsh_test_files["root"] / "sg33_cube_tetra4_min_gmsh41.msh"
+    fixture = gmsh_test_files["root"] / "sg21_box_quad4_min_gmsh41.msh"
 
     with open(fixture, "rb") as file:
         payload = parse_input_buffer(file, format_version="4.1")
@@ -21,3 +21,5 @@ def test_parse_input_buffer_reads_gmsh41_fixture(gmsh_test_files):
     assert payload["is_ascii"] is True
     assert len(payload["mesh"].points) > 0
     assert "property_id" in payload["mesh"].cell_data
+    assert "element_local_csys" in payload["mesh"].cell_data
+    assert "property_ref_csys" in payload["mesh"].cell_data

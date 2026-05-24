@@ -7,8 +7,6 @@ This module tests JSON reading functionality for CauchyContinuumModel:
 
 import pytest
 import json
-import tempfile
-from pathlib import Path
 
 from sgio.iofunc.common.material_json import (
     read_material_from_json,
@@ -114,7 +112,7 @@ class TestReadMaterialFromJson:
         """Test error when JSON is not a dictionary."""
         with pytest.raises(TypeError) as exc_info:
             read_material_from_json(invalid_format_path)
-        assert "dictionary" in str(exc_info.value).lower()
+        assert "not a dictionary" in str(exc_info.value).lower()
 
     def test_invalid_material_parameters(self, invalid_material_path):
         """Test error when material parameters are invalid."""
@@ -130,6 +128,60 @@ class TestReadMaterialFromJson:
         assert mat.name == 'Empty Material'
         assert mat.density == 0
         assert mat.isotropy == 0
+
+    def test_read_standard_grouped_material_record(self, tmp_path):
+        """Standard grouped material records should deserialize directly."""
+        json_file = tmp_path / "standard_sections.json"
+        json_file.write_text(
+            json.dumps(
+                [
+                    {
+                        "name": "UD Carbon/Epoxy",
+                        "model": "sd1",
+                        "label": "7",
+                        "isotropy": 1,
+                        "density": 1570.0,
+                        "temperature": 23.0,
+                        "elastic": {
+                            "e1": 138e9,
+                            "e2": 9e9,
+                            "e3": 9e9,
+                            "g12": 5.2e9,
+                            "g13": 5.2e9,
+                            "g23": 3.5e9,
+                            "nu12": 0.32,
+                            "nu13": 0.32,
+                            "nu23": 0.45,
+                        },
+                        "strength": {
+                            "x1t": 1500.0,
+                            "x2t": 1200.0,
+                            "x3t": 800.0,
+                            "x1c": 900.0,
+                            "x2c": 700.0,
+                            "x3c": 600.0,
+                            "x23": 120.0,
+                            "x13": 110.0,
+                            "x12": 95.0,
+                        },
+                        "strength_measure": 0,
+                        "failure_criterion": "tsai-wu",
+                        "cte": [2.5e-6, 2.5e-6, 2.4e-5, 0.0, 0.0, 0.0],
+                        "specific_heat": 900.0,
+                    }
+                ]
+            ),
+            encoding="utf-8",
+        )
+
+        materials = read_material_from_json(str(json_file))
+
+        mat = materials["UD Carbon/Epoxy"]
+        assert mat.id == 7
+        assert mat.label == "sd1"
+        assert mat.e1 == 138e9
+        assert mat.x12 == 95.0
+        assert mat.failure_criterion == 4
 
     def test_legacy_wrapper_matches_new_codec(self, steel_isotropic_path):
         """Legacy model-level wrapper should delegate to the new codec module."""
@@ -337,13 +389,17 @@ class TestWriteMaterialToJson:
         # Read back and verify
         with open(json_file, 'r') as f:
             data = json.load(f)
-        
-        assert data["name"] == "Steel"
-        assert data["isotropy"] == 0
-        assert data["e1"] == 200e9
-        assert data["nu12"] == 0.3
-        assert data["density"] == 7850
-        assert "stff" in data  # Stiffness matrix should be included
+
+        assert isinstance(data, list)
+        assert len(data) == 1
+        record = data[0]
+        assert record["name"] == "Steel"
+        assert record["model"] == "sd1"
+        assert record["isotropy"] == 0
+        assert record["density"] == 7850
+        assert record["elastic"]["e1"] == 200e9
+        assert record["elastic"]["nu12"] == 0.3
+        assert "stff" not in record["elastic"]
 
     def test_write_orthotropic_material(self, tmp_path, carbon_fiber_orthotropic_path):
         """Test writing an orthotropic material to JSON file."""
@@ -399,11 +455,15 @@ class TestWriteMaterialToJson:
         # Read back
         restored_dict = read_material_from_json(str(json_file))
         restored = restored_dict["Aluminum"]
-        
+
         # Verify strength properties
         assert restored.x1t == 310e6
         assert restored.x1c == 310e6
         assert restored.failure_criterion == 1
+
+        with open(json_file, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        assert data[0]["failure_criterion"] == "max_principal_stress"
 
     def test_write_exclude_none(self, tmp_path):
         """Test writing with exclude_none option."""
@@ -424,16 +484,16 @@ class TestWriteMaterialToJson:
         # Write with exclude_none=True (default)
         json_file = tmp_path / "minimal_write.json"
         write_material_to_json(mat, str(json_file))
-        
+
         with open(json_file, 'r') as f:
-            data = json.load(f)
+            data = json.load(f)[0]
         
         # Verify None values are excluded (but defaults are included)
         assert "density" in data  # Has default value 0
         assert data["density"] == 0
-        assert "e2" not in data  # Set to None, should be excluded
-        assert "g12" not in data  # Set to None, should be excluded
-        assert "x1t" not in data  # Set to None, should be excluded
+        assert "e2" not in data["elastic"]  # Set to None, should be excluded
+        assert "g12" not in data["elastic"]  # Set to None, should be excluded
+        assert "strength" not in data or "x1t" not in data["strength"]
         assert "cte" not in data  # Set to None, should be excluded
         
         # Write with exclude_none=False
@@ -441,15 +501,15 @@ class TestWriteMaterialToJson:
         write_material_to_json(mat, str(json_file_none), exclude_none=False)
         
         with open(json_file_none, 'r') as f:
-            data_none = json.load(f)
+            data_none = json.load(f)[0]
         
         # Verify None values are included when exclude_none=False
-        assert "e2" in data_none
-        assert data_none["e2"] is None
-        assert "g12" in data_none
-        assert data_none["g12"] is None
-        assert "x1t" in data_none
-        assert data_none["x1t"] is None
+        assert "e2" in data_none["elastic"]
+        assert data_none["elastic"]["e2"] is None
+        assert "g12" in data_none["elastic"]
+        assert data_none["elastic"]["g12"] is None
+        assert "x1t" in data_none["strength"]
+        assert data_none["strength"]["x1t"] is None
         assert "cte" in data_none
         assert data_none["cte"] is None
 

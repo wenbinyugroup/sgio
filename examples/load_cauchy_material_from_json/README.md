@@ -1,25 +1,42 @@
 # Load Cauchy Material from JSON
 
-This example shows how to instantiate the renamed `CauchyContinuumModel`
-class directly from serialized JSON data.
+## Problem description
 
-## Files
+This example shows how to load a `CauchyContinuumModel` from the standard
+material/section JSON schema and write it back without falling back to the old
+flat `model_dump()` layout.
 
-- `material.json` — Sample orthotropic material definition
-- `run.py` — Script that loads the JSON payload and builds the model
+## Explaination of the solution
 
-## Usage
+The canonical input is `sections.json`. It stores one material record using the
+grouped schema:
+
+- top-level identity and metadata such as `name`, `model`, `label`
+- grouped elastic constants under `elastic`
+- grouped strength constants under `strength`
+- semantic failure-criterion tokens such as `tsai-wu`
+
+`run.py` reads that record through `sgio.read_material_from_json(...)`, builds
+one `CauchyContinuumModel`, and writes it back with
+`sgio.write_material_to_json(...)`.
+
+`material.json` is kept in the directory only as a legacy flat snapshot. It is
+not the canonical example input anymore.
+
+## Result
+
+After running the script, you get `material_out.json` written with the same
+standard grouped schema as the input.
+
+Run it with:
 
 ```bash
 uv run python examples/load_cauchy_material_from_json/run.py
 ```
 
-The script will:
+## List of all files
 
-1. Deserialize the JSON file into a Python dictionary
-2. Build a `CauchyContinuumModel` instance with full validation
-3. Print select engineering constants and re-serialize the model
-
-Adapt `material.json` to match your own material database, or replace the
-JSON source with data streamed from a service. The `CauchyContinuumModel`
-constructor accepts any keyword arguments documented in the API reference.
+- `run.py`
+- `sections.json`
+- `material_out.json`
+- `material.json` (legacy flat snapshot, not the canonical input)

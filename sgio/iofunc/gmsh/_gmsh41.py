@@ -6,6 +6,10 @@ from functools import partial
 import numpy as np
 
 from sgio.core.mesh import SGMesh, CellBlock
+from sgio.core.property_ref_csys import (
+    build_property_ref_csys_from_axis_cell_data,
+    coerce_property_ref_value_to_csys,
+)
 
 
 from ._common import (
@@ -107,6 +111,8 @@ def read_buffer(f, is_ascii: bool, data_size):
 
     cell_data = cell_data_from_raw(cells, cell_data_raw)
     cell_data.update(cell_tags)
+    _normalize_local_coordinate_fields(cell_data, cells)
+    _normalize_additional_rotation_fields(cell_data, cells)
 
     # Map gmsh:physical to property_id for compatibility with SGIO.
     # Priority: gmsh:physical > existing property_id from $ElementData > zeros fallback.
@@ -376,12 +382,6 @@ def write_buffer(file, mesh, float_fmt, mesh_only, binary, mocombos=None, materi
     # Write cell_point_data (element nodal data) to ElementNodeData sections
     if hasattr(mesh, 'cell_point_data') and mesh.cell_point_data:
         _write_cell_point_data(file, mesh, binary)
-
-    # Write SG-specific custom blocks
-    if mocombos:
-        _write_sg_layer_def(file, mocombos, material_id_map or {})
-    if sg_configs:
-        _write_sg_config(file, sg_configs)
 
 
 def _write_entities(fh, cells, tag_data, cell_sets, point_data, binary):
@@ -978,10 +978,12 @@ def _write_physical_names_ascii(fh, field_data: dict, mocombos: dict = None, sgd
         for name, (phys_id, dim) in field_data.items():
             names[name] = (int(phys_id), int(dim))
 
+    existing_ids = {(phys_id, dim) for phys_id, dim in names.values()}
+
     if mocombos and sgdim is not None:
         for prop_id in sorted(mocombos):
             layer_name = f'layer_{prop_id}'
-            if layer_name not in names:
+            if layer_name not in names and (int(prop_id), int(sgdim)) not in existing_ids:
                 names[layer_name] = (int(prop_id), int(sgdim))
 
     if not names:
@@ -992,6 +994,75 @@ def _write_physical_names_ascii(fh, field_data: dict, mocombos: dict = None, sgd
     for name, (phys_id, dim) in names.items():
         fh.write(f'{dim} {phys_id} "{name}"\n')
     fh.write("$EndPhysicalNames\n")
+
+
+def _normalize_local_coordinate_fields(
+    cell_data: dict[str, list[np.ndarray]],
+    cells: list[CellBlock],
+) -> None:
+    """Populate canonical and compatibility local-csys fields on read."""
+    cell_csys = cell_data.get("element_local_csys")
+    if cell_csys is None:
+        cell_csys = cell_data.get("property_ref_csys")
+
+    if cell_csys is None:
+        axis_y1 = cell_data.get("property_ref_axis_y1")
+        axis_y2 = cell_data.get("property_ref_axis_y2")
+        axis_y3 = cell_data.get("property_ref_axis_y3")
+        if axis_y1 is not None and axis_y2 is not None:
+            try:
+                cell_csys = build_property_ref_csys_from_axis_cell_data(axis_y1, axis_y2, axis_y3)
+            except (TypeError, ValueError):
+                cell_csys = None
+
+    if cell_csys is None:
+        return
+
+    normalized = [
+        np.asarray([coerce_property_ref_value_to_csys(value) for value in block], dtype=float)
+        for block in cell_csys
+    ]
+    cell_data["element_local_csys"] = normalized
+    cell_data["property_ref_csys"] = [block.copy() for block in normalized]
+
+
+def _normalize_additional_rotation_fields(
+    cell_data: dict[str, list[np.ndarray]],
+    cells: list[CellBlock],
+) -> None:
+    """Populate canonical additional-rotation fields on read."""
+    rotation_1 = cell_data.get("additional_rotation_1")
+    rotation_2 = cell_data.get("additional_rotation_2")
+    rotation_3 = cell_data.get("additional_rotation_3")
+    legacy_rotation = cell_data.get("additional_rotation")
+
+    if rotation_1 is None and legacy_rotation is not None:
+        rotation_1 = [np.asarray(block, dtype=float) for block in legacy_rotation]
+
+    if rotation_1 is None and rotation_2 is None and rotation_3 is None:
+        return
+
+    reference_blocks = rotation_1 or rotation_2 or rotation_3
+    assert reference_blocks is not None
+
+    def _zeros_like_cells() -> list[np.ndarray]:
+        return [np.zeros(len(cell_block.data), dtype=float) for cell_block in cells]
+
+    cell_data["additional_rotation_1"] = (
+        [np.asarray(block, dtype=float) for block in rotation_1]
+        if rotation_1 is not None
+        else _zeros_like_cells()
+    )
+    cell_data["additional_rotation_2"] = (
+        [np.asarray(block, dtype=float) for block in rotation_2]
+        if rotation_2 is not None
+        else _zeros_like_cells()
+    )
+    cell_data["additional_rotation_3"] = (
+        [np.asarray(block, dtype=float) for block in rotation_3]
+        if rotation_3 is not None
+        else _zeros_like_cells()
+    )
 
 
 def _write_sg_layer_def(fh, mocombos: dict, material_id_map: dict) -> None:

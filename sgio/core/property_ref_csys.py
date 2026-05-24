@@ -160,6 +160,18 @@ def property_ref_value_to_vabs_theta(value: object) -> float:
     return property_ref_csys_to_vabs_theta(array.reshape(-1))
 
 
+def coerce_property_ref_value_to_csys(value: object) -> np.ndarray:
+    """Normalize one stored legacy or canonical value to the 9-value payload."""
+    array = np.asarray(value, dtype=float).reshape(-1)
+    if array.size == 9:
+        return normalize_property_ref_csys(array)
+    if array.size == 1:
+        return vabs_theta_to_property_ref_csys(float(array[0]))
+    raise ValueError(
+        "property_ref_csys values must be either a scalar legacy theta or a 9-value payload."
+    )
+
+
 def build_property_ref_axis_cell_data(
     cell_csys_blocks: list[Iterable[Iterable[float]]],
 ) -> dict[str, list[np.ndarray]]:
@@ -198,3 +210,104 @@ def build_property_ref_axis_cell_data(
         axis_blocks["property_ref_axis_y3"].append(np.asarray(axis_y3_rows, dtype=float))
 
     return axis_blocks
+
+
+def axes_to_property_ref_csys(
+    axis_y1: Iterable[float],
+    axis_y2: Iterable[float],
+    axis_y3: Iterable[float] | None = None,
+) -> np.ndarray:
+    """Build one 9-value local-coordinate payload from orthonormal local axes.
+
+    Parameters
+    ----------
+    axis_y1 : iterable of float
+        Local ``y1`` axis direction.
+    axis_y2 : iterable of float
+        Local ``y2`` axis direction.
+    axis_y3 : iterable of float, optional
+        Local ``y3`` axis direction. When provided, it is validated against the
+        right-handed basis reconstructed from ``axis_y1`` and ``axis_y2``.
+
+    Returns
+    -------
+    numpy.ndarray
+        Flat 9-value ``(a, b, c)`` payload.
+
+    Raises
+    ------
+    ValueError
+        If the axes are degenerate or inconsistent.
+    """
+    y1 = np.asarray(axis_y1, dtype=float).reshape(3)
+    y2 = np.asarray(axis_y2, dtype=float).reshape(3)
+    norm_y1 = np.linalg.norm(y1)
+    norm_y2 = np.linalg.norm(y2)
+    if norm_y1 <= _EPS or norm_y2 <= _EPS:
+        raise ValueError("Local axes must be non-zero.")
+
+    y1 = y1 / norm_y1
+    y2 = y2 / norm_y2
+    y3 = np.cross(y1, y2)
+    norm_y3 = np.linalg.norm(y3)
+    if norm_y3 <= _EPS:
+        raise ValueError("Local axes y1 and y2 must not be collinear.")
+    y3 = y3 / norm_y3
+    y2 = np.cross(y3, y1)
+    y2 = y2 / np.linalg.norm(y2)
+
+    if axis_y3 is not None:
+        expected_y3 = np.asarray(axis_y3, dtype=float).reshape(3)
+        norm_expected_y3 = np.linalg.norm(expected_y3)
+        if norm_expected_y3 <= _EPS:
+            raise ValueError("Local axis y3 must be non-zero when provided.")
+        expected_y3 = expected_y3 / norm_expected_y3
+        if not np.allclose(y3, expected_y3, atol=1.0e-8):
+            raise ValueError("Provided local axes do not form a consistent right-handed basis.")
+
+    point_c = np.zeros(3, dtype=float)
+    point_a = point_c + y1
+    point_b = point_c + y2
+    return np.concatenate((point_a, point_b, point_c))
+
+
+def build_property_ref_csys_from_axis_cell_data(
+    axis_y1_blocks: list[Iterable[Iterable[float]]],
+    axis_y2_blocks: list[Iterable[Iterable[float]]],
+    axis_y3_blocks: list[Iterable[Iterable[float]]] | None = None,
+) -> list[np.ndarray]:
+    """Rebuild ``property_ref_csys`` cell data from stored local-axis vectors."""
+
+    if len(axis_y1_blocks) != len(axis_y2_blocks):
+        raise ValueError("Axis block counts for y1 and y2 must match.")
+    if axis_y3_blocks is not None and len(axis_y1_blocks) != len(axis_y3_blocks):
+        raise ValueError("Axis block counts for y1 and y3 must match.")
+
+    cell_csys_blocks: list[np.ndarray] = []
+    for block_index, (axis_y1_block, axis_y2_block) in enumerate(
+        zip(axis_y1_blocks, axis_y2_blocks)
+    ):
+        axis_y1_array = np.asarray(axis_y1_block, dtype=float)
+        axis_y2_array = np.asarray(axis_y2_block, dtype=float)
+        if axis_y1_array.shape != axis_y2_array.shape:
+            raise ValueError("Axis block shapes for y1 and y2 must match.")
+
+        axis_y3_array = None
+        if axis_y3_blocks is not None:
+            axis_y3_array = np.asarray(axis_y3_blocks[block_index], dtype=float)
+            if axis_y1_array.shape != axis_y3_array.shape:
+                raise ValueError("Axis block shapes for y1 and y3 must match.")
+
+        block_rows = []
+        for row_index in range(len(axis_y1_array)):
+            axis_y3_row = None if axis_y3_array is None else axis_y3_array[row_index]
+            block_rows.append(
+                axes_to_property_ref_csys(
+                    axis_y1_array[row_index],
+                    axis_y2_array[row_index],
+                    axis_y3_row,
+                )
+            )
+        cell_csys_blocks.append(np.asarray(block_rows, dtype=float))
+
+    return cell_csys_blocks

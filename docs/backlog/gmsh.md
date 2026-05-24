@@ -1,5 +1,16 @@
 # Gmsh Format Guide
 
+```{important}
+This page is legacy background material.
+
+The single normative specification for SG-on-Gmsh serialization is
+{doc}`../source/guide/sg_on_gmsh_spec`.
+
+Any statement below that treats `$SGLayerDef`, `$SGConfig`, or `.msh`-level
+`property_id` as canonical belongs to the old scheme and is kept only for
+migration context.
+```
+
 SGIO uses the [Gmsh 4.1 `.msh` format](https://gmsh.info/doc/texinfo/gmsh.html#MSH-file-format)
 as its portable mesh exchange format. This page explains the full `.msh`
 structure that SGIO writes and reads, including two custom blocks—`$SGLayerDef`
