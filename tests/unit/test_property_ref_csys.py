@@ -46,6 +46,38 @@ def test_vabs_theta_roundtrip_uses_internal_nine_value_representation():
 
 
 @pytest.mark.unit
+@pytest.mark.parametrize(
+    ("model_space", "csys_points", "expected_theta"),
+    [
+        # Gmsh section in xy plane: section normal is +z, local y2 should be
+        # measured from gmsh +x (which the writer maps to VABS x2).
+        ("xy", [0, 0, 1,  1, 0, 0,  0, 0, 0], 0.0),
+        ("xy", [0, 0, 1,  0.7071067811865476, 0.7071067811865476, 0,  0, 0, 0], 45.0),
+        # Gmsh section in yz plane: section normal is +x, theta_1 measured from
+        # gmsh +y (= VABS x2).
+        ("yz", [1, 0, 0,  0, 1, 0,  0, 0, 0], 0.0),
+        ("yz", [1, 0, 0,  0, 0.7071067811865476, 0.7071067811865476,  0, 0, 0], 45.0),
+        # Gmsh section in zx plane: section normal is +y, theta_1 measured from
+        # gmsh +z (= VABS x2).
+        ("zx", [0, 1, 0,  0, 0, 1,  0, 0, 0], 0.0),
+        ("zx", [0, 1, 0,  0.7071067811865476, 0, 0.7071067811865476,  0, 0, 0], 45.0),
+        # VABS-native frame (default): local y1 = VABS x1, theta_1 measured
+        # from VABS x2 toward VABS x3.
+        ("",   [1, 0, 0,  0, 1, 0,  0, 0, 0], 0.0),
+        ("",   [1, 0, 0,  0, 0, 1,  0, 0, 0], 90.0),
+    ],
+)
+def test_property_ref_csys_to_vabs_theta_respects_model_space(
+    model_space, csys_points, expected_theta
+):
+    """theta_1 should be measured in the plane indicated by model_space."""
+    theta = property_ref_csys_to_vabs_theta(
+        np.asarray(csys_points, dtype=float), model_space=model_space
+    )
+    assert theta == pytest.approx(expected_theta)
+
+
+@pytest.mark.unit
 def test_property_ref_csys_axes_follow_right_handed_definition():
     """The internal point-based definition should reconstruct local y1/y2/y3 axes."""
     csys = np.array([1.0, 0.0, 0.0, 0.0, 0.0, 2.0, 0.0, 0.0, 0.0])

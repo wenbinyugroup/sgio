@@ -154,9 +154,12 @@ def process_mesh(
     cell_data = {
         "element_id": [cell_elem_ids[cell_type] for cell_type in cell_types],
         "property_id": _init_cell_data_list(cells_tuple, None),
+        # Default local frame for 2D sections: section normal along Abaqus +z,
+        # local y2 along Abaqus +x. Stored in source (Abaqus) frame; the VABS
+        # writer projects to theta_1 via model_space.
         "property_ref_csys": _init_cell_data_list(
             cells_tuple,
-            [1, 0, 0, 0, 1, 0, 0, 0, 0],
+            [0, 0, 1, 1, 0, 0, 0, 0, 0],
         ),
     }
 
@@ -256,15 +259,11 @@ def _map_distribution_coords_to_property_ref_csys(
     Returns
     -------
     list of float
-        Internal 9-value ``(a, b, c)`` representation.
-
-    Notes
-    -----
-    For 2D cross-sections, Abaqus directions lie in the model ``x-y`` plane,
-    while SG stores the section in the global ``x2-x3`` plane. The local
-    sectional ``y1`` axis is therefore always the section normal ``x1`` and the
-    first Abaqus direction becomes the local ``y2`` direction used by VABS
-    ``theta_1``.
+        Internal 9-value ``(a, b, c)`` representation in the source (Abaqus)
+        frame. For ``sgdim == 2`` the section lives in the Abaqus ``xy``
+        plane, so the local ``y1`` axis is the section normal ``+z`` and the
+        first Abaqus direction defines the local ``y2`` direction. The VABS
+        writer projects this into ``theta_1`` using ``model_space='xy'``.
     """
     if len(coords) != 6:
         raise ValueError(
@@ -272,31 +271,16 @@ def _map_distribution_coords_to_property_ref_csys(
             f"(got {len(coords)})."
         )
 
-    axis_1 = _map_abaqus_vector_to_sg(coords[:3], sgdim)
-    axis_2 = _map_abaqus_vector_to_sg(coords[3:6], sgdim)
+    axis_1 = np.asarray(coords[:3], dtype=float)
+    axis_2 = np.asarray(coords[3:6], dtype=float)
     point_c = np.zeros(3, dtype=float)
 
     if sgdim == 2:
-        point_a = np.array([1.0, 0.0, 0.0], dtype=float)
+        point_a = np.array([0.0, 0.0, 1.0], dtype=float)
         point_b = axis_1
         return list(np.concatenate((point_a, point_b, point_c)))
 
     return list(np.concatenate((axis_1, axis_2, point_c)))
-
-
-def _map_abaqus_vector_to_sg(vector: list[float], sgdim: int) -> np.ndarray:
-    """Map an Abaqus global direction vector into SG coordinates."""
-    direction = np.asarray(vector, dtype=float)
-    if direction.shape != (3,):
-        raise ValueError(
-            "Abaqus direction vector must contain 3 values "
-            f"(got shape {direction.shape})."
-        )
-
-    if sgdim == 2:
-        return np.array([direction[2], direction[0], direction[1]], dtype=float)
-
-    return direction
 
 
 def _process_material(material_block: Any, inprw: inpRW, materials: dict[str, dict[str, Any]]) -> None:

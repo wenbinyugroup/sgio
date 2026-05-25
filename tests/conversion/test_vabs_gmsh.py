@@ -2,13 +2,14 @@
 from __future__ import annotations
 
 import os
+import re
 from pathlib import Path
 
 import numpy as np
 import pytest
 import yaml
 
-from sgio import convert, configure_logging, logger, read
+from sgio import convert, configure_logging, logger, read, read_sg_from_gmsh_bundle, write
 
 configure_logging(cout_level='info')
 
@@ -163,3 +164,112 @@ def test_gmsh_to_vabs_respects_model_space_projection(
     np.testing.assert_allclose(roundtrip.mesh.points[:, 0], 0.0)
     np.testing.assert_allclose(roundtrip.mesh.points[:, 1], expected_points[:, 0])
     np.testing.assert_allclose(roundtrip.mesh.points[:, 2], expected_points[:, 1])
+
+
+@pytest.mark.conversion
+@pytest.mark.gmsh
+@pytest.mark.vabs
+def test_laminate_simple_bundle_to_vabs(test_data_dir, temp_dir):
+    """Convert the laminate_simple Gmsh bundle to VABS and validate the full payload.
+
+    Bundle inputs (Gmsh ``xy`` plane):
+
+    * ``laminate_simple.msh`` — mesh + ``element_local_csys`` +
+      ``additional_rotation_2`` (= 30° on every element)
+    * ``sections.json`` — one orthotropic material ``mat_1`` (label 1)
+    * ``config.json`` — Euler-Bernoulli homogenization config (model=1)
+
+    The test exercises the key invariants of the Gmsh-bundle → VABS path:
+
+    1. Coordinate projection ``xy → yz``: the Gmsh ``z`` is dropped, Gmsh
+       ``x`` becomes VABS ``x2`` and Gmsh ``y`` becomes VABS ``x3``.
+    2. ``additional_rotation_2`` collapses into the layer ``theta_3`` (30°).
+    3. The sidecar material from ``sections.json`` is bound to the layer; the
+       VABS file references it instead of the Gmsh physical-group name.
+    4. ``element_local_csys`` / ``property_ref_csys`` survive the bundle read
+       and drive the per-element ``theta_1`` written to VABS.
+    """
+    bundle_dir = test_data_dir / 'gmsh'
+    main_msh = bundle_dir / 'laminate_simple.msh'
+    sections_json = bundle_dir / 'sections.json'
+    config_json = bundle_dir / 'config.json'
+    dst = temp_dir / 'laminate_simple.sg'
+
+    # --- Read bundle and inspect SG state ---------------------------------
+    sg = read_sg_from_gmsh_bundle(
+        main_msh=main_msh,
+        sections_json=sections_json,
+        config_json=config_json,
+        model_type='BM1',
+    )
+
+    # Bundle config.json drives the analysis config
+    assert sg.sgdim == 2
+    assert sg.analysis_config.model == 1
+
+    # The read step preserves the raw per-element rotation field; folding into
+    # ``theta_3`` happens at write time because it depends on ``model_space``.
+    assert dict(sg.mocombos) == {1: ('mat_1', 0.0)}
+    np.testing.assert_allclose(
+        sg.mesh.cell_data['additional_rotation_2'][0], 30.0
+    )
+    assert 'mat_1' in sg.materials
+    assert sg.materials['mat_1'].e1 == pytest.approx(140e9)
+
+    # element_local_csys is preserved by the Gmsh reader and mirrored into
+    # property_ref_csys so the VABS writer can map it to theta_1.
+    csys_block = np.asarray(sg.mesh.cell_data['element_local_csys'][0])
+    assert csys_block.shape == (53, 9)
+    np.testing.assert_array_equal(
+        sg.mesh.cell_data['property_ref_csys'][0], csys_block
+    )
+
+    # --- Write to VABS using xy → yz projection ---------------------------
+    write(
+        sg=sg,
+        filename=str(dst),
+        file_format='vabs',
+        model_type='BM1',
+        model_space='xy',
+    )
+
+    # --- Re-read the VABS file and validate the on-disk contract ----------
+    vabs_sg = read(str(dst), 'vabs', format_version='4.1', model_type='BM1')
+
+    # Projection: Gmsh xy nodes → VABS yz nodes (VABS x1 is zero).
+    np.testing.assert_allclose(vabs_sg.mesh.points[:, 0], 0.0)
+    np.testing.assert_allclose(vabs_sg.mesh.points[:, 1], sg.mesh.points[:, 0])
+    np.testing.assert_allclose(vabs_sg.mesh.points[:, 2], sg.mesh.points[:, 1])
+
+    # Layer line ``layer_id  mate_id  theta_3`` must carry the 30° angle.
+    text = dst.read_text(encoding='utf-8')
+    layer_line = re.search(
+        r'^\s*(\d+)\s+(\d+)\s+([-\d.eE+]+)\s+! combination id,',
+        text,
+        re.MULTILINE,
+    )
+    assert layer_line is not None, 'VABS layer header line missing'
+    layer_id, mat_id, theta_3 = layer_line.groups()
+    assert int(layer_id) == 1
+    assert float(theta_3) == pytest.approx(30.0)
+
+    # The referenced mate_id resolves to the sidecar material (mat_1) and not
+    # to the physical-group placeholder. ``build_material_id_map`` is the
+    # same mapping the VABS writer uses.
+    from sgio.iofunc.common import build_material_id_map
+    material_id_map = build_material_id_map(sg.materials)
+    name_by_id = {mid: name for name, mid in material_id_map.items()}
+    assert name_by_id[int(mat_id)] == 'mat_1'
+
+    # ``element_local_csys`` is stored in the Gmsh xy frame. The writer maps
+    # each local y2 axis into the VABS x2-x3 plane via model_space='xy' and
+    # writes the per-element ``theta_1``. The fixture has two distinct frames:
+    # ``b = (1, 0, 0)`` -> theta_1 = 0°, ``b = (0.707, 0.707, 0)`` -> 45°.
+    assert len(np.unique(sg.mesh.cell_data['element_local_csys'][0], axis=0)) == 2
+    theta_1_values = sorted({
+        float(match.group(1))
+        for match in re.finditer(
+            r'^\s*\d+\s+1\s+([-\d.eE+]+)\s*$', text, re.MULTILINE
+        )
+    })
+    assert theta_1_values == [pytest.approx(0.0), pytest.approx(45.0)]

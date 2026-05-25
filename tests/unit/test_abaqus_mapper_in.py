@@ -45,11 +45,14 @@ def test_map_input_to_structure_gene_maps_2d_discrete_orientations_to_vabs_angle
         70: 0.0,
     }
 
+    # The Abaqus mapper stores property_ref_csys in the source (Abaqus xy)
+    # frame; ``model_space='xy'`` resolves it to the VABS theta_1.
     theta_by_element_id: dict[int, float] = {}
     for block_index, element_ids in enumerate(sg.mesh.cell_data["element_id"]):
         for element_index, element_id in enumerate(element_ids):
             theta_by_element_id[int(element_id)] = property_ref_value_to_vabs_theta(
-                sg.mesh.cell_data["property_ref_csys"][block_index][element_index]
+                sg.mesh.cell_data["property_ref_csys"][block_index][element_index],
+                model_space="xy",
             )
 
     for element_id, expected_theta in element_to_expected_theta.items():

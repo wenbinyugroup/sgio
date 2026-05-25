@@ -485,7 +485,9 @@ def _write_property_id_ref_csys(
             elem_id = int(elem_ids[i][j])
 
             try:
-                theta_1 = property_ref_value_to_vabs_theta(cell_csys[i][j])
+                theta_1 = property_ref_value_to_vabs_theta(
+                    cell_csys[i][j], model_space=model_space
+                )
             except (IndexError, TypeError, ValueError):
                 theta_1 = 0
 

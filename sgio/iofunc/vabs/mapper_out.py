@@ -16,6 +16,15 @@ from sgio.core.sg import StructureGene
 from ..common import build_material_id_map
 
 
+# Maps the Gmsh section plane to the ``additional_rotation_N`` field whose
+# per-element scalar represents the VABS layup angle ``theta_3``.
+_THETA_3_ROTATION_FIELD_BY_MODEL_SPACE = {
+    "xy": "additional_rotation_2",
+    "yz": "additional_rotation_3",
+    "zx": "additional_rotation_1",
+}
+
+
 VABS_SUPPORTED_CELL_TYPES = frozenset(
     {"triangle", "triangle6", "quad", "quad8", "quad9"}
 )
@@ -43,7 +52,12 @@ def map_structure_gene_to_write_payload(
 
         export_mesh = _build_vabs_export_mesh(sg.mesh)
         material_id_map = build_material_id_map(sg.materials)
-        material_combos = _build_material_combo_records(sg, material_id_map)
+        theta_3_by_property = _resolve_theta_3_from_additional_rotation(
+            sg, model_space
+        )
+        material_combos = _build_material_combo_records(
+            sg, material_id_map, theta_3_by_property
+        )
         curve_flag, initial_curvatures = _build_curvature_payload(sg)
         oblique_flag = int((sg.oblique[0] != 1.0) or (sg.oblique[1] != 0.0))
 
@@ -131,8 +145,15 @@ def _build_curvature_payload(sg: StructureGene) -> tuple[int, list[float]]:
 def _build_material_combo_records(
     sg: StructureGene,
     material_id_map: dict[str, int],
+    theta_3_by_property: dict[int, float] | None = None,
 ) -> list[dict[str, float | int]]:
-    """Convert SG material-orientation combinations to raw writer records."""
+    """Convert SG material-orientation combinations to raw writer records.
+
+    ``theta_3_by_property`` (when provided) overrides the angle stored in
+    ``sg.mocombos`` for the matching combo id; it is used to inject layer
+    ``theta_3`` values derived from per-element ``additional_rotation_N``
+    fields based on the writer's ``model_space``.
+    """
     records: list[dict[str, float | int]] = []
     for combo_id, (material_name, angle) in sg.mocombos.items():
         resolved_material_name = _resolve_combo_material_name(
@@ -141,6 +162,8 @@ def _build_material_combo_records(
             material_name=material_name,
             material_id_map=material_id_map,
         )
+        if theta_3_by_property is not None and int(combo_id) in theta_3_by_property:
+            angle = theta_3_by_property[int(combo_id)]
         records.append(
             {
                 "combo_id": int(combo_id),
@@ -149,6 +172,56 @@ def _build_material_combo_records(
             }
         )
     return records
+
+
+def _resolve_theta_3_from_additional_rotation(
+    sg: StructureGene,
+    model_space: str,
+) -> dict[int, float] | None:
+    """Aggregate per-element ``additional_rotation_N`` into per-layer ``theta_3``.
+
+    The mesh stores the layup angle as a per-element scalar in one of the three
+    ``additional_rotation_{1,2,3}`` ``cell_data`` fields. Which field carries
+    the VABS ``theta_3`` depends on the Gmsh section plane:
+
+    * ``xy`` -> ``additional_rotation_2``
+    * ``yz`` -> ``additional_rotation_3``
+    * ``zx`` -> ``additional_rotation_1``
+
+    VABS layers require a single ``theta_3`` per ``property_id``; mixed values
+    within one property group are rejected.
+
+    Returns
+    -------
+    dict[int, float] or None
+        Mapping ``{property_id: theta_3}``. ``None`` when ``model_space`` is
+        unset/unsupported or the chosen rotation field is absent.
+    """
+    field_name = _THETA_3_ROTATION_FIELD_BY_MODEL_SPACE.get(model_space)
+    if field_name is None or sg.mesh is None:
+        return None
+
+    rotation_blocks = sg.mesh.cell_data.get(field_name)
+    property_blocks = sg.mesh.cell_data.get("property_id")
+    if rotation_blocks is None or property_blocks is None:
+        return None
+
+    values_by_property: dict[int, set[float]] = {}
+    for prop_block, rot_block in zip(property_blocks, rotation_blocks):
+        prop_arr = np.asarray(prop_block, dtype=int)
+        rot_arr = np.asarray(rot_block, dtype=float)
+        for prop_id, angle in zip(prop_arr.tolist(), rot_arr.tolist()):
+            values_by_property.setdefault(int(prop_id), set()).add(float(angle))
+
+    theta_3_by_property: dict[int, float] = {}
+    for prop_id, angles in values_by_property.items():
+        if len(angles) > 1:
+            raise ValueError(
+                f"Property id {prop_id} carries multiple {field_name} values "
+                f"({sorted(angles)}); each VABS layer requires a single theta_3."
+            )
+        theta_3_by_property[prop_id] = next(iter(angles))
+    return theta_3_by_property
 
 
 def _resolve_combo_material_name(

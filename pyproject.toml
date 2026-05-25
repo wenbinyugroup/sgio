@@ -70,6 +70,13 @@ only-include = [
     "pyproject.toml",
 ]
 
+[tool.hatch.build.targets.wheel]
+# Without this hatch's editable install adds the project root to sys.path
+# and exposes top-level directories such as `tests/`, which then shadows
+# downstream projects' own `tests/` package (observed in sgbuilder).
+# Restricting to the `sgio` package keeps editable installs predictable.
+packages = ["sgio"]
+
 [tool.uv]
 dev-dependencies = [
     "pytest>=6.0",

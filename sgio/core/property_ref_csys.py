@@ -21,6 +21,17 @@ VABS_REFERENCE_POINT_A = np.array([1.0, 0.0, 0.0], dtype=float)
 VABS_REFERENCE_POINT_C = np.array([0.0, 0.0, 0.0], dtype=float)
 _EPS = 1.0e-12
 
+# Maps a Gmsh section plane to ``(x2_axis_index, x3_axis_index)`` so the VABS
+# ``theta_1`` can be recovered from a local frame stored in Gmsh coordinates.
+# Without a plane, axes are assumed to be in the VABS-native frame already
+# (``y1`` aligned with VABS ``x1``).
+_MODEL_SPACE_TO_VABS_AXIS_INDICES = {
+    "": (1, 2),
+    "xy": (0, 1),
+    "yz": (1, 2),
+    "zx": (2, 0),
+}
+
 
 def normalize_property_ref_csys(csys: Iterable[float]) -> np.ndarray:
     """Return one local-coordinate-system payload as a flat 9-value array.
@@ -118,27 +129,52 @@ def vabs_theta_to_property_ref_csys(theta_deg: float) -> np.ndarray:
     return np.concatenate((point_a, point_b, point_c))
 
 
-def property_ref_csys_to_vabs_theta(csys: Iterable[float]) -> float:
+def property_ref_csys_to_vabs_theta(
+    csys: Iterable[float], model_space: str = ""
+) -> float:
     """Convert one internal 9-value representation to a VABS ``theta_1`` angle.
 
     Parameters
     ----------
     csys : iterable of float
         Flat 9-value ``(a, b, c)`` point payload.
+    model_space : str, optional
+        Plane the cross-section lives in inside the stored frame:
+
+        * ``''`` (default) — axes are in the VABS-native frame
+          (``y1 = x1``), and ``theta_1`` is the angle of the local ``y2``
+          axis from VABS ``x2``.
+        * ``'xy'`` — local axes are in Gmsh coordinates with the section in
+          the ``xy`` plane; ``theta_1`` is the angle of ``y2`` from
+          Gmsh ``+x`` (which the writer maps to VABS ``x2``).
+        * ``'yz'`` — ``theta_1`` is the angle of ``y2`` from Gmsh ``+y``.
+        * ``'zx'`` — ``theta_1`` is the angle of ``y2`` from Gmsh ``+z``.
 
     Returns
     -------
     float
         VABS ``theta_1`` angle in degrees.
     """
+    try:
+        idx_x2, idx_x3 = _MODEL_SPACE_TO_VABS_AXIS_INDICES[model_space]
+    except KeyError as exc:
+        raise ValueError(
+            f"Unsupported model_space {model_space!r}; "
+            f"expected one of {sorted(_MODEL_SPACE_TO_VABS_AXIS_INDICES)}."
+        ) from exc
+
     _, axis_y2, _ = property_ref_csys_to_axes(csys)
-    theta_deg = float(np.rad2deg(np.arctan2(axis_y2[2], axis_y2[1])))
+    theta_deg = float(
+        np.rad2deg(np.arctan2(axis_y2[idx_x3], axis_y2[idx_x2]))
+    )
     if abs(theta_deg) <= _EPS:
         return 0.0
     return theta_deg
 
 
-def property_ref_value_to_vabs_theta(value: object) -> float:
+def property_ref_value_to_vabs_theta(
+    value: object, model_space: str = ""
+) -> float:
     """Convert a stored reference-csys value to VABS ``theta_1``.
 
     Accepts either the new 9-value representation or a legacy scalar angle.
@@ -147,6 +183,8 @@ def property_ref_value_to_vabs_theta(value: object) -> float:
     ----------
     value : object
         Stored cell-data value.
+    model_space : str, optional
+        See :func:`property_ref_csys_to_vabs_theta`.
 
     Returns
     -------
@@ -157,7 +195,7 @@ def property_ref_value_to_vabs_theta(value: object) -> float:
     if array.ndim == 0:
         theta_deg = float(array)
         return 0.0 if abs(theta_deg) <= _EPS else theta_deg
-    return property_ref_csys_to_vabs_theta(array.reshape(-1))
+    return property_ref_csys_to_vabs_theta(array.reshape(-1), model_space)
 
 
 def coerce_property_ref_value_to_csys(value: object) -> np.ndarray:
