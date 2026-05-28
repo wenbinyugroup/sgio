@@ -1,0 +1,127 @@
+<cross_section name="sta-39-4000">
+
+  <include>
+    <material>materials</material>
+    <layup>layups</layup>
+  </include>
+
+  <analysis>
+    <model>1</model>
+  </analysis>
+
+  <general>
+    <translate>-0.68  0</translate>
+    <scale>0.731</scale>
+    <rotate>-6.19</rotate>
+    <mesh_size>0.001</mesh_size>
+    <element_type>linear</element_type>
+  </general>
+
+  <baselines>
+
+    <line name="ln_af" type="airfoil">
+      <points data="file" format="1" direction="-1">CXTX_4000_110.dat</points>
+      <flip>1</flip>
+    </line>
+
+    <point name="p2" on="ln_af" by="x2" which="bottom">0.089258</point>
+    <point name="p3" on="ln_af" by="x2" which="bottom">0.642800</point>
+    <point name="p4" on="ln_af" by="x2" which="bottom">0.655500</point>
+    <point name="p5" on="ln_af" by="x2" which="bottom">0.704600</point>
+    <point name="p6" on="ln_af" by="x2" which="bottom">0.951216</point>
+
+    <point name="p8" on="ln_af" by="x2" which="top">0.933635</point>
+    <point name="p9" on="ln_af" by="x2" which="top">0.890219</point>
+    <point name="p10" on="ln_af" by="x2" which="top">0.704600</point>
+    <point name="p11" on="ln_af" by="x2" which="top">0.655500</point>
+    <point name="p12" on="ln_af" by="x2" which="top">0.617000</point>
+    <point name="p13" on="ln_af" by="x2" which="top">0.084786</point>
+
+    <line name="l_hp2_hp3">
+      <points>p2:p4</points>
+    </line>
+
+    <line name="l_hp4">
+      <points>p4:p5</points>
+    </line>
+
+    <line name="l_hp5">
+      <points>p5:p6</points>
+    </line>
+
+    <line name="l_hp6_lp7">
+      <points>p6:p8</points>
+    </line>
+
+    <line name="l_lp8">
+      <points>p8:p9</points>
+    </line>
+
+    <line name="l_lp9">
+      <points>p9:p10</points>
+    </line>
+
+    <line name="l_lp10">
+      <points>p10:p11</points>
+    </line>
+
+    <line name="l_lp11_lp12">
+      <points>p11:p13</points>
+    </line>
+
+    <line name="l_lp13_hp1">
+      <points>p13:p2</points>
+    </line>
+
+  </baselines>
+
+  <component name="skin">
+
+    <segments>
+      <baseline>l_hp2_hp3</baseline>
+      <layup>TX_Balsa_Upper</layup>
+    </segments>
+
+    <segments>
+      <baseline>l_hp4</baseline>
+      <layup>TX_Spar_Upper</layup>
+    </segments>
+
+    <segments>
+      <baseline>l_hp5</baseline>
+      <layup>TX_Balsa_Upper</layup>
+    </segments>
+
+    <segments>
+      <baseline>l_hp6_lp7</baseline>
+      <layup>TX_Upper_Strip</layup>
+    </segments>
+
+    <segments>
+      <baseline>l_lp8</baseline>
+      <layup>TX_Balsa_Upper_Strip</layup>
+    </segments>
+
+    <segments>
+      <baseline>l_lp9</baseline>
+      <layup>TX_Balsa_Upper</layup>
+    </segments>
+
+    <segments>
+      <baseline>l_lp10</baseline>
+      <layup>TX_Spar_Upper</layup>
+    </segments>
+
+    <segments>
+      <baseline>l_lp11_lp12</baseline>
+      <layup>TX_Balsa_Upper</layup>
+    </segments>
+
+    <segments>
+      <baseline>l_lp13_hp1</baseline>
+      <layup>TX_Upper</layup>
+    </segments>
+
+  </component>
+
+</cross_section>

@@ -1,0 +1,78 @@
+<cross_section name="sta-80-8700">
+
+  <include>
+    <material>materials</material>
+    <layup>layups</layup>
+  </include>
+
+  <analysis>
+    <model>1</model>
+  </analysis>
+
+  <general>
+    <translate>-0.68  0</translate>
+    <scale>0.162</scale>
+    <rotate>-0.15</rotate>
+    <mesh_size>0.001</mesh_size>
+    <element_type>linear</element_type>
+  </general>
+
+  <baselines>
+
+    <line name="ln_af" type="airfoil">
+      <points data="file" format="1" direction="-1">CXTX_8200_110.dat</points>
+      <flip>1</flip>
+    </line>
+
+    <point name="p2" on="ln_af" by="x2" which="bottom">0.392000</point>
+    <point name="p3" on="ln_af" by="x2" which="bottom">0.540352</point>
+    <point name="p4" on="ln_af" by="x2" which="bottom">0.743574</point>
+    <point name="p5" on="ln_af" by="x2" which="bottom">0.960000</point>
+
+    <point name="p7" on="ln_af" by="x2" which="top">0.679092</point>
+    <point name="p8" on="ln_af" by="x2" which="top">0.392000</point>
+    <point name="p9" on="ln_af" by="x2" which="top">0.370000</point>
+
+    <line name="l_hp3_hp4">
+      <points>p3:p5</points>
+    </line>
+
+    <line name="l_hp5">
+      <points>p5:ln_af_le</points>
+    </line>
+
+    <line name="l_lp6_lp7">
+      <points>ln_af_le:p8</points>
+    </line>
+
+    <line name="l_lp8_lp9_hp1_hp2">
+      <points>p8:p3</points>
+    </line>
+
+  </baselines>
+
+  <component name="skin">
+
+    <segments>
+      <baseline>l_hp3_hp4</baseline>
+      <layup>TX_Upper_Strip</layup>
+    </segments>
+
+    <segments>
+      <baseline>l_hp5</baseline>
+      <layup>TX_Upper_Strip_x10</layup>
+    </segments>
+
+    <segments>
+      <baseline>l_lp6_lp7</baseline>
+      <layup>TX_Upper_Strip</layup>
+    </segments>
+
+    <segments>
+      <baseline>l_lp8_lp9_hp1_hp2</baseline>
+      <layup>TX_Upper</layup>
+    </segments>
+
+  </component>
+
+</cross_section>

@@ -1,0 +1,397 @@
+  <!-- ==================== Layups ==================== -->
+<!--
+    Each composite material from MatDBsi.xml becomes one layup.
+    Layer angles (theta) are taken directly from the source.
+  -->
+
+<layups>
+
+    <layup name="coat">
+        <layer lamina="Gel_Coat">0</layer>
+    </layup>
+
+    <layup name="TX_Balsa_Lower" method="layer list">
+        <layer lamina="Gel_Coat">0</layer>
+        <layer lamina="075oz_Mat">0</layer>
+        <layer lamina="C520_1">-115</layer>
+        <layer lamina="Seartex_Carbon_Triax">-70</layer>
+        <layer lamina="C520_1">-25</layer>
+        <layer lamina="Balsa_1">0</layer>
+        <layer lamina="C520_1">-115</layer>
+        <layer lamina="Seartex_Carbon_Triax">-70</layer>
+        <layer lamina="C520_1">-25</layer>
+    </layup>
+
+    <layup name="TX_Balsa_Lower_Trans" method="layer list">
+        <layer lamina="Gel_Coat">0</layer>
+        <layer lamina="075oz_Mat">0</layer>
+        <layer lamina="C520_1">-115</layer>
+        <layer lamina="Seartex_Carbon_Triax">-70</layer>
+        <layer lamina="C520_1">-25</layer>
+        <layer lamina="DBM1708_1">0</layer>
+        <layer lamina="Balsa_1">0</layer>
+        <layer lamina="C520_1">-115</layer>
+        <layer lamina="Seartex_Carbon_Triax">-70</layer>
+        <layer lamina="C520_1">-25</layer>
+        <layer lamina="DBM1708_1">0</layer>
+    </layup>
+
+    <layup name="TX_Balsa_Upper" method="layer list">
+        <layer lamina="Gel_Coat">0</layer>
+        <layer lamina="075oz_Mat">0</layer>
+        <layer lamina="C520_1">115</layer>
+        <layer lamina="Seartex_Carbon_Triax">70</layer>
+        <layer lamina="C520_1">25</layer>
+        <layer lamina="Balsa_1">0</layer>
+        <layer lamina="C520_1">115</layer>
+        <layer lamina="Seartex_Carbon_Triax">70</layer>
+        <layer lamina="C520_1">25</layer>
+    </layup>
+
+    <layup name="TX_Balsa_Upper_Strip" method="layer list">
+        <layer lamina="Gel_Coat">0</layer>
+        <layer lamina="075oz_Mat">0</layer>
+        <layer lamina="C520_1">115</layer>
+        <layer lamina="Seartex_Carbon_Triax">70</layer>
+        <layer lamina="C520_1">25</layer>
+        <layer lamina="DBM1708_1">0</layer>
+        <layer lamina="Balsa_1">0</layer>
+        <layer lamina="C520_1">115</layer>
+        <layer lamina="Seartex_Carbon_Triax">70</layer>
+        <layer lamina="C520_1">25</layer>
+    </layup>
+
+    <layup name="TX_Lower" method="layer list">
+        <layer lamina="Gel_Coat">0</layer>
+        <layer lamina="075oz_Mat">0</layer>
+        <layer lamina="C520_1">-115</layer>
+        <layer lamina="Seartex_Carbon_Triax">-70</layer>
+        <layer lamina="C520_1">-25</layer>
+        <layer lamina="C520_1">-115</layer>
+        <layer lamina="Seartex_Carbon_Triax">-70</layer>
+        <layer lamina="C520_1">-25</layer>
+    </layup>
+
+    <layup name="TX_Lower_Trans_Strip" method="layer list">
+        <layer lamina="Gel_Coat">0</layer>
+        <layer lamina="075oz_Mat">0</layer>
+        <layer lamina="C520_1">-115</layer>
+        <layer lamina="Seartex_Carbon_Triax">-70</layer>
+        <layer lamina="C520_1">-25</layer>
+        <layer lamina="DBM1708_5">0</layer>
+        <layer lamina="C520_1">-115</layer>
+        <layer lamina="Seartex_Carbon_Triax">-70</layer>
+        <layer lamina="C520_1">-25</layer>
+        <layer lamina="DBM1708_1">0</layer>
+    </layup>
+
+    <layup name="TX_Root_238" method="layer list">
+        <layer lamina="Gel_Coat">0</layer>
+        <layer lamina="075oz_Mat">0</layer>
+        <layer lamina="DBM1708_1">0</layer>
+        <layer lamina="C520_2">0</layer>
+        <layer lamina="C260_1">0</layer>
+        <layer lamina="DBM1208_2">0</layer>
+        <layer lamina="C260_2">0</layer>
+        <layer lamina="C520_3">0</layer>
+        <layer lamina="DBM1208_2">0</layer>
+        <layer lamina="C520_5">0</layer>
+        <layer lamina="DBM1208_2">0</layer>
+        <layer lamina="C520_4">0</layer>
+        <layer lamina="DBM1708_1">0</layer>
+    </layup>
+
+    <layup name="TX_Root_326" method="layer list">
+        <layer lamina="Gel_Coat">0</layer>
+        <layer lamina="075oz_Mat">0</layer>
+        <layer lamina="DBM1708_1">0</layer>
+        <layer lamina="C520_2">0</layer>
+        <layer lamina="C260_1">0</layer>
+        <layer lamina="DBM1208_2">0</layer>
+        <layer lamina="C260_2">0</layer>
+        <layer lamina="C520_3">0</layer>
+        <layer lamina="DBM1208_2">0</layer>
+        <layer lamina="C520_5">0</layer>
+        <layer lamina="DBM1708_1">0</layer>
+    </layup>
+
+    <layup name="TX_Root_498" method="layer list">
+        <layer lamina="Gel_Coat">0</layer>
+        <layer lamina="075oz_Mat">0</layer>
+        <layer lamina="DBM1708_1">0</layer>
+        <layer lamina="C520_2">0</layer>
+        <layer lamina="C260_1">0</layer>
+        <layer lamina="DBM1208_2">0</layer>
+        <layer lamina="C260_2">0</layer>
+        <layer lamina="C520_3">0</layer>
+        <layer lamina="DBM1708_1">0</layer>
+    </layup>
+
+    <layup name="TX_Root_634" method="layer list">
+        <layer lamina="Gel_Coat">0</layer>
+        <layer lamina="075oz_Mat">0</layer>
+        <layer lamina="DBM1708_1">0</layer>
+        <layer lamina="C520_2">0</layer>
+        <layer lamina="C260_1">0</layer>
+        <layer lamina="DBM1708_1">0</layer>
+    </layup>
+
+    <layup name="TX_Shear_Web" method="layer list">
+        <layer lamina="DBM1708_3">0</layer>
+        <layer lamina="Balsa_2">0</layer>
+        <layer lamina="DBM1708_3">0</layer>
+    </layup>
+
+    <layup name="TX_Spar_Lower" method="layer list">
+        <layer lamina="Gel_Coat">0</layer>
+        <layer lamina="075oz_Mat">0</layer>
+        <layer lamina="C520_1">-115</layer>
+        <layer lamina="Seartex_Carbon_Triax">-70</layer>
+        <layer lamina="C520_1">-25</layer>
+        <layer lamina="C520_2">0</layer>
+        <layer lamina="C520_1">-115</layer>
+        <layer lamina="Seartex_Carbon_Triax">-70</layer>
+        <layer lamina="C520_1">-25</layer>
+    </layup>
+
+    <layup name="TX_Spar_Lower_Trans" method="layer list">
+        <layer lamina="Gel_Coat">0</layer>
+        <layer lamina="075oz_Mat">0</layer>
+        <layer lamina="C520_1">-115</layer>
+        <layer lamina="Seartex_Carbon_Triax">-70</layer>
+        <layer lamina="C520_1">-25</layer>
+        <layer lamina="DBM1708_1">0</layer>
+        <layer lamina="C520_2">0</layer>
+        <layer lamina="C520_1">-115</layer>
+        <layer lamina="Seartex_Carbon_Triax">-70</layer>
+        <layer lamina="C520_1">-25</layer>
+        <layer lamina="DBM1708_1">0</layer>
+    </layup>
+
+    <layup name="TX_Spar_Upper" method="layer list">
+        <layer lamina="Gel_Coat">0</layer>
+        <layer lamina="075oz_Mat">0</layer>
+        <layer lamina="C520_1">115</layer>
+        <layer lamina="Seartex_Carbon_Triax">70</layer>
+        <layer lamina="C520_1">25</layer>
+        <layer lamina="C520_2">0</layer>
+        <layer lamina="C520_1">115</layer>
+        <layer lamina="Seartex_Carbon_Triax">70</layer>
+        <layer lamina="C520_1">25</layer>
+    </layup>
+
+    <layup name="TX_Upper" method="layer list">
+        <layer lamina="Gel_Coat">0</layer>
+        <layer lamina="075oz_Mat">0</layer>
+        <layer lamina="C520_1">115</layer>
+        <layer lamina="Seartex_Carbon_Triax">70</layer>
+        <layer lamina="C520_1">25</layer>
+        <layer lamina="C520_1">115</layer>
+        <layer lamina="Seartex_Carbon_Triax">70</layer>
+        <layer lamina="C520_1">25</layer>
+    </layup>
+
+    <layup name="TX_Upper_Strip" method="layer list">
+        <layer lamina="Gel_Coat">0</layer>
+        <layer lamina="075oz_Mat">0</layer>
+        <layer lamina="C520_1">115</layer>
+        <layer lamina="Seartex_Carbon_Triax">70</layer>
+        <layer lamina="C520_1">25</layer>
+        <layer lamina="DBM1708_3">0</layer>
+        <layer lamina="C520_1">115</layer>
+        <layer lamina="Seartex_Carbon_Triax">70</layer>
+        <layer lamina="C520_1">25</layer>
+    </layup>
+
+    <layup name="TX_Upper_Strip_x10" method="layer list">
+        <layer lamina="Gel_Coat">0</layer>
+        <layer lamina="075oz_Mat_X10">0</layer>
+        <layer lamina="C520_1">115</layer>
+        <layer lamina="Seartex_Carbon_Triax_x10">70</layer>
+        <layer lamina="C520_1">25</layer>
+        <layer lamina="DBM_1708_X10">0</layer>
+        <layer lamina="C520_1">115</layer>
+        <layer lamina="Seartex_Carbon_Triax_x10">70</layer>
+        <layer lamina="C520_1">25</layer>
+    </layup>
+
+    <layup name="TX_Balsa_Upper_Joint_1x" method="layer list">
+        <layer lamina="Gel_Coat">0</layer>
+        <layer lamina="075oz_Mat">0</layer>
+        <layer lamina="C520_1">115</layer>
+        <layer lamina="Seartex_Carbon_Triax">70</layer>
+        <layer lamina="DBM1208_3">0</layer>
+        <layer lamina="C520_1">25</layer>
+        <layer lamina="Balsa_1">0</layer>
+        <layer lamina="C520_1">115</layer>
+        <layer lamina="Seartex_Carbon_Triax">70</layer>
+        <layer lamina="DBM1208_3">0</layer>
+        <layer lamina="C520_1">25</layer>
+    </layup>
+
+    <layup name="TX_Balsa_Upper_Joint_2x" method="layer list">
+        <layer lamina="Gel_Coat">0</layer>
+        <layer lamina="075oz_Mat">0</layer>
+        <layer lamina="C520_1">115</layer>
+        <layer lamina="DBM1208_3">0</layer>
+        <layer lamina="Seartex_Carbon_Triax">70</layer>
+        <layer lamina="DBM1208_3">0</layer>
+        <layer lamina="C520_1">25</layer>
+        <layer lamina="Balsa_1">0</layer>
+        <layer lamina="C520_1">115</layer>
+        <layer lamina="DBM1208_3">0</layer>
+        <layer lamina="Seartex_Carbon_Triax">70</layer>
+        <layer lamina="DBM1208_3">0</layer>
+        <layer lamina="C520_1">25</layer>
+    </layup>
+
+    <layup name="TX_Upper_Joint_1x" method="layer list">
+        <layer lamina="Gel_Coat">0</layer>
+        <layer lamina="075oz_Mat">0</layer>
+        <layer lamina="C520_1">115</layer>
+        <layer lamina="Seartex_Carbon_Triax">70</layer>
+        <layer lamina="DBM1208_3">0</layer>
+        <layer lamina="C520_1">25</layer>
+        <layer lamina="C520_1">115</layer>
+        <layer lamina="Seartex_Carbon_Triax">70</layer>
+        <layer lamina="DBM1208_3">0</layer>
+        <layer lamina="C520_1">25</layer>
+    </layup>
+
+    <layup name="TX_Upper_Joint_2x" method="layer list">
+        <layer lamina="Gel_Coat">0</layer>
+        <layer lamina="075oz_Mat">0</layer>
+        <layer lamina="C520_1">115</layer>
+        <layer lamina="DBM1208_3">0</layer>
+        <layer lamina="Seartex_Carbon_Triax">70</layer>
+        <layer lamina="DBM1208_3">0</layer>
+        <layer lamina="C520_1">25</layer>
+        <layer lamina="C520_1">115</layer>
+        <layer lamina="DBM1208_3">0</layer>
+        <layer lamina="Seartex_Carbon_Triax">70</layer>
+        <layer lamina="DBM1208_3">0</layer>
+        <layer lamina="C520_1">25</layer>
+    </layup>
+
+    <layup name="TX_Lower_Trans" method="layer list">
+        <layer lamina="Gel_Coat">0</layer>
+        <layer lamina="075oz_Mat">0</layer>
+        <layer lamina="C520_1">-25</layer>
+        <layer lamina="Seartex_Carbon_Triax">20</layer>
+        <layer lamina="C520_1">65</layer>
+        <layer lamina="DBM1708_2">0</layer>
+        <layer lamina="C520_1">-25</layer>
+        <layer lamina="Seartex_Carbon_Triax">20</layer>
+        <layer lamina="C520_1">65</layer>
+        <layer lamina="DBM1708_2">0</layer>
+    </layup>
+
+    <layup name="TX_Upper_Strip_Joint_1x" method="layer list">
+        <layer lamina="Gel_Coat">0</layer>
+        <layer lamina="075oz_Mat">0</layer>
+        <layer lamina="C520_1">-25</layer>
+        <layer lamina="Seartex_Carbon_Triax">20</layer>
+        <layer lamina="C520_1">65</layer>
+        <layer lamina="DBM1208_1">0</layer>
+        <layer lamina="DBM1708_4">0</layer>
+        <layer lamina="C520_1">-25</layer>
+        <layer lamina="Seartex_Carbon_Triax">20</layer>
+        <layer lamina="C520_1">65</layer>
+        <layer lamina="DBM1208_1">0</layer>
+    </layup>
+
+    <layup name="TX_Upper_Strip_Joint_2x" method="layer list">
+        <layer lamina="Gel_Coat">0</layer>
+        <layer lamina="075oz_Mat">0</layer>
+        <layer lamina="DBM1208_1">0</layer>
+        <layer lamina="C520_1">-25</layer>
+        <layer lamina="Seartex_Carbon_Triax">20</layer>
+        <layer lamina="C520_1">65</layer>
+        <layer lamina="DBM1208_1">0</layer>
+        <layer lamina="DBM1708_4">0</layer>
+        <layer lamina="DBM1208_1">0</layer>
+        <layer lamina="C520_1">-25</layer>
+        <layer lamina="Seartex_Carbon_Triax">20</layer>
+        <layer lamina="C520_1">65</layer>
+        <layer lamina="DBM1208_1">0</layer>
+    </layup>
+
+    <layup name="TX_Upper_Strip_Joint_1x_x10" method="layer list">
+        <layer lamina="Gel_Coat">0</layer>
+        <layer lamina="075oz_Mat">0</layer>
+        <layer lamina="C520_1">-25</layer>
+        <layer lamina="Seartex_Carbon_Triax">20</layer>
+        <layer lamina="C520_1">65</layer>
+        <layer lamina="DBM1208_1">0</layer>
+        <layer lamina="DBM1708_x10">0</layer>
+        <layer lamina="C520_1">-25</layer>
+        <layer lamina="Seartex_Carbon_Triax">20</layer>
+        <layer lamina="C520_1">65</layer>
+        <layer lamina="DBM1208_1">0</layer>
+    </layup>
+
+    <layup name="TX_Upper_Strip_Joint_2x_x10" method="layer list">
+        <layer lamina="Gel_Coat">0</layer>
+        <layer lamina="075oz_Mat">0</layer>
+        <layer lamina="DBM1208_1">0</layer>
+        <layer lamina="C520_1">-25</layer>
+        <layer lamina="Seartex_Carbon_Triax">20</layer>
+        <layer lamina="C520_1">65</layer>
+        <layer lamina="DBM1208_1">0</layer>
+        <layer lamina="DBM1708_x10">0</layer>
+        <layer lamina="DBM1208_1">0</layer>
+        <layer lamina="C520_1">-25</layer>
+        <layer lamina="Seartex_Carbon_Triax">20</layer>
+        <layer lamina="C520_1">65</layer>
+        <layer lamina="DBM1208_1">0</layer>
+    </layup>
+
+    <layup name="TX_Lower_Strip_Trans" method="layer list">
+        <layer lamina="Gel_Coat">0</layer>
+        <layer lamina="075oz_Mat">0</layer>
+        <layer lamina="C520_1">-25</layer>
+        <layer lamina="Seartex_Carbon_Triax">20</layer>
+        <layer lamina="C520_1">65</layer>
+        <layer lamina="DBM1708_4">0</layer>
+        <layer lamina="DBM1708_2">0</layer>
+        <layer lamina="C520_1">-25</layer>
+        <layer lamina="Seartex_Carbon_Triax">20</layer>
+        <layer lamina="C520_1">65</layer>
+        <layer lamina="DBM1708_2">0</layer>
+    </layup>
+
+    <layup name="TX_Balsa_Upper_Strip_Joint_2x" method="layer list">
+        <layer lamina="Gel_Coat">0</layer>
+        <layer lamina="075oz_Mat">0</layer>
+        <layer lamina="DBM1208_1">0</layer>
+        <layer lamina="C520_1">-25</layer>
+        <layer lamina="Seartex_Carbon_Triax">20</layer>
+        <layer lamina="C520_1">65</layer>
+        <layer lamina="DBM1208_1">0</layer>
+        <layer lamina="DBM1708_2">0</layer>
+        <layer lamina="Balsa_3">0</layer>
+        <layer lamina="DBM1708_2">0</layer>
+        <layer lamina="DBM1208_1">0</layer>
+        <layer lamina="C520_1">-25</layer>
+        <layer lamina="Seartex_Carbon_Triax">20</layer>
+        <layer lamina="C520_1">65</layer>
+        <layer lamina="DBM1208_1">0</layer>
+    </layup>
+
+    <layup name="TX_Balsa_Upper_Strip_Joint_1x" method="layer list">
+        <layer lamina="Gel_Coat">0</layer>
+        <layer lamina="075oz_Mat">0</layer>
+        <layer lamina="C520_1">-25</layer>
+        <layer lamina="Seartex_Carbon_Triax">20</layer>
+        <layer lamina="C520_1">65</layer>
+        <layer lamina="DBM1208_1">0</layer>
+        <layer lamina="DBM1708_2">0</layer>
+        <layer lamina="Balsa_3">0</layer>
+        <layer lamina="DBM1708_2">0</layer>
+        <layer lamina="C520_1">-25</layer>
+        <layer lamina="Seartex_Carbon_Triax">20</layer>
+        <layer lamina="C520_1">65</layer>
+        <layer lamina="DBM1208_1">0</layer>
+    </layup>
+
+</layups>

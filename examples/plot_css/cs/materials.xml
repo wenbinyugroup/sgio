@@ -1,0 +1,337 @@
+<materials>
+
+  <!--
+    Unit system: SI
+      length:   m
+      mass:     kg
+      density:  kg/m^3
+      pressure: Pa
+  -->
+
+  <!-- ==================== Raw materials ==================== -->
+
+  <material name="075oz_Mat" type="orthotropic">
+    <density>1687</density>
+    <elastic>
+      <e1>7.58e9</e1>
+      <e2>7.58e9</e2>
+      <e3>7.58e9</e3>
+      <g12>4e9</g12>
+      <g13>4e9</g13>
+      <g23>4e9</g23>
+      <nu12>0.3</nu12>
+      <nu13>0.3</nu13>
+      <nu23>0.3</nu23>
+    </elastic>
+  </material>
+
+  <material name="075oz_Mat_X10" type="orthotropic">
+    <density>16870</density>
+    <elastic>
+      <e1>7.58e10</e1>
+      <e2>7.58e10</e2>
+      <e3>7.58e10</e3>
+      <g12>4e10</g12>
+      <g13>4e10</g13>
+      <g23>4e10</g23>
+      <nu12>0.3</nu12>
+      <nu13>0.3</nu13>
+      <nu23>0.3</nu23>
+    </elastic>
+  </material>
+
+  <material name="Balsa" type="orthotropic">
+    <density>230</density>
+    <elastic>
+      <e1>1.2e8</e1>
+      <e2>1.2e8</e2>
+      <e3>1.2e8</e3>
+      <g12>2e7</g12>
+      <g13>2e7</g13>
+      <g23>2e7</g23>
+      <nu12>0.3</nu12>
+      <nu13>0.3</nu13>
+      <nu23>0.3</nu23>
+    </elastic>
+  </material>
+
+  <material name="C260" type="orthotropic">
+    <density>1874</density>
+    <elastic>
+      <e1>3.73e10</e1>
+      <e2>7.6e9</e2>
+      <e3>7.6e9</e3>
+      <g12>6.89e9</g12>
+      <g13>6.89e9</g13>
+      <g23>6.89e9</g23>
+      <nu12>0.31</nu12>
+      <nu13>0.31</nu13>
+      <nu23>0.31</nu23>
+    </elastic>
+  </material>
+
+  <material name="C520" type="orthotropic">
+    <density>1874</density>
+    <elastic>
+      <e1>3.73e10</e1>
+      <e2>7.6e9</e2>
+      <e3>7.6e9</e3>
+      <g12>6.89e9</g12>
+      <g13>6.89e9</g13>
+      <g23>6.89e9</g23>
+      <nu12>0.31</nu12>
+      <nu13>0.31</nu13>
+      <nu23>0.31</nu23>
+    </elastic>
+  </material>
+
+  <material name="DBM1208" type="orthotropic">
+    <density>1814</density>
+    <elastic>
+      <e1>9.58e9</e1>
+      <e2>9.58e9</e2>
+      <e3>9.58e9</e3>
+      <g12>6.89e9</g12>
+      <g13>6.89e9</g13>
+      <g23>6.89e9</g23>
+      <nu12>0.39</nu12>
+      <nu13>0.39</nu13>
+      <nu23>0.39</nu23>
+    </elastic>
+  </material>
+
+  <material name="DBM1708" type="orthotropic">
+    <density>1814</density>
+    <elastic>
+      <e1>9.58e9</e1>
+      <e2>9.58e9</e2>
+      <e3>9.58e9</e3>
+      <g12>6.89e9</g12>
+      <g13>6.89e9</g13>
+      <g23>6.89e9</g23>
+      <nu12>0.39</nu12>
+      <nu13>0.39</nu13>
+      <nu23>0.39</nu23>
+    </elastic>
+  </material>
+
+  <material name="DBM_1708_X10" type="orthotropic">
+    <density>18480</density>
+    <elastic>
+      <e1>9.58e10</e1>
+      <e2>9.58e10</e2>
+      <e3>9.58e10</e3>
+      <g12>6.89e10</g12>
+      <g13>6.89e10</g13>
+      <g23>6.89e10</g23>
+      <nu12>0.39</nu12>
+      <nu13>0.39</nu13>
+      <nu23>0.39</nu23>
+    </elastic>
+  </material>
+
+  <material name="DBM1708_x10" type="orthotropic">
+    <density>18140</density>
+    <elastic>
+      <e1>9.58e10</e1>
+      <e2>9.58e10</e2>
+      <e3>9.58e10</e3>
+      <g12>6.89e10</g12>
+      <g13>6.89e10</g13>
+      <g23>6.89e10</g23>
+      <nu12>0.39</nu12>
+      <nu13>0.39</nu13>
+      <nu23>0.39</nu23>
+    </elastic>
+  </material>
+
+  <material name="Gel_Coat" type="orthotropic">
+    <density>1235</density>
+    <elastic>
+      <e1>3.44e9</e1>
+      <e2>3.44e9</e2>
+      <e3>3.44e9</e3>
+      <g12>1.38e9</g12>
+      <g13>1.38e9</g13>
+      <g23>1.38e9</g23>
+      <nu12>0.3</nu12>
+      <nu13>0.3</nu13>
+      <nu23>0.3</nu23>
+    </elastic>
+  </material>
+
+  <material name="Seartex_Carbon_Triax" type="orthotropic">
+    <density>1685</density>
+    <elastic>
+      <e1>7.385e10</e1>
+      <e2>6.82e9</e2>
+      <e3>6.82e9</e3>
+      <g12>3.32e9</g12>
+      <g13>3.32e9</g13>
+      <g23>3.32e9</g23>
+      <nu12>0.25</nu12>
+      <nu13>0.3</nu13>
+      <nu23>0.3</nu23>
+    </elastic>
+  </material>
+
+  <material name="Seartex_Carbon_Triax_x10" type="orthotropic">
+    <density>14800</density>
+    <elastic>
+      <e1>1.054e12</e1>
+      <e2>6.82e10</e2>
+      <e3>6.82e10</e3>
+      <g12>3.32e10</g12>
+      <g13>3.32e10</g13>
+      <g23>3.32e10</g23>
+      <nu12>0.283</nu12>
+      <nu13>0.283</nu13>
+      <nu23>0.283</nu23>
+    </elastic>
+  </material>
+
+  <!-- ==================== Laminas ==================== -->
+  <!--
+      Naming convention: single-thickness materials use the material name;
+      multi-thickness materials append a numeric index (_1, _2, …) in order
+      of increasing thickness.
+    -->
+
+  <!-- Gel_Coat: one thickness -->
+  <lamina name="Gel_Coat">
+    <material>Gel_Coat</material>
+    <thickness>0.000508</thickness>
+  </lamina>
+
+  <!-- 075oz_Mat: one thickness -->
+  <lamina name="075oz_Mat">
+    <material>075oz_Mat</material>
+    <thickness>0.00033</thickness>
+  </lamina>
+
+  <!-- 075oz_Mat_X10: one thickness -->
+  <lamina name="075oz_Mat_X10">
+    <material>075oz_Mat_X10</material>
+    <thickness>3.3e-5</thickness>
+  </lamina>
+
+  <!-- Seartex_Carbon_Triax: one thickness -->
+  <lamina name="Seartex_Carbon_Triax">
+    <material>Seartex_Carbon_Triax</material>
+    <thickness>0.000625</thickness>
+  </lamina>
+
+  <!-- Seartex_Carbon_Triax_x10: one thickness -->
+  <lamina name="Seartex_Carbon_Triax_x10">
+    <material>Seartex_Carbon_Triax_x10</material>
+    <thickness>7.62e-5</thickness>
+  </lamina>
+
+  <!-- DBM_1708_X10: one thickness -->
+  <lamina name="DBM_1708_X10">
+    <material>DBM_1708_X10</material>
+    <thickness>0.0001473</thickness>
+  </lamina>
+
+  <!-- DBM1708_x10: one thickness -->
+  <lamina name="DBM1708_x10">
+    <material>DBM1708_x10</material>
+    <thickness>0.000174</thickness>
+  </lamina>
+
+  <!-- C260: two thicknesses (ascending) -->
+  <lamina name="C260_1">
+    <material>C260</material>
+    <thickness>0.00126</thickness>
+  </lamina>
+
+  <lamina name="C260_2">
+    <material>C260</material>
+    <thickness>0.00315</thickness>
+  </lamina>
+
+  <!-- C520: five thicknesses (ascending) -->
+  <lamina name="C520_1">
+    <material>C520</material>
+    <thickness>0.000102</thickness>
+  </lamina>
+
+  <lamina name="C520_2">
+    <material>C520</material>
+    <thickness>0.006299</thickness>
+  </lamina>
+
+  <lamina name="C520_3">
+    <material>C520</material>
+    <thickness>0.007559</thickness>
+  </lamina>
+
+  <lamina name="C520_4">
+    <material>C520</material>
+    <thickness>0.013858</thickness>
+  </lamina>
+
+  <lamina name="C520_5">
+    <material>C520</material>
+    <thickness>0.015118</thickness>
+  </lamina>
+
+  <!-- Balsa: three thicknesses (ascending) -->
+  <lamina name="Balsa_1">
+    <material>Balsa</material>
+    <thickness>0.005588</thickness>
+  </lamina>
+
+  <lamina name="Balsa_2">
+    <material>Balsa</material>
+    <thickness>0.009144</thickness>
+  </lamina>
+
+  <lamina name="Balsa_3">
+    <material>Balsa</material>
+    <thickness>0.009525</thickness>
+  </lamina>
+
+  <!-- DBM1208: three thicknesses (ascending) -->
+  <lamina name="DBM1208_1">
+    <material>DBM1208</material>
+    <thickness>0.00038</thickness>
+  </lamina>
+
+  <lamina name="DBM1208_2">
+    <material>DBM1208</material>
+    <thickness>0.000508</thickness>
+  </lamina>
+
+  <lamina name="DBM1208_3">
+    <material>DBM1208</material>
+    <thickness>0.00051</thickness>
+  </lamina>
+
+  <!-- DBM1708: five thicknesses (ascending) -->
+  <lamina name="DBM1708_1">
+    <material>DBM1708</material>
+    <thickness>0.000737</thickness>
+  </lamina>
+
+  <lamina name="DBM1708_2">
+    <material>DBM1708</material>
+    <thickness>0.00087</thickness>
+  </lamina>
+
+  <lamina name="DBM1708_3">
+    <material>DBM1708</material>
+    <thickness>0.001473</thickness>
+  </lamina>
+
+  <lamina name="DBM1708_4">
+    <material>DBM1708</material>
+    <thickness>0.00174</thickness>
+  </lamina>
+
+  <lamina name="DBM1708_5">
+    <material>DBM1708</material>
+    <thickness>0.00221</thickness>
+  </lamina>
+
+</materials>

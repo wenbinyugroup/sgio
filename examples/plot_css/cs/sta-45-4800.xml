@@ -1,0 +1,87 @@
+<cross_section name="sta-45-4800">
+
+  <include>
+    <material>materials</material>
+    <layup>layups</layup>
+  </include>
+
+  <analysis>
+    <model>1</model>
+  </analysis>
+
+  <general>
+    <translate>-0.68  0</translate>
+    <scale>0.631</scale>
+    <rotate>-4.67</rotate>
+    <mesh_size>0.001</mesh_size>
+    <element_type>linear</element_type>
+  </general>
+
+  <baselines>
+
+    <line name="ln_af" type="airfoil">
+      <points data="file" format="1" direction="-1">CXTX_4800_110.dat</points>
+      <flip>1</flip>
+    </line>
+
+    <point name="p2" on="ln_af" by="x2" which="bottom">0.103332</point>
+    <point name="p3" on="ln_af" by="x2" which="bottom">0.633000</point>
+    <point name="p4" on="ln_af" by="x2" which="bottom">0.930800</point>
+
+    <point name="p6" on="ln_af" by="x2" which="top">0.919339</point>
+    <point name="p7" on="ln_af" by="x2" which="top">0.868273</point>
+    <point name="p8" on="ln_af" by="x2" which="top">0.611600</point>
+    <point name="p9" on="ln_af" by="x2" which="top">0.098494</point>
+
+    <line name="l_hp2_hp3">
+      <points>p2:p4</points>
+    </line>
+
+    <line name="l_hp4_lp5">
+      <points>p4:p6</points>
+    </line>
+
+    <line name="l_lp6">
+      <points>p6:p7</points>
+    </line>
+
+    <line name="l_lp7_lp8">
+      <points>p7:p9</points>
+    </line>
+
+    <line name="l_lp9_hp1">
+      <points>p9:p2</points>
+    </line>
+
+  </baselines>
+
+  <component name="skin">
+
+    <segments>
+      <baseline>l_hp2_hp3</baseline>
+      <layup>TX_Balsa_Upper</layup>
+    </segments>
+
+    <segments>
+      <baseline>l_hp4_lp5</baseline>
+      <layup>TX_Upper_Strip</layup>
+    </segments>
+
+    <segments>
+      <baseline>l_lp6</baseline>
+      <layup>TX_Balsa_Upper_Strip</layup>
+    </segments>
+
+    <segments>
+      <baseline>l_lp7_lp8</baseline>
+      <layup>TX_Balsa_Upper</layup>
+    </segments>
+
+    <segments>
+      <baseline>l_lp9_hp1</baseline>
+      <layup>TX_Upper</layup>
+    </segments>
+
+  </component>
+
+</cross_section>

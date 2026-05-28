@@ -45,6 +45,15 @@ tests/*.v0
 tests/*.v1S
 tests/*.v22
 
+*.log
+*.geo_unrolled
+
+*.opt
+*.ech
+*.v0
+*.v1S
+*.v22
+
 tests/*.U
 tests/*.E
 tests/*.EM

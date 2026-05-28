@@ -1,0 +1,109 @@
+<cross_section name="sta-52-5500">
+
+  <include>
+    <material>materials</material>
+    <layup>layups</layup>
+  </include>
+
+  <analysis>
+    <model>1</model>
+  </analysis>
+
+  <general>
+    <translate>-0.68  0</translate>
+    <scale>0.5501</scale>
+    <rotate>-3.61</rotate>
+    <mesh_size>0.001</mesh_size>
+    <element_type>linear</element_type>
+  </general>
+
+  <baselines>
+
+    <line name="ln_af" type="airfoil">
+      <points data="file" format="1" direction="-1">CXTX_5500_110.dat</points>
+      <flip>1</flip>
+    </line>
+
+    <point name="p2" on="ln_af" by="x2" which="bottom">0.020000</point>
+    <point name="p3" on="ln_af" by="x2" which="bottom">0.115400</point>
+    <point name="p4" on="ln_af" by="x2" which="bottom">0.162300</point>
+    <point name="p5" on="ln_af" by="x2" which="bottom">0.622200</point>
+    <point name="p6" on="ln_af" by="x2" which="bottom">0.904773</point>
+
+    <point name="p8" on="ln_af" by="x2" which="top">0.903507</point>
+    <point name="p9" on="ln_af" by="x2" which="top">0.844237</point>
+    <point name="p10" on="ln_af" by="x2" which="top">0.606100</point>
+    <point name="p11" on="ln_af" by="x2" which="top">0.162300</point>
+    <point name="p12" on="ln_af" by="x2" which="top">0.115400</point>
+    <point name="p13" on="ln_af" by="x2" which="top">0.020000</point>
+
+    <line name="l_hp3">
+      <points>p3:p4</points>
+    </line>
+
+    <line name="l_hp4_hp5">
+      <points>p4:p6</points>
+    </line>
+
+    <line name="l_hp6_lp7">
+      <points>p6:p8</points>
+    </line>
+
+    <line name="l_lp8">
+      <points>p8:p9</points>
+    </line>
+
+    <line name="l_lp9_lp10">
+      <points>p9:p11</points>
+    </line>
+
+    <line name="l_lp11">
+      <points>p11:p12</points>
+    </line>
+
+    <line name="l_lp12_lp13_hp1_hp2">
+      <points>p12:p3</points>
+    </line>
+
+  </baselines>
+
+  <component name="skin">
+
+    <segments>
+      <baseline>l_hp3</baseline>
+      <layup>TX_Balsa_Upper_Joint_1x</layup>
+    </segments>
+
+    <segments>
+      <baseline>l_hp4_hp5</baseline>
+      <layup>TX_Balsa_Upper</layup>
+    </segments>
+
+    <segments>
+      <baseline>l_hp6_lp7</baseline>
+      <layup>TX_Upper_Strip</layup>
+    </segments>
+
+    <segments>
+      <baseline>l_lp8</baseline>
+      <layup>TX_Balsa_Upper_Strip</layup>
+    </segments>
+
+    <segments>
+      <baseline>l_lp9_lp10</baseline>
+      <layup>TX_Balsa_Upper</layup>
+    </segments>
+
+    <segments>
+      <baseline>l_lp11</baseline>
+      <layup>TX_Balsa_Upper_Joint_1x</layup>
+    </segments>
+
+    <segments>
+      <baseline>l_lp12_lp13_hp1_hp2</baseline>
+      <layup>TX_Upper_Joint_2x</layup>
+    </segments>
+
+  </component>
+
+</cross_section>

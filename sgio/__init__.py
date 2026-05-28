@@ -106,6 +106,8 @@ from .execu import run
 
 from .utils import (
     plot_sg_2d,
+    plot_sg_3d_beam,
+    plot_sg_3d_beam_plotly,
 )
 
 from ._vendors import inprw
@@ -166,6 +168,8 @@ __all__ = [
     "get_numbering_requirements",
     # Utility functions
     "plot_sg_2d",
+    "plot_sg_3d_beam",
+    "plot_sg_3d_beam_plotly",
     # Model classes from .model import *
     "BehaviorVariable",
     "BehaviorVariableRole",

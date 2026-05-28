@@ -1,0 +1,116 @@
+<cross_section name="sta-74-7200">
+
+  <include>
+    <material>materials</material>
+    <layup>layups</layup>
+  </include>
+
+  <analysis>
+    <model>1</model>
+  </analysis>
+
+  <general>
+    <translate>-0.68  0</translate>
+    <scale>0.3488</scale>
+    <rotate>-1.4</rotate>
+    <mesh_size>0.001</mesh_size>
+    <element_type>linear</element_type>
+  </general>
+
+  <baselines>
+
+    <line name="ln_af" type="airfoil">
+      <points data="file" format="1" direction="-1">CXTX_7200_110.dat</points>
+      <flip>1</flip>
+    </line>
+
+    <point name="p2" on="ln_af" by="x2" which="bottom">0.171300</point>
+    <point name="p3" on="ln_af" by="x2" which="bottom">0.581500</point>
+    <point name="p4" on="ln_af" by="x2" which="bottom">0.801040</point>
+    <point name="p5" on="ln_af" by="x2" which="bottom">0.889816</point>
+    <point name="p6" on="ln_af" by="x2" which="bottom">0.960000</point>
+
+    <point name="p8" on="ln_af" by="x2" which="top">0.864600</point>
+    <point name="p9" on="ln_af" by="x2" which="top">0.735447</point>
+    <point name="p10" on="ln_af" by="x2" which="top">0.584900</point>
+    <point name="p11" on="ln_af" by="x2" which="top">0.171300</point>
+
+    <line name="l_hp2_hp3">
+      <points>p2:p4</points>
+    </line>
+
+    <line name="l_hp4">
+      <points>p4:p5</points>
+    </line>
+
+    <line name="l_hp5">
+      <points>p5:p6</points>
+    </line>
+
+    <line name="l_hp6">
+      <points>p6:ln_af_le</points>
+    </line>
+
+    <line name="l_lp7">
+      <points>ln_af_le:p8</points>
+    </line>
+
+    <line name="l_lp8">
+      <points>p8:p9</points>
+    </line>
+
+    <line name="l_lp9_lp10">
+      <points>p9:p11</points>
+    </line>
+
+    <line name="l_lp11_hp1">
+      <points>p11:p2</points>
+    </line>
+
+  </baselines>
+
+  <component name="skin">
+
+    <segments>
+      <baseline>l_hp2_hp3</baseline>
+      <layup>TX_Balsa_Upper</layup>
+    </segments>
+
+    <segments>
+      <baseline>l_hp4</baseline>
+      <layup>TX_Balsa_Upper_Strip</layup>
+    </segments>
+
+    <segments>
+      <baseline>l_hp5</baseline>
+      <layup>TX_Upper_Strip</layup>
+    </segments>
+
+    <segments>
+      <baseline>l_hp6</baseline>
+      <layup>TX_Upper_Strip_x10</layup>
+    </segments>
+
+    <segments>
+      <baseline>l_lp7</baseline>
+      <layup>TX_Upper_Strip</layup>
+    </segments>
+
+    <segments>
+      <baseline>l_lp8</baseline>
+      <layup>TX_Balsa_Upper_Strip</layup>
+    </segments>
+
+    <segments>
+      <baseline>l_lp9_lp10</baseline>
+      <layup>TX_Balsa_Upper</layup>
+    </segments>
+
+    <segments>
+      <baseline>l_lp11_hp1</baseline>
+      <layup>TX_Upper</layup>
+    </segments>
+
+  </component>
+
+</cross_section>

@@ -1,0 +1,38 @@
+<cross_section name="sta-01-0000">
+
+  <include>
+    <material>materials</material>
+    <layup>layups</layup>
+  </include>
+
+  <analysis>
+    <model>1</model>
+  </analysis>
+
+  <general>
+    <translate>-0.5  0</translate>
+    <scale>0.387</scale>
+    <rotate>-22.8</rotate>
+    <mesh_size>0.001</mesh_size>
+    <element_type>linear</element_type>
+  </general>
+
+  <baselines>
+
+    <line name="ln_af" type="airfoil">
+      <points data="file" format="1" direction="-1">CXTX_0400_110.dat</points>
+      <flip>1</flip>
+    </line>
+
+  </baselines>
+
+  <component name="skin">
+
+    <segments>
+      <baseline>ln_af</baseline>
+      <layup>TX_Root_238</layup>
+    </segments>
+
+  </component>
+
+</cross_section>
