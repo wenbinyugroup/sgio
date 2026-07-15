@@ -9,7 +9,7 @@ matplotlib.use('Agg')  # Use non-interactive backend for testing
 import matplotlib.pyplot as plt
 
 import sgio
-from sgio.utils.plot import plot_sg_2d
+from sgio.visualization import plot_sg_2d
 
 
 @pytest.mark.visualization

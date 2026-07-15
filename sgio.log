@@ -2833,3 +2833,97 @@
            WARNING  Node IDs renumbered to meet SwiftComp format requirements (consecutive from 1)      numbering.py:510
            WARNING  Node IDs renumbered to meet VABS format requirements (consecutive from 1)           numbering.py:510
            WARNING  Node IDs renumbered to meet SwiftComp format requirements (consecutive from 1)      numbering.py:510
+[10:00:40] INFO     Reading file...                                                                          main.py:141
+           INFO     Converting file format...                                                                main.py:484
+           INFO     Reading file...                                                                          main.py:141
+           INFO     Writing file...                                                                          main.py:355
+           INFO     File format converted.                                                                   main.py:524
+           INFO     Converting file format...                                                                main.py:484
+           INFO     Reading file...                                                                          main.py:141
+           INFO     Writing file...                                                                          main.py:355
+           INFO     File format converted.                                                                   main.py:524
+           INFO     Reading file...                                                                          main.py:141
+           INFO     Reading file...                                                                          main.py:141
+           INFO     Writing file...                                                                          main.py:355
+           INFO     Converting file format...                                                                main.py:484
+           INFO     Reading file...                                                                          main.py:141
+           INFO     Writing file...                                                                          main.py:355
+           INFO     File format converted.                                                                   main.py:524
+           INFO     Reading file...                                                                          main.py:141
+           INFO     Writing file...                                                                          main.py:355
+           INFO     Writing file...                                                                          main.py:355
+           INFO     Reading file...                                                                          main.py:141
+           INFO     Converting                                                                      test_vabs_gmsh.py:53
+                    C:\Users\tian50\work\dev\sgio\tests\fixtures\vabs\version_4_1\isorect.sg to                         
+                    C:\Users\tian50\work\dev\sgio\tests\_temp\isorect.msh...                                            
+           INFO     Converting file format...                                                                main.py:484
+           INFO     Reading file...                                                                          main.py:141
+           INFO     Writing file...                                                                          main.py:355
+           INFO     File format converted.                                                                   main.py:524
+           INFO     Converting                                                                      test_vabs_gmsh.py:53
+                    C:\Users\tian50\work\dev\sgio\tests\fixtures\vabs\version_4_1\uh60a.sg to                           
+                    C:\Users\tian50\work\dev\sgio\tests\_temp\uh60a.msh...                                              
+           INFO     Converting file format...                                                                main.py:484
+           INFO     Reading file...                                                                          main.py:141
+           INFO     Writing file...                                                                          main.py:355
+[10:00:41] INFO     File format converted.                                                                   main.py:524
+           INFO     Converting                                                                      test_vabs_gmsh.py:53
+                    C:\Users\tian50\work\dev\sgio\tests\fixtures\vabs\version_4_0\sg21eb_tri3_vabs4                     
+                    0.sg to C:\Users\tian50\work\dev\sgio\tests\_temp\sg21eb_tri3_vabs40.msh...                         
+           INFO     Converting file format...                                                                main.py:484
+           INFO     Reading file...                                                                          main.py:141
+           INFO     Writing file...                                                                          main.py:355
+[10:00:42] INFO     File format converted.                                                                   main.py:524
+           INFO     Converting                                                                      test_vabs_gmsh.py:53
+                    C:\Users\tian50\work\dev\sgio\tests\fixtures\vabs\version_4_0\sg21t_tri3_vabs40                     
+                    .sg to C:\Users\tian50\work\dev\sgio\tests\_temp\sg21t_tri3_vabs40.msh...                           
+           INFO     Converting file format...                                                                main.py:484
+           INFO     Reading file...                                                                          main.py:141
+           INFO     Writing file...                                                                          main.py:355
+[10:00:43] INFO     File format converted.                                                                   main.py:524
+           INFO     Converting file format...                                                                main.py:484
+           INFO     Reading file...                                                                          main.py:141
+           INFO     Writing file...                                                                          main.py:355
+           INFO     File format converted.                                                                   main.py:524
+           INFO     Converting file format...                                                                main.py:484
+           INFO     Reading file...                                                                          main.py:141
+           INFO     Writing file...                                                                          main.py:355
+[10:00:44] INFO     File format converted.                                                                   main.py:524
+           INFO     Converting file format...                                                                main.py:484
+           INFO     Reading file...                                                                          main.py:141
+           INFO     Writing file...                                                                          main.py:355
+[10:00:45] INFO     File format converted.                                                                   main.py:524
+           INFO     Converting file format...                                                                main.py:484
+           INFO     Reading file...                                                                          main.py:141
+           INFO     Writing file...                                                                          main.py:355
+[10:00:46] INFO     File format converted.                                                                   main.py:524
+           INFO     Reading file...                                                                          main.py:141
+           INFO     Converting file format...                                                                main.py:484
+           INFO     Reading file...                                                                          main.py:141
+           INFO     Writing file...                                                                          main.py:355
+           WARNING  Element IDs renumbered to meet VABS format requirements (consecutive from 1)        numbering.py:510
+           INFO     File format converted.                                                                   main.py:524
+           INFO     Reading file...                                                                          main.py:141
+           INFO     Reading file...                                                                          main.py:141
+           INFO     Converting file format...                                                                main.py:484
+           INFO     Reading file...                                                                          main.py:141
+           INFO     Writing file...                                                                          main.py:355
+           WARNING  Element IDs renumbered to meet VABS format requirements (consecutive from 1)        numbering.py:510
+           INFO     File format converted.                                                                   main.py:524
+           INFO     Reading file...                                                                          main.py:141
+           INFO     Reading file...                                                                          main.py:141
+           INFO     Converting file format...                                                                main.py:484
+           INFO     Reading file...                                                                          main.py:141
+           INFO     Writing file...                                                                          main.py:355
+           WARNING  Element IDs renumbered to meet VABS format requirements (consecutive from 1)        numbering.py:510
+           INFO     File format converted.                                                                   main.py:524
+           INFO     Reading file...                                                                          main.py:141
+           INFO     Reading file...                                                                          main.py:141
+           INFO     Converting file format...                                                                main.py:484
+           INFO     Reading file...                                                                          main.py:141
+           INFO     Writing file...                                                                          main.py:355
+           WARNING  Element IDs renumbered to meet VABS format requirements (consecutive from 1)        numbering.py:510
+           INFO     File format converted.                                                                   main.py:524
+           INFO     Reading file...                                                                          main.py:141
+           INFO     Writing file...                                                                          main.py:355
+           INFO     Reading file...                                                                          main.py:141

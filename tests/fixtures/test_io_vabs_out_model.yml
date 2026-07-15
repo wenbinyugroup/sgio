@@ -1,0 +1,40 @@
+[
+    {
+        "dir": "vabs/version_4_0",
+        "fn_base": "sg21eb_tri3_vabs40",
+        "file_format": "vabs",
+        "version": "4.0",
+        "model": "BM1",
+    },
+    {
+        "dir": "vabs/version_4_0",
+        "fn_base": "sg21t_tri3_vabs40",
+        "file_format": "vabs",
+        "version": "4.0",
+        "model": "BM2",
+    },
+    {
+        "dir": "vabs/version_4_1",
+        "fn_base": "3cells",
+        "file_format": "vabs",
+        "model": "BM2",
+    },
+    {
+        "dir": "vabs/version_4_1",
+        "fn_base": "cas1",
+        "file_format": "vabs",
+        "model": "BM2",
+    },
+    {
+        "dir": "vabs/version_4_1",
+        "fn": "sg2_i_simple_eo1.dat.K",
+        "file_format": "vabs",
+        "model": "BM2",
+    },
+    {
+        "dir": "vabs/version_4_1",
+        "fn_base": "uh60a",
+        "file_format": "vabs",
+        "model": "BM2",
+    },
+]

@@ -1,0 +1,38 @@
+[
+    {
+        "dir": "swiftcomp",
+        "fn_base": "sg12kl_line5_sc21",
+        "file_format": "sc",
+        "model": "PL1",
+    },
+    {
+        "dir": "swiftcomp",
+        "fn_base": "sg12rm_line5_sc21",
+        "file_format": "sc",
+        "model": "PL2",
+    },
+    {
+        "dir": "swiftcomp",
+        "fn_base": "sg21eb_tri6_sc21",
+        "file_format": "sc",
+        "model": "BM1",
+    },
+    {
+        "dir": "swiftcomp",
+        "fn_base": "sg21t_tri6_sc21",
+        "file_format": "sc",
+        "model": "BM2",
+    },
+    {
+        "dir": "swiftcomp",
+        "fn_base": "sg23_tri6_sc21",
+        "file_format": "sc",
+        "model": "SD1",
+    },
+    {
+        "dir": "swiftcomp",
+        "fn_base": "sg31t_hex20_sc21",
+        "file_format": "sc",
+        "model": "BM2",
+    },
+]

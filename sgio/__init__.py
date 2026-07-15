@@ -104,8 +104,12 @@ from .iofunc import (
 
 from .execu import run
 
-from .utils import (
+from .visualization import (
+    plot_matrix,
+    plot_matrix_bar3d,
+    plot_model_matrix,
     plot_sg_2d,
+    plot_sg_2d_plotly,
     plot_sg_3d_beam,
     plot_sg_3d_beam_plotly,
 )
@@ -166,8 +170,12 @@ __all__ = [
     "FORMAT_REQUIREMENTS",
     "normalize_format_name",
     "get_numbering_requirements",
-    # Utility functions
+    # Visualization functions
+    "plot_matrix",
+    "plot_matrix_bar3d",
+    "plot_model_matrix",
     "plot_sg_2d",
+    "plot_sg_2d_plotly",
     "plot_sg_3d_beam",
     "plot_sg_3d_beam_plotly",
     # Model classes from .model import *

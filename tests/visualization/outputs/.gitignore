@@ -1,0 +1,4 @@
+# Generated matrix/section plots from the visualization tests.
+*.png
+*.html
+!.gitignore

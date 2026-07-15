@@ -10,7 +10,7 @@ neutral axis, shear center, and principal axes.
 """
 import matplotlib.pyplot as plt
 import sgio
-from sgio import plot_sg_2d
+from sgio import plot_sg_2d, plot_matrix, plot_matrix_bar3d
 
 input_file = 'sg21eb_tri3_vabs40.sg'
 output_file = 'sg21eb_tri3_vabs40.sg.K'
@@ -37,5 +37,30 @@ ax.set_aspect('equal')
 
 # Display the plot
 plt.tight_layout()
-print("\nDisplaying plot... (close window to exit)")
-plt.show()
+fig.savefig('sg21eb_tri3_vabs40.png', dpi=300)
+# print("\nDisplaying plot... (close window to exit)")
+# plt.show()
+plt.close(fig)
+
+
+# Plot stiffness matrix
+stf_matrix = model.stff
+
+fig2, ax2 = plt.subplots(figsize=(8, 6))
+plot_matrix(
+    stf_matrix, fig=fig2, ax=ax2,
+    annotate=True, font_size=8, symlog=True
+    )
+fig2.savefig('stiffness_matrix.png', dpi=300)
+plt.close(fig2)
+
+fig3 = plt.figure(figsize=(8, 6))
+ax3 = fig3.add_subplot(projection='3d')
+plot_matrix_bar3d(
+    stf_matrix, fig=fig3, ax=ax3,
+    symlog=True
+    )
+fig3.savefig('stiffness_matrix_3d.png', dpi=300)
+plt.close(fig3)
+
+
