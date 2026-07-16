@@ -547,8 +547,10 @@ class StructureGene:
         orientation : float, optional
             In-plane orientation angle in degrees.
         property_id : int or None, optional
-            Property/layer identifier. If omitted, the next available one is
-            assigned.
+            Internal element->section binding key (see :class:`Section`). Users
+            normally omit it and reference sections by name; when omitted the
+            next available id is assigned automatically. It is not part of the
+            public serialization contract.
         extras : mapping, optional
             Extra adapter-specific metadata.
 

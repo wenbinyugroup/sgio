@@ -51,7 +51,9 @@ def map_structure_gene_to_write_payload(
             raise ValueError("StructureGene is required for VABS homogenization input.")
 
         export_mesh = _build_vabs_export_mesh(sg.mesh)
-        material_id_map = build_material_id_map(sg.materials)
+        material_id_map = build_material_id_map(
+            sg.materials, sg.fe_model.material_source_ids, "vabs"
+        )
         theta_3_by_property = _resolve_theta_3_from_additional_rotation(
             sg, model_space
         )

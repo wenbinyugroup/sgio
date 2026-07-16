@@ -29,6 +29,12 @@ class FEModel:
         FE orientation objects indexed by name.
     sections : dict[str, Section]
         FE sections indexed by section name.
+    material_source_ids : dict[str, dict[str, int]]
+        Per-format provenance of solver material ids, keyed by material name
+        then by format name (e.g. ``{"steel": {"vabs": 3}}``). Enables
+        same-format round-trip fidelity for the ``1..n`` material labels that
+        VABS/SwiftComp files require. Not user-authored; populated by adapter
+        readers and consumed by writers via prefer-then-fill numbering.
     extras : dict[str, Any]
         Extra FE-level metadata.
     """
@@ -38,4 +44,5 @@ class FEModel:
     materials: dict[str, object] = field(default_factory=dict)
     orientations: dict[str, Orientation] = field(default_factory=dict)
     sections: dict[str, Section] = field(default_factory=dict)
+    material_source_ids: dict[str, dict[str, int]] = field(default_factory=dict)
     extras: dict[str, object] = field(default_factory=dict)

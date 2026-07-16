@@ -6,6 +6,8 @@ from typing import Any, Mapping
 
 from sgio.core.sg import StructureGene
 
+from ..common import capture_material_and_combo_source_ids
+
 
 def map_input_to_structure_gene(parsed: Mapping[str, Any]) -> StructureGene:
     """Map parsed SwiftComp input payload into a ``StructureGene``."""
@@ -41,6 +43,7 @@ def map_input_to_structure_gene(parsed: Mapping[str, Any]) -> StructureGene:
         parsed["material_rotation_combinations"],
         parsed["material_id_pairs"],
     )
+    capture_material_and_combo_source_ids(sg, parsed["material_id_pairs"], "swiftcomp")
     return sg
 
 

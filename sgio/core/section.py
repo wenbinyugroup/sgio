@@ -36,8 +36,19 @@ class Section:
     orientation : float, optional
         In-plane material orientation angle in degrees.
     property_id : int or None, optional
-        Property/layer identifier used by mesh cell data and legacy
-        ``mocombos`` compatibility APIs.
+        Internal element->section binding key. It is the integer that tags each
+        element in ``mesh.cell_data["property_id"]`` and keys the legacy
+        ``mocombos`` view; sections read from a mesh are created from it. It is
+        an internal implementation detail, not a user-authored field and not
+        part of the public SG-on-Gmsh serialization contract (the sidecars use
+        ``name``/``id``, never ``property_id``). For the id a section carried in
+        a specific solver file, use :attr:`source_ids` instead.
+    source_ids : dict[str, int], optional
+        Per-format provenance of the integer id this section carried in the
+        solver file it was read from, keyed by format name (e.g.
+        ``{"vabs": 3}``). Enables same-format round-trip fidelity: a writer
+        prefers the remembered id for its format, then fills gaps
+        deterministically. Not user-authored; populated by adapter readers.
     extras : dict[str, Any], optional
         Additional adapter-specific metadata.
     """
@@ -46,4 +57,5 @@ class Section:
     material: str
     orientation: float = 0.0
     property_id: int | None = None
+    source_ids: dict[str, int] = field(default_factory=dict)
     extras: dict[str, Any] = field(default_factory=dict)
