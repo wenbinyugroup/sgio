@@ -376,7 +376,7 @@ def write(
         # Fallback: defer to meshio for formats sgio does not own.
         with open(filename, 'w', encoding='utf-8') as file:
             meshio.write(
-                file, sg.mesh, file_format=file_format,
+                file, sg.mesh.to_meshio(), file_format=file_format,
                 int_fmt=sfi, float_fmt=sff,
             )
         return filename

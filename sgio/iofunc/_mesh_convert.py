@@ -9,7 +9,7 @@ import numpy as np
 
 import sgio.model.solid as smdl
 from sgio.core import StructureGene
-from sgio.core.mesh import Mesh
+from sgio.core.mesh import SGMesh
 from sgio.core.numbering import ensure_node_ids
 
 
@@ -67,7 +67,7 @@ def parse_model_type(model_type: str | int) -> tuple[int, int]:
     return 3, 0
 
 
-def mesh_to_sg(mesh: Mesh, sgdim: int = 3, model_type: str = 'SD1') -> StructureGene:
+def mesh_to_sg(mesh: SGMesh, sgdim: int = 3, model_type: str = 'SD1') -> StructureGene:
     """Convert a meshio Mesh object to a StructureGene object.
 
     Parameters
@@ -131,7 +131,7 @@ def restore_sg_from_mesh_extras(sg: StructureGene, mesh) -> None:
             sg.analysis_config.physics = int(sg_configs['thermal'])
 
 
-def _ensure_mesh_data(mesh: Mesh) -> None:
+def _ensure_mesh_data(mesh: SGMesh) -> None:
     """Ensure required mesh data (node_id, element_id, property_id) exists.
 
     Parameters
@@ -166,7 +166,7 @@ def _ensure_mesh_data(mesh: Mesh) -> None:
             mesh.cell_data['property_id'] = property_id
 
 
-def _process_materials_from_mesh(sg: StructureGene, mesh: Mesh, sgdim: int) -> None:
+def _process_materials_from_mesh(sg: StructureGene, mesh: SGMesh, sgdim: int) -> None:
     """Process materials from mesh field_data and cell_data.
 
     Parameters
@@ -194,7 +194,7 @@ def _process_materials_from_mesh(sg: StructureGene, mesh: Mesh, sgdim: int) -> N
                 sg.mocombos[prop_id] = (mat_name, 0.0)
 
 
-def _build_material_name_map(mesh: Mesh, sgdim: int | None) -> dict[int, str]:
+def _build_material_name_map(mesh: SGMesh, sgdim: int | None) -> dict[int, str]:
     """Build material-name lookup from mesh field data.
 
     Parameters

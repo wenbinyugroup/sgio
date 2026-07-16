@@ -13,7 +13,6 @@ import numpy as np
 from sgio.core import StructureGene
 from sgio.core.mesh import (
     CellBlock,
-    Mesh,
     SGMesh,
     get_cell_data_arrays,
     merge_field_data,
@@ -254,12 +253,12 @@ def write_merged_sections(
         logger.info("Wrote merged sections to %s", written)
         return written
 
-    meshio.write(output_file, merged_mesh, file_format=output_format, **write_kwargs)
+    meshio.write(output_file, merged_mesh.to_meshio(), file_format=output_format, **write_kwargs)
     logger.info("Wrote merged sections to %s", output_path)
     return output_path
 
 
-def _convert_mesh_to_visualization_mesh(mesh: Mesh | None) -> SGMesh:
+def _convert_mesh_to_visualization_mesh(mesh: "meshio.Mesh | SGMesh | None") -> SGMesh:
     """Normalize a generic mesh to visualization conventions."""
     if mesh is None:
         raise ValueError("Section mesh is None")
