@@ -42,10 +42,14 @@ dev = [
     "hatchling>=1.27.0",
     "twine>=6.2.0",
 ]
+pyvista = [
+    "pyvista",  # pulls vtk; enables SGMesh.to_pyvista / from_pyvista + mesh preview
+]
 all = [
     "h5py",
     "netCDF4",
     "pytest",
+    "pyvista",
 ]
 
 [project.scripts]

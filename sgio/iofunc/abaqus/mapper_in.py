@@ -10,11 +10,22 @@ import sgio.model as smdl
 from meshio.abaqus._abaqus import abaqus_to_meshio_type
 
 from sgio._vendors.inprw.inpRW import inpRW
+from sgio.core.fe_model import FEModel
 from sgio.core.mesh import CellBlock, SGMesh
+from sgio.core.section import Orientation, Section
 from sgio.core.sg import StructureGene
 from .._mesh_convert import parse_model_type
 
 logger = logging.getLogger(__name__)
+
+# Route unmapped Abaqus structural keywords (captured by the parser) to their
+# ``FEModel.extras`` fallback keys.
+_STRUCTURAL_EXTRAS_KEYS = {
+    "boundary": "abaqus_boundary",
+    "cload": "abaqus_loads",
+    "dload": "abaqus_loads",
+    "step": "abaqus_steps",
+}
 
 abaqus_to_meshio_type.update({
     "CPE3": "triangle",
@@ -33,24 +44,51 @@ abaqus_to_meshio_type.update({
 INPRW_PRINT = logger.getEffectiveLevel() <= logging.DEBUG
 
 
-def map_input_to_structure_gene(parsed: Mapping[str, Any]) -> StructureGene:
-    """Map parsed Abaqus payload into a ``StructureGene``."""
-    sg = StructureGene()
-    sg.sgdim = int(parsed["sgdim"])
-    sg.smdim, sg.analysis_config.model = parse_model_type(parsed["model"])
+def map_input_to_fe_model(parsed: Mapping[str, Any]) -> FEModel:
+    """Map parsed Abaqus payload into a generic ``FEModel``.
 
-    mesh, materials, mocombos = process_mesh(parsed["inprw"], sgdim=sg.sgdim)
-    sg.mesh = mesh
-    sg.materials = _build_material_models(materials)
-    sg.mocombos = mocombos
+    Single source of the Abaqus input semantics: mesh, materials, sections and
+    named orientations become first-class ``FEModel`` fields; unmapped
+    structural blocks (boundary conditions, loads, steps) are stashed in
+    ``FEModel.extras`` as a non-lossy fallback. See the boundary table in
+    ``architecture/io.md``.
+    """
+    sgdim = int(parsed["sgdim"])
+    mesh, materials, mocombos, orientations = process_mesh(
+        parsed["inprw"], sgdim=sgdim
+    )
+
+    fe = FEModel(name="")
+    fe.mesh = mesh
+    fe.materials = _build_material_models(materials)
+    fe.sections = _build_sections(mocombos)
+    fe.orientations = _build_orientations(orientations)
+    _route_structural_blocks(fe, parsed.get("structural_blocks", {}))
+    return fe
+
+
+def map_input_to_structure_gene(parsed: Mapping[str, Any]) -> StructureGene:
+    """Map parsed Abaqus payload into a ``StructureGene``.
+
+    Delegates the FE-level semantics to :func:`map_input_to_fe_model` and wraps
+    the result with SG-specific dimensions/analysis config.
+    """
+    fe = map_input_to_fe_model(parsed)
+    sg = StructureGene.from_fe(fe, sgdim=int(parsed["sgdim"]))
+    sg.smdim, sg.analysis_config.model = parse_model_type(parsed["model"])
     return sg
 
 
 def process_mesh(
     inprw: inpRW,
     sgdim: int,
-) -> tuple[SGMesh, dict[str, dict[str, Any]], dict[int, tuple[str, float]]]:
-    """Build SG mesh, raw materials, and material combos from ``inpRW`` data."""
+) -> tuple[
+    SGMesh,
+    dict[str, dict[str, Any]],
+    dict[int, tuple[str, float]],
+    dict[str, str],
+]:
+    """Build SG mesh, raw materials, material combos, and named orientations."""
     points = []
     node_ids = []
     nid2pid = {}
@@ -183,7 +221,7 @@ def process_mesh(
         cell_sets=cell_sets,
         cell_data=cell_data,
     )
-    return mesh, materials, mocombos
+    return mesh, materials, mocombos, orientations
 
 
 def _build_material_models(materials: Mapping[str, Mapping[str, Any]]) -> dict[str, smdl.CauchyContinuumModel]:
@@ -236,6 +274,53 @@ def _build_material_models(materials: Mapping[str, Mapping[str, Any]]) -> dict[s
 
         mapped_materials[material_name] = model
     return mapped_materials
+
+
+def _build_sections(mocombos: Mapping[int, tuple[str, float]]) -> dict[str, Section]:
+    """Convert ``{property_id: (material, angle)}`` combos into named sections.
+
+    Mirrors the ``StructureGene.mocombos`` setter so the FEModel path and the
+    legacy SG path produce identical sections.
+    """
+    return {
+        f"section_{int(property_id)}": Section(
+            name=f"section_{int(property_id)}",
+            material=material,
+            orientation=float(angle),
+            property_id=int(property_id),
+        )
+        for property_id, (material, angle) in sorted(mocombos.items())
+    }
+
+
+def _build_orientations(orientations: Mapping[str, str]) -> dict[str, Orientation]:
+    """Promote Abaqus named orientations to first-class ``Orientation`` objects.
+
+    Abaqus orientations are discrete coordinate distributions rather than a
+    single angle; the per-element frame is already carried in
+    ``cell_data['property_ref_csys']``. Here we preserve the *named* entity and
+    its distribution reference so it is not silently lost.
+    """
+    return {
+        name: Orientation(
+            name=name,
+            angle=0.0,
+            extras={"source": "abaqus", "distribution": distribution},
+        )
+        for name, distribution in orientations.items()
+    }
+
+
+def _route_structural_blocks(
+    fe: FEModel,
+    structural_blocks: Mapping[str, list[dict[str, Any]]],
+) -> None:
+    """Stash unmapped structural keyword blocks into ``FEModel.extras``."""
+    for keyword, blocks in structural_blocks.items():
+        extras_key = _STRUCTURAL_EXTRAS_KEYS.get(keyword)
+        if extras_key is None:
+            continue
+        fe.extras.setdefault(extras_key, []).extend(blocks)
 
 
 def _init_cell_data_list(cells: list[CellBlock], default_value: Any = None) -> list[list[Any]]:

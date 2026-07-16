@@ -179,6 +179,41 @@ class StructureGene:
         self.itf_nodes: list = []
         self.node_elements: list = []
 
+    @classmethod
+    def from_fe(
+        cls,
+        fe_model: FEModel,
+        sgdim: Optional[int] = None,
+        smdim: Optional[int] = None,
+        spdim: Optional[int] = None,
+    ) -> 'StructureGene':
+        """Wrap an existing ``FEModel`` into a ``StructureGene``.
+
+        Symmetric to :meth:`StructuralModel.from_fe`: the ``fe_model`` is
+        deep-copied to back the SG's FE core, SG-specific dimensions come from
+        the arguments, and ``analysis_config`` keeps its constructor defaults
+        (to be set by the caller or adapter afterwards).
+
+        Parameters
+        ----------
+        fe_model : FEModel
+            Source finite element model.
+        sgdim : int, optional
+            Dimension of the SG.
+        smdim : int, optional
+            Dimension of the material/structural model.
+        spdim : int, optional
+            Dimension of the space containing the SG. Defaults to ``sgdim``.
+
+        Returns
+        -------
+        StructureGene
+            New structure gene with a deep-copied backing ``FEModel``.
+        """
+        sg = cls(name=fe_model.name, sgdim=sgdim, smdim=smdim, spdim=spdim)
+        sg._fe = copy.deepcopy(fe_model)
+        return sg
+
     @property
     def fe_model(self) -> FEModel:
         """Finite element core model owned by the structure gene."""

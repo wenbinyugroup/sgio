@@ -7,7 +7,7 @@ import meshio
 import sgio.iofunc.swiftcomp as _swiftcomp
 import sgio.iofunc.vabs as _vabs
 import sgio.model as sgmodel
-from sgio.core import StructureGene
+from sgio.core import FEModel, StructureGene
 
 from .base import get_format_registry
 from ._mesh_convert import (
@@ -173,6 +173,49 @@ def read(
         sg.analysis_config.model = submodel
 
     return sg
+
+
+def read_fe_model(
+    filename: str,
+    file_format: str,
+    model_type: str = 'SD1',
+    format_version: str = '',
+    sgdim: int = 3,
+    **kwargs
+) -> FEModel:
+    """Read an input file and return the generic FE core model.
+
+    Explicit entry point for the generic finite-element core model. The
+    current implementation reuses :func:`read` and unwraps its ``fe_model``;
+    for the Abaqus path, ``fe_model.extras`` carries unmapped structural
+    blocks (boundary conditions, loads, steps) captured as a fallback. A
+    future FE-native adapter may return :class:`FEModel` directly here without
+    the ``StructureGene`` wrapping.
+
+    Parameters
+    ----------
+    filename : str
+        Name of the input file.
+    file_format : str
+        Format of the input file.
+        Choose one from 'abaqus', 'vabs', 'sc', 'swiftcomp', 'gmsh'.
+    model_type : str, optional
+        Type of the macro structural model. Default is ``'SD1'``.
+    format_version : str, optional
+        Version of the format.
+    sgdim : int, optional
+        Dimension of the geometry. Default is 3.
+
+    Returns
+    -------
+    FEModel
+        The generic finite-element core model.
+    """
+    sg = read(
+        filename, file_format, model_type=model_type,
+        format_version=format_version, sgdim=sgdim, **kwargs
+    )
+    return sg.fe_model
 
 
 def read_output_model(
@@ -532,6 +575,7 @@ convert = convert_file_format
 
 __all__ = [
     'read',
+    'read_fe_model',
     'read_output',
     'read_output_model',
     'read_output_state',

@@ -345,6 +345,72 @@ class SGMesh:
             info=self.info,
         )
 
+    def to_pyvista(self):
+        """Export this mesh to a ``pyvista.UnstructuredGrid`` for visualization.
+
+        Imports ``pyvista`` lazily (an optional dependency; install with
+        ``pip install sgio[pyvista]``). Geometry, ``point_data`` and
+        ``cell_data`` cross over via the meshio bridge; SG-specific
+        ``cell_point_data`` has no pyvista counterpart and is dropped.
+
+        Returns
+        -------
+        pyvista.UnstructuredGrid
+            Grid ready for ``.plot()`` / preview.
+        """
+        import pyvista
+
+        return pyvista.from_meshio(self.to_meshio())
+
+    @classmethod
+    def from_pyvista(cls, grid) -> "SGMesh":
+        """Build an :class:`SGMesh` from a pyvista dataset.
+
+        Imports ``pyvista`` lazily. The grid is cast to an unstructured grid;
+        each VTK cell type becomes one :class:`CellBlock`, and ``point_data`` /
+        ``cell_data`` are carried over (auto-generated ``vtk*`` bookkeeping
+        arrays are skipped). Cell-data values are split per cell-type block by
+        matching VTK cell types.
+
+        Parameters
+        ----------
+        grid : pyvista.DataSet
+            Source pyvista grid (``UnstructuredGrid`` or castable to one).
+
+        Returns
+        -------
+        SGMesh
+            New mesh with copied geometry and data.
+        """
+        import pyvista  # noqa: F401  (ensures the optional dep is present)
+        from meshio._vtk_common import vtk_to_meshio_type
+
+        grid = grid.cast_to_unstructured_grid()
+        celltypes = np.asarray(grid.celltypes)
+
+        data_names = [name for name in grid.cell_data.keys() if not name.startswith("vtk")]
+        cell_data: dict[str, list] = {name: [] for name in data_names}
+
+        cells = []
+        for vtk_type, connectivity in grid.cells_dict.items():
+            cells.append((vtk_to_meshio_type[int(vtk_type)], np.asarray(connectivity)))
+            mask = celltypes == vtk_type
+            for name in data_names:
+                cell_data[name].append(np.asarray(grid.cell_data[name])[mask])
+
+        point_data = {
+            name: np.asarray(values)
+            for name, values in grid.point_data.items()
+            if not name.startswith("vtk")
+        }
+
+        return cls(
+            points=np.asarray(grid.points),
+            cells=cells,
+            point_data=point_data,
+            cell_data=cell_data,
+        )
+
     def get_cell_block_by_type(self, cell_type):
         """
         """
