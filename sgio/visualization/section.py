@@ -183,19 +183,22 @@ def plot_2d_mesh(
 
 
 def plot_sg_2d(
-    sg, model, ax,
+    sg, ax=None,
     ec_mesh='0.5', fc_mesh='0.9', lw_mesh=0.2,
-    legend_kwards={},
+    show_origin=True,
     **kwargs):
     """
-    Plot a 2D structure gene.
+    Plot the mesh of a 2D structure gene.
+
+    Draws only the section geometry (mesh and, optionally, the origin
+    marker). The constitutive-model overlays (principal bending axes and
+    feature centers) are drawn separately by :func:`plot_model_2d`, so the two
+    can be combined on the same axes or used independently.
 
     Parameters
     ----------
     sg : StructureGene
         The 2D structure gene to be plotted.
-    model : dict
-        The model containing the information of the structure gene.
     ax : matplotlib.axes.Axes
         The axes object to plot on.
     ec_mesh : str, optional
@@ -204,24 +207,57 @@ def plot_sg_2d(
         The face color of the mesh. Default is '0.9'.
     lw_mesh : float, optional
         The line width of the mesh. Default is 0.2.
+    show_origin : bool, optional
+        Whether to mark the section origin (0, 0). Default is True.
     **kwargs : dict, optional
         Additional keyword arguments to pass to matplotlib plotting functions.
     """
-    if sg is None or model is None or ax is None:
-        raise ValueError("Arguments 'sg', 'model', and 'ax' cannot be None")
-
-    handlers = []
-    labels = []
+    if sg is None or ax is None:
+        raise ValueError("Arguments 'sg' and 'ax' cannot be None")
 
     # Plot the mesh
     if not hasattr(sg, 'mesh'):
         raise ValueError("The 'sg' object must have a 'mesh' attribute")
     plot_2d_mesh(ax, sg.mesh, edge_color=ec_mesh, face_color=fc_mesh, line_width=lw_mesh)
 
-    origin = (0, 0)
-    o, = ax.plot(*origin, marker='o', mec='k', mfc='none', markersize=5)
-    # handlers.append(o)
-    # labels.append('Origin')
+    if show_origin:
+        ax.plot(0, 0, marker='o', mec='k', mfc='none', markersize=5)
+
+
+def plot_model_2d(
+    model, ax=None,
+    origin=(0, 0),
+    legend_kwards={},
+    **kwargs):
+    """
+    Plot the constitutive-model overlays of a 2D beam section.
+
+    Draws the principal bending axes and the feature centers (mass / tension /
+    shear) derived from the analysis result. Intended to be combined with
+    :func:`plot_sg_2d`, which draws the underlying section mesh, but can also
+    be used on its own.
+
+    Parameters
+    ----------
+    model : object
+        The constitutive model providing the principal axes (via
+        ``get_axis_angle``) and feature centers (via ``get_center``).
+    ax : matplotlib.axes.Axes
+        The axes object to plot on.
+    origin : tuple of float, optional
+        The section origin through which the principal axes pass. Default is
+        ``(0, 0)``.
+    legend_kwards : dict, optional
+        Keyword arguments forwarded to ``ax.legend``. If empty, a default
+        legend placement is used.
+    **kwargs : dict, optional
+        Additional keyword arguments to pass to matplotlib plotting functions.
+    """
+    if model is None or ax is None:
+        raise ValueError("Arguments 'model' and 'ax' cannot be None")
+
+    handlers = []
+    labels = []
 
     # Plot the principal bending axes
     phi_pba_2 = model.get_axis_angle(SectionAxis.BENDING)
@@ -250,7 +286,6 @@ def plot_sg_2d(
         sc, = ax.plot(*shear_center, ls='none', marker='d', mec='C8', mfc='none', markersize=5)
         handlers.append(sc)
         labels.append('Shear center')
-
 
     # Add a legend
     if legend_kwards:
@@ -836,31 +871,67 @@ def _add_center_traces(
         )
 
 
+def _compose_2d_figure(fig, traces: list, title: str):
+    """Add ``traces`` to a 2D section figure, creating one if needed.
+
+    When ``fig`` is ``None`` a new figure is created with the standard 2D
+    section layout (equal aspect, x2/x3 axis titles); otherwise the traces are
+    appended to the existing figure so :func:`plot_sg_2d_plotly` and
+    :func:`plot_model_2d_plotly` can share one figure.
+
+    Parameters
+    ----------
+    fig : plotly.graph_objects.Figure or None
+        Existing figure to add to, or ``None`` to create a new one.
+    traces : list
+        Plotly traces to add.
+    title : str
+        Figure title, applied only when a new figure is created.
+
+    Returns
+    -------
+    plotly.graph_objects.Figure
+        The figure the traces were added to.
+    """
+    import plotly.graph_objects as go
+
+    if fig is None:
+        layout_dict = dict(
+            title=title,
+            xaxis_title='x2',
+            yaxis_title='x3',
+            # Equal aspect ratio so the section is not distorted.
+            yaxis=dict(scaleanchor='x', scaleratio=1),
+            margin=dict(l=0, r=0, t=40 if title else 10, b=0),
+        )
+        fig = go.Figure(layout=layout_dict)
+    if traces:
+        fig.add_traces(traces)
+    return fig
+
+
 def plot_sg_2d_plotly(
-    sg, model,
+    sg,
     mesh_style: str = 'regions',
     mesh_color: str = 'rgba(30,30,30,0.9)',
     mesh_width: float = 1.5,
-    show_principal_axes: bool = True,
-    pba_scale: float = 0.6,
-    show_centers: bool = True,
     show_origin: bool = True,
+    fig=None,
     output_html: str | Path | None = None,
     title: str = '',
 ):
-    """Plot a single 2D cross-section using plotly (interactive HTML output).
+    """Plot the mesh of a single 2D cross-section using plotly.
 
-    Plotly counterpart of :func:`plot_sg_2d`. Renders the section mesh (as a
-    region outline or full wireframe), the principal bending axes and the
-    feature centers (mass / tension / shear). The trace-building helpers are
-    shared with :func:`plot_sg_3d_beam_plotly`.
+    Plotly counterpart of :func:`plot_sg_2d`. Renders only the section
+    geometry (mesh as a region outline or full wireframe, plus an optional
+    origin marker). The constitutive-model overlays are drawn separately by
+    :func:`plot_model_2d_plotly`; pass its returned ``fig`` between the two (or
+    the same ``fig``) to combine them.
 
     Parameters
     ----------
     sg : StructureGene
         The 2D structure gene to plot; must have a ``mesh`` attribute.
-    model : object
-        Constitutive model with ``get_center`` / ``get_axis_angle`` methods.
     mesh_style : {'regions', 'boundary', 'wireframe'}, optional
         Mesh rendering style; see :func:`_extract_section_edges`. Default
         ``'regions'``.
@@ -868,29 +939,23 @@ def plot_sg_2d_plotly(
         Color string for mesh lines (plotly notation).
     mesh_width : float, optional
         Mesh line width in pixels. Default 1.5.
-    show_principal_axes : bool, optional
-        Whether to draw the principal bending axes. Default True.
-    pba_scale : float, optional
-        Principal-axis segment length as a fraction of half the section's
-        in-plane bounding-box diagonal. Default 0.6.
-    show_centers : bool, optional
-        Whether to draw mass / tension / shear centers. Default True.
     show_origin : bool, optional
         Whether to mark the section origin (0, 0). Default True.
+    fig : plotly.graph_objects.Figure, optional
+        Existing figure to add the mesh traces to. If ``None`` a new figure is
+        created. Default ``None``.
     output_html : str or Path, optional
         If given, the figure is written to this HTML file.
     title : str, optional
-        Optional figure title.
+        Optional figure title (used only when creating a new figure).
 
     Returns
     -------
     plotly.graph_objects.Figure
-        The constructed plotly figure.
+        The figure the mesh was added to.
     """
-    import plotly.graph_objects as go
-
-    if sg is None or model is None:
-        raise ValueError("Arguments 'sg' and 'model' cannot be None")
+    if sg is None:
+        raise ValueError("Argument 'sg' cannot be None")
     if getattr(sg, 'mesh', None) is None:
         raise ValueError("The 'sg' object must have a mesh")
 
@@ -901,14 +966,91 @@ def plot_sg_2d_plotly(
     if segs_2d.shape[0] > 0:
         traces.append(_line_trace(segs_2d, 'Mesh', mesh_color, mesh_width))
 
-    # In-plane half-extent used to size the principal-axis segments.
-    section_pts = sg.mesh.points[:, 1:3]
-    if section_pts.size > 0:
-        plane_range = section_pts.max(axis=0) - section_pts.min(axis=0)
-        half_diag = 0.5 * float(np.linalg.norm(plane_range))
+    # Origin marker.
+    if show_origin:
+        _add_center_traces(
+            traces, [(0.0, 0.0)], 'rgba(80,80,80,0.7)', 'circle-open', 'Origin'
+        )
+
+    fig = _compose_2d_figure(fig, traces, title)
+
+    if output_html is not None:
+        fig.write_html(str(output_html), include_plotlyjs='cdn', full_html=True)
+        logger.info("Wrote 2D plot to %s", output_html)
+
+    return fig
+
+
+def plot_model_2d_plotly(
+    model, sg=None,
+    pba_length: float | None = None,
+    pba_scale: float = 0.6,
+    show_principal_axes: bool = True,
+    show_centers: bool = True,
+    fig=None,
+    output_html: str | Path | None = None,
+    title: str = '',
+):
+    """Plot the constitutive-model overlays of a 2D beam section using plotly.
+
+    Plotly counterpart of :func:`plot_model_2d`. Renders the principal bending
+    axes and the feature centers (mass / tension / shear). Intended to be
+    combined with :func:`plot_sg_2d_plotly` by sharing the ``fig``, but can be
+    used on its own.
+
+    Because the principal-axis segments are drawn with a finite length, their
+    size is taken from ``pba_length`` if given, otherwise from the section
+    in-plane extent (when ``sg`` is provided), otherwise a unit length.
+
+    Parameters
+    ----------
+    model : object
+        Constitutive model with ``get_center`` / ``get_axis_angle`` methods.
+    sg : StructureGene, optional
+        Structure gene whose mesh sets the principal-axis segment length when
+        ``pba_length`` is not given. Default ``None``.
+    pba_length : float, optional
+        Explicit half-length of the principal-axis segments. Overrides the
+        value derived from ``sg``. Default ``None``.
+    pba_scale : float, optional
+        Principal-axis segment length as a fraction of half the section's
+        in-plane bounding-box diagonal (used only when the length is derived
+        from ``sg``). Default 0.6.
+    show_principal_axes : bool, optional
+        Whether to draw the principal bending axes. Default True.
+    show_centers : bool, optional
+        Whether to draw mass / tension / shear centers. Default True.
+    fig : plotly.graph_objects.Figure, optional
+        Existing figure to add the overlay traces to. If ``None`` a new figure
+        is created. Default ``None``.
+    output_html : str or Path, optional
+        If given, the figure is written to this HTML file.
+    title : str, optional
+        Optional figure title (used only when creating a new figure).
+
+    Returns
+    -------
+    plotly.graph_objects.Figure
+        The figure the overlays were added to.
+    """
+    if model is None:
+        raise ValueError("Argument 'model' cannot be None")
+
+    traces: list = []
+
+    # Determine the principal-axis segment half-length.
+    if pba_length is not None:
+        pba_half_len = max(float(pba_length), 1e-9)
+    elif sg is not None and getattr(sg, 'mesh', None) is not None:
+        section_pts = sg.mesh.points[:, 1:3]
+        if section_pts.size > 0:
+            plane_range = section_pts.max(axis=0) - section_pts.min(axis=0)
+            half_diag = 0.5 * float(np.linalg.norm(plane_range))
+        else:
+            half_diag = 1.0
+        pba_half_len = max(pba_scale * half_diag, 1e-9)
     else:
-        half_diag = 1.0
-    pba_half_len = max(pba_scale * half_diag, 1e-9)
+        pba_half_len = 1.0
 
     # Principal bending axes.
     if show_principal_axes:
@@ -926,11 +1068,7 @@ def plot_sg_2d_plotly(
                             'rgba(210,90,90,0.7)', 1.5)
             )
 
-    # Origin and feature centers (single section -> one point each).
-    if show_origin:
-        _add_center_traces(
-            traces, [(0.0, 0.0)], 'rgba(80,80,80,0.7)', 'circle-open', 'Origin'
-        )
+    # Feature centers (single section -> one point each).
     if show_centers:
         _add_center_traces(
             traces, [tuple(model.get_center(SectionCenter.MASS))],
@@ -946,15 +1084,7 @@ def plot_sg_2d_plotly(
                 'rgba(180,160,80,1)', 'cross', 'Shear center',
             )
 
-    layout_dict = dict(
-        title=title,
-        xaxis_title='x2',
-        yaxis_title='x3',
-        # Equal aspect ratio so the section is not distorted.
-        yaxis=dict(scaleanchor='x', scaleratio=1),
-        margin=dict(l=0, r=0, t=40 if title else 10, b=0),
-    )
-    fig = go.Figure(data=traces, layout=layout_dict)
+    fig = _compose_2d_figure(fig, traces, title)
 
     if output_html is not None:
         fig.write_html(str(output_html), include_plotlyjs='cdn', full_html=True)

@@ -10,7 +10,7 @@ neutral axis, shear center, and principal axes.
 """
 import matplotlib.pyplot as plt
 import sgio
-from sgio import plot_sg_2d, plot_matrix, plot_matrix_bar3d
+from sgio import plot_sg_2d, plot_model_2d, plot_matrix, plot_matrix_bar3d
 
 input_file = 'sg21eb_tri3_vabs40.sg'
 output_file = 'sg21eb_tri3_vabs40.sg.K'
@@ -26,8 +26,9 @@ cs = sgio.read(input_file, 'vabs')
 # Create figure and axis
 fig, ax = plt.subplots(figsize=(10, 8))
 
-# Plot cross-section with beam properties overlay
-plot_sg_2d(cs, model, ax)
+# Plot cross-section geometry, then overlay the beam properties
+plot_sg_2d(cs, ax)
+plot_model_2d(model, ax)
 
 # Add labels
 ax.set_xlabel(r'$x_2$ (m)', fontsize=12)
