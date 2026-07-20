@@ -202,3 +202,35 @@ def test_read_sg_from_gmsh_bundle_rejects_duplicate_sidecar_ids(
 
     with pytest.raises(ValueError, match="Duplicate section sidecar id"):
         read_sg_from_gmsh_bundle(gmsh_path, sections_path, None)
+
+
+@pytest.mark.unit
+def test_read_sg_from_gmsh_bundle_rejects_duplicate_sidecar_names(
+    tmp_path: Path,
+    gmsh_test_files,
+):
+    """Duplicate sidecar names should raise instead of assembling ambiguously."""
+    sections_path = tmp_path / "sections.json"
+    gmsh_path = gmsh_test_files["root"] / "sg21_box_quad4_min_gmsh41.msh"
+    payload = {
+        "sections": [
+            {
+                "kind": "material",
+                "theory": "cauchy_continuum",
+                "id": 1,
+                "name": "dup",
+                "payload": {"name": "dup", "id": 1, "isotropy": 0, "e1": 1.0, "nu12": 0.3},
+            },
+            {
+                "kind": "material",
+                "theory": "cauchy_continuum",
+                "id": 2,
+                "name": "dup",
+                "payload": {"name": "dup", "id": 2, "isotropy": 0, "e1": 2.0, "nu12": 0.25},
+            },
+        ]
+    }
+    sections_path.write_text(json.dumps(payload), encoding="utf-8")
+
+    with pytest.raises(ValueError, match="Duplicate section sidecar name"):
+        read_sg_from_gmsh_bundle(gmsh_path, sections_path, None)

@@ -315,7 +315,11 @@ You also need element local coordinate data.
 
 Inside `sgio`, the canonical per-element local coordinate field is:
 
-- `mesh.cell_data["property_ref_csys"]`
+- `mesh.cell_data["element_local_csys"]`
+
+`mesh.cell_data["property_ref_csys"]` is a legacy compatibility alias of the
+same data; it is still readable and writable during migration, but it is no
+longer the canonical name (see {doc}`sg_on_gmsh_spec`).
 
 Its value is a 9-component payload per element:
 
@@ -338,8 +342,12 @@ coordinate information in element data.
 
 In practice, the `.msh` file written by `sgio` contains:
 
+- `element_local_csys`
+  - a 9-component `$ElementData` field
+  - this is the canonical local-coordinate field
 - `property_ref_csys`
   - a 9-component `$ElementData` field
+  - legacy compatibility alias of `element_local_csys`
 - `property_ref_axis_y1`
   - a 3-component `$ElementData` field
 - `property_ref_axis_y2`
@@ -348,7 +356,9 @@ In practice, the `.msh` file written by `sgio` contains:
   - a 3-component `$ElementData` field
 
 The axis fields are mainly for inspection and visualization.
-The canonical field for SG round-trip use is still `property_ref_csys`.
+The canonical field for SG round-trip use is `element_local_csys`;
+`property_ref_csys` is retained only as a readable/writable compatibility
+alias.
 
 So, if a `.msh` file was produced by `sgio`, it already contains the element
 local coordinate data needed for later conversion back to solver input.
@@ -360,7 +370,10 @@ There are two different cases.
 #### Case 1: the `.msh` file was written by `sgio`
 
 This is the easy round-trip case.
-The file already contains SG-specific element data and custom blocks, so:
+The mesh already contains SG-specific element data (region tags and
+`element_local_csys`), and the section payloads and analysis config travel in
+the `sections.json` / `config.json` sidecars described in
+{doc}`sg_on_gmsh_spec`. So:
 
 ```python
 import sgio
@@ -398,12 +411,15 @@ sgio.convert(
 )
 ```
 
-This works because the `.msh` already carries:
+This works because the bundle already carries:
 
-- region IDs,
-- SG layer definitions,
-- SG analysis config,
-- and element local coordinate data.
+- region IDs and element local coordinate data in `main.msh`,
+- section/material payloads in `sections.json`,
+- and SG analysis config in `config.json`.
+
+(Legacy `.msh` files that stored `$SGLayerDef` / `$SGConfig` custom blocks are
+still readable for backward compatibility, but new writers no longer emit
+them.)
 
 #### Case 2: the `.msh` file was created in external CAD + Gmsh
 
@@ -462,14 +478,16 @@ sg.materials["core"] = mat_core
 sg.mocombos[101] = ("skin", 45.0)
 sg.mocombos[102] = ("core", 0.0)
 
-# Optional: attach element-wise local coordinate systems directly
+# Optional: attach element-wise local coordinate systems directly.
+# The canonical field is "element_local_csys"; the helper still returns the
+# same 9-component payload it always did.
 for block_index, prop_ids in enumerate(sg.mesh.cell_data["property_id"]):
     block_csys = []
     for prop_id in prop_ids:
         theta = 45.0 if int(prop_id) == 101 else 0.0
         block_csys.append(vabs_theta_to_property_ref_csys(theta))
-    sg.mesh.cell_data.setdefault("property_ref_csys", [])
-    sg.mesh.cell_data["property_ref_csys"].append(np.asarray(block_csys, dtype=float))
+    sg.mesh.cell_data.setdefault("element_local_csys", [])
+    sg.mesh.cell_data["element_local_csys"].append(np.asarray(block_csys, dtype=float))
 
 sgio.write(
     sg=sg,
@@ -484,7 +502,7 @@ sgio.write(
 If orientation is constant per material region, filling `sg.mocombos` is often
 enough.
 If orientation varies element by element, you should provide
-`mesh.cell_data["property_ref_csys"]` explicitly.
+`mesh.cell_data["element_local_csys"]` explicitly.
 
 ## 3C. How to Preserve Full SG Information
 
@@ -500,8 +518,8 @@ A `.msh` file is a good carrier for:
 - connectivity,
 - physical region IDs,
 - point data,
-- element data,
-- and SGIO custom blocks if the file was written by `sgio`.
+- and element data (including `element_local_csys` when the file was written by
+  `sgio`).
 
 ### What a plain Gmsh file is usually not good at authoring
 
@@ -540,17 +558,20 @@ This is usually the best choice when geometry/mesh generation is external.
 #### Strategy 3: let `sgio` re-export the enriched mesh
 
 After you enrich the mesh with SG metadata in Python, you can write it back out
-through `sgio` to a new `.msh`.
+through `sgio` as an SG-on-Gmsh bundle.
 
-That SG-enriched `.msh` can preserve:
+That bundle preserves:
 
-- physical groups,
-- `$SGLayerDef`,
-- `$SGConfig`,
-- `property_ref_csys`,
-- and local-axis element data.
+- physical groups and `element_local_csys` in `main.msh`,
+- section/material payloads in `sections.json`,
+- and SG analysis config in `config.json`.
 
-This is the best option when you want a Gmsh-based file that can round-trip
+See {doc}`sg_on_gmsh_spec` for the normative bundle contract. The legacy
+single-file layout that embedded `$SGLayerDef` / `$SGConfig` custom blocks is
+readable for backward compatibility only and is no longer produced by new
+writers.
+
+This is the best option when you want a Gmsh-based bundle that can round-trip
 inside the `sgio` ecosystem.
 
 ## 4. Provide Material Definitions for All Regions

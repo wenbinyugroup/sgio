@@ -9,7 +9,7 @@ import tempfile
 import numpy as np
 import pytest
 
-from sgio.core.mesh import SGMesh
+from sgio.core.mesh import CellBlock, SGMesh
 from sgio.core.property_ref_csys import (
     build_property_ref_csys_from_axis_cell_data,
     build_property_ref_axis_cell_data,
@@ -18,6 +18,7 @@ from sgio.core.property_ref_csys import (
     vabs_theta_to_property_ref_csys,
 )
 from sgio.iofunc.gmsh import _gmsh
+from sgio.iofunc.gmsh._gmsh41 import _normalize_local_coordinate_fields
 from sgio.iofunc.gmsh.writer import write_input_payload
 from sgio.iofunc.vabs._mesh import (
     _read_property_id_ref_csys,
@@ -292,6 +293,35 @@ def test_gmsh_reader_rebuilds_element_local_csys_from_axis_fields():
         vabs_theta_to_property_ref_csys(30.0),
         atol=1.0e-12,
     )
+
+
+@pytest.mark.unit
+def test_normalize_local_csys_prefers_element_local_csys_over_property_ref_csys():
+    """When both fields are present with different values, the canonical one wins.
+
+    Locks reader priority step 1 (element_local_csys) over step 2
+    (property_ref_csys) from the SG-on-Gmsh spec.
+    """
+    canonical = vabs_theta_to_property_ref_csys(30.0)
+    legacy = vabs_theta_to_property_ref_csys(75.0)
+    cell_data = {
+        "element_local_csys": [np.array([canonical])],
+        "property_ref_csys": [np.array([legacy])],
+    }
+    cells = [CellBlock("quad", np.array([[0, 1, 2, 3]], dtype=int))]
+
+    _normalize_local_coordinate_fields(cell_data, cells)
+
+    # Canonical field is preserved.
+    np.testing.assert_allclose(
+        cell_data["element_local_csys"][0][0], canonical, atol=1.0e-12
+    )
+    # Compatibility field is overwritten to match the canonical field, not the
+    # differing legacy value it originally held.
+    np.testing.assert_allclose(
+        cell_data["property_ref_csys"][0][0], canonical, atol=1.0e-12
+    )
+    assert not np.allclose(cell_data["property_ref_csys"][0][0], legacy)
 
 
 @pytest.mark.unit

@@ -15,6 +15,7 @@ I/O Functions
     :toctree: _temp
 
     read
+    read_fe_model
     read_output_model
     read_output_state
     merge_sections

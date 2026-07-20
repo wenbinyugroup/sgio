@@ -41,7 +41,12 @@ def test_map_model_to_write_payload_supports_bare_mesh():
 
 @pytest.mark.unit
 def test_map_model_to_write_payload_extracts_structure_gene_metadata():
-    """StructureGene inputs should export material combos and SG config."""
+    """StructureGene inputs forward the mesh, SG dimension and material combos.
+
+    Under the section-sidecar contract the writer payload no longer carries the
+    legacy custom-block metadata (``material_id_map`` / ``sg_configs``); those
+    now live in the ``sections.json`` / ``config.json`` sidecars.
+    """
     sg = sgio.StructureGene()
     sg.sgdim = 2
     sg.smdim = 1
@@ -57,11 +62,8 @@ def test_map_model_to_write_payload_extracts_structure_gene_metadata():
     assert payload["mesh"] is sg.mesh
     assert payload["sgdim"] == 2
     assert payload["mesh_only"] is False
+    assert payload["format_version"] == "4.1"
     assert payload["mocombos"] == {3: ("matrix", 45.0)}
-    assert payload["material_id_map"] == {"matrix": 1}
-    assert payload["sg_configs"] == {
-        "sgdim": 2,
-        "model": 0,
-        "do_damping": 1,
-        "thermal": 1,
-    }
+    # Legacy custom-block metadata must not leak into the mesh payload.
+    assert "material_id_map" not in payload
+    assert "sg_configs" not in payload

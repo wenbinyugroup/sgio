@@ -48,6 +48,67 @@ def test_material_combo_writer_uses_adapter_local_material_ids():
 
 
 @pytest.mark.unit
+def test_build_material_id_map_prefers_source_ids():
+    """Remembered per-format ids should be honored regardless of dict order."""
+    materials = {"a": None, "b": None, "c": None}
+    source_ids = {
+        "a": {"vabs": 2},
+        "b": {"vabs": 3},
+        "c": {"vabs": 1},
+    }
+
+    result = build_material_id_map(materials, source_ids, "vabs")
+
+    assert result == {"a": 2, "b": 3, "c": 1}
+
+
+@pytest.mark.unit
+def test_build_material_id_map_fills_gaps_for_materials_without_provenance():
+    """Materials lacking provenance should fill the smallest free ids in order."""
+    materials = {"a": None, "b": None, "c": None}
+    # Only "b" has a remembered id; "a"/"c" must fill the remaining 1..n gaps.
+    source_ids = {"b": {"vabs": 2}}
+
+    result = build_material_id_map(materials, source_ids, "vabs")
+
+    assert result == {"a": 1, "b": 2, "c": 3}
+
+
+@pytest.mark.unit
+def test_build_material_id_map_ignores_other_format_provenance():
+    """Provenance for a different format must not affect this format's map."""
+    materials = {"a": None, "b": None}
+    source_ids = {"a": {"swiftcomp": 2}, "b": {"swiftcomp": 1}}
+
+    result = build_material_id_map(materials, source_ids, "vabs")
+
+    assert result == {"a": 1, "b": 2}
+
+
+@pytest.mark.unit
+def test_build_material_id_map_falls_back_when_provenance_invalid():
+    """Duplicate or out-of-range remembered ids should force positional numbering."""
+    materials = {"a": None, "b": None}
+
+    # Duplicate remembered id cannot form a valid 1..n assignment.
+    duplicate = {"a": {"vabs": 1}, "b": {"vabs": 1}}
+    assert build_material_id_map(materials, duplicate, "vabs") == {"a": 1, "b": 2}
+
+    # Out-of-range remembered id (> n) is invalid for a 2-material file.
+    out_of_range = {"a": {"vabs": 5}}
+    assert build_material_id_map(materials, out_of_range, "vabs") == {"a": 1, "b": 2}
+
+
+@pytest.mark.unit
+def test_build_material_id_map_without_provenance_is_positional():
+    """Absent provenance keeps the legacy positional numbering (no regression)."""
+    materials = {"a": None, "b": None, "c": None}
+
+    assert build_material_id_map(materials) == {"a": 1, "b": 2, "c": 3}
+    assert build_material_id_map(materials, {}, "vabs") == {"a": 1, "b": 2, "c": 3}
+
+
+@pytest.mark.unit
 def test_restore_sg_from_mesh_extras_uses_mesh_field_names():
     """Gmsh layer definitions should resolve names from mesh field data."""
     mesh = Mesh(

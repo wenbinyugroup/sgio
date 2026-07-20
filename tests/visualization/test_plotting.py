@@ -9,7 +9,7 @@ matplotlib.use('Agg')  # Use non-interactive backend for testing
 import matplotlib.pyplot as plt
 
 import sgio
-from sgio.visualization import plot_sg_2d
+from sgio.visualization import plot_sg_2d, plot_model_2d
 
 
 @pytest.mark.visualization
@@ -21,7 +21,7 @@ def test_plot_sg_2d_basic(test_data_dir):
     This test verifies:
     1. Cross-section can be read from file
     2. Output model can be read
-    3. plot_sg_2d function executes without errors
+    3. plot_sg_2d / plot_model_2d functions execute without errors
     4. Figure and axes are created correctly
     """
     # Use a test file from the test data directory
@@ -47,11 +47,12 @@ def test_plot_sg_2d_basic(test_data_dir):
     # Create figure and axes
     fig, ax = plt.subplots()
     
-    # Plot the cross-section
+    # Plot the cross-section geometry and the model overlays
     try:
-        plot_sg_2d(cs, model, ax)
+        plot_sg_2d(cs, ax)
+        plot_model_2d(model, ax)
     except Exception as e:
-        pytest.fail(f"plot_sg_2d raised an exception: {e}")
+        pytest.fail(f"plotting raised an exception: {e}")
     
     # Verify the plot was created
     assert ax is not None, "Axes should not be None"
@@ -85,10 +86,11 @@ def test_plot_sg_2d_with_properties(test_data_dir):
     model = sgio.read_output_model(str(fn_out), 'vabs', sg=cs)
     
     fig, ax = plt.subplots()
-    
-    # Plot with default settings
-    plot_sg_2d(cs, model, ax)
-    
+
+    # Plot mesh with default settings, then overlay the model properties
+    plot_sg_2d(cs, ax)
+    plot_model_2d(model, ax)
+
     # Verify that lines were added (principal axes, centers, etc.)
     assert len(ax.lines) > 0, "Plot should contain lines for axes and centers"
     
@@ -100,27 +102,27 @@ def test_plot_sg_2d_with_properties(test_data_dir):
 
 @pytest.mark.visualization
 def test_plot_sg_2d_error_handling():
-    """Test error handling in plot_sg_2d function.
-    
+    """Test error handling in plot_sg_2d / plot_model_2d functions.
+
     This test verifies:
-    1. Function raises ValueError for None arguments
-    2. Function raises ValueError for invalid sg object
+    1. Functions raise ValueError for None arguments
     """
     fig, ax = plt.subplots()
-    
-    # Test with None arguments
+
+    # plot_sg_2d requires sg and ax
     with pytest.raises(ValueError, match="cannot be None"):
-        plot_sg_2d(None, None, ax)
-    
+        plot_sg_2d(None, ax)
+
     with pytest.raises(ValueError, match="cannot be None"):
-        plot_sg_2d(None, {}, ax)
-    
+        plot_sg_2d({}, None)
+
+    # plot_model_2d requires model and ax
     with pytest.raises(ValueError, match="cannot be None"):
-        plot_sg_2d({}, None, ax)
-    
+        plot_model_2d(None, ax)
+
     with pytest.raises(ValueError, match="cannot be None"):
-        plot_sg_2d({}, {}, None)
-    
+        plot_model_2d({}, None)
+
     plt.close(fig)
 
 
@@ -147,7 +149,8 @@ def test_plot_sg_2d_euler_bernoulli(test_data_dir):
     model = sgio.read_output_model(str(fn_out), 'vabs', sg=cs)
 
     fig, ax = plt.subplots()
-    plot_sg_2d(cs, model, ax)
+    plot_sg_2d(cs, ax)
+    plot_model_2d(model, ax)
 
     # Just verify it doesn't crash
     assert ax is not None

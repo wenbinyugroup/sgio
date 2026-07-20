@@ -24,7 +24,25 @@ def test_fe_model_is_independently_usable():
     assert fe.materials == {}
     assert fe.sections == {}
     assert fe.orientations == {}
+    assert fe.material_source_ids == {}
     assert fe.extras["source"] == "unit-test"
+
+
+@pytest.mark.unit
+def test_fe_model_material_source_ids_carry_per_format_provenance():
+    """FEModel should hold a per-material, per-format solver-id side map."""
+    fe = FEModel(name="prov")
+
+    assert fe.material_source_ids == {}
+
+    fe.material_source_ids["steel"] = {"vabs": 3}
+    fe.material_source_ids.setdefault("foam", {})["swiftcomp"] = 5
+
+    assert fe.material_source_ids["steel"]["vabs"] == 3
+    assert fe.material_source_ids["foam"]["swiftcomp"] == 5
+
+    # Distinct FEModel instances must not share the default side map.
+    assert FEModel().material_source_ids == {}
 
 
 @pytest.mark.unit

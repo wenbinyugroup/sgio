@@ -18,20 +18,76 @@ from sgio.model.query_types import MatrixKind, TensorComponent
 logger = logging.getLogger(__name__)
 
 
-def build_material_id_map(dict_materials: dict[str, smdl.CauchyContinuumModel]) -> dict[str, int]:
-    """Build a sequential export ID map for materials.
+def build_material_id_map(
+    dict_materials: dict[str, smdl.CauchyContinuumModel],
+    source_ids: dict[str, dict[str, int]] | None = None,
+    format_name: str = "",
+) -> dict[str, int]:
+    """Build a 1-based export ID map for materials (prefer-then-fill).
+
+    When ``source_ids`` provenance is available for ``format_name``, materials
+    keep the integer id they carried in the file they were read from, so a
+    same-format round-trip reproduces the original numbering. Materials without
+    provenance fill the remaining ids deterministically by insertion order.
+
+    Format validity beats fidelity: VABS/SwiftComp require ids to be a
+    contiguous ``1..n``. If the remembered ids cannot form such an assignment
+    (duplicates, out of range), the whole map falls back to positional
+    numbering.
 
     Parameters
     ----------
     dict_materials : dict[str, CauchyContinuumModel]
         Materials indexed by material name.
+    source_ids : dict[str, dict[str, int]] or None, optional
+        Per-material, per-format provenance (``{name: {format: id}}``). When
+        ``None`` or empty the result is pure positional numbering.
+    format_name : str, optional
+        Format key to read from ``source_ids`` (e.g. ``"vabs"``). Ignored when
+        no provenance is supplied.
 
     Returns
     -------
     dict[str, int]
         Mapping from material name to 1-based export ID.
     """
-    return {name: idx + 1 for idx, name in enumerate(dict_materials)}
+    names = list(dict_materials)
+    n = len(names)
+
+    # Positional fallback used when no provenance applies or it is invalid.
+    positional = {name: idx + 1 for idx, name in enumerate(names)}
+    if not source_ids or not format_name:
+        return positional
+
+    # Collect the remembered id for each material that has one for this format.
+    preferred: dict[str, int] = {}
+    for name in names:
+        format_ids = source_ids.get(name)
+        if format_ids and format_name in format_ids:
+            preferred[name] = int(format_ids[format_name])
+
+    # Fidelity is only honored if the remembered ids form a valid partial
+    # 1..n assignment; otherwise fall back to positional numbering.
+    preferred_values = list(preferred.values())
+    is_valid = len(preferred_values) == len(set(preferred_values)) and all(
+        1 <= value <= n for value in preferred_values
+    )
+    if not is_valid:
+        return positional
+
+    # prefer-then-fill: keep remembered ids, fill gaps by insertion order.
+    used = set(preferred.values())
+    result: dict[str, int] = {}
+    next_free = 1
+    for name in names:
+        if name in preferred:
+            result[name] = preferred[name]
+            continue
+        while next_free in used:
+            next_free += 1
+        result[name] = next_free
+        used.add(next_free)
+    return result
 
 
 def write_material_combos(

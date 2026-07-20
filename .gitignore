@@ -67,3 +67,10 @@ tests/*.ELE
 
 *.rpy*
 ABQ*.dmp
+
+# Generated ParaView / VTK visualization outputs
+*.vtm
+*.vtu
+*.vtk
+*.pvd
+examples/view_css_fi_paraview/blade_fi/

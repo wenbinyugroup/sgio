@@ -22,7 +22,7 @@ from .gmsh.bundle import (
 )
 from .main import (
     convert,
-    read, read_load_csv,
+    read, read_fe_model, read_load_csv,
     read_output, read_output_model, read_output_state,
     write
     )
@@ -50,6 +50,7 @@ from . import registry_init
 __all__ = [
     # Main functions
     "read",
+    "read_fe_model",
     "write",
     "convert",
     "read_output",

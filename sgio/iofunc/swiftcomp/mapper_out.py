@@ -30,7 +30,9 @@ def map_structure_gene_to_write_payload(
     sg_for_write.smdim = resolve_model_dimension(model)
 
     if analysis == "h":
-        material_id_map = build_material_id_map(sg_for_write.materials)
+        material_id_map = build_material_id_map(
+            sg_for_write.materials, sg_for_write.fe_model.material_source_ids, "swiftcomp"
+        )
         return {
             "mode": "homogenization",
             "sg": sg_for_write,

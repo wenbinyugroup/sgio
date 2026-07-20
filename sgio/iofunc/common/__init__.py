@@ -27,6 +27,7 @@ from .material_writers import (
     write_displacement_rotation,
     write_load,
 )
+from .provenance import capture_material_and_combo_source_ids
 from .response_writers import (
     write_section_response_displacement,
     write_section_response_load,
@@ -42,6 +43,7 @@ __all__ = [
     'read_material_from_json',
     'read_materials_from_json',
     'build_material_id_map',
+    'capture_material_and_combo_source_ids',
     'write_material_combos',
     'write_material',
     'write_materials',

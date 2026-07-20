@@ -75,6 +75,7 @@ from .model import (
 
 from .iofunc import (
     read,
+    read_fe_model,
     read_output,
     read_output_model,
     read_output_state,
@@ -109,7 +110,9 @@ from .visualization import (
     plot_matrix_bar3d,
     plot_model_matrix,
     plot_sg_2d,
+    plot_model_2d,
     plot_sg_2d_plotly,
+    plot_model_2d_plotly,
     plot_sg_3d_beam,
     plot_sg_3d_beam_plotly,
 )
@@ -123,6 +126,7 @@ __all__ = [
     "configure_logging",
     # I/O functions
     "read",
+    "read_fe_model",
     "read_output",
     "read_output_model",
     "read_output_state",
@@ -175,7 +179,9 @@ __all__ = [
     "plot_matrix_bar3d",
     "plot_model_matrix",
     "plot_sg_2d",
+    "plot_model_2d",
     "plot_sg_2d_plotly",
+    "plot_model_2d_plotly",
     "plot_sg_3d_beam",
     "plot_sg_3d_beam_plotly",
     # Model classes from .model import *

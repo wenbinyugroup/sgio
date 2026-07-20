@@ -1,10 +1,15 @@
 """Mesh data structures for Structure Genome I/O.
 
-Provides the ``SGMesh`` class (a ``meshio.Mesh`` extension that adds
+Provides the ``SGMesh`` class (a backend-neutral mesh container that adds
 ``cell_point_data`` for element-nodal fields) plus a few mesh-level helpers
 (isolated-node detection, cell-ordering checks).
 
-``SGMesh`` itself stores only geometry and standard meshio-style data.
+``SGMesh`` stores only geometry and standard mesh data (points, cell blocks,
+point/cell data). It has **no** ``meshio`` dependency: the core IR can be
+used without ``meshio`` installed. Interop with ``meshio`` is provided by the
+:meth:`SGMesh.from_meshio` / :meth:`SGMesh.to_meshio` bridge methods, which
+import ``meshio`` lazily only when called.
+
 The optional ``point_data['node_id']`` / ``cell_data['element_id']`` fields
 that enable round-trip preservation of original node/element IDs are
 operated on by :mod:`sgio.core.numbering` (validation, mapping,
@@ -15,9 +20,78 @@ See also
 sgio.core.numbering : Dual numbering validation / renumbering utilities.
 dev-notes/architecture/io.md : Background on the dual numbering contract.
 """
-from meshio import Mesh, CellBlock
+from __future__ import annotations
+
+import copy
 from typing import Dict, Tuple, Union
+
 import numpy as np
+
+
+# Topological dimension per cell type. Copied from meshio's canonical table so
+# the core IR can build ``CellBlock`` / ``SGMesh`` without importing meshio.
+topological_dimension = {
+    "line": 1, "polygon": 2, "triangle": 2, "quad": 2, "tetra": 3,
+    "hexahedron": 3, "wedge": 3, "pyramid": 3, "line3": 1, "triangle6": 2,
+    "quad9": 2, "tetra10": 3, "hexahedron27": 3, "wedge18": 3, "pyramid14": 3,
+    "vertex": 0, "quad8": 2, "hexahedron20": 3, "triangle10": 2,
+    "triangle15": 2, "triangle21": 2, "line4": 1, "line5": 1, "line6": 1,
+    "tetra20": 3, "tetra35": 3, "tetra56": 3, "quad16": 2, "quad25": 2,
+    "quad36": 2, "triangle28": 2, "triangle36": 2, "triangle45": 2,
+    "triangle55": 2, "triangle66": 2, "quad49": 2, "quad64": 2, "quad81": 2,
+    "quad100": 2, "quad121": 2, "line7": 1, "line8": 1, "line9": 1,
+    "line10": 1, "line11": 1, "tetra84": 3, "tetra120": 3, "tetra165": 3,
+    "tetra220": 3, "tetra286": 3, "wedge40": 3, "wedge75": 3, "hexahedron64": 3,
+    "hexahedron125": 3, "hexahedron216": 3, "hexahedron343": 3,
+    "hexahedron512": 3, "hexahedron729": 3, "hexahedron1000": 3, "wedge126": 3,
+    "wedge196": 3, "wedge288": 3, "wedge405": 3, "wedge550": 3,
+    "VTK_LAGRANGE_CURVE": 1, "VTK_LAGRANGE_TRIANGLE": 2,
+    "VTK_LAGRANGE_QUADRILATERAL": 2, "VTK_LAGRANGE_TETRAHEDRON": 3,
+    "VTK_LAGRANGE_HEXAHEDRON": 3, "VTK_LAGRANGE_WEDGE": 3,
+    "VTK_LAGRANGE_PYRAMID": 3,
+}
+
+
+class CellBlock:
+    """A block of cells of a single type.
+
+    Backend-neutral counterpart of ``meshio.CellBlock``; carries the same
+    ``type`` / ``data`` / ``dim`` / ``tags`` attributes so adapters and the
+    meshio bridge can treat the two interchangeably.
+
+    Parameters
+    ----------
+    cell_type : str
+        Cell type identifier (e.g. ``'triangle'``, ``'tetra10'``).
+    data : list or numpy.ndarray
+        Connectivity array of shape ``(n_cells, n_nodes_per_cell)``.
+    tags : list of str, optional
+        Optional tags carried through from the source format.
+    """
+
+    def __init__(self, cell_type: str, data, tags: list | None = None):
+        self.type = cell_type
+        self.data = data
+
+        if cell_type.startswith("polyhedron"):
+            self.dim = 3
+        else:
+            self.data = np.asarray(self.data)
+            self.dim = topological_dimension[cell_type]
+
+        self.tags = [] if tags is None else tags
+
+    def __repr__(self):
+        items = [
+            "sgio CellBlock",
+            f"type: {self.type}",
+            f"num cells: {len(self.data)}",
+            f"tags: {self.tags}",
+        ]
+        return "<" + ", ".join(items) + ">"
+
+    def __len__(self):
+        return len(self.data)
 
 
 def _is_element_node_data(dict_data: dict) -> bool:
@@ -79,11 +153,15 @@ def _build_multi_component_cell_point_data(names, dict_data, cell_data_eid):
         result[comp_name] = per_block
     return result
 
-class SGMesh(Mesh):
-    """Extended mesh class that inherits from meshio.Mesh.
+class SGMesh:
+    """Backend-neutral mesh container for Structure Genome I/O.
 
-    This class provides additional functionality and custom format support
-    while maintaining compatibility with the original meshio.Mesh class.
+    Stores geometry (points, cell blocks) and standard mesh data, plus
+    ``cell_point_data`` for element-nodal fields. Attribute layout mirrors
+    ``meshio.Mesh`` so adapters can access ``points`` / ``cells`` /
+    ``point_data`` / ``cell_data`` / ``field_data`` / ``point_sets`` /
+    ``cell_sets`` / ``gmsh_periodic`` / ``info`` uniformly. Interop with
+    ``meshio`` goes through :meth:`from_meshio` / :meth:`to_meshio`.
 
     Attributes
     ----------
@@ -107,16 +185,56 @@ class SGMesh(Mesh):
         cell_point_data=None,
         ):
 
-        super().__init__(
-            points, cells,
-            point_data=point_data,
-            cell_data=cell_data,
-            field_data=field_data,
-            point_sets=point_sets,
-            cell_sets=cell_sets,
-            gmsh_periodic=gmsh_periodic,
-            info=info,
-        )
+        self.points = np.asarray(points)
+
+        # Normalize cells to a list of CellBlock (accept dict or (type, data)
+        # tuples for backward compatibility with the meshio.Mesh signature).
+        if isinstance(cells, dict):
+            cells = list(cells.items())
+
+        self.cells = []
+        for cell_block in cells:
+            if isinstance(cell_block, tuple):
+                cell_type, data = cell_block
+                cell_block = CellBlock(
+                    cell_type,
+                    data if cell_type.startswith("polyhedron") else np.asarray(data),
+                )
+            self.cells.append(cell_block)
+
+        self.point_data = {} if point_data is None else point_data
+        self.cell_data = {} if cell_data is None else cell_data
+        self.field_data = {} if field_data is None else field_data
+        self.point_sets = {} if point_sets is None else point_sets
+        self.cell_sets = {} if cell_sets is None else cell_sets
+        self.gmsh_periodic = gmsh_periodic
+        self.info = info
+
+        # Assert point-data consistency and convert to numpy arrays.
+        for key, item in self.point_data.items():
+            self.point_data[key] = np.asarray(item)
+            if len(self.point_data[key]) != len(self.points):
+                raise ValueError(
+                    f"len(points) = {len(self.points)}, "
+                    f'but len(point_data["{key}"]) = {len(self.point_data[key])}'
+                )
+
+        # Assert cell-data consistency and convert to numpy arrays.
+        for key, data in self.cell_data.items():
+            if len(data) != len(self.cells):
+                raise ValueError(
+                    f"Incompatible cell data '{key}'. "
+                    f"{len(self.cells)} cell blocks, but '{key}' has {len(data)} blocks."
+                )
+            for k in range(len(data)):
+                data[k] = np.asarray(data[k])
+                if len(data[k]) != len(self.cells[k]):
+                    raise ValueError(
+                        "Incompatible cell data. "
+                        + f"Cell block {k} ('{self.cells[k].type}') "
+                        + f"has length {len(self.cells[k])}, but "
+                        + f"corresponding cell data item has length {len(data[k])}."
+                    )
 
         # Initialize cell_point_data (element nodal data)
         self.cell_point_data = {} if cell_point_data is None else cell_point_data
@@ -139,6 +257,159 @@ class SGMesh(Mesh):
                         + f"corresponding cell_point_data item has {len(data[k])} elements."
                     )
 
+
+    def __repr__(self):
+        lines = ["<sgio SGMesh object>", f"  Number of points: {len(self.points)}"]
+        if len(self.cells) > 0:
+            lines.append("  Number of cells:")
+            for cell_block in self.cells:
+                lines.append(f"    {cell_block.type}: {len(cell_block)}")
+        else:
+            lines.append("  No cells.")
+        for label, container in (
+            ("Point data", self.point_data),
+            ("Cell data", self.cell_data),
+            ("Field data", self.field_data),
+            ("Cell point data", self.cell_point_data),
+        ):
+            if container:
+                lines.append(f"  {label}: {', '.join(container.keys())}")
+        return "\n".join(lines)
+
+    def copy(self) -> "SGMesh":
+        """Return a deep copy of this mesh."""
+        return copy.deepcopy(self)
+
+    @classmethod
+    def from_meshio(cls, mesh) -> "SGMesh":
+        """Build an :class:`SGMesh` from a ``meshio.Mesh``.
+
+        Copies geometry and all standard data containers, converting each
+        meshio cell block into an sgio :class:`CellBlock`. ``meshio`` need not
+        be importable here; only the passed object's attributes are read.
+
+        Parameters
+        ----------
+        mesh : meshio.Mesh
+            Source mesh.
+
+        Returns
+        -------
+        SGMesh
+            New mesh with copied data.
+        """
+        cells = [
+            CellBlock(cb.type, np.asarray(cb.data), list(getattr(cb, "tags", []) or []))
+            for cb in mesh.cells
+        ]
+        return cls(
+            points=np.asarray(mesh.points),
+            cells=cells,
+            point_data={k: np.asarray(v) for k, v in dict(mesh.point_data).items()},
+            cell_data={k: list(v) for k, v in dict(mesh.cell_data).items()},
+            field_data=dict(getattr(mesh, "field_data", {}) or {}),
+            point_sets=dict(getattr(mesh, "point_sets", {}) or {}),
+            cell_sets=dict(getattr(mesh, "cell_sets", {}) or {}),
+            gmsh_periodic=getattr(mesh, "gmsh_periodic", None),
+            info=getattr(mesh, "info", None),
+        )
+
+    def to_meshio(self):
+        """Export this mesh to a ``meshio.Mesh``.
+
+        Imports ``meshio`` lazily. Element-nodal ``cell_point_data`` has no
+        meshio counterpart and is dropped; all other containers are passed
+        through. Used at the I/O boundary when handing a mesh to a meshio
+        writer for a format sgio does not own.
+
+        Returns
+        -------
+        meshio.Mesh
+            Equivalent meshio mesh.
+        """
+        import meshio
+
+        cells = [
+            meshio.CellBlock(cb.type, cb.data, list(getattr(cb, "tags", []) or []))
+            for cb in self.cells
+        ]
+        return meshio.Mesh(
+            self.points,
+            cells,
+            point_data=dict(self.point_data),
+            cell_data={k: list(v) for k, v in self.cell_data.items()},
+            field_data=dict(self.field_data),
+            point_sets=dict(self.point_sets),
+            cell_sets=dict(self.cell_sets),
+            gmsh_periodic=self.gmsh_periodic,
+            info=self.info,
+        )
+
+    def to_pyvista(self):
+        """Export this mesh to a ``pyvista.UnstructuredGrid`` for visualization.
+
+        Imports ``pyvista`` lazily (an optional dependency; install with
+        ``pip install sgio[pyvista]``). Geometry, ``point_data`` and
+        ``cell_data`` cross over via the meshio bridge; SG-specific
+        ``cell_point_data`` has no pyvista counterpart and is dropped.
+
+        Returns
+        -------
+        pyvista.UnstructuredGrid
+            Grid ready for ``.plot()`` / preview.
+        """
+        import pyvista
+
+        return pyvista.from_meshio(self.to_meshio())
+
+    @classmethod
+    def from_pyvista(cls, grid) -> "SGMesh":
+        """Build an :class:`SGMesh` from a pyvista dataset.
+
+        Imports ``pyvista`` lazily. The grid is cast to an unstructured grid;
+        each VTK cell type becomes one :class:`CellBlock`, and ``point_data`` /
+        ``cell_data`` are carried over (auto-generated ``vtk*`` bookkeeping
+        arrays are skipped). Cell-data values are split per cell-type block by
+        matching VTK cell types.
+
+        Parameters
+        ----------
+        grid : pyvista.DataSet
+            Source pyvista grid (``UnstructuredGrid`` or castable to one).
+
+        Returns
+        -------
+        SGMesh
+            New mesh with copied geometry and data.
+        """
+        import pyvista  # noqa: F401  (ensures the optional dep is present)
+        from meshio._vtk_common import vtk_to_meshio_type
+
+        grid = grid.cast_to_unstructured_grid()
+        celltypes = np.asarray(grid.celltypes)
+
+        data_names = [name for name in grid.cell_data.keys() if not name.startswith("vtk")]
+        cell_data: dict[str, list] = {name: [] for name in data_names}
+
+        cells = []
+        for vtk_type, connectivity in grid.cells_dict.items():
+            cells.append((vtk_to_meshio_type[int(vtk_type)], np.asarray(connectivity)))
+            mask = celltypes == vtk_type
+            for name in data_names:
+                cell_data[name].append(np.asarray(grid.cell_data[name])[mask])
+
+        point_data = {
+            name: np.asarray(values)
+            for name, values in grid.point_data.items()
+            if not name.startswith("vtk")
+        }
+
+        return cls(
+            points=np.asarray(grid.points),
+            cells=cells,
+            point_data=point_data,
+            cell_data=cell_data,
+        )
 
     def get_cell_block_by_type(self, cell_type):
         """

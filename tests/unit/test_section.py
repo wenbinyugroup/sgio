@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from dataclasses import asdict
+
 import pytest
 
 import sgio
@@ -25,6 +27,33 @@ def test_section_and_orientation_are_independently_usable():
     assert section.material == "mat1"
     assert section.orientation == 45.0
     assert section.property_id == 3
+
+
+@pytest.mark.unit
+def test_section_source_ids_default_empty_and_carry_provenance():
+    """Section should carry an empty per-format source-id map by default."""
+    default_section = Section(name="s", material="m")
+    assert default_section.source_ids == {}
+
+    provenance_section = Section(
+        name="s",
+        material="m",
+        source_ids={"vabs": 3},
+    )
+    assert provenance_section.source_ids == {"vabs": 3}
+    # Serialization should include the new provenance field.
+    assert asdict(provenance_section)["source_ids"] == {"vabs": 3}
+
+
+@pytest.mark.unit
+def test_section_source_ids_are_not_shared_between_instances():
+    """Each Section should get its own source-id map (no mutable default)."""
+    first = Section(name="a", material="m")
+    second = Section(name="b", material="m")
+
+    first.source_ids["vabs"] = 1
+
+    assert second.source_ids == {}
 
 
 @pytest.mark.unit
