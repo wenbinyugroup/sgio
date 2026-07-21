@@ -18,7 +18,7 @@ cross-section, in both the global and material coordinate systems.
 
 To read the data, we need to first read the cross-sectional data using
 {func}`sgio.read`. Then read the local state fields using
-{func}`sgio.readOutputState`. The returned object is a list of `N`
+{func}`sgio.read_output_state`. The returned object is a list of `N`
 {class}`sgio.model.StateCase` objects corresponding to `N` load cases.
 
 ```{literalinclude} ../../../examples/read_vabs_output_d/run.py

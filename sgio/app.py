@@ -152,7 +152,7 @@ def cli(*args: str) -> None:
 
     # Build
     parser = sub_parser.add_parser(
-        Command.BUILD, aliases=['b'], help='Build 1D structural gene.',
+        Command.BUILD.value, aliases=['b'], help='Build 1D structural gene.',
         parents=[logging_args]
         )
     parser.set_defaults(func=Command.BUILD)
@@ -163,7 +163,7 @@ def cli(*args: str) -> None:
 
     # Convert
     parser = sub_parser.add_parser(
-        Command.CONVERT, aliases=['c'], help='Convert CS/SG data file.',
+        Command.CONVERT.value, aliases=['c'], help='Convert CS/SG data file.',
         parents=[logging_args]
         )
     parser.set_defaults(func=Command.CONVERT)

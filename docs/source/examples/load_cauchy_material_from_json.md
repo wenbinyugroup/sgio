@@ -10,13 +10,18 @@ Given a JSON file containing orthotropic material constants (elastic moduli, Poi
 :language: python
 ```
 
-`CauchyContinuumModel(**payload)` validates the JSON payload against the model's field definitions. Call `model_dump_json()` to round-trip back to JSON.
+{func}`sgio.read_material_from_json` parses one standard JSON material record
+and validates it against the model's field definitions, returning a mapping of
+material name to model object. `write_material_to_json` performs the reverse
+round-trip.
 
 ## Result
 
-The script prints the loaded material properties and a pretty-printed JSON serialization to the console. No output file is written.
+The script prints the loaded material, selected engineering constants (`e1`,
+`g12`, `nu12`), and the re-serialized JSON. It also writes `material_out.json`
+next to the script.
 
 ## File List
 
 - [run.py](../../../examples/load_cauchy_material_from_json/run.py): Main Python script
-- [material.json](../../../examples/load_cauchy_material_from_json/material.json): Orthotropic carbon/epoxy material definition
+- [sections.json](../../../examples/load_cauchy_material_from_json/sections.json): Orthotropic carbon/epoxy material definition

@@ -15,6 +15,13 @@ Model
 
 ..  toctree::
     :maxdepth: 1
+    :caption: Constitutive behavior
+
+    constitutive
+
+
+..  toctree::
+    :maxdepth: 1
     :caption: Local states
 
     state

@@ -5,10 +5,9 @@ Cauchy Continuum Model
 
 .. note::
 
-   The legacy dataclass-based ``CauchyContinuumModel`` has been removed.
-   The Pydantic implementation (formerly named ``CauchyContinuumModelNew``)
-   now carries the canonical class name. A compatibility alias named
-   ``CauchyContinuumModelNew`` remains available during the migration window.
+   The legacy dataclass-based ``CauchyContinuumModel`` and the transitional
+   ``CauchyContinuumModelNew`` alias have both been removed. The Pydantic
+   implementation now carries the canonical name ``CauchyContinuumModel``.
 
 .. autoclass:: CauchyContinuumModel
    :members:

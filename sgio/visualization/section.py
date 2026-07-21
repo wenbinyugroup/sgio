@@ -1129,9 +1129,7 @@ def plot_sg_3d_beam_plotly(
         Layout CSV file.
     section_dir : str or Path
         Directory containing section input files.
-    input_format, model_type, file_extension, output_extension,
-    location_column, section_column, axis, show_principal_axes, pba_scale,
-    connect_centers, show_origin_axis
+    input_format, model_type, file_extension, output_extension, location_column, section_column, axis, show_principal_axes, pba_scale, connect_centers, show_origin_axis
         See :func:`plot_sg_3d_beam`.
     mesh_color : str, optional
         Color string for mesh wireframe lines (plotly notation).
