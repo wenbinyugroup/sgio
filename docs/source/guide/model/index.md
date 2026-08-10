@@ -9,7 +9,6 @@ pl_kirchhoff
 pl_reissner
 bm_euler
 bm_timoshenko
-migration_compat
 ```
 
 ## Solid (SD)

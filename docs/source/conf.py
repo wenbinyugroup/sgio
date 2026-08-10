@@ -12,6 +12,7 @@
 #
 import os
 import sys
+from datetime import datetime
 sys.path.append(os.path.abspath(os.path.join('..', '..', 'sgio')))
 sys.path.append(os.path.abspath(os.path.join('..', '..')))
 sys.path.append(os.path.abspath('.'))
@@ -21,7 +22,7 @@ print(f'sys.path: {sys.path}')
 # -- Project information -----------------------------------------------------
 
 project = 'sgio'
-copyright = '2023, su tian'
+copyright = f'{datetime.now().year}, su tian'
 author = 'su tian'
 
 # The full version, including alpha/beta/rc tags

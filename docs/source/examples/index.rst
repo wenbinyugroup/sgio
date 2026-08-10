@@ -38,10 +38,10 @@ Visualization
     merge_section_meshes
     view_css_fi_paraview
 
-Multiscale workflows
---------------------
+.. Multiscale workflows
+.. --------------------
 
-..  toctree::
-    :maxdepth: 1
+.. ..  toctree::
+..     :maxdepth: 1
 
-    multiscale_beam
+..     multiscale_beam
