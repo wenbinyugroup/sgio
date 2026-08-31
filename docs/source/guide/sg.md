@@ -109,6 +109,14 @@ If all regions are isotropic, this angle may be zero everywhere.
 For composites, omitting orientation data usually makes the model physically
 wrong even if conversion succeeds.
 
+For per-element local frames, `mesh.cell_data['property_ref_csys']` stores nine
+values `(a1, a2, a3, b1, b2, b3, c1, c2, c3)`. The points define a local frame:
+`c` is its origin, `a-c` is local `y1`, and `b-c` lies in the local `y1-y2`
+plane. These values always share the same 3D source frame as `mesh.points`.
+When a 2D solver file needs a different coordinate order, the output mapper
+uses `model_space` on a private export mesh; it does not modify the SG held by
+the caller.
+
 ### 5. Structural model selection
 
 The SG must match the intended structural model.
