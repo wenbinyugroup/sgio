@@ -50,6 +50,28 @@ def test_to_pyvista_produces_unstructured_grid():
 
 
 @pytest.mark.unit
+def test_to_pyvista_drops_cross_block_sets_without_mutating_source_mesh():
+    """PyVista conversion must ignore Abaqus-style sets spanning cell blocks."""
+    pytest.importorskip("pyvista")
+
+    mesh = _sample_mesh()
+    mesh.point_sets = {"boundary": np.array([0, 2, 4])}
+    # Abaqus mapper cell sets contain original element IDs rather than meshio's
+    # block-major local indexes. meshio's PyVista bridge cannot convert them.
+    mesh.cell_sets = {"ALL_ELEMENTS": [101, 102, 103]}
+
+    grid = mesh.to_pyvista()
+
+    assert grid.n_points == len(mesh.points)
+    assert grid.n_cells == sum(len(block) for block in mesh.cells)
+    assert "node_id" in grid.point_data
+    assert "property_id" in grid.cell_data
+    assert set(mesh.point_sets) == {"boundary"}
+    np.testing.assert_array_equal(mesh.point_sets["boundary"], np.array([0, 2, 4]))
+    assert mesh.cell_sets == {"ALL_ELEMENTS": [101, 102, 103]}
+
+
+@pytest.mark.unit
 def test_from_pyvista_roundtrips_geometry_and_data():
     """from_pyvista(to_pyvista(mesh)) preserves geometry and per-block data."""
     pytest.importorskip("pyvista")

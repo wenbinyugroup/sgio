@@ -16,6 +16,7 @@ from sgio.core.property_ref_csys import (
     project_property_ref_csys,
     property_ref_csys_to_axes,
     property_ref_csys_to_vabs_theta,
+    resolve_element_local_csys,
     vabs_theta_to_property_ref_csys,
 )
 from sgio.iofunc.gmsh import _gmsh
@@ -270,6 +271,53 @@ def test_build_property_ref_csys_from_axis_cell_data_roundtrips_axes():
     )
 
     np.testing.assert_allclose(rebuilt[0][0], original_blocks[0][0])
+
+
+@pytest.mark.unit
+def test_resolve_element_local_csys_prefers_canonical_data_without_mutation():
+    """Canonical local-csys data must win without changing the source mapping."""
+    canonical = vabs_theta_to_property_ref_csys(30.0)
+    legacy = vabs_theta_to_property_ref_csys(75.0)
+    cell_data = {
+        "element_local_csys": [np.array([canonical])],
+        "property_ref_csys": [np.array([legacy])],
+    }
+    cells = [CellBlock("quad", np.array([[0, 1, 2, 3]], dtype=int))]
+
+    resolved = resolve_element_local_csys(cell_data, cells)
+
+    assert resolved is not None
+    np.testing.assert_allclose(resolved[0][0], canonical)
+    np.testing.assert_allclose(cell_data["property_ref_csys"][0][0], legacy)
+
+
+@pytest.mark.unit
+def test_resolve_element_local_csys_rebuilds_axis_compatibility_data():
+    """Axis compatibility fields must rebuild canonical 9-value cell data."""
+    canonical = vabs_theta_to_property_ref_csys(30.0)
+    cell_data = build_property_ref_axis_cell_data([[canonical]])
+    cells = [CellBlock("quad", np.array([[0, 1, 2, 3]], dtype=int))]
+
+    resolved = resolve_element_local_csys(cell_data, cells)
+
+    assert resolved is not None
+    np.testing.assert_allclose(resolved[0][0], canonical)
+
+
+@pytest.mark.unit
+@pytest.mark.parametrize(
+    ("cell_csys", "match"),
+    [
+        (np.array([[1.0, 2.0]]), "exactly 9 values"),
+        (np.zeros((1, 9)), "points a and c must be distinct"),
+    ],
+)
+def test_resolve_element_local_csys_rejects_invalid_canonical_values(cell_csys, match):
+    """Resolved local coordinate systems must have valid 9-value geometry."""
+    cells = [CellBlock("quad", np.array([[0, 1, 2, 3]], dtype=int))]
+
+    with pytest.raises(ValueError, match=match):
+        resolve_element_local_csys({"element_local_csys": [cell_csys]}, cells)
 
 
 @pytest.mark.unit

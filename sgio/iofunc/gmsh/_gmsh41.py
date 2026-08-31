@@ -7,8 +7,7 @@ import numpy as np
 
 from sgio.core.mesh import SGMesh, CellBlock
 from sgio.core.property_ref_csys import (
-    build_property_ref_csys_from_axis_cell_data,
-    coerce_property_ref_value_to_csys,
+    resolve_element_local_csys,
 )
 
 
@@ -1001,27 +1000,10 @@ def _normalize_local_coordinate_fields(
     cells: list[CellBlock],
 ) -> None:
     """Populate canonical and compatibility local-csys fields on read."""
-    cell_csys = cell_data.get("element_local_csys")
-    if cell_csys is None:
-        cell_csys = cell_data.get("property_ref_csys")
-
-    if cell_csys is None:
-        axis_y1 = cell_data.get("property_ref_axis_y1")
-        axis_y2 = cell_data.get("property_ref_axis_y2")
-        axis_y3 = cell_data.get("property_ref_axis_y3")
-        if axis_y1 is not None and axis_y2 is not None:
-            try:
-                cell_csys = build_property_ref_csys_from_axis_cell_data(axis_y1, axis_y2, axis_y3)
-            except (TypeError, ValueError):
-                cell_csys = None
-
-    if cell_csys is None:
+    normalized = resolve_element_local_csys(cell_data, cells)
+    if normalized is None:
         return
 
-    normalized = [
-        np.asarray([coerce_property_ref_value_to_csys(value) for value in block], dtype=float)
-        for block in cell_csys
-    ]
     cell_data["element_local_csys"] = normalized
     cell_data["property_ref_csys"] = [block.copy() for block in normalized]
 
