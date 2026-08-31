@@ -9,6 +9,8 @@ import numpy as np
 import pytest
 
 import sgio
+from sgio.core.mesh import CellBlock, SGMesh
+from sgio.iofunc.swiftcomp._mesh import write_buffer as sc_write_buffer
 
 
 def _parse_sc_numbers(text: str) -> list[list[float]]:
@@ -85,3 +87,22 @@ def test_write_sc_pl1_from_abaqus(test_data_dir, expected_data_dir, temp_dir):
             act_row, exp_row, rtol=1e-9,
             err_msg=f'Row {i} values differ: got {act_row}, expected {exp_row}'
         )
+
+
+@pytest.mark.io
+@pytest.mark.swiftcomp
+def test_write_sc_rejects_property_reference_csys_with_wrong_size():
+    """SwiftComp orientation output must identify the malformed element payload."""
+    mesh = SGMesh(
+        points=np.array([[0.0, 0.0, 0.0], [1.0, 0.0, 0.0], [0.0, 1.0, 0.0]]),
+        cells=[CellBlock('triangle', np.array([[0, 1, 2]], dtype=int))],
+        point_data={'node_id': np.array([1, 2, 3], dtype=int)},
+        cell_data={
+            'element_id': [np.array([1], dtype=int)],
+            'property_id': [np.array([1], dtype=int)],
+            'property_ref_csys': [np.zeros((1, 6), dtype=float)],
+        },
+    )
+
+    with pytest.raises(ValueError, match='element 1'):
+        sc_write_buffer(StringIO(), mesh, sgdim=2, model_space='xy')

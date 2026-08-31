@@ -8,6 +8,7 @@ from typing import TextIO, List, Dict, Tuple, Optional, Union
 import numpy as np
 
 from sgio.core.mesh import SGMesh
+from sgio.core.property_ref_csys import normalize_property_ref_csys
 from sgio.iofunc._meshio import (
     is_buffer,
     _meshio_to_sg_order,
@@ -639,14 +640,18 @@ def _write_property_ref_csys(file: TextIO, cell_csys: List, cell_id_to_elem_id: 
 
     sfi = '{:' + int_fmt + '}'
     sff = ''.join(['{:' + float_fmt + '}', ]*CSYS_MATRIX_SIZE)
-    c = [0, 0, 0]
-
     for i, block_data in enumerate(cell_csys):
         for j, csys in enumerate(block_data):
             elem_id = cell_id_to_elem_id[i][j]
+            try:
+                values = normalize_property_ref_csys(csys)
+            except ValueError as exc:
+                raise ValueError(
+                    f"Invalid property_ref_csys for element {elem_id}: {exc}"
+                ) from exc
 
             file.write(sfi.format(elem_id))
-            file.write(sff.format(*(list(csys)+c)))
+            file.write(sff.format(*values))
             file.write('\n')
 
     file.write('\n')

@@ -60,6 +60,42 @@ def normalize_property_ref_csys(csys: Iterable[float]) -> np.ndarray:
     return array
 
 
+def project_property_ref_csys(csys: Iterable[float], model_space: str) -> np.ndarray:
+    """Project one local coordinate system into the SwiftComp solver frame.
+
+    Parameters
+    ----------
+    csys : iterable of float
+        Flat 9-value ``(a, b, c)`` point payload in the internal source frame.
+    model_space : str
+        Section plane in the source frame. Supported values are ``''``,
+        ``'xy'``, ``'yz'``, and ``'zx'``.
+
+    Returns
+    -------
+    numpy.ndarray
+        The 9-value point payload after applying the corresponding coordinate
+        permutation to each of ``a``, ``b``, and ``c``.
+
+    Raises
+    ------
+    ValueError
+        If ``model_space`` is unsupported or ``csys`` is not a 9-value payload.
+    """
+    try:
+        idx_x2, idx_x3 = _MODEL_SPACE_TO_VABS_AXIS_INDICES[model_space]
+    except KeyError as exc:
+        raise ValueError(
+            f"Unsupported model_space {model_space!r}; "
+            f"expected one of {sorted(_MODEL_SPACE_TO_VABS_AXIS_INDICES)}."
+        ) from exc
+
+    idx_x1 = next(index for index in range(3) if index not in (idx_x2, idx_x3))
+    permutation = (idx_x1, idx_x2, idx_x3)
+    points = normalize_property_ref_csys(csys).reshape(3, 3)
+    return points[:, permutation].reshape(-1)
+
+
 def property_ref_csys_to_axes(csys: Iterable[float]) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     """Convert one ``property_ref_csys`` payload to orthonormal local axes.
 

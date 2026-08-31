@@ -13,6 +13,7 @@ from sgio.core.mesh import CellBlock, SGMesh
 from sgio.core.property_ref_csys import (
     build_property_ref_csys_from_axis_cell_data,
     build_property_ref_axis_cell_data,
+    project_property_ref_csys,
     property_ref_csys_to_axes,
     property_ref_csys_to_vabs_theta,
     vabs_theta_to_property_ref_csys,
@@ -88,6 +89,37 @@ def test_property_ref_csys_axes_follow_right_handed_definition():
     np.testing.assert_allclose(axis_y1, np.array([1.0, 0.0, 0.0]))
     np.testing.assert_allclose(axis_y2, np.array([0.0, 0.0, 1.0]))
     np.testing.assert_allclose(axis_y3, np.array([0.0, -1.0, 0.0]))
+
+
+@pytest.mark.unit
+@pytest.mark.parametrize(
+    ("model_space", "expected"),
+    [
+        ("", [11.0, 20.0, 30.0, 10.0, 22.0, 30.0, 10.0, 20.0, 30.0]),
+        ("xy", [30.0, 11.0, 20.0, 30.0, 10.0, 22.0, 30.0, 10.0, 20.0]),
+        ("yz", [11.0, 20.0, 30.0, 10.0, 22.0, 30.0, 10.0, 20.0, 30.0]),
+        ("zx", [20.0, 30.0, 11.0, 22.0, 30.0, 10.0, 20.0, 30.0, 10.0]),
+    ],
+)
+def test_project_property_ref_csys_reorders_all_points_with_right_handed_axes(
+    model_space,
+    expected,
+):
+    """Projection must apply the same even coordinate permutation to ``a``, ``b``, and ``c``."""
+    csys = [11.0, 20.0, 30.0, 10.0, 22.0, 30.0, 10.0, 20.0, 30.0]
+
+    projected = project_property_ref_csys(csys, model_space)
+
+    np.testing.assert_allclose(projected, expected)
+    axis_y1, axis_y2, axis_y3 = property_ref_csys_to_axes(projected)
+    np.testing.assert_allclose(np.cross(axis_y1, axis_y2), axis_y3)
+
+
+@pytest.mark.unit
+def test_project_property_ref_csys_rejects_unknown_model_space():
+    """Projection must reject a model-space name that does not define a plane."""
+    with pytest.raises(ValueError, match="Unsupported model_space 'bad'"):
+        project_property_ref_csys(np.arange(9, dtype=float), "bad")
 
 
 @pytest.mark.unit
