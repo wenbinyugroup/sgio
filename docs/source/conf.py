@@ -83,6 +83,9 @@ html_theme = 'pydata_sphinx_theme'
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_title = 'SGIO'
 html_static_path = ['_static']
+html_css_files = [
+    'custom.css',
+]
 
 html_theme_options = {
 #     'site_url': 'https://wenbinyugroup.github.io/sgio/',

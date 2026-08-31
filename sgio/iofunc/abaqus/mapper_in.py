@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from dataclasses import dataclass
 import logging
 from typing import Any, Mapping
 
@@ -12,6 +13,10 @@ from meshio.abaqus._abaqus import abaqus_to_meshio_type
 from sgio._vendors.inprw.inpRW import inpRW
 from sgio.core.fe_model import FEModel
 from sgio.core.mesh import CellBlock, SGMesh
+from sgio.core.property_ref_csys import (
+    axes_to_property_ref_csys,
+    property_ref_csys_to_axes,
+)
 from sgio.core.section import Orientation, Section
 from sgio.core.sg import StructureGene
 from .._mesh_convert import parse_model_type
@@ -42,6 +47,17 @@ abaqus_to_meshio_type.update({
 })
 
 INPRW_PRINT = logger.getEffectiveLevel() <= logging.DEBUG
+
+
+@dataclass(frozen=True)
+class _AbaqusOrientationDefinition:
+    """Normalized Abaqus ``*Orientation`` definition for mapper use."""
+
+    name: str
+    coordinates: tuple[float, ...] | None
+    distribution: str | None
+    rotation_axis: int
+    rotation_angle: float
 
 
 def map_input_to_fe_model(parsed: Mapping[str, Any]) -> FEModel:
@@ -86,7 +102,7 @@ def process_mesh(
     SGMesh,
     dict[str, dict[str, Any]],
     dict[int, tuple[str, float]],
-    dict[str, str],
+    dict[str, _AbaqusOrientationDefinition],
 ]:
     """Build SG mesh, raw materials, material combos, and named orientations."""
     points = []
@@ -146,17 +162,26 @@ def process_mesh(
                 cell_sets[set_name].extend(row)
 
     distributions: dict[str, dict[int, list[float]]] = {}
+    distribution_defaults: dict[str, list[float]] = {}
     for distr_block in inprw.findKeyword("distribution", printOutput=INPRW_PRINT):
-        distr_name = distr_block.parameter["name"]._value
+        distr_name = str(
+            getattr(distr_block.parameter["name"], "_value", distr_block.parameter["name"])
+        )
         distributions.setdefault(distr_name, {})
-        for row_index in range(1, len(distr_block.data)):
-            elem_id = distr_block.data[row_index][0]
-            distributions[distr_name][elem_id] = list(map(float, distr_block.data[row_index][1:]))
+        for row in distr_block.data:
+            row_key = row[0]
+            coordinates = list(map(float, row[1:]))
+            if isinstance(row_key, str) and getattr(row_key, "_value", row_key) == "":
+                distribution_defaults[distr_name] = coordinates
+            else:
+                distributions[distr_name][int(row_key)] = coordinates
 
-    orientations: dict[str, str] = {}
+    orientations: dict[str, _AbaqusOrientationDefinition] = {}
     for orient_block in inprw.findKeyword("orientation", printOutput=INPRW_PRINT):
-        orient_name = orient_block.parameter["name"]._value
-        orientations[orient_name] = orient_block.data[0][0]._value
+        orient_name = str(
+            getattr(orient_block.parameter["name"], "_value", orient_block.parameter["name"])
+        )
+        orientations[orient_name] = _parse_orientation_definition(orient_block, orient_name)
 
     materials: dict[str, dict[str, Any]] = {}
     for material_block in inprw.findKeyword("material", printOutput=INPRW_PRINT):
@@ -165,7 +190,7 @@ def process_mesh(
     cell_prop_ids: dict[int, list[int]] = {}
     used_materials: list[str] = []
     mocombos: dict[int, tuple[str, float]] = {}
-    used_orientations: list[str] = []
+    orientation_element_ids: dict[str, set[int]] = {}
 
     for section_block in inprw.findKeyword("solid section", printOutput=INPRW_PRINT):
         _process_section(
@@ -175,7 +200,7 @@ def process_mesh(
             cell_sets,
             cell_prop_ids,
             used_materials,
-            used_orientations,
+            orientation_element_ids,
         )
     for section_block in inprw.findKeyword("shell section", printOutput=INPRW_PRINT):
         _process_section(
@@ -185,20 +210,14 @@ def process_mesh(
             cell_sets,
             cell_prop_ids,
             used_materials,
-            used_orientations,
+            orientation_element_ids,
         )
 
     cells_tuple = [CellBlock(cell_type, np.asarray(cell_rows, dtype=int)) for cell_type, cell_rows in cells]
     cell_data = {
         "element_id": [cell_elem_ids[cell_type] for cell_type in cell_types],
         "property_id": _init_cell_data_list(cells_tuple, None),
-        # Default local frame for 2D sections: section normal along Abaqus +z,
-        # local y2 along Abaqus +x. Stored in source (Abaqus) frame; the VABS
-        # writer projects to theta_1 via model_space.
-        "property_ref_csys": _init_cell_data_list(
-            cells_tuple,
-            [0, 0, 1, 1, 0, 0, 0, 0, 0],
-        ),
+        "property_ref_csys": _init_cell_data_list(cells_tuple, _default_property_ref_csys(sgdim)),
     }
 
     for prop_id, elem_ids in cell_prop_ids.items():
@@ -206,12 +225,43 @@ def process_mesh(
             cell_block_index, cell_index = eid2cid[elem_id]
             cell_data["property_id"][cell_block_index][cell_index] = prop_id
 
-    for orient_name in used_orientations:
-        distribution_name = orientations[orient_name]
-        for elem_id, coords in distributions[distribution_name].items():
+    for orient_name, elem_ids in orientation_element_ids.items():
+        if orient_name not in orientations:
+            raise ValueError(
+                f"Abaqus section references unknown orientation {orient_name!r}."
+            )
+        orientation = orientations[orient_name]
+        if orientation.coordinates is not None:
+            coordinates_by_element = {elem_id: orientation.coordinates for elem_id in elem_ids}
+        else:
+            distribution_name = orientation.distribution
+            if distribution_name not in distributions:
+                raise ValueError(
+                    f"Abaqus orientation {orient_name!r} references unknown distribution "
+                    f"{distribution_name!r}."
+                )
+            coordinates_by_element = {}
+            for elem_id in elem_ids:
+                coordinates = distributions[distribution_name].get(
+                    elem_id,
+                    distribution_defaults.get(distribution_name),
+                )
+                if coordinates is None:
+                    raise ValueError(
+                        f"Abaqus orientation {orient_name!r} has no coordinates for "
+                        f"element {elem_id}."
+                    )
+                coordinates_by_element[elem_id] = coordinates
+
+        for elem_id, coords in coordinates_by_element.items():
             cell_block_index, cell_index = eid2cid[elem_id]
             cell_data["property_ref_csys"][cell_block_index][cell_index] = (
-                _map_distribution_coords_to_property_ref_csys(coords, sgdim)
+                _map_orientation_coords_to_property_ref_csys(
+                    coords,
+                    sgdim,
+                    orientation.rotation_axis,
+                    orientation.rotation_angle,
+                )
             )
 
     mesh = SGMesh(
@@ -293,7 +343,9 @@ def _build_sections(mocombos: Mapping[int, tuple[str, float]]) -> dict[str, Sect
     }
 
 
-def _build_orientations(orientations: Mapping[str, str]) -> dict[str, Orientation]:
+def _build_orientations(
+    orientations: Mapping[str, _AbaqusOrientationDefinition],
+) -> dict[str, Orientation]:
     """Promote Abaqus named orientations to first-class ``Orientation`` objects.
 
     Abaqus orientations are discrete coordinate distributions rather than a
@@ -304,10 +356,21 @@ def _build_orientations(orientations: Mapping[str, str]) -> dict[str, Orientatio
     return {
         name: Orientation(
             name=name,
-            angle=0.0,
-            extras={"source": "abaqus", "distribution": distribution},
+            angle=definition.rotation_angle,
+            extras={
+                "source": "abaqus",
+                "definition": (
+                    "coordinates" if definition.coordinates is not None else "distribution"
+                ),
+                "axis": definition.rotation_axis,
+                **(
+                    {"coordinates": list(definition.coordinates)}
+                    if definition.coordinates is not None
+                    else {"distribution": definition.distribution}
+                ),
+            },
         )
-        for name, distribution in orientations.items()
+        for name, definition in orientations.items()
     }
 
 
@@ -328,44 +391,177 @@ def _init_cell_data_list(cells: list[CellBlock], default_value: Any = None) -> l
     return [[default_value] * len(cell_block.data) for cell_block in cells]
 
 
-def _map_distribution_coords_to_property_ref_csys(
-    coords: list[float],
+def _default_property_ref_csys(sgdim: int) -> list[float]:
+    """Return the Abaqus-frame default property reference coordinate system."""
+    if sgdim == 2:
+        return [0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    return [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0]
+
+
+def _parse_orientation_definition(
+    orientation_block: Any,
+    orientation_name: str,
+) -> _AbaqusOrientationDefinition:
+    """Normalize a direct or distributed Abaqus orientation definition."""
+    parameters = orientation_block.parameter
+    definition = _orientation_parameter_value(parameters, "definition", "COORDINATES")
+    system = _orientation_parameter_value(parameters, "system", "RECTANGULAR")
+    if definition != "COORDINATES" or system != "RECTANGULAR":
+        raise ValueError(
+            f"Abaqus orientation {orientation_name!r} supports only "
+            f"DEFINITION=COORDINATES with SYSTEM=RECTANGULAR "
+            f"(got definition={definition!r}, system={system!r})."
+        )
+    if "local directions" in parameters or "dispersion" in parameters:
+        raise ValueError(
+            f"Abaqus orientation {orientation_name!r} with LOCAL DIRECTIONS or DISPERSION "
+            "is not supported."
+        )
+
+    first_row = orientation_block.data[0]
+    first_value = first_row[0]
+    rotation_axis = 1
+    rotation_angle = 0.0
+    if len(orientation_block.data) > 1:
+        rotation_axis = int(orientation_block.data[1][0])
+        rotation_angle = float(orientation_block.data[1][1])
+
+    if isinstance(first_value, str):
+        return _AbaqusOrientationDefinition(
+            name=orientation_name,
+            coordinates=None,
+            distribution=str(getattr(first_value, "_value", first_value)),
+            rotation_axis=rotation_axis,
+            rotation_angle=rotation_angle,
+        )
+
+    coordinates = tuple(float(value) for value in first_row)
+    if len(coordinates) not in (6, 9):
+        raise ValueError(
+            f"Abaqus orientation {orientation_name!r} must contain 6 or 9 direct "
+            f"coordinates (got {len(coordinates)})."
+        )
+    return _AbaqusOrientationDefinition(
+        name=orientation_name,
+        coordinates=coordinates,
+        distribution=None,
+        rotation_axis=rotation_axis,
+        rotation_angle=rotation_angle,
+    )
+
+
+def _orientation_parameter_value(parameters: Mapping[str, Any], name: str, default: str) -> str:
+    """Return one normalized Abaqus orientation keyword parameter."""
+    value = parameters.get(name)
+    if value is None:
+        return default
+    return str(getattr(value, "_value", value)).strip().upper()
+
+
+def _map_orientation_coords_to_property_ref_csys(
+    coords: list[float] | tuple[float, ...],
     sgdim: int,
+    rotation_axis: int,
+    rotation_angle: float,
 ) -> list[float]:
-    """Map one Abaqus discrete-orientation record into ``property_ref_csys``.
+    """Map one Abaqus orientation record into ``property_ref_csys``.
 
     Parameters
     ----------
-    coords : list of float
-        Abaqus ``coord3D, coord3D`` payload: two direction vectors.
+    coords : list of float or tuple of float
+        Abaqus ``coord3D, coord3D`` payload, with optional origin ``c``.
     sgdim : int
         Structure-gene dimension.
+    rotation_axis : int
+        Abaqus local axis for the additional rotation.
+    rotation_angle : float
+        Abaqus additional rotation in degrees.
 
     Returns
     -------
     list of float
         Internal 9-value ``(a, b, c)`` representation in the source (Abaqus)
-        frame. For ``sgdim == 2`` the section lives in the Abaqus ``xy``
-        plane, so the local ``y1`` axis is the section normal ``+z`` and the
-        first Abaqus direction defines the local ``y2`` direction. The VABS
-        writer projects this into ``theta_1`` using ``model_space='xy'``.
+        frame.
     """
-    if len(coords) != 6:
+    if len(coords) not in (6, 9):
         raise ValueError(
-            "Abaqus discrete orientation must contain 6 values "
+            "Abaqus orientation must contain 6 or 9 values "
             f"(got {len(coords)})."
         )
 
-    axis_1 = np.asarray(coords[:3], dtype=float)
-    axis_2 = np.asarray(coords[3:6], dtype=float)
-    point_c = np.zeros(3, dtype=float)
+    point_c = (
+        np.zeros(3, dtype=float)
+        if len(coords) == 6
+        else np.asarray(coords[6:9], dtype=float)
+    )
+    raw_csys = np.concatenate((np.asarray(coords[:6], dtype=float), point_c))
+    axis_y1, axis_y2, axis_y3 = property_ref_csys_to_axes(raw_csys)
+    axis_y1, axis_y2, axis_y3 = _rotate_orientation_axes(
+        axis_y1,
+        axis_y2,
+        axis_y3,
+        rotation_axis,
+        rotation_angle,
+    )
 
     if sgdim == 2:
-        point_a = np.array([0.0, 0.0, 1.0], dtype=float)
-        point_b = axis_1
-        return list(np.concatenate((point_a, point_b, point_c)))
+        if rotation_axis == 1 and rotation_angle != 0.0:
+            raise ValueError(
+                "Abaqus 2D orientation rotation about local axis 1 is unsupported "
+                "because it tilts the section normal."
+            )
+        if rotation_axis == 2 and rotation_angle != 0.0:
+            raise ValueError(
+                "Abaqus 2D orientation rotation about local axis 2 requires "
+                "section/material combo assignment and is not supported."
+            )
+        property_csys = axes_to_property_ref_csys(axis_y3, axis_y1, axis_y2)
+    else:
+        property_csys = axes_to_property_ref_csys(axis_y1, axis_y2, axis_y3)
 
-    return list(np.concatenate((axis_1, axis_2, point_c)))
+    return list(_translate_property_ref_csys(property_csys, point_c))
+
+
+def _rotate_orientation_axes(
+    axis_y1: np.ndarray,
+    axis_y2: np.ndarray,
+    axis_y3: np.ndarray,
+    rotation_axis: int,
+    rotation_angle: float,
+) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """Rotate one right-handed Abaqus local basis about one local axis."""
+    if rotation_axis not in (1, 2, 3):
+        raise ValueError(
+            f"Abaqus orientation rotation axis must be 1, 2, or 3 (got {rotation_axis})."
+        )
+    if rotation_angle == 0.0:
+        return axis_y1, axis_y2, axis_y3
+
+    axes = (axis_y1, axis_y2, axis_y3)
+    rotation_vector = axes[rotation_axis - 1]
+    angle_rad = np.deg2rad(rotation_angle)
+    cross_matrix = np.array(
+        [
+            [0.0, -rotation_vector[2], rotation_vector[1]],
+            [rotation_vector[2], 0.0, -rotation_vector[0]],
+            [-rotation_vector[1], rotation_vector[0], 0.0],
+        ]
+    )
+    rotation_matrix = (
+        np.eye(3)
+        + np.sin(angle_rad) * cross_matrix
+        + (1.0 - np.cos(angle_rad)) * (cross_matrix @ cross_matrix)
+    )
+    return (
+        rotation_matrix @ axis_y1,
+        rotation_matrix @ axis_y2,
+        rotation_matrix @ axis_y3,
+    )
+
+
+def _translate_property_ref_csys(csys: np.ndarray, point_c: np.ndarray) -> np.ndarray:
+    """Translate a canonical origin-zero coordinate system to ``point_c``."""
+    return (np.asarray(csys, dtype=float).reshape(3, 3) + point_c).reshape(-1)
 
 
 def _process_material(material_block: Any, inprw: inpRW, materials: dict[str, dict[str, Any]]) -> None:
@@ -403,7 +599,7 @@ def _process_section(
     cell_sets: Mapping[str, list[int]],
     cell_prop_ids: dict[int, list[int]],
     used_materials: list[str],
-    used_orientations: list[str],
+    orientation_element_ids: dict[str, set[int]],
 ) -> None:
     """Extract one Abaqus section block into property/material assignments."""
     params = section_block.parameter
@@ -415,8 +611,9 @@ def _process_section(
     material_name = material_name._value
 
     orient_name = params.get("orientation")
-    if orient_name is not None and orient_name._value not in used_orientations:
-        used_orientations.append(orient_name._value)
+    if orient_name is not None:
+        orientation_name = str(getattr(orient_name, "_value", orient_name))
+        orientation_element_ids.setdefault(orientation_name, set()).update(cell_sets[elset_name])
 
     angle = 0.0
     try:

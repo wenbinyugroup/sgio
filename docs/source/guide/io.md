@@ -185,7 +185,11 @@ These formats support full Structure Gene data (mesh + materials + properties):
 - Format identifier: `'abaqus'`
 - File extension: `.inp`
 - Use for: Import from Abaqus CAE
-- Supports: Material properties, element sets, node sets
+- Supports: Material properties, element sets, node sets, and rectangular
+  `*Orientation` definitions. An orientation can use direct six/nine-value
+  coordinates or an element distribution; it applies only to the section's
+  element set. Unsupported Abaqus orientation systems and definitions report a
+  `ValueError` instead of being silently interpreted as rectangular.
 
 ### Format Conversion Matrix
 

@@ -41,6 +41,22 @@ class TestAbaqusFeModelMapping:
         # Distribution reference is preserved, not silently dropped.
         assert orient.extras["distribution"]
 
+    def test_promotes_named_direct_orientation(self, abaqus_test_files):
+        """A named direct orientation preserves its source definition in FEModel."""
+        fixture = abaqus_test_files["root"] / "sg33_ud_fiber_direct_orientation_bug.inp"
+        parsed = parse_input_file(str(fixture), sgdim=3, model="SD1")
+
+        fe = map_input_to_fe_model(parsed)
+
+        orient = fe.orientations["Ori-1"]
+        assert orient.angle == pytest.approx(0.0)
+        assert orient.extras == {
+            "source": "abaqus",
+            "definition": "coordinates",
+            "axis": 3,
+            "coordinates": [1.0, 0.0, 0.0, 0.0, 1.0, 0.0],
+        }
+
     def test_routes_structural_blocks_to_extras(self, abaqus_test_files):
         fixture = abaqus_test_files["root"] / "sg31_rec_ori_discrete.inp"
         parsed = parse_input_file(str(fixture), sgdim=3, model="SD1")

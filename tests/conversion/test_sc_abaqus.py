@@ -9,8 +9,9 @@ import numpy as np
 import pytest
 import yaml
 
-from sgio import convert, configure_logging, logger
-from sgio.core.mesh import SGMesh
+import sgio
+from sgio import convert, configure_logging, logger, read, write
+from sgio.core.mesh import CellBlock, SGMesh
 from sgio.iofunc.swiftcomp._mesh import write_buffer as sc_write_buffer
 
 configure_logging(cout_level='info')
@@ -46,6 +47,34 @@ def _mesh_with_nonconsecutive_ids() -> SGMesh:
     point_data = {'node_id': np.array([10, 20, 30])}
     cell_data = {'property_id': [np.array([1])]}
     return SGMesh(points, cells, point_data=point_data, cell_data=cell_data)
+
+
+def _model_space_yz_structure_gene() -> "sgio.StructureGene":
+    """Build a 2D SG stored in the internal ``yz`` source frame."""
+    sg = sgio.StructureGene(sgdim=2)
+    sg.mesh = SGMesh(
+        points=np.array(
+            [
+                [0.0, 0.0, 0.0],
+                [0.0, 1.0, 0.0],
+                [0.0, 0.0, 1.0],
+            ]
+        ),
+        cells=[CellBlock("triangle", np.array([[0, 1, 2]], dtype=int))],
+        point_data={"node_id": np.array([1, 2, 3], dtype=int)},
+        cell_data={
+            "element_id": [np.array([1], dtype=int)],
+            "property_id": [np.array([1], dtype=int)],
+            "property_ref_csys": [
+                np.array([[1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0]])
+            ],
+        },
+    )
+    sg.materials = {
+        "matrix": sgio.CauchyContinuumModel(name="matrix", e1=1.0, nu12=0.3)
+    }
+    sg.mocombos[1] = ("matrix", 0.0)
+    return sg
 
 
 @pytest.mark.conversion
@@ -125,3 +154,49 @@ def test_swiftcomp_emits_warning_on_renumber():
     f = StringIO()
     with pytest.warns(UserWarning, match='[Nn]ode'):
         sc_write_buffer(f, mesh, sgdim=2, model_space='xy')
+
+
+@pytest.mark.conversion
+@pytest.mark.swiftcomp
+def test_swiftcomp_roundtrip_preserves_yz_model_space(tmp_path: Path):
+    """A SwiftComp 2D model already in ``yz`` must not drift on SC-to-SC I/O."""
+    source = tmp_path / "source.sg"
+    roundtrip = tmp_path / "roundtrip.sg"
+    sg = _model_space_yz_structure_gene()
+
+    write(
+        sg,
+        str(source),
+        file_format="sc",
+        format_version="2.1",
+        model_type="PL1",
+        model_space="yz",
+    )
+    parsed = read(
+        str(source),
+        file_format="sc",
+        format_version="2.1",
+        model_type="PL1",
+        sgdim=2,
+    )
+    write(
+        parsed,
+        str(roundtrip),
+        file_format="sc",
+        format_version="2.1",
+        model_type="PL1",
+        model_space="yz",
+    )
+    reparsed = read(
+        str(roundtrip),
+        file_format="sc",
+        format_version="2.1",
+        model_type="PL1",
+        sgdim=2,
+    )
+
+    np.testing.assert_allclose(reparsed.mesh.points, parsed.mesh.points)
+    np.testing.assert_allclose(
+        reparsed.mesh.cell_data["property_ref_csys"][0],
+        parsed.mesh.cell_data["property_ref_csys"][0],
+    )
