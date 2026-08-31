@@ -2,11 +2,171 @@
 
 from __future__ import annotations
 
+import numpy as np
 import pytest
 
-from sgio.core.property_ref_csys import property_ref_value_to_vabs_theta
+from sgio.core.property_ref_csys import (
+    property_ref_csys_to_axes,
+    property_ref_value_to_vabs_theta,
+)
 from sgio.iofunc.abaqus.mapper_in import map_input_to_structure_gene
 from sgio.iofunc.abaqus.parser import parse_input_file
+
+
+def _write_direct_orientation_input(
+    tmp_path,
+    orientation_options: str = "",
+    rotation_axis: int = 3,
+    rotation_angle: float = 0.0,
+) -> str:
+    """Write one minimal 3D Abaqus input with a direct orientation origin."""
+    filename = tmp_path / "direct_orientation.inp"
+    filename.write_text(
+        f"""*Heading
+*Part, name=RVE
+*Node
+1, 0., 0., 0.
+2, 1., 0., 0.
+3, 0., 1., 0.
+4, 0., 0., 1.
+5, 1., 1., 1.
+*Element, type=C3D4, elset=FIBRE
+1, 1, 2, 3, 4
+*Element, type=C3D4, elset=MATRIX
+2, 2, 3, 4, 5
+*Material, name=FIBRE_MAT
+*Elastic
+1.0, 0.3
+*Material, name=MATRIX_MAT
+*Elastic
+1.0, 0.3
+*Orientation, name=FIBRE_ORIENTATION{orientation_options}
+2., 1., 0., 1., 3., 0., 1., 1., 0.
+{rotation_axis}, {rotation_angle}
+*Solid Section, elset=FIBRE, material=FIBRE_MAT, orientation=FIBRE_ORIENTATION
+,
+*Solid Section, elset=MATRIX, material=MATRIX_MAT
+,
+*End Part
+""",
+        encoding="utf-8",
+    )
+    return str(filename)
+
+
+def _write_2d_direct_orientation_input(tmp_path, rotation_axis: int) -> str:
+    """Write a minimal 2D input with one additional orientation rotation."""
+    filename = tmp_path / "direct_orientation_2d.inp"
+    filename.write_text(
+        f"""*Heading
+*Part, name=RVE
+*Node
+1, 0., 0.
+2, 1., 0.
+3, 1., 1.
+4, 0., 1.
+*Element, type=CPE4, elset=FIBRE
+1, 1, 2, 3, 4
+*Material, name=FIBRE_MAT
+*Elastic
+1.0, 0.3
+*Orientation, name=FIBRE_ORIENTATION
+1., 0., 0., 0., 1., 0.
+{rotation_axis}, 45.
+*Solid Section, elset=FIBRE, material=FIBRE_MAT, orientation=FIBRE_ORIENTATION
+,
+*End Part
+""",
+        encoding="utf-8",
+    )
+    return str(filename)
+
+
+def _write_2d_direct_orientation_without_rotation(tmp_path) -> str:
+    """Write a minimal 2D input using Abaqus's default axis and angle."""
+    filename = tmp_path / "direct_orientation_2d_default_rotation.inp"
+    filename.write_text(
+        """*Heading
+*Part, name=RVE
+*Node
+1, 0., 0.
+2, 1., 0.
+3, 1., 1.
+4, 0., 1.
+*Element, type=CPE4, elset=FIBRE
+1, 1, 2, 3, 4
+*Material, name=FIBRE_MAT
+*Elastic
+1.0, 0.3
+*Orientation, name=FIBRE_ORIENTATION
+1., 0., 0., 0., 1., 0.
+*Solid Section, elset=FIBRE, material=FIBRE_MAT, orientation=FIBRE_ORIENTATION
+,
+*End Part
+""",
+        encoding="utf-8",
+    )
+    return str(filename)
+
+
+def _write_distribution_orientation_input(tmp_path) -> str:
+    """Write a 3D input with one distribution override and one defaulted element."""
+    filename = tmp_path / "distribution_orientation.inp"
+    filename.write_text(
+        """*Heading
+*Part, name=RVE
+*Node
+1, 0., 0., 0.
+2, 1., 0., 0.
+3, 0., 1., 0.
+4, 0., 0., 1.
+5, 1., 1., 1.
+*Element, type=C3D4, elset=FIBRE
+1, 1, 2, 3, 4
+2, 2, 3, 4, 5
+*Distribution, name=FIBRE_DISTRIBUTION, location=ELEMENT, Table=ORIENTATION_TABLE
+, 0., 1., 0., -1., 0., 0.
+1, 1., 0., 0., 0., 1., 0.
+*Orientation, name=FIBRE_ORIENTATION
+FIBRE_DISTRIBUTION
+3, 0.
+*Solid Section, elset=FIBRE, material=FIBRE_MAT, orientation=FIBRE_ORIENTATION
+,
+*End Part
+*Distribution Table, name=ORIENTATION_TABLE
+coord3D, coord3D
+*Material, name=FIBRE_MAT
+*Elastic
+1.0, 0.3
+""",
+        encoding="utf-8",
+    )
+    return str(filename)
+
+
+def _write_missing_orientation_input(tmp_path) -> str:
+    """Write a minimal input whose section references an unknown orientation."""
+    filename = tmp_path / "missing_orientation.inp"
+    filename.write_text(
+        """*Heading
+*Part, name=RVE
+*Node
+1, 0., 0., 0.
+2, 1., 0., 0.
+3, 0., 1., 0.
+4, 0., 0., 1.
+*Element, type=C3D4, elset=FIBRE
+1, 1, 2, 3, 4
+*Solid Section, elset=FIBRE, material=FIBRE_MAT, orientation=MISSING_ORIENTATION
+,
+*End Part
+*Material, name=FIBRE_MAT
+*Elastic
+1.0, 0.3
+""",
+        encoding="utf-8",
+    )
+    return str(filename)
 
 
 @pytest.mark.unit
@@ -58,3 +218,182 @@ def test_map_input_to_structure_gene_maps_2d_discrete_orientations_to_vabs_angle
     for element_id, expected_theta in element_to_expected_theta.items():
         assert element_id in theta_by_element_id
         assert theta_by_element_id[element_id] == pytest.approx(expected_theta)
+
+
+@pytest.mark.unit
+def test_map_input_to_structure_gene_maps_direct_3d_orientation_to_global_default(
+    abaqus_test_files,
+):
+    """A direct global 3D orientation should equal the no-orientation default."""
+    fixture = abaqus_test_files["root"] / "sg33_ud_fiber_direct_orientation_bug.inp"
+
+    parsed = parse_input_file(str(fixture), sgdim=3, model="SD1")
+    sg = map_input_to_structure_gene(parsed)
+
+    expected_element_ids = set(sg.mesh.cell_sets["FIBRE"]) | set(sg.mesh.cell_sets["MATRIX"])
+    expected_csys = np.array([1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0])
+
+    for element_ids, csys_block in zip(
+        sg.mesh.cell_data["element_id"],
+        sg.mesh.cell_data["property_ref_csys"],
+    ):
+        for element_id, csys in zip(element_ids, csys_block):
+            if int(element_id) in expected_element_ids:
+                assert np.allclose(csys, expected_csys)
+
+
+@pytest.mark.unit
+def test_map_input_to_structure_gene_applies_2d_orientation_axis_3_rotation(
+    abaqus_test_files,
+):
+    """Abaqus axis-3 rotation should become the 2D sectional orientation."""
+    fixture = abaqus_test_files["root"] / "sg31_rec_ori_discrete.inp"
+
+    parsed = parse_input_file(str(fixture), sgdim=2, model="BM2")
+    sg = map_input_to_structure_gene(parsed)
+
+    csys = sg.mesh.cell_data["property_ref_csys"][0][0]
+    theta = property_ref_value_to_vabs_theta(csys, model_space="xy")
+
+    assert theta == pytest.approx(45.0)
+
+
+@pytest.mark.unit
+def test_map_input_to_structure_gene_accepts_default_2d_orientation_rotation(tmp_path):
+    """A missing Abaqus rotation row defaults to axis 1 and zero degrees."""
+    filename = _write_2d_direct_orientation_without_rotation(tmp_path)
+    parsed = parse_input_file(filename, sgdim=2, model="BM2")
+
+    sg = map_input_to_structure_gene(parsed)
+
+    csys = sg.mesh.cell_data["property_ref_csys"][0][0]
+    assert np.allclose(csys, [0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0])
+    assert sg.orientations["FIBRE_ORIENTATION"].extras["axis"] == 1
+    assert sg.orientations["FIBRE_ORIENTATION"].angle == pytest.approx(0.0)
+
+
+@pytest.mark.unit
+def test_map_input_to_structure_gene_binds_direct_orientation_to_its_section(tmp_path):
+    """A direct 9-value orientation applies only to its section and retains ``c``."""
+    parsed = parse_input_file(_write_direct_orientation_input(tmp_path), sgdim=3, model="SD1")
+
+    sg = map_input_to_structure_gene(parsed)
+
+    csys_by_element_id = dict(
+        zip(
+            sg.mesh.cell_data["element_id"][0],
+            sg.mesh.cell_data["property_ref_csys"][0],
+        )
+    )
+    assert np.allclose(csys_by_element_id[1], [2.0, 1.0, 0.0, 1.0, 2.0, 0.0, 1.0, 1.0, 0.0])
+    assert np.allclose(csys_by_element_id[2], [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0])
+
+
+@pytest.mark.unit
+def test_map_input_to_structure_gene_rejects_nonrectangular_orientation(tmp_path):
+    """Unsupported Abaqus orientation systems must not be interpreted as rectangular."""
+    filename = _write_direct_orientation_input(tmp_path, ", SYSTEM=CYLINDRICAL")
+    parsed = parse_input_file(filename, sgdim=3, model="SD1")
+
+    with pytest.raises(ValueError, match="FIBRE_ORIENTATION.*CYLINDRICAL"):
+        map_input_to_structure_gene(parsed)
+
+
+@pytest.mark.unit
+@pytest.mark.parametrize(
+    ("orientation_options", "message"),
+    [
+        (", DEFINITION=OFFSET TO NODES", "definition='OFFSET TO NODES'"),
+        (", SYSTEM=Z RECTANGULAR", "system='Z RECTANGULAR'"),
+        (", LOCAL DIRECTIONS", "LOCAL DIRECTIONS"),
+        (", DISPERSION", "DISPERSION"),
+    ],
+)
+def test_map_input_to_structure_gene_rejects_unsupported_orientation_syntax(
+    tmp_path,
+    orientation_options,
+    message,
+):
+    """Unsupported Abaqus orientation syntax must report its semantic cause."""
+    filename = _write_direct_orientation_input(tmp_path, orientation_options)
+    parsed = parse_input_file(filename, sgdim=3, model="SD1")
+
+    with pytest.raises(ValueError, match=message):
+        map_input_to_structure_gene(parsed)
+
+
+@pytest.mark.unit
+def test_map_input_to_structure_gene_applies_distribution_default_and_override(tmp_path):
+    """A distribution default must fill elements without an explicit record."""
+    parsed = parse_input_file(_write_distribution_orientation_input(tmp_path), sgdim=3, model="SD1")
+
+    sg = map_input_to_structure_gene(parsed)
+
+    csys_by_element_id = dict(
+        zip(
+            sg.mesh.cell_data["element_id"][0],
+            sg.mesh.cell_data["property_ref_csys"][0],
+        )
+    )
+    assert np.allclose(csys_by_element_id[1], [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0])
+    assert np.allclose(csys_by_element_id[2], [0.0, 1.0, 0.0, -1.0, 0.0, 0.0, 0.0, 0.0, 0.0])
+
+
+@pytest.mark.unit
+def test_map_input_to_structure_gene_reports_unknown_section_orientation(tmp_path):
+    """A missing section orientation must not leak a bare ``KeyError``."""
+    parsed = parse_input_file(_write_missing_orientation_input(tmp_path), sgdim=3, model="SD1")
+
+    with pytest.raises(ValueError, match="unknown orientation 'MISSING_ORIENTATION'"):
+        map_input_to_structure_gene(parsed)
+
+
+@pytest.mark.unit
+@pytest.mark.parametrize(
+    ("rotation_axis", "message"),
+    [
+        (1, "tilts the section normal"),
+        (2, "section/material combo assignment"),
+    ],
+)
+def test_map_input_to_structure_gene_rejects_unsupported_2d_orientation_rotations(
+    tmp_path,
+    rotation_axis,
+    message,
+):
+    """2D rotations that cannot map to the property frame must fail clearly."""
+    filename = _write_2d_direct_orientation_input(tmp_path, rotation_axis)
+    parsed = parse_input_file(filename, sgdim=2, model="BM2")
+
+    with pytest.raises(ValueError, match=message):
+        map_input_to_structure_gene(parsed)
+
+
+@pytest.mark.unit
+@pytest.mark.parametrize(
+    ("rotation_axis", "expected_axes"),
+    [
+        (1, ([1.0, 0.0, 0.0], [0.0, 0.0, 1.0], [0.0, -1.0, 0.0])),
+        (2, ([0.0, 0.0, -1.0], [0.0, 1.0, 0.0], [1.0, 0.0, 0.0])),
+        (3, ([0.0, 1.0, 0.0], [-1.0, 0.0, 0.0], [0.0, 0.0, 1.0])),
+    ],
+)
+def test_map_input_to_structure_gene_applies_3d_orientation_rotation_about_local_axis(
+    tmp_path,
+    rotation_axis,
+    expected_axes,
+):
+    """Each 3D Abaqus local rotation axis must follow the right-hand rule."""
+    filename = _write_direct_orientation_input(
+        tmp_path,
+        rotation_axis=rotation_axis,
+        rotation_angle=90.0,
+    )
+    parsed = parse_input_file(filename, sgdim=3, model="SD1")
+
+    sg = map_input_to_structure_gene(parsed)
+
+    csys = sg.mesh.cell_data["property_ref_csys"][0][0]
+    actual_axes = property_ref_csys_to_axes(csys)
+    for actual_axis, expected_axis in zip(actual_axes, expected_axes):
+        assert np.allclose(actual_axis, expected_axis)
