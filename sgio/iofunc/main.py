@@ -145,6 +145,10 @@ def read(
     canonical_format = registry.normalize(file_format)
     reader = registry.get_reader(canonical_format)
     if reader is None:
+        if registry.get_writer(canonical_format) is not None:
+            raise ValueError(
+                f"File format {file_format!r} supports writing only; reading is not implemented."
+            )
         raise ValueError(f"Unknown file format: {file_format}")
 
     adapter_kwargs = dict(kwargs)
@@ -358,7 +362,7 @@ def write(
         Name of the input file.
     file_format : str
         Format of the SG data file.
-        Choose one from 'vabs', 'sc', 'swiftcomp', 'gmsh'.
+        Choose one from 'vabs', 'sc', 'swiftcomp', 'gmsh', 'vtk', or 'vtu'.
     format_version : str, optional
         Version of the format. Default is ``''``.
     analysis : str, optional
@@ -449,6 +453,8 @@ def write(
             mesh_only=mesh_only,
             binary=binary,
         )
+    elif canonical_format in ('vtk', 'vtu'):
+        common_kwargs = {'binary': binary}
 
     writer.write_input(filename, sg, **common_kwargs)
     return filename
