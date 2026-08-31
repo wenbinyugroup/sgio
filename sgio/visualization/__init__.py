@@ -1,4 +1,4 @@
-"""Visualization tools for structure genes, sections and matrices.
+"""Visualization tools for structure genes, sections, matrices, and PyVista scenes.
 
 Built on matplotlib and plotly. Two concerns:
 
@@ -6,6 +6,8 @@ Built on matplotlib and plotly. Two concerns:
   principal axes and feature centers (matplotlib and plotly backends).
 - :mod:`sgio.visualization.matrix` -- stiffness / compliance matrix heatmaps
   for linear-elastic, beam and plate/shell models.
+- :mod:`sgio.visualization.pyvista` -- optional three-dimensional ``SGMesh``
+  scenes and local-coordinate glyphs.
 """
 
 from .section import (
@@ -23,6 +25,7 @@ from .matrix import (
     plot_matrix_bar3d,
     plot_model_matrix,
 )
+from .pyvista import create_pyvista_plotter
 
 __all__ = [
     'plot_line_by_point_angle',
@@ -36,4 +39,5 @@ __all__ = [
     'plot_matrix',
     'plot_matrix_bar3d',
     'plot_model_matrix',
+    'create_pyvista_plotter',
 ]

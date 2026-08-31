@@ -106,6 +106,7 @@ from .iofunc import (
 from .execu import run
 
 from .visualization import (
+    create_pyvista_plotter,
     plot_matrix,
     plot_matrix_bar3d,
     plot_model_matrix,
@@ -175,6 +176,7 @@ __all__ = [
     "normalize_format_name",
     "get_numbering_requirements",
     # Visualization functions
+    "create_pyvista_plotter",
     "plot_matrix",
     "plot_matrix_bar3d",
     "plot_model_matrix",
