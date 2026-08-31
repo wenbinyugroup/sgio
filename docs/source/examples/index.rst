@@ -35,6 +35,8 @@ Visualization
     plot_cs
     plot_css_3d
     preview_sg_mesh
+    plot_abaqus_local_csys
+    export_sg_mesh_to_vtu
     merge_section_meshes
     view_css_fi_paraview
 
