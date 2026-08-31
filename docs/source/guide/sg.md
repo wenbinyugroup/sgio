@@ -125,7 +125,8 @@ Typical choices are:
 
 - `BM1`: Euler-Bernoulli beam,
 - `BM2`: Timoshenko beam,
-- `PL1` / `PL2`: plate or shell,
+- `PL1`: Kirchhoff-Love plate/shell,
+- `PL2`: Reissner-Mindlin plate/shell,
 - `SD1`: 3D solid.
 
 This selection controls how the same mesh is interpreted by the solver.
