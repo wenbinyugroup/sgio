@@ -20,7 +20,7 @@ from sgio.core.property_ref_csys import (
     vabs_theta_to_property_ref_csys,
 )
 from sgio.iofunc.gmsh import _gmsh
-from sgio.iofunc.gmsh._gmsh41 import _normalize_local_coordinate_fields
+from sgio.iofunc.gmsh._common import _normalize_local_coordinate_fields
 from sgio.iofunc.gmsh.writer import write_input_payload
 from sgio.iofunc.vabs._mesh import (
     _read_property_id_ref_csys,

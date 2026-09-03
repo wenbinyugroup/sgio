@@ -4,7 +4,8 @@ from __future__ import annotations
 
 import pytest
 
-from sgio.iofunc.gmsh.parser import parse_input_buffer
+import sgio
+from sgio.iofunc.gmsh.parser import _resolve_reader, parse_input_buffer
 
 
 @pytest.mark.unit
@@ -23,3 +24,71 @@ def test_parse_input_buffer_reads_gmsh41_fixture(gmsh_test_files):
     assert "property_id" in payload["mesh"].cell_data
     assert "element_local_csys" in payload["mesh"].cell_data
     assert "property_ref_csys" in payload["mesh"].cell_data
+
+
+@pytest.mark.unit
+@pytest.mark.parametrize(
+    "format_version, expected_module",
+    [
+        ("2", "_gmsh22"),
+        ("2.2", "_gmsh22"),
+        ("4", "_gmsh40"),
+        ("4.0", "_gmsh40"),
+        ("4.1", "_gmsh41"),
+    ],
+)
+def test_resolve_reader_dispatches_on_exact_version(format_version, expected_module):
+    """MSH 4.0 declares itself as "4" and must not reach the 4.1 reader."""
+    reader = _resolve_reader(format_version)
+
+    assert reader.__name__.rsplit(".", 1)[-1] == expected_module
+
+
+@pytest.mark.unit
+def test_resolve_reader_falls_back_to_newest_minor_version():
+    """An unknown minor version resolves to the newest reader of that major."""
+    assert _resolve_reader("4.2").__name__.rsplit(".", 1)[-1] == "_gmsh41"
+
+
+@pytest.mark.unit
+def test_resolve_reader_rejects_unknown_major_version():
+    """An unsupported major version is reported rather than mis-parsed."""
+    with pytest.raises(ValueError, match="Need mesh format"):
+        _resolve_reader("3.0")
+
+
+@pytest.mark.unit
+def test_parse_input_buffer_reads_gmsh40_fixture(gmsh_test_files):
+    """A MSH 4.0 file parses to the same counts native Gmsh reports.
+
+    Regression for the ``$Entities`` parse failure: MSH 4.0 point entities
+    carry a 6-double bounding box where 4.1 carries 3 coordinates, so parsing
+    a 4.0 file with the 4.1 reader desynchronises on the first point entity.
+    """
+    fixture = gmsh_test_files["root"] / "sg33_tpms_entities_parse_bug.msh"
+
+    with open(fixture, "rb") as file:
+        payload = parse_input_buffer(file, format_version="4.1")
+
+    mesh = payload["mesh"]
+
+    assert payload["format_version"] == "4"
+    # Counts cross-checked against the native Gmsh Python API for this file.
+    assert len(mesh.points) == 10841
+    assert sum(len(cell_block.data) for cell_block in mesh.cells) == 35288
+    assert {cell_block.type for cell_block in mesh.cells} == {"tetra"}
+    assert mesh.field_data["Mat0"].tolist() == [1, 3]
+    # SG post-processing must run for 4.0 exactly as it does for 4.1.
+    assert "property_id" in mesh.cell_data
+
+
+@pytest.mark.unit
+def test_read_gmsh40_mesh_into_structure_gene(gmsh_test_files):
+    """The full read path yields a SG with the expected node/element counts."""
+    fixture = gmsh_test_files["root"] / "sg33_tpms_entities_parse_bug.msh"
+
+    sg = sgio.read(str(fixture), "gmsh", sgdim=3, model_type="SD1")
+
+    assert sg.nnodes == 10841
+    assert sg.nelems == 35288
+    assert list(sg.materials.keys()) == ["Mat0"]

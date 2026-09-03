@@ -8,15 +8,26 @@ from typing import Any, TextIO
 from meshio._exceptions import ReadError
 
 from . import _gmsh22
+from . import _gmsh40
 from . import _gmsh41
 from ._common import _fast_forward_to_end_block
 from .keywords import COMMENT_BLOCK, MESH_FORMAT_BLOCK, DEFAULT_FORMAT_VERSION
 
+# Exact ``$MeshFormat`` version strings. Note that MSH 4.0 files declare
+# themselves as "4", not "4.0", so bare "4" must resolve to the 4.0 reader.
 _READERS = {
     "2": _gmsh22,
     "2.2": _gmsh22,
-    "4": _gmsh41,
+    "4": _gmsh40,
+    "4.0": _gmsh40,
     "4.1": _gmsh41,
+}
+
+# Fallback for unknown minor versions: parse with the newest reader of that
+# major version rather than the oldest.
+_MAJOR_READERS = {
+    "2": _gmsh22,
+    "4": _gmsh41,
 }
 
 
@@ -87,7 +98,7 @@ def _resolve_reader(format_version: str):
         return _READERS[format_version]
     except KeyError:
         try:
-            return _READERS[format_version.split(".")[0]]
+            return _MAJOR_READERS[format_version.split(".")[0]]
         except KeyError as exc:
             raise ValueError(
                 f"Need mesh format in {sorted(_READERS.keys())} (got {format_version})"
