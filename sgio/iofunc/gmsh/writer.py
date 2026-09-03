@@ -53,7 +53,9 @@ def _prepare_gmsh41_mesh(mesh: Any, sgdim: int) -> None:
         [[sgdim, 1] for _ in range(len(mesh.points))],
         dtype=int,
     )
-    mesh.cell_data["gmsh:geometrical"] = [[1]] * len(mesh.cells)
+    mesh.cell_data["gmsh:geometrical"] = [
+        np.ones(len(cell_block), dtype=int) for cell_block in mesh.cells
+    ]
 
     _normalize_local_coordinate_fields(mesh)
     _normalize_additional_rotation_fields(mesh)

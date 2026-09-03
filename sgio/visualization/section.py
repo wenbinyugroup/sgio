@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 from pathlib import Path
-from typing import Iterable, Sequence
+from typing import Any, Iterable, Sequence
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -10,6 +10,7 @@ from matplotlib.collections import PatchCollection
 from mpl_toolkits.mplot3d.art3d import Line3DCollection
 
 from sgio.core.mesh import SGMesh
+from sgio.core.sg import StructureGene
 from sgio.model.query_types import SectionAxis, SectionCenter
 
 logger = logging.getLogger(__name__)
@@ -27,7 +28,9 @@ _CELL_EDGES = {
 
 
 
-def plot_line_by_point_angle(ax, point, angle_degrees, color='r', linestyle='--', label='', **kwargs):
+def plot_line_by_point_angle(
+    ax, point, angle_degrees, color='r', linestyle='--', label='', **kwargs
+):
     """
     Plot a line on the given axes object.
 
@@ -222,6 +225,68 @@ def plot_sg_2d(
 
     if show_origin:
         ax.plot(0, 0, marker='o', mec='k', mfc='none', markersize=5)
+
+
+def plot_sg_matplotlib(
+    sg: StructureGene,
+    *,
+    ax: Any | None = None,
+    figure_size: tuple[float, float] = (10.0, 8.0),
+    edge_color: str = '0.5',
+    face_color: str = '0.9',
+    line_width: float = 0.2,
+    show_origin: bool = True,
+) -> Any:
+    """Plot one structure-gene cross-section with matplotlib.
+
+    This is the single-section matplotlib entry point. It creates an axes when
+    one is not supplied, draws the SG mesh in its ``(x2, x3)`` plane, and
+    returns the axes for caller-controlled labels, model overlays, and file
+    output. Use :func:`plot_sg_2d` when composing into an existing axes is the
+    primary concern.
+
+    Parameters
+    ----------
+    sg : StructureGene
+        Structure gene containing a two-dimensional section mesh.
+    ax : matplotlib.axes.Axes, optional
+        Existing axes to draw on. A new figure and axes are created by default.
+    figure_size : tuple of float, optional
+        Size in inches used only when creating a new figure. Default is
+        ``(10.0, 8.0)``.
+    edge_color : str, optional
+        Mesh edge color. Default is ``'0.5'``.
+    face_color : str, optional
+        Mesh face color. Default is ``'0.9'``.
+    line_width : float, optional
+        Mesh edge line width. Default is ``0.2``.
+    show_origin : bool, optional
+        Whether to mark the section origin. Default is ``True``.
+
+    Returns
+    -------
+    matplotlib.axes.Axes
+        Axes containing the section mesh.
+
+    Raises
+    ------
+    TypeError
+        If ``sg`` is not a :class:`~sgio.StructureGene`.
+    ValueError
+        If ``sg`` has no mesh.
+    """
+    _validate_plot_sg(sg)
+    if ax is None:
+        _, ax = plt.subplots(figsize=figure_size)
+    plot_sg_2d(
+        sg,
+        ax,
+        ec_mesh=edge_color,
+        fc_mesh=face_color,
+        lw_mesh=line_width,
+        show_origin=show_origin,
+    )
+    return ax
 
 
 def plot_model_2d(
@@ -645,7 +710,11 @@ def plot_sg_3d_beam(
 
     # In-plane half-extent used to size principal-axis segments.
     plane_range = plane_max - plane_min
-    half_diag = 0.5 * float(np.linalg.norm(plane_range)) if np.all(np.isfinite(plane_range)) else 1.0
+    half_diag = (
+        0.5 * float(np.linalg.norm(plane_range))
+        if np.all(np.isfinite(plane_range))
+        else 1.0
+    )
     pba_half_len = max(pba_scale * half_diag, 1e-9)
 
     # Per-section principal bending axes.
@@ -714,7 +783,10 @@ def plot_sg_3d_beam(
     spanwise_min = min(locations) if locations else 0.0
     spanwise_max = max(locations) if locations else 1.0
     span_pad = 0.05 * max(spanwise_max - spanwise_min, 1.0)
-    in_plane_pad = 0.05 * max(float(np.max(plane_range)) if np.all(np.isfinite(plane_range)) else 1.0, 1e-9)
+    largest_plane_range = (
+        float(np.max(plane_range)) if np.all(np.isfinite(plane_range)) else 1.0
+    )
+    in_plane_pad = 0.05 * max(largest_plane_range, 1e-9)
 
     limits = [None, None, None]
     limits[axis] = (spanwise_min - span_pad, spanwise_max + span_pad)
@@ -981,6 +1053,76 @@ def plot_sg_2d_plotly(
     return fig
 
 
+def plot_sg_plotly(
+    sg: StructureGene,
+    *,
+    mesh_style: str = 'regions',
+    mesh_color: str = 'rgba(30,30,30,0.9)',
+    mesh_width: float = 1.5,
+    show_origin: bool = True,
+    fig: Any | None = None,
+    output_html: str | Path | None = None,
+    title: str = '',
+) -> Any:
+    """Plot one structure-gene cross-section with Plotly.
+
+    This is the single-section Plotly entry point. It returns the native
+    Plotly figure, which callers can continue to customize or write to HTML.
+    Use :func:`plot_sg_2d_plotly` when composing geometry with model overlays
+    in an existing figure is the primary concern.
+
+    Parameters
+    ----------
+    sg : StructureGene
+        Structure gene containing a two-dimensional section mesh.
+    mesh_style : {'regions', 'boundary', 'wireframe'}, optional
+        Mesh rendering style. Default is ``'regions'``.
+    mesh_color : str, optional
+        Plotly color for mesh lines.
+    mesh_width : float, optional
+        Mesh line width in pixels. Default is ``1.5``.
+    show_origin : bool, optional
+        Whether to mark the section origin. Default is ``True``.
+    fig : plotly.graph_objects.Figure, optional
+        Existing figure to draw on.
+    output_html : str or pathlib.Path, optional
+        Optional output HTML file.
+    title : str, optional
+        Figure title when a new figure is created.
+
+    Returns
+    -------
+    plotly.graph_objects.Figure
+        Figure containing the section mesh.
+
+    Raises
+    ------
+    TypeError
+        If ``sg`` is not a :class:`~sgio.StructureGene`.
+    ValueError
+        If ``sg`` has no mesh.
+    """
+    _validate_plot_sg(sg)
+    return plot_sg_2d_plotly(
+        sg,
+        mesh_style=mesh_style,
+        mesh_color=mesh_color,
+        mesh_width=mesh_width,
+        show_origin=show_origin,
+        fig=fig,
+        output_html=output_html,
+        title=title,
+    )
+
+
+def _validate_plot_sg(sg: StructureGene) -> None:
+    """Validate the common structure-gene input for high-level plotters."""
+    if not isinstance(sg, StructureGene):
+        raise TypeError(f"sg must be a StructureGene; got {type(sg).__name__}.")
+    if sg.mesh is None:
+        raise ValueError("sg must contain a mesh.")
+
+
 def plot_model_2d_plotly(
     model, sg=None,
     pba_length: float | None = None,
@@ -1129,7 +1271,27 @@ def plot_sg_3d_beam_plotly(
         Layout CSV file.
     section_dir : str or Path
         Directory containing section input files.
-    input_format, model_type, file_extension, output_extension, location_column, section_column, axis, show_principal_axes, pba_scale, connect_centers, show_origin_axis
+    input_format : str, optional
+        See :func:`plot_sg_3d_beam`.
+    model_type : str, optional
+        See :func:`plot_sg_3d_beam`.
+    file_extension : str, optional
+        See :func:`plot_sg_3d_beam`.
+    output_extension : str, optional
+        See :func:`plot_sg_3d_beam`.
+    location_column : str, optional
+        See :func:`plot_sg_3d_beam`.
+    section_column : str, optional
+        See :func:`plot_sg_3d_beam`.
+    axis : int, optional
+        See :func:`plot_sg_3d_beam`.
+    show_principal_axes : bool, optional
+        See :func:`plot_sg_3d_beam`.
+    pba_scale : float, optional
+        See :func:`plot_sg_3d_beam`.
+    connect_centers : bool, optional
+        See :func:`plot_sg_3d_beam`.
+    show_origin_axis : bool, optional
         See :func:`plot_sg_3d_beam`.
     mesh_color : str, optional
         Color string for mesh wireframe lines (plotly notation).

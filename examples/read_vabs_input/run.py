@@ -26,5 +26,12 @@ sg = sgio.read(
     model_type='BM1'
 )
 
+plotter = sgio.plot_sg_pyvista(
+    sg,
+    show_local_axes=True,
+    output_html=cwd / "pyvista.html",
+)
+plotter.close()
+
 print(sg)
 

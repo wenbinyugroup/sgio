@@ -8,6 +8,8 @@ This example demonstrates how to:
 The plot shows the cross-section geometry with beam properties like
 neutral axis, shear center, and principal axes.
 """
+from pathlib import Path
+
 import matplotlib.pyplot as plt
 import sgio
 from sgio import plot_sg_2d, plot_model_2d, plot_matrix, plot_matrix_bar3d
@@ -20,6 +22,13 @@ model = sgio.read_output_model(output_file, 'vabs', model_type='BM1')
 
 # Read VABS input (cross-section mesh)
 cs = sgio.read(input_file, 'vabs')
+
+plotter = sgio.plot_sg_pyvista(
+    cs,
+    show_local_axes=True,
+    output_html=Path(__file__).resolve().parent / 'pyvista.html',
+)
+plotter.close()
 
 # Create plot
 

@@ -15,10 +15,11 @@ import sgio
 EXAMPLE_DIR = Path(__file__).resolve().parent
 INPUT_FILE = EXAMPLE_DIR.parent / "preview_sg_mesh" / "sg21t_tri3.sg"
 OUTPUT_FILE = EXAMPLE_DIR / "sg21t_tri3.vtu"
+LOCAL_AXES_FILE = EXAMPLE_DIR / "sg21t_tri3_local_axes.vtm"
 
 
 def main() -> None:
-    """Read the bundled VABS Structure Gene and write a VTU mesh export."""
+    """Write the mesh VTU and a VTM scene with explicit local-axis geometry."""
     sg = sgio.read(
         str(INPUT_FILE),
         file_format="vabs",
@@ -27,7 +28,10 @@ def main() -> None:
         model_type="BM2",
     )
     sgio.write(sg, str(OUTPUT_FILE), file_format="vtu")
+    local_axes = sgio.create_pyvista_local_axis_multiblock(sg.mesh)
+    local_axes.save(LOCAL_AXES_FILE)
     print(f"Wrote VTU mesh for ParaView/PyVista: {OUTPUT_FILE.resolve()}")
+    print(f"Wrote VTM local-axis scene for ParaView: {LOCAL_AXES_FILE.resolve()}")
 
 
 if __name__ == "__main__":

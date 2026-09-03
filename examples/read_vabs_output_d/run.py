@@ -65,3 +65,10 @@ sgio.write(
     filename=str(output_file),
     file_format='gmsh',
 )
+
+plotter = sgio.plot_sg_pyvista(
+    sg,
+    show_local_axes=True,
+    output_html=cwd / "pyvista.html",
+)
+plotter.close()

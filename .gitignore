@@ -73,4 +73,5 @@ ABQ*.dmp
 *.vtu
 *.vtk
 *.pvd
+examples/**/pyvista.html
 examples/view_css_fi_paraview/blade_fi/

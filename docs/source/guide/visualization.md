@@ -11,6 +11,23 @@ meshes. Three backends are used, each suited to a different job.
 
 ## Plot a Single Cross-Section
 
+The preferred single-SG entry points share one input — a
+{class}`sgio.StructureGene` — and return the native object for their backend:
+{func}`sgio.plot_sg_matplotlib` returns matplotlib axes,
+{func}`sgio.plot_sg_plotly` returns a Plotly figure, and
+{func}`sgio.plot_sg_pyvista` returns a PyVista plotter. The matplotlib and
+Plotly entries render the section's `(x2, x3)` plane; PyVista renders the mesh
+in its stored three-dimensional coordinates.
+
+```python
+import sgio
+
+sg = sgio.read('cross_section.sg', file_format='vabs', model_type='BM2')
+axes = sgio.plot_sg_matplotlib(sg)
+figure = sgio.plot_sg_plotly(sg, output_html='cross_section_plotly.html')
+plotter = sgio.plot_sg_pyvista(sg)
+```
+
 {func}`sgio.plot_sg_2d` draws the mesh of a {class}`sgio.StructureGene`, and
 {func}`sgio.plot_model_2d` draws the quantities carried by a homogenized model —
 the mass center, shear center, and principal bending axes. They are separate
@@ -104,22 +121,37 @@ See {doc}`/examples/merge_section_meshes`.
 
 ## Inspect a Mesh with PyVista
 
-{func}`sgio.create_pyvista_plotter` is the high-level scene factory for an
-{class}`sgio.SGMesh`. It converts geometry and point/cell fields to a PyVista
-grid and returns a `pyvista.Plotter`; the caller chooses whether to open a
-desktop window, take a screenshot, or write HTML.
+{func}`sgio.plot_sg_pyvista` is the high-level scene factory for one
+{class}`sgio.StructureGene`. It converts its mesh geometry and point/cell fields
+to a PyVista grid and returns a `pyvista.Plotter`; the caller chooses whether
+to open a desktop window, take a screenshot, or write HTML.
+It colors cells by ``mesh.cell_data['property_id']`` by default, using a
+discrete property legend instead of a continuous scalar bar.
 
 ```python
 import sgio
 
 sg = sgio.read('cross_section.sg', file_format='vabs', model_type='BM2')
-plotter = sgio.create_pyvista_plotter(
-    sg.mesh,
+plotter = sgio.plot_sg_pyvista(
+    sg,
     scalars='property_id',
     show_edges=True,
     show_local_axes=True,
 )
 plotter.show()
+```
+
+For a desktop inspection window, pass `widgets=True` to add checkboxes for
+local axes, faces, edges, and nodes. These controls use Python callbacks and
+therefore are intentionally unavailable with `output_html`.
+
+```python
+plotter = sgio.plot_sg_pyvista(
+    sg,
+    show_local_axes=True,
+    widgets=True,
+    show=True,
+)
 ```
 
 The local-axis overlay resolves the canonical per-element coordinate system:
@@ -142,6 +174,24 @@ uv sync --extra pyvista-html
 
 The HTML viewer provides PyVista/VTK interaction, not Plotly's modebar or a
 configurable CAD/CAE trackball toolbar.
+
+For a persisted local-axis scene, first write a complete VTM file with
+{func}`sgio.create_pyvista_local_axis_multiblock`, then use the high-level
+{func}`sgio.plot_pyvista_local_axes` interface. The VTM retains glyphs for all
+cells; `max_local_axes` limits only the browser or desktop rendering.
+
+```python
+import sgio
+
+plotter = sgio.plot_pyvista_local_axes(
+    'cross_section_local_axes.vtm',
+    max_local_axes=500,
+    output_html='cross_section.html',
+)
+plotter.close()
+```
+
+The HTML export includes an axis legend and its supported mouse controls.
 
 ## Export a Mesh for ParaView
 

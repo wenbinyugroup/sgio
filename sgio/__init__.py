@@ -106,10 +106,15 @@ from .iofunc import (
 from .execu import run
 
 from .visualization import (
+    create_pyvista_local_axis_multiblock,
     create_pyvista_plotter,
+    plot_sg_pyvista,
+    plot_pyvista_local_axes,
     plot_matrix,
     plot_matrix_bar3d,
     plot_model_matrix,
+    plot_sg_matplotlib,
+    plot_sg_plotly,
     plot_sg_2d,
     plot_model_2d,
     plot_sg_2d_plotly,
@@ -176,10 +181,15 @@ __all__ = [
     "normalize_format_name",
     "get_numbering_requirements",
     # Visualization functions
+    "create_pyvista_local_axis_multiblock",
     "create_pyvista_plotter",
+    "plot_sg_pyvista",
+    "plot_pyvista_local_axes",
     "plot_matrix",
     "plot_matrix_bar3d",
     "plot_model_matrix",
+    "plot_sg_matplotlib",
+    "plot_sg_plotly",
     "plot_sg_2d",
     "plot_model_2d",
     "plot_sg_2d_plotly",

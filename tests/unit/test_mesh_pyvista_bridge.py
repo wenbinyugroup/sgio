@@ -14,8 +14,10 @@ import textwrap
 import numpy as np
 import pytest
 
+import sgio
 import sgio.core.mesh as core_mesh
 from sgio.core.mesh import SGMesh
+from sgio.core.sg import StructureGene
 
 
 def _sample_mesh() -> SGMesh:
@@ -69,6 +71,29 @@ def test_to_pyvista_drops_cross_block_sets_without_mutating_source_mesh():
     assert set(mesh.point_sets) == {"boundary"}
     np.testing.assert_array_equal(mesh.point_sets["boundary"], np.array([0, 2, 4]))
     assert mesh.cell_sets == {"ALL_ELEMENTS": [101, 102, 103]}
+
+
+@pytest.mark.unit
+def test_gmsh_write_keeps_source_mesh_usable_by_pyvista(tmp_path):
+    """Gmsh 4.1 writer metadata must remain aligned with every cell block."""
+    pytest.importorskip("pyvista")
+    mesh = _sample_mesh()
+    sg = StructureGene(name="sample", sgdim=2)
+    sg.mesh = mesh
+
+    sgio.write(
+        sg,
+        str(tmp_path / "mesh.msh"),
+        file_format="gmsh",
+        format_version="4.1",
+        binary=False,
+    )
+
+    grid = mesh.to_pyvista()
+
+    assert grid.n_cells == 3
+    for cell_block, geometrical_tags in zip(mesh.cells, mesh.cell_data["gmsh:geometrical"]):
+        assert len(geometrical_tags) == len(cell_block)
 
 
 @pytest.mark.unit
