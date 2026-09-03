@@ -101,10 +101,14 @@ def test_convert_to_gmsh(test_data_dir, capsys):
 @pytest.mark.vabs
 def test_gmsh_xy_section_converts_to_vabs(test_data_dir, temp_dir):
     """A Gmsh section mesh in the ``xy`` plane should convert to VABS."""
-    src = test_data_dir / 'gmsh' / 'laminate_closed_spline_3.msh'
-    dst = temp_dir / 'laminate_closed_spline_3_xy.sg'
+    src = test_data_dir / 'gmsh' / 'laminate_simple.msh'
+    sections = test_data_dir / 'gmsh' / 'sections_laminate_simple.json'
+    dst = temp_dir / 'laminate_simple_xy.sg'
 
-    source_sg = read(str(src), 'gmsh', format_version='4.1', sgdim=2, model_type='BM2')
+    source_sg = read(
+        str(src), 'gmsh', format_version='4.1', sgdim=2, model_type='BM2',
+        sections_json=str(sections),
+    )
 
     convert(
         str(src),
@@ -116,6 +120,7 @@ def test_gmsh_xy_section_converts_to_vabs(test_data_dir, temp_dir):
         sgdim=2,
         model_space='xy',
         model_type='BM2',
+        sections_json=str(sections),
     )
 
     assert dst.exists(), f'Output file was not created: {dst}'
@@ -141,10 +146,14 @@ def test_gmsh_to_vabs_respects_model_space_projection(
     expected_axes,
 ):
     """Gmsh -> VABS conversion should project nodes onto the requested section plane."""
-    src = test_data_dir / 'gmsh' / 'laminate_closed_spline_3.msh'
-    dst = temp_dir / f'laminate_closed_spline_3_{model_space}.sg'
+    src = test_data_dir / 'gmsh' / 'laminate_simple.msh'
+    sections = test_data_dir / 'gmsh' / 'sections_laminate_simple.json'
+    dst = temp_dir / f'laminate_simple_{model_space}.sg'
 
-    source_sg = read(str(src), 'gmsh', format_version='4.1', sgdim=2, model_type='BM2')
+    source_sg = read(
+        str(src), 'gmsh', format_version='4.1', sgdim=2, model_type='BM2',
+        sections_json=str(sections),
+    )
 
     convert(
         str(src),
@@ -156,6 +165,7 @@ def test_gmsh_to_vabs_respects_model_space_projection(
         sgdim=2,
         model_space=model_space,
         model_type='BM2',
+        sections_json=str(sections),
     )
 
     roundtrip = read(str(dst), 'vabs', format_version='4.1', model_type='BM2')

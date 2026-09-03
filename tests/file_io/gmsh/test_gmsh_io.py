@@ -11,7 +11,29 @@ import pytest
 from pathlib import Path
 import yaml
 
-from sgio import convert, logger
+from sgio import convert, logger, section_model_to_record, write_sections_to_json
+
+
+def _write_sections_sidecar(sg, msh_path):
+    """Write the bundle section sidecar next to one written ``.msh``.
+
+    A ``.msh`` holds mesh data only, so the Gmsh -> VABS leg of the round
+    trip needs the section payload written alongside it.
+    """
+    sections_path = Path(msh_path).with_suffix('.sections.json')
+    write_sections_to_json(
+        [
+            section_model_to_record(
+                sg.materials[section.material],
+                name=section.name,
+                id=section.property_id,
+                orientation=section.orientation,
+            )
+            for section in sg.sections.values()
+        ],
+        sections_path,
+    )
+    return sections_path
 
 
 @pytest.mark.io
@@ -48,13 +70,14 @@ def test_vabs_to_gmsh_to_vabs_roundtrip(test_data_dir, temp_dir):
 
         logger.info(f'Converting {fn_in} to {fn_out}...')
 
-        convert(
+        source_sg = convert(
             fn_in, fn_out,
             ff_in, ff_out,
             file_version_in=_case.get('version_in', ''),
             file_version_out=_case.get('version_out', ''),
             model_type=_case.get('model', 'SD1'),
         )
+        _write_sections_sidecar(source_sg, fn_out)
 
         # Verify the gmsh file was created
         assert Path(fn_out).exists(), f"Failed to create {fn_out}"
@@ -86,6 +109,7 @@ def test_vabs_to_gmsh_to_vabs_roundtrip(test_data_dir, temp_dir):
             file_version_in=_case.get('version_in', ''),
             file_version_out=_case.get('version_out', ''),
             model_type=_case.get('model', 'SD1'),
+            sections_json=str(Path(fn_in).with_suffix('.sections.json')),
         )
 
         # Verify the vabs file was created

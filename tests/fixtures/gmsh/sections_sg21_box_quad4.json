@@ -1,0 +1,21 @@
+{
+  "sections": [
+    {
+      "kind": "material",
+      "theory": "cauchy_continuum",
+      "name": "frp",
+      "id": 1,
+      "payload": {
+        "name": "frp",
+        "model": "sd1",
+        "label": "1",
+        "isotropy": 0,
+        "density": 1550.0,
+        "elastic": {
+          "e": 20590000000.0,
+          "nu": 0.3
+        }
+      }
+    }
+  ]
+}

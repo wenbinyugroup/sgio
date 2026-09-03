@@ -1,0 +1,38 @@
+{
+  "sections": [
+    {
+      "kind": "material",
+      "theory": "cauchy_continuum",
+      "name": "matrix",
+      "id": 1,
+      "payload": {
+        "name": "matrix",
+        "model": "sd1",
+        "label": "1",
+        "isotropy": 0,
+        "density": 1550.0,
+        "elastic": {
+          "e": 3500000000.0,
+          "nu": 0.35
+        }
+      }
+    },
+    {
+      "kind": "material",
+      "theory": "cauchy_continuum",
+      "name": "inclusion",
+      "id": 2,
+      "payload": {
+        "name": "inclusion",
+        "model": "sd1",
+        "label": "2",
+        "isotropy": 0,
+        "density": 1550.0,
+        "elastic": {
+          "e": 70000000000.0,
+          "nu": 0.22
+        }
+      }
+    }
+  ]
+}

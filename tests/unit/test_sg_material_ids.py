@@ -123,19 +123,21 @@ def test_restore_sg_from_mesh_extras_uses_mesh_field_names():
     mesh.sg_layer_defs = {1: (5, 30.0)}
     mesh.sg_configs = {"sgdim": 2, "model": 1, "do_damping": 1, "thermal": 1}
 
-    sg = mesh_to_sg(mesh, sgdim=2, model_type="PL1")
+    sg = mesh_to_sg(mesh, sgdim=2, model_type="PL1", section_names={"matrix"})
     restore_sg_from_mesh_extras(sg, mesh)
 
     assert sg.mocombos[1] == ("matrix", 30.0)
-    assert "matrix" in sg.materials
+    # The layer definition binds a name; the material payload itself comes from
+    # the section data, so nothing is fabricated here.
+    assert sg.materials == {}
     assert sg.analysis_config.model == 1
     assert sg.analysis_config.do_damping == 1
     assert sg.analysis_config.physics == 1
 
 
 @pytest.mark.unit
-def test_restore_sg_from_mesh_extras_falls_back_to_generated_material_name():
-    """Gmsh layer definitions without field names should get generated names."""
+def test_restore_sg_from_mesh_extras_ignores_unresolvable_layer_defs():
+    """A layer definition naming no known physical group must not invent one."""
     mesh = Mesh(
         points=np.array(
             [[0.0, 0.0, 0.0], [1.0, 0.0, 0.0], [0.0, 1.0, 0.0]],
@@ -151,5 +153,5 @@ def test_restore_sg_from_mesh_extras_falls_back_to_generated_material_name():
     sg = mesh_to_sg(mesh, sgdim=2, model_type="PL1")
     restore_sg_from_mesh_extras(sg, mesh)
 
-    assert sg.mocombos[2] == ("Material_7", 0.0)
-    assert "Material_7" in sg.materials
+    assert dict(sg.mocombos) == {}
+    assert sg.materials == {}

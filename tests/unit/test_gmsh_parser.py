@@ -86,8 +86,9 @@ def test_parse_input_buffer_reads_gmsh40_fixture(gmsh_test_files):
 def test_read_gmsh40_mesh_into_structure_gene(gmsh_test_files):
     """The full read path yields a SG with the expected node/element counts."""
     fixture = gmsh_test_files["root"] / "sg33_tpms_entities_parse_bug.msh"
+    sections = gmsh_test_files["root"] / "sections_sg33_tpms.json"
 
-    sg = sgio.read(str(fixture), "gmsh", sgdim=3, model_type="SD1")
+    sg = sgio.read_sg_from_gmsh_bundle(fixture, sections, model_type="SD1")
 
     assert sg.nnodes == 10841
     assert sg.nelems == 35288

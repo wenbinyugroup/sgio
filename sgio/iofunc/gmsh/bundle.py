@@ -6,7 +6,12 @@ from pathlib import Path
 from typing import Any, Mapping, Sequence
 
 from sgio.core import SGAnalysisConfig, StructureGene
-from sgio.iofunc._mesh_convert import mesh_to_sg, restore_sg_from_mesh_extras
+from sgio._exceptions import IncompleteModelDataError
+from sgio.iofunc._mesh_convert import (
+    mesh_to_sg,
+    parse_model_type,
+    restore_sg_from_mesh_extras,
+)
 from sgio.iofunc.common.material_json import (
     deserialize_material_record,
     serialize_material_record,
@@ -219,15 +224,33 @@ def read_sg_from_gmsh_bundle(
     with open(main_msh, "rb") as file:
         mesh = read_gmsh_buffer(file, format_version=format_version)
 
-    sgdim = int(mesh.cells[0].dim) if mesh.cells else 2
+    records = read_sections_from_json(sections_json) if sections_json is not None else []
+    if not records:
+        raise IncompleteModelDataError(
+            f"{main_msh} carries mesh data only. Building a structure gene also needs "
+            "section/material data; supply sections.json."
+        )
+    section_names = {record.name for record in records if record.name}
+    section_ids = {int(record.id) for record in records if record.id is not None}
+
+    # Restricting to the declared sections first drops auxiliary groups, so the
+    # SG dimension is read off the elements that actually belong to the gene.
+    sg = mesh_to_sg(
+        mesh,
+        sgdim=1,
+        model_type="SD1",
+        section_names=section_names,
+        section_ids=section_ids,
+    )
+    sgdim = max((int(cell_block.dim) for cell_block in mesh.cells), default=2)
+    sg.sgdim = sgdim
     resolved_model_type = model_type or _default_model_type_for_sgdim(sgdim)
-    sg = mesh_to_sg(mesh, sgdim=sgdim, model_type=resolved_model_type)
+    sg.smdim, sg.analysis_config.model = parse_model_type(resolved_model_type)
     restore_sg_from_mesh_extras(sg, mesh)
 
     if config_json is not None:
         sg.analysis_config = read_config_from_json(config_json)
 
-    records = read_sections_from_json(sections_json) if sections_json is not None else []
     if records:
         _apply_section_records_to_sg(sg, records)
         bundle_extras = sg.extras.setdefault("gmsh_bundle", {})
@@ -307,10 +330,7 @@ def _build_physical_name_by_id(sg: StructureGene) -> dict[int, str]:
     """Build one physical-name lookup table from mesh field data."""
     physical_name_by_id: dict[int, str] = {}
     for name, values in getattr(sg.mesh, "field_data", {}).items():
-        physical_id = int(values[0])
-        physical_dim = int(values[1])
-        if physical_dim == int(sg.sgdim):
-            physical_name_by_id[physical_id] = name
+        physical_name_by_id[int(values[0])] = name
     return physical_name_by_id
 
 
