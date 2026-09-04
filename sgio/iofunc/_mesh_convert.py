@@ -11,7 +11,7 @@ import numpy as np
 
 from sgio._exceptions import IncompleteModelDataError
 from sgio.core import StructureGene
-from sgio.core.mesh import SGMesh
+from sgio.core.mesh import CellBlock, SGMesh
 from sgio.core.numbering import ensure_node_ids
 
 
@@ -234,13 +234,16 @@ def _restrict_mesh_to_sections(
     section_names: set[str],
     section_ids: set[int],
 ) -> None:
-    """Drop cell blocks whose physical group does not resolve to a section.
+    """Drop cells whose physical group does not resolve to a section.
 
     Implements the ``element -> entity -> physical tag -> physical name ->
-    section`` chain: a cell block survives when its physical group name is one
-    of ``section_names``. Blocks carrying no physical group, or a group absent
-    from the section data, are auxiliary markers rather than SG elements and are
-    removed together with their per-cell data.
+    section`` chain per element, not per cell block: a MSH 2.2 file (and any
+    other format that merges same-typed elements from different physical
+    groups into one block) can carry a resolving and a non-resolving physical
+    group side by side in the same block. Elements whose physical group is
+    absent from the section data are auxiliary markers rather than SG
+    elements and are removed together with their per-cell data; a block left
+    with zero surviving elements is dropped outright.
 
     Parameters
     ----------
@@ -254,49 +257,74 @@ def _restrict_mesh_to_sections(
     Raises
     ------
     IncompleteModelDataError
-        If no cell block resolves to any declared section.
+        If no element resolves to any declared section.
     """
     names_by_tag = _build_physical_name_map(mesh)
     tag_blocks = mesh.cell_data.get('property_id') or mesh.cell_data.get('gmsh:physical')
 
-    kept: list[int] = []
+    masks: list[np.ndarray] = []
     for index, cell_block in enumerate(mesh.cells):
+        n = len(cell_block.data)
         if tag_blocks is None or index >= len(tag_blocks):
+            masks.append(np.zeros(n, dtype=bool))
             continue
-        tags = {int(tag) for tag in tag_blocks[index]}
-        if tags and all(
-            _resolves_to_section(tag, names_by_tag, section_names, section_ids)
-            for tag in tags
-        ):
-            kept.append(index)
+        tags = np.asarray(tag_blocks[index]).astype(int)
+        masks.append(np.array(
+            [_resolves_to_section(int(tag), names_by_tag, section_names, section_ids)
+             for tag in tags],
+            dtype=bool,
+        ))
 
-    if not kept:
+    if not any(mask.any() for mask in masks):
         raise IncompleteModelDataError(
             "No mesh element resolves to a section. "
             f"Section names: {sorted(section_names)}; section ids: {sorted(section_ids)}. "
             f"Mesh physical groups: {_describe_physical_groups(mesh, names_by_tag, tag_blocks)}."
         )
 
-    if len(kept) == len(mesh.cells):
+    if all(mask.all() for mask in masks):
         return
 
-    _slice_mesh_cell_blocks(mesh, kept)
+    _mask_mesh_cells(mesh, masks)
 
 
-def _slice_mesh_cell_blocks(mesh: SGMesh, kept: list[int]) -> None:
-    """Keep only the cell blocks at ``kept``, slicing every per-cell container.
+def _mask_mesh_cells(mesh: SGMesh, masks: list[np.ndarray]) -> None:
+    """Keep only the cells selected by ``masks``, one boolean array per block.
+
+    A block whose mask is entirely ``False`` is dropped outright; a block
+    that is partially kept has its connectivity and every per-cell data
+    container boolean-indexed by its mask.
+
+    ``cell_sets`` is left as-is for every surviving block: its entries are
+    per-block local-index arrays (and, for the special
+    ``gmsh:bounding_entities`` key, a single geometric-entity reference, not
+    an index array at all), so remapping it through a partial mask needs
+    per-key semantics this passthrough metadata does not carry, and it is not
+    consumed by the SG pipeline.
 
     Parameters
     ----------
     mesh : SGMesh
-        Mesh to slice, modified in place.
-    kept : list of int
-        Indices of the cell blocks to retain, in order.
+        Mesh to mask, modified in place.
+    masks : list of numpy.ndarray
+        One boolean array per cell block in ``mesh.cells``, True for cells to
+        keep.
     """
-    mesh.cells = [mesh.cells[index] for index in kept]
+    kept = [index for index, mask in enumerate(masks) if mask.any()]
+
+    mesh.cells = [
+        mesh.cells[index] if masks[index].all() else
+        CellBlock(mesh.cells[index].type, mesh.cells[index].data[masks[index]],
+                  list(mesh.cells[index].tags))
+        for index in kept
+    ]
     for container in (mesh.cell_data, mesh.cell_point_data):
         for key, blocks in list(container.items()):
-            container[key] = [blocks[index] for index in kept]
+            container[key] = [
+                blocks[index] if masks[index].all() else
+                np.asarray(blocks[index])[masks[index]]
+                for index in kept
+            ]
     for key, blocks in list(mesh.cell_sets.items()):
         mesh.cell_sets[key] = [blocks[index] for index in kept]
 
@@ -306,10 +334,13 @@ def _describe_physical_groups(
     names_by_tag: dict[int, str],
     tag_blocks: list | None,
 ) -> str:
-    """Render the mesh's physical groups as ``name (dim D, N elements)`` text."""
-    if not names_by_tag:
-        return "none"
+    """Render the mesh's physical groups as ``name (dim D, N elements)`` text.
 
+    Falls back to the bare numeric tag (``'tag 3'``) when the mesh has no
+    ``$PhysicalNames`` block, so a caller diagnosing "nothing resolved" still
+    gets the actual physical tags present instead of an uninformative
+    ``"none"``.
+    """
     counts: dict[int, int] = {}
     if tag_blocks is not None:
         for index, cell_block in enumerate(mesh.cells):
@@ -318,12 +349,17 @@ def _describe_physical_groups(
             for tag in tag_blocks[index]:
                 counts[int(tag)] = counts.get(int(tag), 0) + 1
 
+    if not names_by_tag and not counts:
+        return "none"
+
     dims_by_tag = {
         int(values[0]): int(values[1]) for values in mesh.field_data.values() if len(values) > 1
     }
+    all_tags = sorted(set(names_by_tag) | set(counts))
     return ", ".join(
-        f"{name!r} (dim {dims_by_tag.get(tag, '?')}, {counts.get(tag, 0)} elements)"
-        for tag, name in sorted(names_by_tag.items())
+        f"{names_by_tag.get(tag, f'tag {tag}')!r} (dim {dims_by_tag.get(tag, '?')}, "
+        f"{counts.get(tag, 0)} elements)"
+        for tag in all_tags
     )
 
 
