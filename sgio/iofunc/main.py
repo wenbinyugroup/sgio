@@ -549,6 +549,13 @@ def convert_file_format(
         If write meshing data only, by default False
     renum_elem : bool, optional
         If renumber elements, by default False
+    sections_json : str, optional
+        Path to a ``sections.json`` sidecar. Required when ``file_format_in``
+        is ``'gmsh'``, since a bare ``.msh`` carries mesh data only; see
+        :func:`sgio.iofunc.gmsh.bundle.read_sg_from_gmsh_bundle`.
+    config_json : str, optional
+        Path to a ``config.json`` sidecar carrying the analysis config, used
+        together with ``sections_json`` for the Gmsh bundle path.
     """
 
     logger.info('Converting file format...')

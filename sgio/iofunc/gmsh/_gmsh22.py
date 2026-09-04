@@ -1,9 +1,10 @@
 from __future__ import annotations
 
 import logging
-import numpy as np
+from typing import BinaryIO
 
-from sgio.core.mesh import CellBlock, SGMesh
+import numpy as np
+from meshio._common import raw_from_cell_data, warn
 from meshio.gmsh._gmsh22 import (
     c_int,
     c_double,
@@ -16,7 +17,7 @@ from meshio.gmsh._gmsh22 import (
     _write_periodic,
 )
 
-logger = logging.getLogger(__name__)
+from sgio.core.mesh import CellBlock, SGMesh
 
 from ._common import (
     _fast_forward_over_blank_lines,
@@ -31,15 +32,16 @@ from ._common import (
     _write_physical_names,  # binary path; ASCII uses _write_physical_names_ascii below
     finalize_sg_cell_data,
 )
-from meshio._common import warn, raw_from_cell_data
+
+logger = logging.getLogger(__name__)
 
 
-def read_buffer(f, is_ascii: bool, data_size) -> SGMesh:
+def read_buffer(f: BinaryIO, is_ascii: bool, data_size: int) -> SGMesh:
     """Read a Gmsh 2.2 mesh from an open binary buffer.
 
     Parameters
     ----------
-    f : file-like
+    f : BinaryIO
         Buffer opened in binary mode, positioned just after ``$EndMeshFormat``.
     is_ascii : bool
         Whether the file body is ASCII (as opposed to binary).
