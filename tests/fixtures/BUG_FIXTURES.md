@@ -16,7 +16,7 @@ failing assertion points at one line of code — not that the geometry is
 interesting. Where an older, large fixture covers the same defect it is noted
 below; the small one is a drop-in replacement.
 
-Status column is against **sgio 0.8.0 as published**. Three entries differ in
+Status column is against **sgio 0.8.0 as published**. Four entries differ in
 this working tree, which is called out per row.
 
 | Fixture | Defect | Status |
@@ -24,7 +24,7 @@ this working tree, which is called out per row.
 | `gmsh/sg33_cube_boundary_group_bug_min_gmsh41.msh` | lower-dim physical group counted as SG elements | fixed in tree |
 | `gmsh/sg22_square_boundary_group_bug_min_gmsh41.msh` | same, in 2D | fixed in tree |
 | `gmsh/sg33_cube_tetra4_min_gmsh40.msh` | MSH 4.0 sent to the 4.1 reader | fixed in tree |
-| `gmsh/sg33_cube_tetra4_min_gmsh22.msh` | MSH 2.2 read path returns meshio `Mesh`, writer needs `SGMesh` | open |
+| `gmsh/sg33_cube_tetra4_min_gmsh22.msh` | MSH 2.2 read path returns meshio `Mesh`, writer needs `SGMesh` | fixed in tree |
 | `gmsh/sections_thermoelastic_cte_bug.json` + `config_thermoelastic.json` | CTE vector written at 6 components for every isotropy | open |
 | `abaqus/sg33_cube_distribution_input_bug.inp` + `.ori` | `*Distribution ... Input=<file>` never followed | open |
 
@@ -98,8 +98,12 @@ sgio.write(sg=sg, filename="out.sg", file_format="sc",
 # AttributeError: 'Mesh' object has no attribute 'cell_point_data'
 ```
 
-The two read paths disagree on the mesh type they return, and 0.8's SwiftComp
-writer requires the `SGMesh` one. Still reproduces in this working tree.
+The two read paths disagreed on the mesh type they return, and 0.8's SwiftComp
+writer requires the `SGMesh` one. Fixed in this working tree: the 2.2 reader
+now wraps meshio's parsed mesh in `SGMesh.from_meshio` and runs the same
+`finalize_sg_cell_data` post-processing the 4.0/4.1 readers already did, so
+all three format versions of the trio yield the same mesh IR
+(`tests/unit/test_gmsh_parser.py::test_gmsh_versions_read_into_the_same_mesh_ir`).
 
 ## `sections_thermoelastic_cte_bug.json` + `config_thermoelastic.json`
 

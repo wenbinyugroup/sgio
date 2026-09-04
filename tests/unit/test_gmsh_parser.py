@@ -93,3 +93,44 @@ def test_read_gmsh40_mesh_into_structure_gene(gmsh_test_files):
     assert sg.nnodes == 10841
     assert sg.nelems == 35288
     assert list(sg.materials.keys()) == ["Mat0"]
+
+
+@pytest.mark.unit
+@pytest.mark.parametrize(
+    "fixture_name, format_version",
+    [
+        ("sg33_cube_tetra4_min_gmsh41.msh", "4.1"),
+        ("sg33_cube_tetra4_min_gmsh40.msh", "4.0"),
+        ("sg33_cube_tetra4_min_gmsh22.msh", "2.2"),
+    ],
+)
+def test_gmsh_versions_read_into_the_same_mesh_ir(
+    gmsh_test_files, fixture_name, format_version, tmp_path
+):
+    """The same cube mesh must read identically regardless of $MeshFormat.
+
+    Regression for the 2.2 read path returning a raw ``meshio.Mesh`` instead
+    of the ``SGMesh`` every other version yields, which crashed the
+    SwiftComp writer on the missing ``cell_point_data`` attribute.
+    """
+    from sgio.core.mesh import SGMesh
+
+    fixture = gmsh_test_files["root"] / fixture_name
+
+    sg = sgio.read_sg_from_gmsh_bundle(
+        fixture,
+        gmsh_test_files["root"] / "sections_sg33_cube_tetra4.json",
+        model_type="SD1",
+        format_version=format_version,
+    )
+
+    assert type(sg.mesh) is SGMesh
+    assert sg.nnodes == 8
+    assert sg.nelems == 6
+    assert list(sg.materials.keys()) == ["matrix"]
+
+    # Must be writable, not just readable -- this is where 2.2 used to crash.
+    sgio.write(
+        sg=sg, filename=str(tmp_path / f"{fixture_name}.sc"), file_format="sc",
+        format_version="2.1", model_type="SD1",
+    )
