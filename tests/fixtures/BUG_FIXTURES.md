@@ -230,9 +230,13 @@ rather than by hand-parsing `Input=` in `mapper_in.py`:
   silently overwriting the real default with an empty coordinate list.
   Harmless for this fixture (both Yarn elements have explicit rows), but any
   RVE that leans on the default for elements *not* listed in the table would
-  get corrupted defaults. Fixed by skipping rows with fewer than 2 columns
-  (label + at least one value) in `mapper_in.py`, rather than touching the
-  vendored line-splitting used by every `_dataKWs` keyword.
+  get corrupted defaults. First patched as a `len(row) < 2` guard in
+  `mapper_in.py`; moved down into `_parseSubData` itself (strip trailing blank
+  lines from `self.lines` before `_parseData()` turns them into rows) once
+  code review pointed out the guard was a cross-layer workaround for a defect
+  that belongs to the shared vendor parsing every `_dataKWs` keyword's
+  external file goes through -- one fix there covers all of them, not just
+  `*Distribution`.
 
 Regression tests in `tests/unit/test_abaqus_mapper_in.py`:
 `test_map_input_to_structure_gene_reads_distribution_input_file` (this

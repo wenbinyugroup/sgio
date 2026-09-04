@@ -109,56 +109,33 @@ def _write_2d_direct_orientation_without_rotation(tmp_path) -> str:
     return str(filename)
 
 
-def _write_distribution_orientation_input(tmp_path) -> str:
-    """Write a 3D input with one distribution override and one defaulted element."""
+def _write_distribution_orientation_input(tmp_path, *, use_input_file: bool = False) -> str:
+    """Write a 3D input with one distribution override and one defaulted element.
+
+    Element 1 gets an explicit distribution row; element 2 has none and must
+    fall back to the blank-label default row. With ``use_input_file=True``
+    those rows live entirely in an external ``Input=`` file instead of
+    inline under the ``*Distribution`` keyword -- the same
+    ``*Distribution Table`` / ``*Orientation`` / ``*Solid Section`` wiring
+    covers both read paths.
+    """
+    distribution_rows = ", 0., 1., 0., -1., 0., 0.\n1, 1., 0., 0., 0., 1., 0.\n"
+
+    if use_input_file:
+        (tmp_path / "orientation.ori").write_text(distribution_rows, encoding="utf-8")
+        distribution_card = (
+            "*Distribution, name=FIBRE_DISTRIBUTION, location=ELEMENT, "
+            "Table=ORIENTATION_TABLE, Input=orientation.ori\n"
+        )
+    else:
+        distribution_card = (
+            "*Distribution, name=FIBRE_DISTRIBUTION, location=ELEMENT, Table=ORIENTATION_TABLE\n"
+            + distribution_rows
+        )
+
     filename = tmp_path / "distribution_orientation.inp"
     filename.write_text(
-        """*Heading
-*Part, name=RVE
-*Node
-1, 0., 0., 0.
-2, 1., 0., 0.
-3, 0., 1., 0.
-4, 0., 0., 1.
-5, 1., 1., 1.
-*Element, type=C3D4, elset=FIBRE
-1, 1, 2, 3, 4
-2, 2, 3, 4, 5
-*Distribution, name=FIBRE_DISTRIBUTION, location=ELEMENT, Table=ORIENTATION_TABLE
-, 0., 1., 0., -1., 0., 0.
-1, 1., 0., 0., 0., 1., 0.
-*Orientation, name=FIBRE_ORIENTATION
-FIBRE_DISTRIBUTION
-3, 0.
-*Solid Section, elset=FIBRE, material=FIBRE_MAT, orientation=FIBRE_ORIENTATION
-,
-*End Part
-*Distribution Table, name=ORIENTATION_TABLE
-coord3D, coord3D
-*Material, name=FIBRE_MAT
-*Elastic
-1.0, 0.3
-""",
-        encoding="utf-8",
-    )
-    return str(filename)
-
-
-def _write_distribution_input_file_orientation_input(tmp_path) -> str:
-    """Write a 3D input whose distribution table lives entirely in an Input= file.
-
-    Element 1 gets an explicit row in the external file; element 2 has no row
-    and must fall back to the file's blank-label default row.
-    """
-    ori_filename = tmp_path / "orientation.ori"
-    ori_filename.write_text(
-        ", 0., 1., 0., -1., 0., 0.\n1, 1., 0., 0., 0., 1., 0.\n",
-        encoding="utf-8",
-    )
-
-    filename = tmp_path / "distribution_input_file_orientation.inp"
-    filename.write_text(
-        """*Heading
+        f"""*Heading
 *Part, name=RVE
 *Node
 1, 0., 0., 0.
@@ -171,8 +148,7 @@ def _write_distribution_input_file_orientation_input(tmp_path) -> str:
 2, 2, 3, 4, 5
 *Distribution Table, name=ORIENTATION_TABLE
 coord3D, coord3D
-*Distribution, name=FIBRE_DISTRIBUTION, location=ELEMENT, Table=ORIENTATION_TABLE, Input=orientation.ori
-*Orientation, name=FIBRE_ORIENTATION
+{distribution_card}*Orientation, name=FIBRE_ORIENTATION
 FIBRE_DISTRIBUTION
 3, 0.
 *Solid Section, elset=FIBRE, material=FIBRE_MAT, orientation=FIBRE_ORIENTATION
@@ -425,7 +401,8 @@ def test_map_input_to_structure_gene_applies_input_file_distribution_default(tmp
     empty coordinate list, which then breaks the element that needed it.
     """
     parsed = parse_input_file(
-        _write_distribution_input_file_orientation_input(tmp_path), sgdim=3, model="SD1"
+        _write_distribution_orientation_input(tmp_path, use_input_file=True),
+        sgdim=3, model="SD1",
     )
 
     sg = map_input_to_structure_gene(parsed)

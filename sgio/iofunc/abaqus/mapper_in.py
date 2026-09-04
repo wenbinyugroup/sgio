@@ -169,12 +169,6 @@ def process_mesh(
         )
         distributions.setdefault(distr_name, {})
         for row in distr_block.data:
-            if len(row) < 2:
-                # A distribution read from an external Input= file has one
-                # spurious trailing all-blank row from the file's final
-                # newline; it carries no coordinates and must not be mistaken
-                # for the (blank-label) default row.
-                continue
             row_key = row[0]
             coordinates = list(map(float, row[1:]))
             if isinstance(row_key, str) and getattr(row_key, "_value", row_key) == "":

@@ -1683,11 +1683,17 @@ class inpKeyword:
         """
         
         subName = subName
-        fileName = f'{self.inputFolder}{subName}' 
+        fileName = f'{self.inputFolder}{subName}'
         #print('\n Reading data for block %s from file %s' % (parentKwLine, fileName))
         with open(fileName, 'r', newline=self._nl, encoding=_openEncoding) as subFile:
             self.inputString = subFile.read()
         self.lines = self._parseInputString(parseKwLine=False)
+        # A file's own trailing newline splits into one spurious wholly-blank
+        # line with no bearing on the keyword's data; every well-formed text
+        # file ends this way, so leaving it in would hand every _dataKWs
+        # keyword's caller a bogus, blank-labelled extra row.
+        while self.lines and self.lines[-1] == '':
+            self.lines.pop()
         data = self._parseData()
         self.data = data
         #breakpoint()
