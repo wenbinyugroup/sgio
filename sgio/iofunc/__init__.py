@@ -1,6 +1,5 @@
 from . import (
     abaqus,
-    nastran,
     swiftcomp,
     vabs,
 )
