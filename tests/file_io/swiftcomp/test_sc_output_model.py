@@ -168,3 +168,23 @@ def test_swiftcomp_output_model_properties_access(test_data_dir):
     
     logger.info("✓ All property access methods work correctly")
 
+
+@pytest.mark.io
+@pytest.mark.swiftcomp
+def test_swiftcomp_output_model_phi_pia_branches(test_data_dir):
+    """phi_pia must come from the actual rotation angle when the axes are
+    rotated, and default to 0 (not a swallowed parse failure) when the
+    SwiftComp output states the user axes already are the principal axes.
+    """
+    already_principal = test_data_dir / "swiftcomp" / "sg21t_tri6_sc21.sg.k"
+    rotated = test_data_dir / "swiftcomp" / "sg31t_hex20_sc21.sg.k"
+
+    if not already_principal.exists() or not rotated.exists():
+        pytest.skip("Test fixtures not found")
+
+    model_zero = read_output_model(str(already_principal), 'sc', model_type='BM2')
+    assert model_zero.phi_pia == 0
+
+    model_rotated = read_output_model(str(rotated), 'sc', model_type='BM2')
+    assert model_rotated.phi_pia == pytest.approx(63.079756027134785)
+

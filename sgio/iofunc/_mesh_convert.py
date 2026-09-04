@@ -26,8 +26,7 @@ def parse_model_type(model_type: str | int) -> tuple[int, int]:
 
     The suffix is converted to a 0-based submodel index (``'SD1'`` →
     submodel 0, ``'PL2'`` → submodel 1). Integer form returns
-    ``(model_type, model_type)`` unchanged. Unknown input falls back to
-    ``(3, 0)``.
+    ``(model_type, model_type)`` unchanged.
 
     Parameters
     ----------
@@ -38,29 +37,38 @@ def parse_model_type(model_type: str | int) -> tuple[int, int]:
     -------
     tuple[int, int]
         ``(smdim, submodel)``.
+
+    Raises
+    ------
+    ValueError
+        If ``model_type`` is not an ``int`` or a ``str`` matching
+        ``SD*``/``PL*``/``BM*`` with a numeric suffix.
     """
     if isinstance(model_type, int):
         return model_type, model_type
 
     if isinstance(model_type, str):
         prefix = model_type.upper()[:2]
-        if prefix == 'SD':
-            smdim = 3
-        elif prefix == 'PL':
-            smdim = 2
-        elif prefix == 'BM':
-            smdim = 1
-        else:
-            smdim = 3
+        smdim = {'SD': 3, 'PL': 2, 'BM': 1}.get(prefix)
+        if smdim is None:
+            raise ValueError(
+                f"Unknown model_type prefix {model_type[:2]!r} in {model_type!r}; "
+                "expected one of SD*, PL*, BM*."
+            )
 
         try:
             # Suffix '1' maps to submodel 0 (matches solver indexing).
             submodel = int(model_type[2]) - 1
         except (IndexError, ValueError):
-            submodel = 0
+            raise ValueError(
+                f"model_type {model_type!r} must end with a numeric submodel suffix, "
+                "e.g. 'SD1', 'PL2', 'BM1'."
+            )
         return smdim, submodel
 
-    return 3, 0
+    raise ValueError(
+        f"model_type must be an int or a str like 'SD1'/'PL2'/'BM1'; got {model_type!r}."
+    )
 
 
 def mesh_to_sg(

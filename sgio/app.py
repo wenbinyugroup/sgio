@@ -317,12 +317,6 @@ def main(command: str, **kwargs: Any) -> None:
             logger.error(f'Unknown command: {command}')
             raise ValueError(f'Unknown command: {command}')
             
-    except KeyError as e:
-        logger.error(f'Missing required argument: {e}')
-        raise
-    except (FileNotFoundError, NotImplementedError, ValueError) as e:
-        # Re-raise these exceptions as they have good error messages
-        raise
     except Exception as e:
         logger.error(f'Error executing {command}: {e}', exc_info=True)
         raise

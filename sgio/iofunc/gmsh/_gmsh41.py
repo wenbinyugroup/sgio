@@ -501,15 +501,19 @@ def _write_entities(fh, cells, tag_data, cell_sets, point_data, binary):
         if matching_cell_block.size > 0:
             # entity has a physical tag, write this
             # ASSUMPTION: There is a single physical tag for this
-            try:
+            if "gmsh:physical" in tag_data:
                 physical_tag = tag_data["gmsh:physical"][matching_cell_block[0]][0]
                 if binary:
                     np.array([1], dtype=c_size_t).tofile(fh)
                     np.array([physical_tag], dtype=c_int).tofile(fh)
                 else:
                     fh.write(f"1 {physical_tag} ")
-            except KeyError:
-                pass
+            else:
+                # No physical groups at all (mesh-only output): zero tags.
+                if binary:
+                    np.array([0], dtype=c_size_t).tofile(fh)
+                else:
+                    fh.write("0 ")
         else:
             # The number of physical tags is zero
             if binary:

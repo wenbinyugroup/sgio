@@ -98,13 +98,22 @@ def _readEulerBernoulliBeamModel(file):
             model.i22 = float(line.split()[-1])
         elif 'i33' in line:
             model.i33 = float(line.split()[-1])
-        elif 'principal inertial axes' in line:
+        elif 'principal inertial axes rotated' in line:
+            # Only reached when the axes are actually rotated; when the user
+            # coordinate axes already are the principal ones, SwiftComp emits
+            # a different sentence and phi_pia keeps its model default (0).
             line = line.split()
             try:
                 tmp_id = line.index('degrees')
-                model.phi_pia = float(line[tmp_id - 1])
             except ValueError:
-                model.phi_pia = 0
+                line = file.readline().split()
+                try:
+                    tmp_id = line.index('degrees')
+                except ValueError:
+                    raise OutputFileError(
+                        'No principal inertial axes rotation angle found.'
+                    )
+            model.phi_pia = float(line[tmp_id - 1])
         elif 'Mass-Weighted Radius of Gyration' in line:
             model.rg = float(line.split()[-1])
 
@@ -199,13 +208,22 @@ def _readTimoshenkoBeamModel(file):
             model.i22 = float(line.split()[-1])
         elif 'i33' in line:
             model.i33 = float(line.split()[-1])
-        elif 'principal inertial axes' in line:
+        elif 'principal inertial axes rotated' in line:
+            # Only reached when the axes are actually rotated; when the user
+            # coordinate axes already are the principal ones, SwiftComp emits
+            # a different sentence and phi_pia keeps its model default (0).
             line = line.split()
             try:
                 tmp_id = line.index('degrees')
-                model.phi_pia = float(line[tmp_id - 1])
             except ValueError:
-                model.phi_pia = 0
+                line = file.readline().split()
+                try:
+                    tmp_id = line.index('degrees')
+                except ValueError:
+                    raise OutputFileError(
+                        'No principal inertial axes rotation angle found.'
+                    )
+            model.phi_pia = float(line[tmp_id - 1])
         elif 'Mass-Weighted Radius of Gyration' in line:
             model.rg = float(line.split()[-1])
 

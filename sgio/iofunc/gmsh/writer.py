@@ -73,9 +73,5 @@ def _normalize_local_coordinate_fields(mesh: Any) -> None:
         np.asarray(block, dtype=float).copy() for block in mesh.cell_data["element_local_csys"]
     ]
 
-    try:
-        axis_data = build_property_ref_axis_cell_data(mesh.cell_data["element_local_csys"])
-    except (TypeError, ValueError):
-        return
-
+    axis_data = build_property_ref_axis_cell_data(mesh.cell_data["element_local_csys"])
     mesh.cell_data.update(axis_data)

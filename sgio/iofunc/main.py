@@ -2,8 +2,6 @@ from __future__ import annotations
 
 import logging
 
-import meshio
-
 import sgio.iofunc.swiftcomp as _swiftcomp
 import sgio.iofunc.vabs as _vabs
 import sgio.model as sgmodel
@@ -32,7 +30,7 @@ def read_output_state(
     extension: str | list[str] = "ele", sg: StructureGene | None = None,
     tool_version: str = "", num_cases: int = 1, num_elements: int = 0,
     **kwargs
-) -> list[sgmodel.StateCase] | None:
+) -> list[sgmodel.StateCase]:
     """Read SG dehomogenization or failure analysis output.
 
     Parameters
@@ -76,8 +74,8 @@ def read_output_state(
 
     Returns
     -------
-    list[StateCase] or None
-        List of state cases per load case, or ``None`` on parse failure.
+    list[StateCase]
+        List of state cases per load case. Raises on parse failure.
     """
     logger.debug('reading output state...')
     logger.debug(locals())
@@ -244,7 +242,7 @@ def read_fe_model(
 def read_output_model(
     filename: str, file_format: str, model_type: str = "",
     sg: StructureGene | None = None, **kwargs
-) -> sgmodel.Model | None:
+) -> sgmodel.Model:
     """Read SG homogenization output file.
 
     Parameters
@@ -261,17 +259,15 @@ def read_output_model(
 
     Returns
     -------
-    Model or None
-        Constitutive model parsed from the homogenization output, or None
-        if the file cannot be opened.
-    """
-    try:
-        file_obj = open(filename, "r")
-    except FileNotFoundError:
-        logger.error(f"File not found: {filename}")
-        return None
+    Model
+        Constitutive model parsed from the homogenization output.
 
-    with file_obj as file:
+    Raises
+    ------
+    FileNotFoundError
+        If ``filename`` does not exist.
+    """
+    with open(filename, "r") as file:
         if file_format.lower().startswith("s"):
             return _swiftcomp.read_output_buffer(
                 file, analysis="h", model_type=model_type, sg=sg, **kwargs
@@ -439,13 +435,7 @@ def write(
         mesh_only = True
 
     if writer is None:
-        # Fallback: defer to meshio for formats sgio does not own.
-        with open(filename, 'w', encoding='utf-8') as file:
-            meshio.write(
-                file, sg.mesh.to_meshio(), file_format=file_format,
-                int_fmt=sfi, float_fmt=sff,
-            )
-        return filename
+        raise ValueError(f"Unsupported output format: {file_format}")
 
     common_kwargs = dict(
         analysis=analysis,

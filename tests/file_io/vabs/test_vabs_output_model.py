@@ -137,6 +137,15 @@ def test_vabs_output_model_properties_access(test_data_dir):
     if hasattr(model, 'model_dump'):
         model_dict = model.model_dump()
         assert isinstance(model_dict, dict), "model_dump() should return a dict"
+
+
+@pytest.mark.io
+@pytest.mark.vabs
+def test_vabs_output_model_missing_file_raises(tmp_path):
+    """A missing output file should raise FileNotFoundError, not return None."""
+    missing = tmp_path / "does_not_exist.sg.K"
+    with pytest.raises(FileNotFoundError):
+        read_output_model(str(missing), 'vabs', model_type='BM2')
         assert 'ea' in model_dict, "EA should be in model dict"
     
     logger.info("✓ All property access methods work correctly")

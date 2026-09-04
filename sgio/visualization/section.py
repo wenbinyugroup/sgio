@@ -814,10 +814,7 @@ def plot_sg_3d_beam(
         raise ValueError(
             f"aspect_mode must be 'cube' or 'data'; got {aspect_mode!r}"
         )
-    try:
-        ax.set_box_aspect(box_aspect)
-    except Exception:
-        pass
+    ax.set_box_aspect(box_aspect)
 
     if legend_kwargs is None:
         ax.legend(handlers, labels, loc='upper left', fontsize=8)
