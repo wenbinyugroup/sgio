@@ -3,11 +3,11 @@ from __future__ import annotations
 import logging
 import numpy as np
 
-from sgio.core.mesh import CellBlock
+from sgio.core.mesh import CellBlock, SGMesh
 from meshio.gmsh._gmsh22 import (
     c_int,
     c_double,
-    read_buffer,
+    read_buffer as _meshio_read_buffer,
     _read_nodes,
     _read_cells,
     _read_cells_ascii,
@@ -29,8 +29,39 @@ from ._common import (
     _read_physical_names,
     _write_data,
     _write_physical_names,  # binary path; ASCII uses _write_physical_names_ascii below
+    finalize_sg_cell_data,
 )
 from meshio._common import warn, raw_from_cell_data
+
+
+def read_buffer(f, is_ascii: bool, data_size) -> SGMesh:
+    """Read a Gmsh 2.2 mesh from an open binary buffer.
+
+    Parameters
+    ----------
+    f : file-like
+        Buffer opened in binary mode, positioned just after ``$EndMeshFormat``.
+    is_ascii : bool
+        Whether the file body is ASCII (as opposed to binary).
+    data_size : int
+        Size in bytes of the file's floating-point/size types.
+
+    Returns
+    -------
+    SGMesh
+        Parsed mesh with SG cell data (``property_id``, local coordinate
+        systems, additional rotations) resolved -- the same mesh IR every
+        other supported ``$MeshFormat`` version yields.
+    """
+    mesh = SGMesh.from_meshio(_meshio_read_buffer(f, is_ascii, data_size))
+
+    finalize_sg_cell_data(mesh.cell_data, mesh.cells)
+
+    # MSH 2.2 has no $SGLayerDef / $SGConfig blocks; keep the attributes the
+    # downstream SG conversion expects.
+    mesh.sg_layer_defs = {}
+    mesh.sg_configs = {}
+    return mesh
 
 
 def write_buffer(file, mesh, float_fmt=".16e", binary=False, **kwargs):
