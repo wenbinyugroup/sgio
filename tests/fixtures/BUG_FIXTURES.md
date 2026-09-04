@@ -16,13 +16,13 @@ failing assertion points at one line of code — not that the geometry is
 interesting. Where an older, large fixture covers the same defect it is noted
 below; the small one is a drop-in replacement.
 
-Status column is against **sgio 0.8.0 as published**. Two entries differ in
+Status column is against **sgio 0.8.0 as published**. Three entries differ in
 this working tree, which is called out per row.
 
 | Fixture | Defect | Status |
 |---|---|---|
-| `gmsh/sg33_cube_boundary_group_bug_min_gmsh41.msh` | lower-dim physical group counted as SG elements | open |
-| `gmsh/sg22_square_boundary_group_bug_min_gmsh41.msh` | same, in 2D | open |
+| `gmsh/sg33_cube_boundary_group_bug_min_gmsh41.msh` | lower-dim physical group counted as SG elements | fixed in tree |
+| `gmsh/sg22_square_boundary_group_bug_min_gmsh41.msh` | same, in 2D | fixed in tree |
 | `gmsh/sg33_cube_tetra4_min_gmsh40.msh` | MSH 4.0 sent to the 4.1 reader | fixed in tree |
 | `gmsh/sg33_cube_tetra4_min_gmsh22.msh` | MSH 2.2 read path returns meshio `Mesh`, writer needs `SGMesh` | open |
 | `gmsh/sections_thermoelastic_cte_bug.json` + `config_thermoelastic.json` | CTE vector written at 6 components for every isotropy | open |
@@ -44,9 +44,17 @@ sg = sgio.read(fixture, "gmsh", sgdim=3, model_type="SD1")
 | `sg.nelems` | 24 | **48** |
 | `list(sg.materials)` | `['matrix']` | `['matrix', 'Material_2']` |
 
-The surface elements are counted as SG elements and given a placeholder
-material. Replaces `sg33_spheres_boundary_group_bug.msh` (941 KB), where the
-same defect shows as `nelem` 25211 instead of 21963.
+The surface elements were counted as SG elements and given a placeholder
+material. Replaced `sg33_spheres_boundary_group_bug.msh` (941 KB, since
+deleted), where the same defect showed as `nelem` 25211 instead of 21963.
+
+Fixed in this working tree: `mesh_to_sg` now keeps only the cell blocks whose
+physical group resolves to a declared section, so `boundary` is dropped
+instead of counted. Reading a bare `.msh` with no section data now raises
+`IncompleteModelDataError` rather than fabricating a placeholder material —
+so the snippet above must be called via
+`sgio.read_sg_from_gmsh_bundle(fixture, sections_json=..., model_type="SD1")`
+to get `sg.nelems == 24`.
 
 The companion `sg22_square_boundary_group_bug_min_gmsh41.msh` (927 bytes) is
 the same situation one dimension down — `matrix` (dim 2, 4 triangles) plus
