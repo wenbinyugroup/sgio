@@ -10,10 +10,14 @@ a silent wrong value (see docs archive issue 20260903-swiftcomp-cte-vector-lengt
 
 from __future__ import annotations
 
+from io import StringIO
+
 import pytest
 
 import sgio
-from sgio.iofunc.common.material_writers import _project_cte
+from sgio.iofunc.common.material_readers import read_materials, read_thermal_property
+from sgio.iofunc.common.material_writers import _project_cte, write_material
+from sgio.model.solid import CauchyContinuumModel
 
 
 @pytest.mark.unit
@@ -37,6 +41,49 @@ class TestProjectCte:
     def test_orthotropic_rejects_nonzero_shear(self):
         with pytest.raises(ValueError, match="shear components"):
             _project_cte([1.0, 2.0, 3.0, 0.0, 0.1, 0.0], 1)
+
+    def test_rejects_unsupported_isotropy_with_a_descriptive_message(self):
+        """An invalid isotropy must not leak a bare KeyError."""
+        with pytest.raises(ValueError, match="Unsupported isotropy"):
+            _project_cte([0.0] * 6, 3)
+
+
+@pytest.mark.unit
+def test_read_thermal_property_rejects_unsupported_isotropy():
+    """The reader's isotropy dispatch must not leak a bare KeyError either."""
+    with pytest.raises(ValueError, match="Unsupported isotropy"):
+        read_thermal_property(StringIO("1.0 2.0\n"), 3)
+
+
+@pytest.mark.unit
+def test_swiftcomp_anisotropic_cte_round_trips():
+    """isotropy=2 keeps all 6 CTE components through a real writer + reader round trip.
+
+    The other isotropy=2 coverage in this module (`_project_cte`) only checks
+    the truncation helper in isolation; this exercises the actual
+    `write_material` / `read_material` pair the way isotropy 0/1 are covered
+    by ``test_swiftcomp_specific_heat_round_trips`` below.
+    """
+    compliance = [[0.01 if i == j else 0.0 for j in range(6)] for i in range(6)]
+    material = CauchyContinuumModel(
+        isotropy=2,
+        density=1600.0,
+        temperature=0.0,
+        cmpl=compliance,
+        cte=[1e-06, 2e-06, 3e-06, 4e-06, 5e-06, 6e-06],
+        specific_heat=900.0,
+    )
+
+    buffer = StringIO()
+    write_material(mid=1, material=material, file=buffer, analysis="h",
+                    physics=1, comment_char="#", has_ntemp=True)
+
+    buffer.seek(0)
+    materials, _ = read_materials(buffer, nmate=1, comment_char="#", has_ntemp=True, physics=1)
+    material_back = next(iter(materials.values()))
+
+    assert material_back.specific_heat == pytest.approx(900.0)
+    assert material_back.cte == pytest.approx([1e-06, 2e-06, 3e-06, 4e-06, 5e-06, 6e-06])
 
 
 def _material_block_thermal_line_lengths(sc_text: str) -> list[int]:

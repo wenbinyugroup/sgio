@@ -14,7 +14,7 @@ import sgio.utils as sutl
 from sgio.core.sg import StructureGene
 from sgio.model.query_types import MatrixKind, TensorComponent
 
-from .material_readers import CTE_LEN_BY_ISOTROPY
+from ._thermal import CTE_LEN_BY_ISOTROPY
 
 
 logger = logging.getLogger(__name__)
@@ -43,7 +43,13 @@ def _project_cte(cte: list[float], anisotropy: int) -> list[float]:
     list of float
         CTE truncated to the length SwiftComp expects for ``anisotropy``.
     """
-    n = CTE_LEN_BY_ISOTROPY[anisotropy]
+    try:
+        n = CTE_LEN_BY_ISOTROPY[anisotropy]
+    except KeyError:
+        raise ValueError(
+            f'Unsupported isotropy {anisotropy!r}; expected one of '
+            f'{sorted(CTE_LEN_BY_ISOTROPY)} (0=isotropic, 1=orthotropic, 2=anisotropic)'
+        ) from None
     if anisotropy in (0, 1) and any(abs(c) > 1e-12 for c in cte[3:6]):
         raise ValueError(
             f'CTE shear components {cte[3:6]} must be zero for isotropy={anisotropy}, '

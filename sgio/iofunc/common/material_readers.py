@@ -12,12 +12,10 @@ from typing import Any, TextIO
 import sgio.model as smdl
 import sgio.utils as sutl
 
+from ._thermal import CTE_LEN_BY_ISOTROPY
+
 
 logger = logging.getLogger(__name__)
-
-# Voigt CTE components SwiftComp's thermal record carries per isotropy level.
-# Shared with material_writers.py so read and write agree on the same table.
-CTE_LEN_BY_ISOTROPY = {0: 1, 1: 3, 2: 6}
 
 
 def read_material_rotation_combinations(
@@ -270,7 +268,13 @@ def read_thermal_property(
     line = sutl.readNextNonEmptyLine(file)
     line = list(map(sutl.fortran_float, line.split()))
 
-    n = CTE_LEN_BY_ISOTROPY[isotropy]
+    try:
+        n = CTE_LEN_BY_ISOTROPY[isotropy]
+    except KeyError:
+        raise ValueError(
+            f'Unsupported isotropy {isotropy!r}; expected one of '
+            f'{sorted(CTE_LEN_BY_ISOTROPY)} (0=isotropic, 1=orthotropic, 2=anisotropic)'
+        ) from None
     specific_heat = line[n]
 
     if isotropy == 0:
