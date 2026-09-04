@@ -217,10 +217,10 @@ def plot_sg_2d(
     """
     if sg is None or ax is None:
         raise ValueError("Arguments 'sg' and 'ax' cannot be None")
+    if sg.mesh is None:
+        raise ValueError("The 'sg' object must have a mesh assigned")
 
     # Plot the mesh
-    if not hasattr(sg, 'mesh'):
-        raise ValueError("The 'sg' object must have a 'mesh' attribute")
     plot_2d_mesh(ax, sg.mesh, edge_color=ec_mesh, face_color=fc_mesh, line_width=lw_mesh)
 
     if show_origin:

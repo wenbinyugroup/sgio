@@ -360,10 +360,6 @@ def ensure_node_ids(mesh) -> None:
         If ``mesh.point_data['node_id']`` exists but its length does not match
         the number of points.
     """
-    # Ensure point_data exists
-    if not hasattr(mesh, "point_data") or mesh.point_data is None:
-        mesh.point_data = {}
-
     n_nodes = len(mesh.points)
     node_ids = mesh.point_data.get("node_id", None)
 
@@ -432,7 +428,7 @@ def auto_renumber_for_format(
         )
 
     # Elements
-    element_ids = mesh.cell_data.get("element_id", []) if hasattr(mesh, "cell_data") else []
+    element_ids = mesh.cell_data.get("element_id", [])
     if not _meets_requirements(element_ids, requirements, "elements"):
         _renumber_elements_sequential(mesh, requirements)
         elements_renumbered = True

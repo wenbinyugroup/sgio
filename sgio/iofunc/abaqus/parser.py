@@ -41,35 +41,69 @@ def _serialize_block(block: Any) -> dict[str, Any]:
 
     The result contains only primitives/strings so it survives the deep copy
     performed by :meth:`StructureGene.from_fe` / :meth:`StructuralModel.from_fe`.
+
+    ``block.parameter`` (a ``csid`` mapping) and ``block.data`` (a list of
+    rows of wrapped scalars) are characterized empirically for
+    ``*Boundary``/``*Cload``/``*Dload``/``*Step`` in
+    ``tests/unit/test_abaqus_parser.py`` -- ``_scalar`` never raises, so a
+    failure here means the block genuinely does not have the expected
+    parameter/data shape.
+
+    Raises
+    ------
+    ValueError
+        If ``block.parameter`` or ``block.data`` cannot be walked as a
+        mapping / list of rows.
     """
+    keyword = str(getattr(block, "name", ""))
+
     parameters: dict[str, Any] = {}
     try:
         for key in block.parameter:
             parameters[str(key).strip()] = _scalar(block.parameter[key])
-    except Exception:  # pragma: no cover - defensive against odd blocks
-        parameters = {}
+    except Exception as exc:
+        raise ValueError(
+            f"Cannot serialize parameters of Abaqus '*{keyword}' block: {exc}"
+        ) from exc
 
     data: list[list[Any]] = []
     try:
         for row in block.data:
             data.append([_scalar(cell) for cell in row])
-    except Exception:  # pragma: no cover - *Step data may be non-tabular
-        data = []
+    except Exception as exc:
+        raise ValueError(
+            f"Cannot serialize data of Abaqus '*{keyword}' block: {exc}"
+        ) from exc
 
     return {
-        "keyword": str(getattr(block, "name", "")),
+        "keyword": keyword,
         "parameters": parameters,
         "data": data,
     }
 
 
 def _extract_structural_blocks(parser: inpRW) -> dict[str, list[dict[str, Any]]]:
-    """Capture unmapped structural keyword blocks as serializable payloads."""
+    """Capture unmapped structural keyword blocks as serializable payloads.
+
+    A block that cannot be serialized is logged and skipped rather than
+    aborting the whole read: ``extras`` is a non-lossy, best-effort fallback
+    for keywords the mapper does not consume, not a strict validator, so one
+    unusual block must not force every Abaqus file to support the same
+    syntax.
+    """
     blocks: dict[str, list[dict[str, Any]]] = {}
     for keyword in STRUCTURAL_KEYWORDS:
         found = parser.findKeyword(keyword, printOutput=False)
-        if found:
-            blocks[keyword] = [_serialize_block(block) for block in found]
+        if not found:
+            continue
+        serialized = []
+        for block in found:
+            try:
+                serialized.append(_serialize_block(block))
+            except ValueError as exc:
+                logger.warning(str(exc))
+        if serialized:
+            blocks[keyword] = serialized
     return blocks
 
 
