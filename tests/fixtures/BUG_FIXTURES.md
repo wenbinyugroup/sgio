@@ -16,7 +16,7 @@ failing assertion points at one line of code — not that the geometry is
 interesting. Where an older, large fixture covers the same defect it is noted
 below; the small one is a drop-in replacement.
 
-Status column is against **sgio 0.8.0 as published**. Four entries differ in
+Status column is against **sgio 0.8.0 as published**. Five entries differ in
 this working tree, which is called out per row.
 
 | Fixture | Defect | Status |
@@ -25,7 +25,7 @@ this working tree, which is called out per row.
 | `gmsh/sg22_square_boundary_group_bug_min_gmsh41.msh` | same, in 2D | fixed in tree |
 | `gmsh/sg33_cube_tetra4_min_gmsh40.msh` | MSH 4.0 sent to the 4.1 reader | fixed in tree |
 | `gmsh/sg33_cube_tetra4_min_gmsh22.msh` | MSH 2.2 read path returns meshio `Mesh`, writer needs `SGMesh` | fixed in tree |
-| `gmsh/sections_thermoelastic_cte_bug.json` + `config_thermoelastic.json` | CTE vector written at 6 components for every isotropy | open |
+| `gmsh/sections_thermoelastic_cte_bug.json` + `config_thermoelastic.json` | CTE vector written at 6 components for every isotropy | fixed in tree |
 | `abaqus/sg33_cube_distribution_input_bug.inp` + `.ori` | `*Distribution ... Input=<file>` never followed | open |
 
 ---
@@ -137,14 +137,40 @@ record at all. Both materials then get **7 numbers** on that line:
 
 SwiftComp's thermal record is isotropy-dependent — 1 CTE + specific heat for
 isotropic, 3 + specific heat for orthotropic, 6 + specific heat for
-anisotropic — and so is sgio's own `read_thermal_property`. The writer has no
-matching branch, so the specific heat is read out of the wrong column: 1100
-becomes 5.8e-05 and 750 becomes 0.
+anisotropic — and so is sgio's own `read_thermal_property`. The writer had no
+matching branch, so the specific heat was read out of the wrong column: 1100
+became 5.8e-05 and 750 became 0.
 
-**This one is silent.** SwiftComp reports success and the stiffness and CTE
-results stay correct; only the effective-specific-heat block is wrong. A test
-that only checks "no exception" will not catch it — assert the number count on
-the thermal line, or round-trip `specific_heat` through write/read.
+**This one was silent.** SwiftComp reports success and the stiffness and CTE
+results stay correct; only the effective-specific-heat block was wrong. A test
+that only checks "no exception" would not have caught it.
+
+Fixed in this working tree: `_write_material` (in `material_writers.py`) now
+truncates `cte` through `_project_cte` before appending `specific_heat`, using
+the same isotropy -> length table (`CTE_LEN_BY_ISOTROPY`, now shared with
+`material_readers.py` instead of duplicated) `read_thermal_property` already
+used to parse it back. `_project_cte` raises rather than silently discarding
+if the components being dropped are not actually redundant (nonzero shear, or
+unequal normal components under isotropy=0) — truncating those would just
+trade one silent wrong value for another.
+
+Fixing the writer surfaced a second, independent bug on the read side:
+`read_material` did `mp.cte = cte` with the isotropy-truncated 1/3-length
+list, which `CauchyContinuumModel`'s `validate_assignment` rejects since `cte`
+is a fixed 6-component field — so reading back *any* SwiftComp file with
+`physics=1` and isotropy 0 or 1 raised a `ValidationError`, independent of
+whether the writer was fixed. `read_thermal_property` now pads back to 6
+components the same way an isotropic/orthotropic material's Voigt CTE always
+looks (repeated value for isotropic, zero shear for isotropic/orthotropic),
+so sgio's internal representation stays fixed-length end to end and
+write -> read is lossless. The VABS thermal branch (`physics == 3`,
+`has_ntemp=False`) reads/writes CTE components individually via
+`get_thermal_expansion` and was not touched.
+
+Regression tests in `tests/unit/test_material_writers.py`: `_project_cte`
+truncation and its two invariant checks, the thermal line's token count for
+the mixed isotropic/orthotropic fixture (2 and 4, not 7), and a full
+write -> read round trip asserting `specific_heat` and `cte` survive exactly.
 
 ## `sg33_cube_distribution_input_bug.inp` + `.ori` (1.8 KB / 304 B)
 

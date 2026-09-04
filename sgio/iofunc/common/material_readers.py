@@ -15,6 +15,10 @@ import sgio.utils as sutl
 
 logger = logging.getLogger(__name__)
 
+# Voigt CTE components SwiftComp's thermal record carries per isotropy level.
+# Shared with material_writers.py so read and write agree on the same table.
+CTE_LEN_BY_ISOTROPY = {0: 1, 1: 3, 2: 6}
+
 
 def read_material_rotation_combinations(
     file: TextIO,
@@ -255,22 +259,25 @@ def read_thermal_property(
     Returns
     -------
     tuple
-        (cte, specific_heat) - coefficient of thermal expansion and specific heat.
+        (cte, specific_heat) - 6-component Voigt CTE vector and specific heat.
+        Components SwiftComp's isotropy-dependent record does not carry are
+        filled in from what isotropy implies (repeated value for isotropic,
+        zero shear for isotropic/orthotropic), matching sgio's fixed
+        6-component internal representation.
     """
-    cte = []
     specific_heat = 0.0
-    
+
     line = sutl.readNextNonEmptyLine(file)
     line = list(map(sutl.fortran_float, line.split()))
-    
+
+    n = CTE_LEN_BY_ISOTROPY[isotropy]
+    specific_heat = line[n]
+
     if isotropy == 0:
-        cte = line[:1]
-        specific_heat = line[1]
+        cte = [line[0]] * 3 + [0.0, 0.0, 0.0]
     elif isotropy == 1:
-        cte = line[:3]
-        specific_heat = line[3]
-    elif isotropy == 2:
+        cte = line[:3] + [0.0, 0.0, 0.0]
+    else:
         cte = line[:6]
-        specific_heat = line[6]
-    
+
     return cte, specific_heat
