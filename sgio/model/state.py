@@ -287,38 +287,23 @@ class StateCase():
 
     def getState(self, name):
         """Get state by name."""
-        try:
-            return self._states[name]
-        except KeyError:
-            return None
+        return self._states.get(name)
 
     @property
     def displacement(self):
-        try:
-            return self._states['displacement']
-        except KeyError:
-            return None
+        return self._states.get('displacement')
 
     @property
     def rotation(self):
-        try:
-            return self._states['rotation']
-        except KeyError:
-            return None
+        return self._states.get('rotation')
 
     @property
     def load(self):
-        try:
-            return self._states['load']
-        except KeyError:
-            return None
+        return self._states.get('load')
 
     @property
     def distributed_load(self):
-        try:
-            return self._states['distributed_load']
-        except KeyError:
-            return None
+        return self._states.get('distributed_load')
 
     def __repr__(self):
         lines = [

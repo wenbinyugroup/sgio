@@ -160,11 +160,16 @@ def _normalize_local_coordinate_fields(
     cell_data["property_ref_csys"] = [block.copy() for block in normalized]
 
 
-def _normalize_additional_rotation_fields(
+def normalize_additional_rotation_fields(
     cell_data: dict[str, list[np.ndarray]],
     cells: list[CellBlock],
 ) -> None:
-    """Populate canonical additional-rotation fields on read."""
+    """Populate canonical additional-rotation fields, promoting the legacy
+    ``additional_rotation`` field to ``additional_rotation_1`` if needed.
+
+    Shared by the Gmsh reader (``finalize_sg_cell_data``) and writer
+    (``_prepare_gmsh41_mesh``) so both accept the same legacy input shape.
+    """
     rotation_1 = cell_data.get("additional_rotation_1")
     rotation_2 = cell_data.get("additional_rotation_2")
     rotation_3 = cell_data.get("additional_rotation_3")
@@ -217,7 +222,7 @@ def finalize_sg_cell_data(
         Cell blocks the data belongs to.
     """
     _normalize_local_coordinate_fields(cell_data, cells)
-    _normalize_additional_rotation_fields(cell_data, cells)
+    normalize_additional_rotation_fields(cell_data, cells)
 
     # Map gmsh:physical to property_id for compatibility with SGIO.
     # Priority: gmsh:physical > existing property_id from $ElementData > zeros fallback.

@@ -90,10 +90,7 @@ def build_sg_1d(
         # print(_lyr_np)
 
         # Check used material-orientation combination first
-        try:
-            _lyr_m_name = sgdb_map[_lyr_m_name]
-        except KeyError:
-            pass
+        _lyr_m_name = sgdb_map.get(_lyr_m_name, _lyr_m_name)
 
         logger.debug(f'checking material {_lyr_m_name}...')
 
@@ -270,19 +267,11 @@ def generate_layer_list(layup_design):
         _lyr_ply_thk = layer_design['ply_thickness']
         layer['ply_thickness'] = _lyr_ply_thk
 
-        try:
-            _lyr_ipo = layer_design['in-plane_rotation']
-        except KeyError:
-            try:
-                _lyr_ipo = layer_design['in-plane_orientation']
-            except KeyError:
-                _lyr_ipo = 0
+        _lyr_ipo = layer_design.get(
+            'in-plane_rotation', layer_design.get('in-plane_orientation', 0))
         layer['in-plane_rotation'] = _lyr_ipo
 
-        try:
-            _lyr_np = layer_design['number_of_plies']
-        except KeyError:
-            _lyr_np = 1
+        _lyr_np = layer_design.get('number_of_plies', 1)
         layer['number_of_plies'] = _lyr_np
 
         # print(_lyr_np)
