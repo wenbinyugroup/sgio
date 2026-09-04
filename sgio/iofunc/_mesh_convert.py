@@ -120,7 +120,7 @@ def mesh_to_sg(
     else:
         known_names = set(section_names or ())
         known_ids = {int(section_id) for section_id in (section_ids or ())}
-        _restrict_mesh_to_sections(mesh, known_names, known_ids)
+        restrict_mesh_to_sections(mesh, known_names, known_ids)
 
     sg.mesh = mesh
 
@@ -229,7 +229,7 @@ def _section_material_name(tag: int, names_by_tag: dict[int, str]) -> str:
     return names_by_tag.get(tag, f'section_{tag}')
 
 
-def _restrict_mesh_to_sections(
+def restrict_mesh_to_sections(
     mesh: SGMesh,
     section_names: set[str],
     section_ids: set[int],

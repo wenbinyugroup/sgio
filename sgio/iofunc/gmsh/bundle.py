@@ -11,6 +11,7 @@ from sgio.iofunc._mesh_convert import (
     mesh_to_sg,
     parse_model_type,
     restore_sg_from_mesh_extras,
+    restrict_mesh_to_sections,
 )
 from sgio.iofunc.common.material_json import (
     deserialize_material_record,
@@ -233,19 +234,20 @@ def read_sg_from_gmsh_bundle(
     section_names = {record.name for record in records if record.name}
     section_ids = {int(record.id) for record in records if record.id is not None}
 
-    # Restricting to the declared sections first drops auxiliary groups, so the
-    # SG dimension is read off the elements that actually belong to the gene.
+    # Restrict to the declared sections before anything else needs the mesh:
+    # the SG dimension and the model type default both depend on which
+    # elements actually belong to the gene, once auxiliary groups are dropped.
+    restrict_mesh_to_sections(mesh, section_names, section_ids)
+    sgdim = max((int(cell_block.dim) for cell_block in mesh.cells), default=2)
+    resolved_model_type = model_type or _default_model_type_for_sgdim(sgdim)
+
     sg = mesh_to_sg(
         mesh,
-        sgdim=1,
-        model_type="SD1",
+        sgdim=sgdim,
+        model_type=resolved_model_type,
         section_names=section_names,
         section_ids=section_ids,
     )
-    sgdim = max((int(cell_block.dim) for cell_block in mesh.cells), default=2)
-    sg.sgdim = sgdim
-    resolved_model_type = model_type or _default_model_type_for_sgdim(sgdim)
-    sg.smdim, sg.analysis_config.model = parse_model_type(resolved_model_type)
     restore_sg_from_mesh_extras(sg, mesh)
 
     if config_json is not None:
