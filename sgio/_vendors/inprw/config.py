@@ -106,9 +106,9 @@ _EoFKWs = {'include','manifest'}
 :type: set
 """
 
-_dataKWs = {'amplitude', 'clearance', 'correlation', 'element', 'equation', 'eventseries', 'field', 'impedanceproperty', 'initialconditions', 
-            'massflowrate', 'matrixinput', 'mpc', 'nodalenergyrate', 'nodalthickness', 'node', 'parametershapevariation', 'pressurestress', 
-            'psd-definition', 'release', 'spectrum', 'surfaceflaw', 'temperature', 'timepoints', 'wave'} 
+_dataKWs = {'amplitude', 'clearance', 'correlation', 'distribution', 'element', 'equation', 'eventseries', 'field', 'impedanceproperty', 'initialconditions',
+            'massflowrate', 'matrixinput', 'mpc', 'nodalenergyrate', 'nodalthickness', 'node', 'parametershapevariation', 'pressurestress',
+            'psd-definition', 'release', 'spectrum', 'surfaceflaw', 'temperature', 'timepoints', 'wave'}
 """Keywords that can read their data from another file.
 
 :meta hide-value:

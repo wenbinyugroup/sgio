@@ -144,6 +144,49 @@ coord3D, coord3D
     return str(filename)
 
 
+def _write_distribution_input_file_orientation_input(tmp_path) -> str:
+    """Write a 3D input whose distribution table lives entirely in an Input= file.
+
+    Element 1 gets an explicit row in the external file; element 2 has no row
+    and must fall back to the file's blank-label default row.
+    """
+    ori_filename = tmp_path / "orientation.ori"
+    ori_filename.write_text(
+        ", 0., 1., 0., -1., 0., 0.\n1, 1., 0., 0., 0., 1., 0.\n",
+        encoding="utf-8",
+    )
+
+    filename = tmp_path / "distribution_input_file_orientation.inp"
+    filename.write_text(
+        """*Heading
+*Part, name=RVE
+*Node
+1, 0., 0., 0.
+2, 1., 0., 0.
+3, 0., 1., 0.
+4, 0., 0., 1.
+5, 1., 1., 1.
+*Element, type=C3D4, elset=FIBRE
+1, 1, 2, 3, 4
+2, 2, 3, 4, 5
+*Distribution Table, name=ORIENTATION_TABLE
+coord3D, coord3D
+*Distribution, name=FIBRE_DISTRIBUTION, location=ELEMENT, Table=ORIENTATION_TABLE, Input=orientation.ori
+*Orientation, name=FIBRE_ORIENTATION
+FIBRE_DISTRIBUTION
+3, 0.
+*Solid Section, elset=FIBRE, material=FIBRE_MAT, orientation=FIBRE_ORIENTATION
+,
+*End Part
+*Material, name=FIBRE_MAT
+*Elastic
+1.0, 0.3
+""",
+        encoding="utf-8",
+    )
+    return str(filename)
+
+
 def _write_missing_orientation_input(tmp_path) -> str:
     """Write a minimal input whose section references an unknown orientation."""
     filename = tmp_path / "missing_orientation.inp"
@@ -336,6 +379,66 @@ def test_map_input_to_structure_gene_applies_distribution_default_and_override(t
         )
     )
     assert np.allclose(csys_by_element_id[1], [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0])
+    assert np.allclose(csys_by_element_id[2], [0.0, 1.0, 0.0, -1.0, 0.0, 0.0, 0.0, 0.0, 0.0])
+
+
+@pytest.mark.unit
+def test_map_input_to_structure_gene_reads_distribution_input_file(abaqus_test_files):
+    """A ``*Distribution`` with ``Input=<file>`` must read that file, not go empty.
+
+    Regression fixture: ``sg33_cube_distribution_input_bug.inp`` has 3 elements
+    -- 1 isotropic Matrix (no orientation) and 2 orthotropic Yarn elements whose
+    orientation comes from a ``*Distribution`` table stored entirely in the
+    external ``.ori`` file (nothing under the keyword in the ``.inp`` itself).
+    The two Yarn elements are given deliberately different fibre directions
+    (+X and +Y) so a reader that drops the external file collapses them onto
+    one orientation instead of raising -- the silent 0.7.0 failure mode.
+    """
+    fixture = abaqus_test_files["root"] / "sg33_cube_distribution_input_bug.inp"
+
+    parsed = parse_input_file(str(fixture), sgdim=3, model="SD1")
+    sg = map_input_to_structure_gene(parsed)
+
+    csys_by_element_id = dict(
+        zip(
+            sg.mesh.cell_data["element_id"][0],
+            sg.mesh.cell_data["property_ref_csys"][0],
+        )
+    )
+
+    # Element 1 (Matrix) has no orientation -> the global default.
+    assert np.allclose(csys_by_element_id[1], [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0])
+    # Element 2 (Yarn, fibre +X per the .ori file) and element 3 (fibre +Y)
+    # must resolve to their own, distinct rows from the external file.
+    assert np.allclose(csys_by_element_id[2], [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0])
+    assert np.allclose(csys_by_element_id[3], [0.0, 1.0, 0.0, -1.0, 0.0, 0.0, 0.0, 0.0, 0.0])
+    assert not np.allclose(csys_by_element_id[2], csys_by_element_id[3])
+
+
+@pytest.mark.unit
+def test_map_input_to_structure_gene_applies_input_file_distribution_default(tmp_path):
+    """A distribution read from an external Input= file must keep its real default.
+
+    The external file's own trailing newline produces one spurious, all-blank
+    row after the real data rows; if that row is mistaken for the (also
+    blank-label) default row it silently replaces the real default with an
+    empty coordinate list, which then breaks the element that needed it.
+    """
+    parsed = parse_input_file(
+        _write_distribution_input_file_orientation_input(tmp_path), sgdim=3, model="SD1"
+    )
+
+    sg = map_input_to_structure_gene(parsed)
+
+    csys_by_element_id = dict(
+        zip(
+            sg.mesh.cell_data["element_id"][0],
+            sg.mesh.cell_data["property_ref_csys"][0],
+        )
+    )
+    assert np.allclose(csys_by_element_id[1], [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0])
+    # Element 2 has no explicit row -- must fall back to the real default,
+    # not the spurious trailing blank row.
     assert np.allclose(csys_by_element_id[2], [0.0, 1.0, 0.0, -1.0, 0.0, 0.0, 0.0, 0.0, 0.0])
 
 

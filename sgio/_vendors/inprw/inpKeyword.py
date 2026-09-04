@@ -452,7 +452,7 @@ class inpKeyword:
             self._dataParsed = True
         self.path = path #: :str: Stores a string representation of the path to the :class:`inpKeyword` object through :attr:`keywords <inpRW.inpRW.keywords>`. Defaults to ''
         if suboptions == None and createSuboptions:
-            import inpKeywordSequence
+            from . import inpKeywordSequence
             self.suboptions = inpKeywordSequence.inpKeywordSequence(parentBlock=self) #: :inpKeywordSequence: Stores the sub blocks to the :class:`inpKeyword` object if :attr:`~inpRW.inpRW.organize` = True. The suboptions for each block will be set during the block organization loop of :func:`~inpRW.inpRW.parse`. Defaults to :class:`.inpKeywordSequence`
         elif suboptions == None:
             self.suboptions = None 

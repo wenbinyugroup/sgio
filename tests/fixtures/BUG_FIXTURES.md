@@ -16,7 +16,7 @@ failing assertion points at one line of code — not that the geometry is
 interesting. Where an older, large fixture covers the same defect it is noted
 below; the small one is a drop-in replacement.
 
-Status column is against **sgio 0.8.0 as published**. Five entries differ in
+Status column is against **sgio 0.8.0 as published**. Six entries differ in
 this working tree, which is called out per row.
 
 | Fixture | Defect | Status |
@@ -26,7 +26,7 @@ this working tree, which is called out per row.
 | `gmsh/sg33_cube_tetra4_min_gmsh40.msh` | MSH 4.0 sent to the 4.1 reader | fixed in tree |
 | `gmsh/sg33_cube_tetra4_min_gmsh22.msh` | MSH 2.2 read path returns meshio `Mesh`, writer needs `SGMesh` | fixed in tree |
 | `gmsh/sections_thermoelastic_cte_bug.json` + `config_thermoelastic.json` | CTE vector written at 6 components for every isotropy | fixed in tree |
-| `abaqus/sg33_cube_distribution_input_bug.inp` + `.ori` | `*Distribution ... Input=<file>` never followed | open |
+| `abaqus/sg33_cube_distribution_input_bug.inp` + `.ori` | `*Distribution ... Input=<file>` never followed | fixed in tree |
 
 ---
 
@@ -183,9 +183,9 @@ sgio.read(fixture, "abaqus", sgdim=3, model_type="SD1")
 # ValueError: Abaqus orientation 'Orientations' has no coordinates for element 2.
 ```
 
-sgio builds its distribution table only from rows physically present under the
-keyword and never follows `Input=`. 0.7.0 fell back to a single default
-orientation for every element, silently; 0.8.0 raises. The missing feature is
+sgio built its distribution table only from rows physically present under the
+keyword and never followed `Input=`. 0.7.0 fell back to a single default
+orientation for every element, silently; 0.8.0 raised. The missing feature was
 in both.
 
 The two yarn elements are given **different** fibre directions (+X and +Y) on
@@ -204,3 +204,39 @@ Two shape constraints worth preserving if this deck is edited:
   deck ending in a `*Solid Section` cannot be read.)
 - The `.ori` keeps Abaqus's leading blank-label default row. A fix must not
   mistake it for an element labelled 0.
+
+**Fixed in this working tree**, entirely at the parser layer (`sgio/_vendors/inprw`)
+rather than by hand-parsing `Input=` in `mapper_in.py`:
+
+- The vendored `inpRW` library already has a generic mechanism for keywords
+  whose data can live in an external `Input=` file (`config._dataKWs`): it
+  reads the file and merges its rows into the block's `.data`, so callers
+  never need to know whether a keyword's data came from the main `.inp` or a
+  side file. `distribution` was simply missing from that set — added it.
+- Exercising that path for the first time (nothing in this repo previously
+  used `Input=` on any `_dataKWs` keyword) hit a second, independent bug: the
+  `_data = inpKeyword()` branch in `inpKeyword.parseKWData` does a bare
+  `import inpKeywordSequence`, an absolute import left over from before the
+  library was vendored under the `sgio._vendors.inprw` package. It raised
+  `ModuleNotFoundError` for *any* keyword using this branch, not just
+  `*Distribution`. Changed to `from . import inpKeywordSequence`, matching
+  every other import in the file.
+- A *third* bug surfaced once the file actually loaded: `_parseSubData` reads
+  the whole external file's raw text and splits it on newlines with no
+  trimming, so a file ending in a normal trailing newline (i.e. essentially
+  any well-formed text file) produces one spurious all-blank row after the
+  real data. In `mapper_in.py`'s distribution-table loop that phantom row has
+  the same blank label as the real default row and was parsed *after* it,
+  silently overwriting the real default with an empty coordinate list.
+  Harmless for this fixture (both Yarn elements have explicit rows), but any
+  RVE that leans on the default for elements *not* listed in the table would
+  get corrupted defaults. Fixed by skipping rows with fewer than 2 columns
+  (label + at least one value) in `mapper_in.py`, rather than touching the
+  vendored line-splitting used by every `_dataKWs` keyword.
+
+Regression tests in `tests/unit/test_abaqus_mapper_in.py`:
+`test_map_input_to_structure_gene_reads_distribution_input_file` (this
+fixture: 2 distinct Yarn orientations, matrix gets the global default) and
+`test_map_input_to_structure_gene_applies_input_file_distribution_default`
+(a synthetic `Input=` file where one element has no explicit row, so it must
+fall back to the real default and not the phantom trailing blank one).
