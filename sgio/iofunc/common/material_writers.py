@@ -14,8 +14,46 @@ import sgio.utils as sutl
 from sgio.core.sg import StructureGene
 from sgio.model.query_types import MatrixKind, TensorComponent
 
+from .material_readers import CTE_LEN_BY_ISOTROPY
+
 
 logger = logging.getLogger(__name__)
+
+
+def _project_cte(cte: list[float], anisotropy: int) -> list[float]:
+    """Truncate a 6-component CTE vector to what SwiftComp reads back.
+
+    SwiftComp's thermal record is isotropy-dependent (1/3/6 CTE components
+    plus specific heat), but sgio's internal ``CauchyContinuumModel.cte`` is
+    always a fixed 6-component Voigt vector. Writing all 6 unconditionally
+    shifts specific heat into what SwiftComp parses as an extra CTE
+    component. The dropped components must be redundant, not discarded data:
+    isotropic material requires cte[0] == cte[1] == cte[2], and isotropic or
+    orthotropic material requires the shear components cte[3:6] == 0.
+
+    Parameters
+    ----------
+    cte : list of float
+        6-component Voigt CTE vector.
+    anisotropy : int
+        0 = isotropic, 1 = orthotropic, 2 = anisotropic.
+
+    Returns
+    -------
+    list of float
+        CTE truncated to the length SwiftComp expects for ``anisotropy``.
+    """
+    n = CTE_LEN_BY_ISOTROPY[anisotropy]
+    if anisotropy in (0, 1) and any(abs(c) > 1e-12 for c in cte[3:6]):
+        raise ValueError(
+            f'CTE shear components {cte[3:6]} must be zero for isotropy={anisotropy}, '
+            'SwiftComp has no field to write them to'
+        )
+    if anisotropy == 0 and not (abs(cte[1] - cte[0]) <= 1e-12 and abs(cte[2] - cte[0]) <= 1e-12):
+        raise ValueError(
+            f'CTE {cte[:3]} must be equal in all three directions for isotropy=0'
+        )
+    return cte[:n]
 
 
 def build_material_id_map(
@@ -253,8 +291,8 @@ def write_material(
         
         # Thermal properties (SwiftComp format)
         if physics in [1, 4, 6] and has_ntemp:
-            sutl.writeFormatFloats(
-                file, thermal.cte + [thermal.specific_heat], sff)
+            cte = _project_cte(list(thermal.cte), anisotropy)
+            sutl.writeFormatFloats(file, cte + [thermal.specific_heat], sff)
     
     elif analysis == 'f' or analysis.startswith('f'):
         # Write material properties for failure analysis
