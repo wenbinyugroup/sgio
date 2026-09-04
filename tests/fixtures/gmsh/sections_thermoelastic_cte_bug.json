@@ -1,0 +1,63 @@
+{
+  "sections": [
+    {
+      "kind": "material",
+      "theory": "cauchy_continuum",
+      "name": "matrix",
+      "id": 1,
+      "payload": {
+        "name": "matrix",
+        "model": "sd1",
+        "label": "1",
+        "isotropy": 0,
+        "density": 1200.0,
+        "elastic": {
+          "e1": 3500000000.0,
+          "nu12": 0.35
+        },
+        "cte": [
+          5.8e-05,
+          5.8e-05,
+          5.8e-05,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "specific_heat": 1100.0
+      }
+    },
+    {
+      "kind": "material",
+      "theory": "cauchy_continuum",
+      "name": "fibre",
+      "id": 2,
+      "payload": {
+        "name": "fibre",
+        "model": "sd1",
+        "label": "2",
+        "isotropy": 1,
+        "density": 1760.0,
+        "elastic": {
+          "e1": 230000000000.0,
+          "e2": 15000000000.0,
+          "e3": 15000000000.0,
+          "g12": 15000000000.0,
+          "g13": 15000000000.0,
+          "g23": 7000000000.0,
+          "nu12": 0.2,
+          "nu13": 0.2,
+          "nu23": 0.07
+        },
+        "cte": [
+          -5e-07,
+          1e-05,
+          1e-05,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "specific_heat": 750.0
+      }
+    }
+  ]
+}

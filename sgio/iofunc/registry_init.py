@@ -28,6 +28,7 @@ from .vabs.adapter import VABSReader, VABSWriter
 from .swiftcomp.adapter import SwiftCompReader, SwiftCompWriter
 from .gmsh.adapter import GmshReader, GmshWriter
 from .abaqus.adapter import AbaqusReader, AbaqusWriter
+from .vtk.adapter import VtkWriter
 
 
 def register_all_formats():
@@ -61,6 +62,10 @@ def register_all_formats():
     abaqus_writer = AbaqusWriter()
     registry.register_reader('abaqus', abaqus_reader)
     registry.register_writer('abaqus', abaqus_writer)
+
+    # Register write-only VTK mesh-export formats.
+    registry.register_writer('vtk', VtkWriter('vtk'))
+    registry.register_writer('vtu', VtkWriter('vtu'))
 
     # Aliases (short / alternate spellings).
     registry.register_alias('sc', 'swiftcomp')

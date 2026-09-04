@@ -1,0 +1,6 @@
+** Orientation vectors, Abaqus *Distribution external data format.
+** 1st vector is the fibre direction, 2nd an arbitrary perpendicular vector.
+** The leading blank-label row is Abaqus's default entry.
+, 1.0, 0.0, 0.0,   0.0, 1.0, 0.0
+2, 1.0, 0.0, 0.0,   0.0, 1.0, 0.0
+3, 0.0, 1.0, 0.0,   -1.0, 0.0, 0.0

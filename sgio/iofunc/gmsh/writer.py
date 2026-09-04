@@ -8,8 +8,7 @@ import numpy as np
 
 from sgio.core.property_ref_csys import (
     build_property_ref_axis_cell_data,
-    build_property_ref_csys_from_axis_cell_data,
-    coerce_property_ref_value_to_csys,
+    resolve_element_local_csys,
 )
 
 from . import _gmsh22
@@ -54,7 +53,9 @@ def _prepare_gmsh41_mesh(mesh: Any, sgdim: int) -> None:
         [[sgdim, 1] for _ in range(len(mesh.points))],
         dtype=int,
     )
-    mesh.cell_data["gmsh:geometrical"] = [[1]] * len(mesh.cells)
+    mesh.cell_data["gmsh:geometrical"] = [
+        np.ones(len(cell_block), dtype=int) for cell_block in mesh.cells
+    ]
 
     _normalize_local_coordinate_fields(mesh)
     _normalize_additional_rotation_fields(mesh)
@@ -62,30 +63,11 @@ def _prepare_gmsh41_mesh(mesh: Any, sgdim: int) -> None:
 
 def _normalize_local_coordinate_fields(mesh: Any) -> None:
     """Normalize canonical and legacy local-csys fields before Gmsh writing."""
-    axis_y1 = mesh.cell_data.get("property_ref_axis_y1")
-    axis_y2 = mesh.cell_data.get("property_ref_axis_y2")
-    axis_y3 = mesh.cell_data.get("property_ref_axis_y3")
-
-    cell_csys = mesh.cell_data.get("element_local_csys")
-    if cell_csys is None:
-        cell_csys = mesh.cell_data.get("property_ref_csys")
-
-    if cell_csys is None and axis_y1 is not None and axis_y2 is not None:
-        try:
-            cell_csys = build_property_ref_csys_from_axis_cell_data(axis_y1, axis_y2, axis_y3)
-        except (TypeError, ValueError):
-            cell_csys = None
-
+    cell_csys = resolve_element_local_csys(mesh.cell_data, mesh.cells)
     if cell_csys is None:
         return
 
-    mesh.cell_data["element_local_csys"] = [
-        np.asarray(
-            [coerce_property_ref_value_to_csys(value) for value in block],
-            dtype=float,
-        )
-        for block in cell_csys
-    ]
+    mesh.cell_data["element_local_csys"] = cell_csys
     mesh.cell_data["property_ref_csys"] = [
         np.asarray(block, dtype=float).copy() for block in mesh.cell_data["element_local_csys"]
     ]

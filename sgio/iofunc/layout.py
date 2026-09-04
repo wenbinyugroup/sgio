@@ -68,6 +68,9 @@ def merge_sections(
 ) -> SGMesh:
     """Merge multiple section files according to a blade layout."""
     from .main import read
+    from .gmsh.adapter import GmshReader
+
+    read_gmsh_mesh = GmshReader().read_input
 
     layout = list(layout)
     root = Path(section_dir)
@@ -103,11 +106,16 @@ def merge_sections(
             location,
         )
 
-        if input_format in SGIO_INPUT_FORMATS:
+        if input_format == "gmsh":
+            # Merging only needs the mesh, and a bare .msh has no section data
+            # to build a structure gene from, so read it as a mesh.
+            mesh = _convert_mesh_to_visualization_mesh(
+                read_gmsh_mesh(str(section_path), **read_kwargs)
+            )
+        elif input_format in SGIO_INPUT_FORMATS:
             sg = read(str(section_path), file_format=input_format, **read_kwargs)
             mesh = _convert_mesh_to_visualization_mesh(sg.mesh)
-            if input_format != "gmsh":
-                mesh.field_data = _build_field_data_from_structure_gene(sg)
+            mesh.field_data = _build_field_data_from_structure_gene(sg)
         else:
             mesh = _convert_mesh_to_visualization_mesh(
                 meshio.read(section_path, file_format=input_format)

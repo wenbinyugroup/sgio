@@ -45,11 +45,14 @@ dev = [
 pyvista = [
     "pyvista",  # pulls vtk; enables SGMesh.to_pyvista / from_pyvista + mesh preview
 ]
+pyvista-html = [
+    "pyvista[jupyter]",  # adds trame for Plotter.export_html
+]
 all = [
     "h5py",
     "netCDF4",
     "pytest",
-    "pyvista",
+    "pyvista[jupyter]",
 ]
 
 [project.scripts]

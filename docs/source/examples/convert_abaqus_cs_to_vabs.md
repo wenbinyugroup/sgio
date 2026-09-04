@@ -18,6 +18,9 @@ SGIO provides two approaches: a one-step `convert()` call, or the explicit `read
 
 A VABS input file `sg2_airfoil_2.sg` is written to the working directory and can be passed directly to VABS for homogenization.
 
+To inspect the Abaqus mesh and its per-element material directions before
+homogenization, see {doc}`plot_abaqus_local_csys`.
+
 ## File List
 
 - [run.py](../../../examples/convert_abaqus_cs_to_vabs/run.py): Main Python script

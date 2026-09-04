@@ -351,7 +351,9 @@ class SGMesh:
         Imports ``pyvista`` lazily (an optional dependency; install with
         ``pip install sgio[pyvista]``). Geometry, ``point_data`` and
         ``cell_data`` cross over via the meshio bridge; SG-specific
-        ``cell_point_data`` has no pyvista counterpart and is dropped.
+        ``cell_point_data`` and set metadata have no pyvista counterpart and
+        are dropped. The bridge-owned meshio payload is changed instead of
+        mutating this ``SGMesh``.
 
         Returns
         -------
@@ -360,7 +362,10 @@ class SGMesh:
         """
         import pyvista
 
-        return pyvista.from_meshio(self.to_meshio())
+        meshio_mesh = self.to_meshio()
+        meshio_mesh.point_sets = {}
+        meshio_mesh.cell_sets = {}
+        return pyvista.from_meshio(meshio_mesh)
 
     @classmethod
     def from_pyvista(cls, grid) -> "SGMesh":

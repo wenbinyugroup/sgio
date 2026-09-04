@@ -27,3 +27,10 @@ sgio.write(
     format_version='2.1',
     model_type='SD1',
 )
+
+plotter = sgio.plot_sg_pyvista(
+    sg,
+    show_local_axes=True,
+    output_html=cwd / "pyvista.html",
+)
+plotter.close()

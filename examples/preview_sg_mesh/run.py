@@ -26,6 +26,13 @@ sg = sgio.read(
     model_type="BM2",
 )
 
+plotter = sgio.plot_sg_pyvista(
+    sg,
+    show_local_axes=True,
+    output_html=cwd / "pyvista.html",
+)
+plotter.close()
+
 # 2. Bridge the SG mesh to a pyvista UnstructuredGrid.
 grid = sg.mesh.to_pyvista()
 print(grid)

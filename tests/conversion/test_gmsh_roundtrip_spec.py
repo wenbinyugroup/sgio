@@ -20,6 +20,28 @@ from sgio import (
 from sgio.model import CauchyContinuumModel
 
 
+def _write_sections_sidecar(sg, path: Path) -> Path:
+    """Write the bundle section sidecar carrying one structure gene's materials.
+
+    A ``.msh`` holds mesh data only, so a VABS -> Gmsh -> VABS round trip has to
+    carry the section payload alongside it; that sidecar is what makes the
+    second leg readable.
+    """
+    write_sections_to_json(
+        [
+            section_model_to_record(
+                sg.materials[section.material],
+                name=section.material,
+                id=section.property_id,
+                orientation=section.orientation,
+            )
+            for section in sg.sections.values()
+        ],
+        path,
+    )
+    return path
+
+
 def _remove_block(text: str, block_name: str) -> str:
     start = text.index(f"${block_name}")
     end = text.index(f"$End{block_name}") + len(f"$End{block_name}\n")
@@ -66,6 +88,7 @@ def test_vabs_gmsh_vabs_roundtrip_preserves_mesh_orientation_invariants(tmp_path
         file_version_out="4.1",
         model_type="BM2",
     )
+    sections_path = _write_sections_sidecar(source_sg, tmp_path / "isorect.sections.json")
     convert(
         str(gmsh_path),
         str(roundtrip_path),
@@ -76,6 +99,7 @@ def test_vabs_gmsh_vabs_roundtrip_preserves_mesh_orientation_invariants(tmp_path
         model_type="BM2",
         sgdim=2,
         model_space="yz",
+        sections_json=str(sections_path),
     )
     roundtrip_sg = read(str(roundtrip_path), "vabs", format_version="4.1", model_type="BM2")
 
@@ -154,6 +178,7 @@ def test_vabs_gmsh_bundle_roundtrip_preserves_material_payload_and_config(tmp_pa
 def test_gmsh_enriched_to_vabs_to_gmsh_preserves_local_csys_fields(tmp_path: Path):
     """An enriched Gmsh mesh should keep canonical local-csys fields after re-export."""
     src = Path("tests/fixtures/gmsh/sg21_box_quad4_min_gmsh41.msh")
+    sections = Path("tests/fixtures/gmsh/sections_sg21_box_quad4.json")
     vabs_path = tmp_path / "roundtrip.sg"
     gmsh_path = tmp_path / "roundtrip.msh"
 
@@ -167,6 +192,7 @@ def test_gmsh_enriched_to_vabs_to_gmsh_preserves_local_csys_fields(tmp_path: Pat
         model_type="BM2",
         sgdim=2,
         model_space="xy",
+        sections_json=str(sections),
     )
     roundtrip_sg = read(str(vabs_path), "vabs", format_version="4.1", model_type="BM2")
     write(roundtrip_sg, str(gmsh_path), "gmsh", format_version="4.1", model_type="BM2", binary=False)
@@ -243,7 +269,12 @@ def test_legacy_sg_blocks_are_still_readable(tmp_path: Path, gmsh_test_files):
         encoding="utf-8",
     )
 
-    sg = read(str(legacy_path), "gmsh", format_version="4.1", model_type="BM2", sgdim=2)
+    sg = read_sg_from_gmsh_bundle(
+        legacy_path,
+        gmsh_test_files["root"] / "sections_sg21_box_quad4.json",
+        None,
+        model_type="BM2",
+    )
 
     assert sg.analysis_config.model == 1
     assert sg.analysis_config.do_damping == 1

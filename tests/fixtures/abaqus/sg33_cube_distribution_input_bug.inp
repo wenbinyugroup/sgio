@@ -1,0 +1,57 @@
+** Minimal reproduction: *Distribution with its data in an external Input= file.
+**
+** sgio builds its distribution table only from the rows physically present
+** under the keyword and never follows Input=, so this table reads as empty.
+** 0.7.0 then silently gave every element in the Yarn set the same default
+** orientation; 0.8.0 raises "has no coordinates for element 2".
+**
+** Geometry is 3 stacked C3D8 hexahedra on a 1x1x3 column:
+**   element 1 -> Matrix, isotropic, no orientation
+**   elements 2,3 -> Yarn,  orthotropic, orientation from the distribution
+** The two yarn elements are given DIFFERENT fibre directions in the .ori file
+** (+X and +Y), so a reader that drops the file collapses them onto one
+** orientation and the failure is visible by counting distinct values.
+*Heading
+sgio fixture: external *Distribution Input= file
+*Node
+1, 0.0, 0.0, 0.0
+2, 1.0, 0.0, 0.0
+3, 1.0, 1.0, 0.0
+4, 0.0, 1.0, 0.0
+5, 0.0, 0.0, 1.0
+6, 1.0, 0.0, 1.0
+7, 1.0, 1.0, 1.0
+8, 0.0, 1.0, 1.0
+9, 0.0, 0.0, 2.0
+10, 1.0, 0.0, 2.0
+11, 1.0, 1.0, 2.0
+12, 0.0, 1.0, 2.0
+13, 0.0, 0.0, 3.0
+14, 1.0, 0.0, 3.0
+15, 1.0, 1.0, 3.0
+16, 0.0, 1.0, 3.0
+*Element, Type=C3D8
+1, 1, 2, 3, 4, 5, 6, 7, 8
+2, 5, 6, 7, 8, 9, 10, 11, 12
+3, 9, 10, 11, 12, 13, 14, 15, 16
+*ElSet, ElSet=Matrix
+1
+*ElSet, ElSet=Yarn
+2, 3
+*Distribution Table, Name=OrientationVectors
+COORD3D,COORD3D
+*Distribution, Location=Element, Table=OrientationVectors, Name=OrientationVectors, Input=sg33_cube_distribution_input_bug.ori
+*Orientation, Name=Orientations, Definition=coordinates
+OrientationVectors
+1, 0
+*Solid Section, ElSet=Matrix, Material=Mat0
+,
+*Solid Section, ElSet=Yarn, Material=Mat1, Orientation=Orientations
+,
+*Material, Name=Mat0
+*Elastic
+3.5e+09, 0.35
+*Material, Name=Mat1
+*Elastic, type=ENGINEERING CONSTANTS
+2.3e+11, 1.5e+10, 1.5e+10, 0.2, 0.2, 0.07, 1.5e+10, 1.5e+10
+7.0e+09

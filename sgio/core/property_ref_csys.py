@@ -12,9 +12,13 @@ as nine floating-point values ``(a1, a2, a3, b1, b2, b3, c1, c2, c3)``:
 """
 from __future__ import annotations
 
-from typing import Iterable
+from collections.abc import Mapping, Sequence
+from typing import TYPE_CHECKING, Iterable
 
 import numpy as np
+
+if TYPE_CHECKING:
+    from .mesh import CellBlock
 
 
 VABS_REFERENCE_POINT_A = np.array([1.0, 0.0, 0.0], dtype=float)
@@ -242,8 +246,90 @@ def coerce_property_ref_value_to_csys(value: object) -> np.ndarray:
     if array.size == 1:
         return vabs_theta_to_property_ref_csys(float(array[0]))
     raise ValueError(
-        "property_ref_csys values must be either a scalar legacy theta or a 9-value payload."
+        "property_ref_csys values must be either a scalar legacy theta or contain exactly 9 values."
     )
+
+
+def resolve_element_local_csys(
+    cell_data: Mapping[str, Sequence[Iterable[object]]],
+    cells: Sequence[CellBlock],
+) -> list[np.ndarray] | None:
+    """Resolve element local-coordinate data to canonical nine-value blocks.
+
+    The resolver is the single owner of local-coordinate field priority:
+    ``element_local_csys``, then ``property_ref_csys``, then the three
+    ``property_ref_axis_y*`` compatibility fields. The returned arrays are
+    newly allocated and never modify ``cell_data``.
+
+    Parameters
+    ----------
+    cell_data : mapping of str to sequence of iterable
+        Cell-block-major data fields.
+    cells : sequence of CellBlock
+        Cell blocks that define required block and element counts.
+
+    Returns
+    -------
+    list[numpy.ndarray] or None
+        Canonical arrays with shape ``(n_elements, 9)`` for each cell block,
+        or ``None`` if no local-coordinate field is present.
+
+    Raises
+    ------
+    ValueError
+        If local-coordinate data is incomplete, misaligned with cell blocks,
+        non-finite, or geometrically invalid.
+    """
+    source_name = "element_local_csys"
+    source_blocks = cell_data.get(source_name)
+    if source_blocks is None:
+        source_name = "property_ref_csys"
+        source_blocks = cell_data.get(source_name)
+
+    if source_blocks is None:
+        axis_y1 = cell_data.get("property_ref_axis_y1")
+        axis_y2 = cell_data.get("property_ref_axis_y2")
+        axis_y3 = cell_data.get("property_ref_axis_y3")
+        if axis_y1 is None and axis_y2 is None and axis_y3 is None:
+            return None
+        if axis_y1 is None or axis_y2 is None:
+            raise ValueError(
+                "property_ref_axis_y1 and property_ref_axis_y2 are both required "
+                "to resolve element local coordinate systems."
+            )
+        source_name = "property_ref_axis_y*"
+        source_blocks = build_property_ref_csys_from_axis_cell_data(axis_y1, axis_y2, axis_y3)
+
+    if len(source_blocks) != len(cells):
+        raise ValueError(
+            f"{source_name} has {len(source_blocks)} cell blocks, but mesh has {len(cells)}."
+        )
+
+    resolved_blocks: list[np.ndarray] = []
+    for block_index, (source_block, cell_block) in enumerate(zip(source_blocks, cells)):
+        source_values = list(source_block)
+        if len(source_values) != len(cell_block):
+            raise ValueError(
+                f"{source_name} cell block {block_index} has {len(source_values)} values, "
+                f"but cell block '{cell_block.type}' has {len(cell_block)} elements."
+            )
+
+        resolved_rows = []
+        for row_index, value in enumerate(source_values):
+            try:
+                csys = coerce_property_ref_value_to_csys(value)
+                if not np.isfinite(csys).all():
+                    raise ValueError("local coordinate values must be finite.")
+                property_ref_csys_to_axes(csys)
+            except (TypeError, ValueError) as exc:
+                raise ValueError(
+                    f"Invalid {source_name} value at cell block {block_index}, "
+                    f"element {row_index}: {exc}"
+            ) from exc
+            resolved_rows.append(csys)
+        resolved_blocks.append(np.asarray(resolved_rows, dtype=float).reshape((-1, 9)))
+
+    return resolved_blocks
 
 
 def build_property_ref_axis_cell_data(

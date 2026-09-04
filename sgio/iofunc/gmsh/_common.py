@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 import numpy as np
 from meshio.gmsh.common import (
     c_int,
@@ -17,8 +19,14 @@ from meshio.gmsh.common import (
 from meshio._common import (
     num_nodes_per_cell,
     cell_data_from_raw,
+    warn,
 )
 from meshio._exceptions import WriteError
+
+from sgio.core.property_ref_csys import resolve_element_local_csys
+
+if TYPE_CHECKING:
+    from sgio.core.mesh import CellBlock
 
 
 def _to_ascii_scalar(value):
@@ -138,3 +146,88 @@ def build_geometrical_tags(
 
     return geometrical_data
 
+
+def _normalize_local_coordinate_fields(
+    cell_data: dict[str, list[np.ndarray]],
+    cells: list[CellBlock],
+) -> None:
+    """Populate canonical and compatibility local-csys fields on read."""
+    normalized = resolve_element_local_csys(cell_data, cells)
+    if normalized is None:
+        return
+
+    cell_data["element_local_csys"] = normalized
+    cell_data["property_ref_csys"] = [block.copy() for block in normalized]
+
+
+def _normalize_additional_rotation_fields(
+    cell_data: dict[str, list[np.ndarray]],
+    cells: list[CellBlock],
+) -> None:
+    """Populate canonical additional-rotation fields on read."""
+    rotation_1 = cell_data.get("additional_rotation_1")
+    rotation_2 = cell_data.get("additional_rotation_2")
+    rotation_3 = cell_data.get("additional_rotation_3")
+    legacy_rotation = cell_data.get("additional_rotation")
+
+    if rotation_1 is None and legacy_rotation is not None:
+        rotation_1 = [np.asarray(block, dtype=float) for block in legacy_rotation]
+
+    if rotation_1 is None and rotation_2 is None and rotation_3 is None:
+        return
+
+    reference_blocks = rotation_1 or rotation_2 or rotation_3
+    assert reference_blocks is not None
+
+    def _zeros_like_cells() -> list[np.ndarray]:
+        return [np.zeros(len(cell_block.data), dtype=float) for cell_block in cells]
+
+    cell_data["additional_rotation_1"] = (
+        [np.asarray(block, dtype=float) for block in rotation_1]
+        if rotation_1 is not None
+        else _zeros_like_cells()
+    )
+    cell_data["additional_rotation_2"] = (
+        [np.asarray(block, dtype=float) for block in rotation_2]
+        if rotation_2 is not None
+        else _zeros_like_cells()
+    )
+    cell_data["additional_rotation_3"] = (
+        [np.asarray(block, dtype=float) for block in rotation_3]
+        if rotation_3 is not None
+        else _zeros_like_cells()
+    )
+
+
+def finalize_sg_cell_data(
+    cell_data: dict[str, list[np.ndarray]],
+    cells: list["CellBlock"],
+) -> None:
+    """Apply SG-specific post-processing to freshly read Gmsh cell data.
+
+    Shared by every MSH-version reader so that local coordinate systems,
+    additional rotations and ``property_id`` are resolved identically
+    regardless of which ``$MeshFormat`` version the file declares.
+
+    Parameters
+    ----------
+    cell_data : dict of str to list of numpy.ndarray
+        Cell data read from the file, modified in place.
+    cells : list of CellBlock
+        Cell blocks the data belongs to.
+    """
+    _normalize_local_coordinate_fields(cell_data, cells)
+    _normalize_additional_rotation_fields(cell_data, cells)
+
+    # Map gmsh:physical to property_id for compatibility with SGIO.
+    # Priority: gmsh:physical > existing property_id from $ElementData > zeros fallback.
+    if "gmsh:physical" in cell_data:
+        cell_data["property_id"] = cell_data["gmsh:physical"]
+    elif "property_id" not in cell_data:
+        # No physical groups and no $ElementData property_id — create empty arrays
+        warn("No physical groups found in mesh. Creating empty property_id arrays. "
+             "Consider using Gmsh physical groups to assign materials.")
+        cell_data["property_id"] = [
+            np.zeros(len(cell_block.data), dtype=int) for cell_block in cells
+        ]
+    # else: property_id already populated from $ElementData — keep it

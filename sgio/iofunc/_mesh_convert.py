@@ -5,18 +5,14 @@ These helpers are used by :func:`sgio.iofunc.main.read` for the Gmsh path
 """
 from __future__ import annotations
 
+from typing import Iterable
+
 import numpy as np
 
-import sgio.model.solid as smdl
+from sgio._exceptions import IncompleteModelDataError
 from sgio.core import StructureGene
 from sgio.core.mesh import SGMesh
 from sgio.core.numbering import ensure_node_ids
-
-
-DEFAULT_MATERIAL_PROPERTIES = {
-    'elastic': [200e9, 0.3],  # Default steel-like properties
-    'isotropy': 0
-}
 
 
 def parse_model_type(model_type: str | int) -> tuple[int, int]:
@@ -67,30 +63,69 @@ def parse_model_type(model_type: str | int) -> tuple[int, int]:
     return 3, 0
 
 
-def mesh_to_sg(mesh: SGMesh, sgdim: int = 3, model_type: str = 'SD1') -> StructureGene:
-    """Convert a meshio Mesh object to a StructureGene object.
+def mesh_to_sg(
+    mesh: SGMesh,
+    sgdim: int = 3,
+    model_type: str = 'SD1',
+    section_names: Iterable[str] | None = None,
+    section_ids: Iterable[int] | None = None,
+) -> StructureGene:
+    """Wrap a mesh into a StructureGene.
+
+    Which elements belong to the structure gene is decided by the section data,
+    not by element dimension: an element is an SG element when its physical
+    group resolves to one of ``section_names``. Cell blocks whose group does not
+    resolve -- an auxiliary ``boundary`` surface group, say -- are dropped, so
+    they never reach the element table. Element topological dimension is never
+    compared against ``sgdim``; 1D beam elements in a 3D strut lattice are
+    legitimate SG elements.
 
     Parameters
     ----------
-    mesh : meshio.Mesh
-        The mesh object to convert.
+    mesh : SGMesh
+        The mesh object to convert. Modified in place when cell blocks are
+        dropped.
     sgdim : int
         Dimension of the structure gene geometry.
     model_type : str
         Type of the macro structural model.
+    section_names : iterable of str, optional
+        Names of the sections/materials known from the model data (for the Gmsh
+        bundle these come from ``sections.json``). When ``None`` the mesh is
+        wrapped without any sections -- the mesh-only path, used when a mesh is
+        carried to a mesh writer rather than to a solver.
+    section_ids : iterable of int, optional
+        Section ids, used to resolve groups whose name is unavailable or does
+        not match. Names take precedence, mirroring the bundle's own
+        name-then-id matching.
 
     Returns
     -------
     StructureGene
         The structure gene object.
+
+    Raises
+    ------
+    IncompleteModelDataError
+        If ``section_names`` is given but no element in the mesh resolves to
+        any of those sections.
     """
     sg = StructureGene()
     sg.sgdim = sgdim
     sg.smdim, sg.analysis_config.model = parse_model_type(model_type)
+
+    if section_names is None and section_ids is None:
+        known_names: set[str] | None = None
+        known_ids: set[int] = set()
+    else:
+        known_names = set(section_names or ())
+        known_ids = {int(section_id) for section_id in (section_ids or ())}
+        _restrict_mesh_to_sections(mesh, known_names, known_ids)
+
     sg.mesh = mesh
 
     _ensure_mesh_data(mesh)
-    _process_materials_from_mesh(sg, mesh, sgdim)
+    _process_materials_from_mesh(sg, mesh, known_names, known_ids)
 
     return sg
 
@@ -111,12 +146,13 @@ def restore_sg_from_mesh_extras(sg: StructureGene, mesh) -> None:
     """
     sg_layer_defs = getattr(mesh, 'sg_layer_defs', {})
     if sg_layer_defs:
-        material_names_by_id = _build_material_name_map(mesh, sg.sgdim)
+        names_by_tag = _build_physical_name_map(mesh)
         # sg_layer_defs: {layer_id: (mat_id, angle)}
         # mocombos:      {property_id: (material_name, angle)}
         for layer_id, (mat_id, angle) in sg_layer_defs.items():
-            mat_name = _resolve_material_name(material_names_by_id, mat_id)
-            _ensure_material_exists(sg, mat_name)
+            mat_name = names_by_tag.get(int(mat_id))
+            if mat_name is None:
+                continue
             sg.mocombos[layer_id] = (mat_name, angle)
 
     sg_configs = getattr(mesh, 'sg_configs', {})
@@ -166,90 +202,191 @@ def _ensure_mesh_data(mesh: SGMesh) -> None:
             mesh.cell_data['property_id'] = property_id
 
 
-def _process_materials_from_mesh(sg: StructureGene, mesh: SGMesh, sgdim: int) -> None:
-    """Process materials from mesh field_data and cell_data.
+def _resolves_to_section(
+    tag: int,
+    names_by_tag: dict[int, str],
+    section_names: set[str],
+    section_ids: set[int],
+) -> bool:
+    """Return whether one physical tag resolves to a declared section.
+
+    Name matching takes precedence; the id fallback covers meshes whose
+    ``$PhysicalNames`` are absent or do not line up with the section records.
+    """
+    name = names_by_tag.get(tag)
+    if name is not None and name in section_names:
+        return True
+    return tag in section_ids
+
+
+def _section_material_name(tag: int, names_by_tag: dict[int, str]) -> str:
+    """Return the section identity for one physical tag.
+
+    The physical name is the identity token when present; an id-matched group
+    with no name gets a positional stand-in, which the bundle then overwrites
+    with the material the section record actually names.
+    """
+    return names_by_tag.get(tag, f'section_{tag}')
+
+
+def _restrict_mesh_to_sections(
+    mesh: SGMesh,
+    section_names: set[str],
+    section_ids: set[int],
+) -> None:
+    """Drop cell blocks whose physical group does not resolve to a section.
+
+    Implements the ``element -> entity -> physical tag -> physical name ->
+    section`` chain: a cell block survives when its physical group name is one
+    of ``section_names``. Blocks carrying no physical group, or a group absent
+    from the section data, are auxiliary markers rather than SG elements and are
+    removed together with their per-cell data.
+
+    Parameters
+    ----------
+    mesh : SGMesh
+        Mesh to restrict, modified in place.
+    section_names : set of str
+        Names of the sections known from the model data.
+    section_ids : set of int
+        Section ids, used when a group cannot be matched by name.
+
+    Raises
+    ------
+    IncompleteModelDataError
+        If no cell block resolves to any declared section.
+    """
+    names_by_tag = _build_physical_name_map(mesh)
+    tag_blocks = mesh.cell_data.get('property_id') or mesh.cell_data.get('gmsh:physical')
+
+    kept: list[int] = []
+    for index, cell_block in enumerate(mesh.cells):
+        if tag_blocks is None or index >= len(tag_blocks):
+            continue
+        tags = {int(tag) for tag in tag_blocks[index]}
+        if tags and all(
+            _resolves_to_section(tag, names_by_tag, section_names, section_ids)
+            for tag in tags
+        ):
+            kept.append(index)
+
+    if not kept:
+        raise IncompleteModelDataError(
+            "No mesh element resolves to a section. "
+            f"Section names: {sorted(section_names)}; section ids: {sorted(section_ids)}. "
+            f"Mesh physical groups: {_describe_physical_groups(mesh, names_by_tag, tag_blocks)}."
+        )
+
+    if len(kept) == len(mesh.cells):
+        return
+
+    _slice_mesh_cell_blocks(mesh, kept)
+
+
+def _slice_mesh_cell_blocks(mesh: SGMesh, kept: list[int]) -> None:
+    """Keep only the cell blocks at ``kept``, slicing every per-cell container.
+
+    Parameters
+    ----------
+    mesh : SGMesh
+        Mesh to slice, modified in place.
+    kept : list of int
+        Indices of the cell blocks to retain, in order.
+    """
+    mesh.cells = [mesh.cells[index] for index in kept]
+    for container in (mesh.cell_data, mesh.cell_point_data):
+        for key, blocks in list(container.items()):
+            container[key] = [blocks[index] for index in kept]
+    for key, blocks in list(mesh.cell_sets.items()):
+        mesh.cell_sets[key] = [blocks[index] for index in kept]
+
+
+def _describe_physical_groups(
+    mesh: SGMesh,
+    names_by_tag: dict[int, str],
+    tag_blocks: list | None,
+) -> str:
+    """Render the mesh's physical groups as ``name (dim D, N elements)`` text."""
+    if not names_by_tag:
+        return "none"
+
+    counts: dict[int, int] = {}
+    if tag_blocks is not None:
+        for index, cell_block in enumerate(mesh.cells):
+            if index >= len(tag_blocks):
+                continue
+            for tag in tag_blocks[index]:
+                counts[int(tag)] = counts.get(int(tag), 0) + 1
+
+    dims_by_tag = {
+        int(values[0]): int(values[1]) for values in mesh.field_data.values() if len(values) > 1
+    }
+    return ", ".join(
+        f"{name!r} (dim {dims_by_tag.get(tag, '?')}, {counts.get(tag, 0)} elements)"
+        for tag, name in sorted(names_by_tag.items())
+    )
+
+
+def _process_materials_from_mesh(
+    sg: StructureGene,
+    mesh: SGMesh,
+    section_names: set[str] | None,
+    section_ids: set[int],
+) -> None:
+    """Create one section per resolved physical group.
+
+    No material properties are invented here: the section records the material
+    name taken from the physical group, and the caller supplies the material
+    models. When ``section_names`` is ``None`` no sections are created at all.
 
     Parameters
     ----------
     sg : StructureGene
         Structure gene object to update.
-    mesh : Mesh
-        Mesh object containing material information.
-    sgdim : int
-        Structure gene dimension.
+    mesh : SGMesh
+        Mesh whose physical groups drive the sections.
+    section_names : set of str or None
+        Names of the sections known from the model data. ``None`` selects the
+        mesh-only path, where no sections are created.
+    section_ids : set of int
+        Section ids, used when a group cannot be matched by name.
     """
-    material_names_by_id = _build_material_name_map(mesh, sgdim)
+    if section_names is None:
+        return
 
-    if 'property_id' in mesh.cell_data:
-        property_ids = set()
-        for prop_block in mesh.cell_data['property_id']:
-            for prop_id in prop_block:
-                if prop_id is not None:
-                    property_ids.add(int(prop_id))
+    names_by_tag = _build_physical_name_map(mesh)
 
-        for prop_id in property_ids:
-            if prop_id not in sg.mocombos:
-                mat_name = _resolve_material_name(material_names_by_id, prop_id)
-                _ensure_material_exists(sg, mat_name)
-                sg.mocombos[prop_id] = (mat_name, 0.0)
+    property_ids = set()
+    for prop_block in mesh.cell_data.get('property_id', []):
+        for prop_id in prop_block:
+            if prop_id is not None:
+                property_ids.add(int(prop_id))
+
+    for prop_id in sorted(property_ids):
+        if prop_id in sg.mocombos:
+            continue
+        if not _resolves_to_section(prop_id, names_by_tag, section_names, section_ids):
+            continue
+        sg.mocombos[prop_id] = (_section_material_name(prop_id, names_by_tag), 0.0)
 
 
-def _build_material_name_map(mesh: SGMesh, sgdim: int | None) -> dict[int, str]:
-    """Build material-name lookup from mesh field data.
+def _build_physical_name_map(mesh: SGMesh) -> dict[int, str]:
+    """Build a physical-tag to physical-name lookup from mesh field data.
+
+    Deliberately unfiltered by topological dimension: element dimension is not
+    what decides section membership.
 
     Parameters
     ----------
-    mesh : Mesh
+    mesh : SGMesh
         Mesh object containing field-data labels.
-    sgdim : int or None
-        Structure-gene section dimension.
 
     Returns
     -------
     dict[int, str]
-        Mapping from physical/material ID to material name.
+        Mapping from physical tag to physical name.
     """
-    material_names_by_id: dict[int, str] = {}
-    if not hasattr(mesh, 'field_data') or not mesh.field_data:
-        return material_names_by_id
-
-    for name, values in mesh.field_data.items():
-        phys_id, dim = int(values[0]), int(values[1])
-        if sgdim is None or dim == sgdim:
-            material_names_by_id[phys_id] = name
-    return material_names_by_id
-
-
-def _resolve_material_name(material_names_by_id: dict[int, str], prop_id: int) -> str:
-    """Resolve material name for a property ID.
-
-    Parameters
-    ----------
-    material_names_by_id : dict[int, str]
-        Mapping from physical/material ID to material name.
-    prop_id : int
-        Property ID.
-
-    Returns
-    -------
-    str
-        Material name for the property.
-    """
-    return material_names_by_id.get(prop_id, f'Material_{prop_id}')
-
-
-def _ensure_material_exists(sg: StructureGene, mat_name: str) -> None:
-    """Ensure material exists in structure gene, create with defaults if needed.
-
-    Parameters
-    ----------
-    sg : StructureGene
-        Structure gene object.
-    mat_name : str
-        Material name to ensure exists.
-    """
-    if mat_name not in sg.materials:
-        mat = smdl.CauchyContinuumModel(name=mat_name)
-        mat.set_isotropy(0)
-        mat.set_elastic(DEFAULT_MATERIAL_PROPERTIES['elastic'])
-        sg.materials[mat_name] = mat
+    names_by_tag: dict[int, str] = {}
+    for name, values in (getattr(mesh, 'field_data', None) or {}).items():
+        names_by_tag[int(values[0])] = name
+    return names_by_tag

@@ -7,9 +7,26 @@ meshes. Three backends are used, each suited to a different job.
 |---|---|---|
 | matplotlib | Static figures for reports | required |
 | plotly | Interactive HTML, large meshes | required |
-| PyVista / VTK | 3D inspection, ParaView export | optional (`sgio[pyvista]`) |
+| PyVista / VTK | 3D inspection and ParaView export | optional (`pyvista` extra) |
 
 ## Plot a Single Cross-Section
+
+The preferred single-SG entry points share one input — a
+{class}`sgio.StructureGene` — and return the native object for their backend:
+{func}`sgio.plot_sg_matplotlib` returns matplotlib axes,
+{func}`sgio.plot_sg_plotly` returns a Plotly figure, and
+{func}`sgio.plot_sg_pyvista` returns a PyVista plotter. The matplotlib and
+Plotly entries render the section's `(x2, x3)` plane; PyVista renders the mesh
+in its stored three-dimensional coordinates.
+
+```python
+import sgio
+
+sg = sgio.read('cross_section.sg', file_format='vabs', model_type='BM2')
+axes = sgio.plot_sg_matplotlib(sg)
+figure = sgio.plot_sg_plotly(sg, output_html='cross_section_plotly.html')
+plotter = sgio.plot_sg_pyvista(sg)
+```
 
 {func}`sgio.plot_sg_2d` draws the mesh of a {class}`sgio.StructureGene`, and
 {func}`sgio.plot_model_2d` draws the quantities carried by a homogenized model —
@@ -102,21 +119,99 @@ sgio.merge_sections_from_csv(
 
 See {doc}`/examples/merge_section_meshes`.
 
-## Bridge to PyVista and ParaView
+## Inspect a Mesh with PyVista
 
-{class}`sgio.SGMesh` converts to and from PyVista, so any SG mesh — with its
-`point_data` and `cell_data` — can be rendered by VTK or written to ParaView's
-native formats.
+{func}`sgio.plot_sg_pyvista` is the high-level scene factory for one
+{class}`sgio.StructureGene`. It converts its mesh geometry and point/cell fields
+to a PyVista grid and returns a `pyvista.Plotter`; the caller chooses whether
+to open a desktop window, take a screenshot, or write HTML.
+It colors cells by ``mesh.cell_data['property_id']`` by default, using a
+discrete property legend instead of a continuous scalar bar.
 
 ```python
 import sgio
 
 sg = sgio.read('cross_section.sg', file_format='vabs', model_type='BM2')
-grid = sg.mesh.to_pyvista()
-grid.plot(scalars='property_id', show_edges=True, cpos='yz')
+plotter = sgio.plot_sg_pyvista(
+    sg,
+    scalars='property_id',
+    show_edges=True,
+    show_local_axes=True,
+)
+plotter.show()
 ```
 
-PyVista is optional and imported lazily; install it with
-`pip install sgio[pyvista]`.
+For a desktop inspection window, pass `widgets=True` to add checkboxes for
+local axes, faces, edges, and nodes. These controls use Python callbacks and
+therefore are intentionally unavailable with `output_html`.
 
-See {doc}`/examples/preview_sg_mesh` and {doc}`/examples/view_css_fi_paraview`.
+```python
+plotter = sgio.plot_sg_pyvista(
+    sg,
+    show_local_axes=True,
+    widgets=True,
+    show=True,
+)
+```
+
+The local-axis overlay resolves the canonical per-element coordinate system:
+`element_local_csys`, then `property_ref_csys`, then the compatibility axis
+fields. It draws `y1`, `y2`, and `y3` as red, green, and blue arrows at sampled
+cell centers. The factory does not need a GUI to construct a scene.
+
+PyVista is optional and imported lazily; install it with:
+
+```powershell
+uv sync --extra pyvista
+```
+
+For browser HTML export, install the Trame-enabled extra and call
+`plotter.export_html(...)`:
+
+```powershell
+uv sync --extra pyvista-html
+```
+
+The HTML viewer provides PyVista/VTK interaction, not Plotly's modebar or a
+configurable CAD/CAE trackball toolbar.
+
+For a persisted local-axis scene, first write a complete VTM file with
+{func}`sgio.create_pyvista_local_axis_multiblock`, then use the high-level
+{func}`sgio.plot_pyvista_local_axes` interface. The VTM retains glyphs for all
+cells; `max_local_axes` limits only the browser or desktop rendering.
+
+```python
+import sgio
+
+plotter = sgio.plot_pyvista_local_axes(
+    'cross_section_local_axes.vtm',
+    max_local_axes=500,
+    output_html='cross_section.html',
+)
+plotter.close()
+```
+
+The HTML export includes an axis legend and its supported mouse controls.
+
+## Export a Mesh for ParaView
+
+`sgio.write` exports an {class}`sgio.SGMesh` or {class}`sgio.StructureGene` to
+legacy `.vtk` or XML `.vtu` files:
+
+```python
+sgio.write('cross_section.vtu', sg, file_format='vtu')
+```
+
+This is a mesh-only exchange contract. It preserves points, cell topology,
+`point_data`, and `cell_data`, but it does not serialize SG materials,
+sections, orientations, or analysis configuration. It rejects non-empty
+`cell_point_data`, `point_sets`, and `cell_sets` rather than silently losing
+them. VTK/VTU input is not supported by `sgio.read` in this release.
+
+`SGMesh.to_pyvista()` remains available for lower-level work. Its bridge keeps
+geometry plus point/cell data, but deliberately drops point/cell sets and
+element-nodal data because PyVista has no compatible representation.
+
+See {doc}`/examples/preview_sg_mesh`, {doc}`/examples/plot_abaqus_local_csys`,
+{doc}`/examples/export_sg_mesh_to_vtu`, and
+{doc}`/examples/view_css_fi_paraview`.

@@ -216,3 +216,25 @@ class OutputFileError(SGIOError):
             msg += f" (file: {file_path})"
         super().__init__(msg)
 
+
+class IncompleteModelDataError(SGIOError):
+    """Exception raised when input data is insufficient to build a structure gene.
+
+    A structure gene needs both a mesh and the section/material data that binds
+    its elements to constitutive models. Mesh-only inputs -- a bare Gmsh
+    ``.msh``, for instance -- do not carry that data. sgio refuses to invent it:
+    rather than fabricating placeholder materials or guessing which elements
+    are auxiliary, it raises this error and names what is missing.
+
+    Parameters
+    ----------
+    message : str
+        Description of the missing data.
+
+    Examples
+    --------
+    >>> raise IncompleteModelDataError(
+    ...     "Gmsh mesh carries no material data; supply sections.json"
+    ... )
+    IncompleteModelDataError: Gmsh mesh carries no material data; supply sections.json
+    """
