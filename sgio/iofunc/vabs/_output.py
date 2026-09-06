@@ -49,9 +49,6 @@ def _readEulerBernoulliBeamModel(file, model=None):
             line = file.readline()
             continue
 
-        # line = line.lower()
-        # line = line.replace('-', ' ')
-
         elif 'Geometric Center' in line:
             for _ in range(3): line = file.readline()
             model.xg2, model.xg3 = list(map(float, line.split()))
@@ -165,9 +162,6 @@ def _readTimoshenkoBeamModel(file, model=None):
         elif line.startswith('--') or line.startswith('=='):
             line = file.readline()
             continue
-
-        # line = line.lower()
-        # line = line.replace('-', ' ')
 
         elif 'Geometric Center' in line:
             for _ in range(3): line = file.readline()
@@ -285,179 +279,6 @@ def _readTimoshenkoBeamModel(file, model=None):
 
     return model
 
-        # elif 'Vlasov Stiffness Matrix' in line:
-        #     keywordsIndex['vsm'] = ln
-        # elif 'Vlasov Flexibility Matrix' in line:
-        #     keywordsIndex['vfm'] = ln
-        
-        # elif 'Trapeze Effects' in line:
-        #     keywordsIndex['te'] = ln
-        # elif 'Ag1--Ag1--Ag1--Ag1' in line:
-        #     keywordsIndex['te_ag'] = ln
-        # elif 'Bk1--Bk1--Bk1--Bk1' in line:
-        #     keywordsIndex['te_bk'] = ln
-        # elif 'Ck2--Ck2--Ck2--Ck2' in line:
-        #     keywordsIndex['te_ck'] = ln
-        # elif 'Dk3--Dk3--Dk3--Dk3' in line:
-        #     keywordsIndex['te_dk'] = ln
-
-    # #check whether the analysis is Vlasov or timoshenko
-    # #Read stiffness matrix and compliance matrix
-    # if 'vsm' in keywordsIndex.keys():
-    #     pass
-    #     # try:
-    #     #     ln = keywordsIndex['vsm']
-    #     #     sm.stiffness_refined = utl.textToMatrix(linesRead[ln + 3:ln + 8])
-    #     #     #old dic to save valsov stiffness matrix
-    #     #     # sm.eff_props[1]['stiffness']['refined'] = utl.textToMatrix(linesRead[ln + 3:ln + 8])
-    #     # except KeyError:
-    #     #     if scrnout:
-    #     #         print('No Vlasov stiffness matrix found.')
-    #     #     else:
-    #     #         pass
-    #     # try:
-    #     #     ln = keywordsIndex['vfm']
-    #     #     sm.compliance_refined = utl.textToMatrix(linesRead[ln + 3:ln + 8])
-    #     #     #old dic to save valsov compliance matrix
-    #     #     # sm.eff_props[1]['compliance']['refined'] = utl.textToMatrix(linesRead[ln + 3:ln + 8])            
-    #     # except KeyError:
-    #     #     if scrnout:
-    #     #         print('No Vlasov flexibility matrix found.')
-    #     #     else:
-    #     #         pass
-    #     #check whether trapeze effect analysis is on and read the correponding matrix
-    #     # if 'te' in keywordsIndex.keys():
-    #     #     try:
-    #     #         ln = keywordsIndex['te_ag']
-    #     #         sm.trapeze_effect['ag'] = utl.textToMatrix(linesRead[ln + 3:ln + 7])
-    #     #     except KeyError:
-    #     #         if scrnout:
-    #     #             print('No Ag1--Ag1--Ag1--Ag1 matrix found.')
-    #     #         else:
-    #     #             pass
-    #     #     try:
-    #     #         ln = keywordsIndex['te_bk']
-    #     #         sm.trapeze_effect['bk'] = utl.textToMatrix(linesRead[ln + 3:ln + 7])
-    #     #     except KeyError:
-    #     #         if scrnout:
-    #     #             print('No Bk1--Bk1--Bk1--Bk1 matrix found.')
-    #     #         else:
-    #     #             pass
-    #     #     try:
-    #     #         ln = keywordsIndex['te_ck']
-    #     #         sm.trapeze_effect['ck'] = utl.textToMatrix(linesRead[ln + 3:ln + 7])
-    #     #     except KeyError:
-    #     #         if scrnout:
-    #     #             print('No Ck2--Ck2--Ck2--Ck2 matrix found.')
-    #     #         else:
-    #     #             pass    
-    #     #     try:
-    #     #         ln = keywordsIndex['te_dk']
-    #     #         sm.trapeze_effect['dk'] = utl.textToMatrix(linesRead[ln + 3:ln + 7])
-    #     #     except KeyError:
-    #     #         if scrnout:
-    #     #             print('No Dk3--Dk3--Dk3--Dk3 matrix found.')
-    #     #         else:
-    #     #             pass                   
-    # else:
-    #     try:
-    #         ln = keywordsIndex['csm']
-    #         bp.stff = sutl.textToMatrix(linesRead[ln + 2:ln + 6])
-    #         #old dic method to save classical stiffness
-    #         # sm.eff_props[1]['stiffness']['classical'] = utl.textToMatrix(linesRead[ln + 3:ln + 7])
-    #     except KeyError:
-    #         logger.info('No classical stiffness matrix found.')
-    #         # if scrnout:
-    #         # else:
-    #         #     pass
-
-    #     try:
-    #         ln = keywordsIndex['cfm']
-    #         bp.cmpl = sutl.textToMatrix(linesRead[ln + 2:ln + 6])
-    #         #old dic method to save classical compliance
-    #         # sm.eff_props[1]['compliance']['classical'] = utl.textToMatrix(linesRead[ln + 3:ln + 7])
-    #     except KeyError:
-    #         logger.info('No classical compliance matrix found.')
-    #         # if scrnout:
-    #         # else:
-    #         #     pass
-
-    #     try:
-    #         ln = keywordsIndex['tsm']
-    #         bp.stff_t = sutl.textToMatrix(linesRead[ln + 2:ln + 8])
-    #         #old dic method to save refined stiffness matrix
-    #         # sm.eff_props[1]['stiffness']['refined'] = utl.textToMatrix(linesRead[ln + 3:ln + 9])
-    #     except KeyError:
-    #         logger.info('No Timoshenko stiffness matrix found.')
-    #         # if scrnout:
-    #         # else:
-    #         #     pass
-    #     try:
-    #         ln = keywordsIndex['tfm']
-    #         bp.cmpl_t = sutl.textToMatrix(linesRead[ln + 2:ln + 8])
-    #         #old dic method to save refined compliance matrix
-    #         # sm.eff_props[1]['compliance']['refined'] = utl.textToMatrix(linesRead[ln + 3:ln + 9])
-    #     except KeyError:
-    #         logger.info('No Timoshenko compliance matrix found.')
-    #         # if scrnout:
-    #         # else:
-    #         #     pass
-
-    #     if 'tc' in keywordsIndex.keys():
-    #         ln = keywordsIndex['tc']
-    #         bp.xt2, bp.xt3 = list(map(float, linesRead[ln + 2].split()))
-    #     if 'sc' in keywordsIndex.keys():
-    #         ln = keywordsIndex['sc']
-    #         bp.xs2, bp.xs3 = list(map(float, linesRead[ln + 2].split()))
-    #     if 'mc' in keywordsIndex.keys():
-    #         ln = keywordsIndex['mc']
-    #         bp.xm2, bp.xm3 = list(map(float, linesRead[ln + 2].split()))
-    #     if 'gc' in keywordsIndex.keys():
-    #         ln = keywordsIndex['gc']
-    #         bp.xg2, bp.xg3 = list(map(float, linesRead[ln + 2].split()))
-
-    #     #check whether trapeze effect analysis is on and read the correponding matrix
-    #     # if 'te' in keywordsIndex.keys():
-    #     #     try:
-    #     #         ln = keywordsIndex['te_ag']
-    #     #         sm.trapeze_effect['ag'] = utl.textToMatrix(linesRead[ln + 3:ln + 7])
-    #     #     except KeyError:
-    #     #         if scrnout:
-    #     #             print('No Ag1--Ag1--Ag1--Ag1 matrix found.')
-    #     #         else:
-    #     #             pass
-    #     #     try:
-    #     #         ln = keywordsIndex['te_bk']
-    #     #         sm.trapeze_effect['bk'] = utl.textToMatrix(linesRead[ln + 3:ln + 7])
-    #     #     except KeyError:
-    #     #         if scrnout:
-    #     #             print('No Bk1--Bk1--Bk1--Bk1 matrix found.')
-    #     #         else:
-    #     #             pass
-    #     #     try:
-    #     #         ln = keywordsIndex['te_ck']
-    #     #         sm.trapeze_effect['ck'] = utl.textToMatrix(linesRead[ln + 3:ln + 7])
-    #     #     except KeyError:
-    #     #         if scrnout:
-    #     #             print('No Ck2--Ck2--Ck2--Ck2 matrix found.')
-    #     #         else:
-    #     #             pass    
-    #     #     try:
-    #     #         ln = keywordsIndex['te_dk']
-    #     #         sm.trapeze_effect['dk'] = utl.textToMatrix(linesRead[ln + 3:ln + 7])
-    #     #     except KeyError:
-    #     #         if scrnout:
-    #     #             print('No Dk3--Dk3--Dk3--Dk3 matrix found.')
-    #     #         else:
-    #     #             pass              
-
-    # ms.constitutive = bp
-
-    # return ms
-
-
-
-
 # Read dehomogenization output
 
 
@@ -516,7 +337,6 @@ def _readOutputElementStrainStressCase(file, nelem):
 
     e, s, em, sm = {}, {}, {}, {}
     i = 0
-    # for i, line in enumerate(file):
     while i < nelem:
         line = file.readline().strip()
         if line == '':
@@ -565,29 +385,21 @@ def _readOutputFailureIndexCase(file, nelem):
     eids_sr_min = []
 
     i = 0
-    # for i, line in enumerate(file):
     while i <= nelem:
         line = file.readline().strip()
         if line == '':
             continue
-        # if line.startswith('Failure index'):
-        #     continue
 
         # Read the initial failure indices and strength ratios
         if i < nelem:
             line = line.split()
             if len(line) == 3:
-                # lines.append(line)
                 fi[int(line[0])] = float(line[1])
                 sr[int(line[0])] = float(line[2])
 
         # Read the last line of sectional strength ratio
-        # if (line.startswith('The sectional strength ratio is')):
         elif i == nelem:
-            # line = file.readline().strip()
             line = line.split()
-            # _loc = line.index('existing')
-            # _sr_min = float(line[tmp_id - 1])
             try:
                 _eid = int(line[-1])
             except ValueError:
@@ -595,19 +407,8 @@ def _readOutputFailureIndexCase(file, nelem):
                 _eid = int(line[0])
 
             eids_sr_min.append(_eid)
-            # lines.pop()
-            # continue
 
         i += 1
-
-    # result = []
-    # # fis = []
-    # # srs = []
-    # for line in lines:
-    #     # line = line.strip().split()
-    #     result.append([int(line[0]), float(line[1]), float(line[2])])
-    #     # fis.append(float(line[1]))
-    #     # srs.append(float(line[2]))
 
     return fi, sr, eids_sr_min
 

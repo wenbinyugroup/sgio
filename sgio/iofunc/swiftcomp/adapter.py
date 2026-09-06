@@ -7,7 +7,6 @@ and BaseFormatWriter abstract base classes for SwiftComp format I/O operations.
 from __future__ import annotations
 
 from typing import Any, Optional
-import io
 
 from ..base import BaseFormatReader, BaseFormatWriter
 from sgio.core.sg import StructureGene
@@ -123,58 +122,6 @@ class SwiftCompReader(BaseFormatReader):
                 model_type=model_type, tool_version=tool_version,
                 ncase=ncase, nelem=nelem, **kwargs
             )
-    
-    def validate(self, file_path_or_buffer) -> bool:
-        """Validate if file is in SwiftComp format.
-        
-        Parameters
-        ----------
-        file_path_or_buffer : str or file-like
-            Path to file or file buffer to validate.
-            
-        Returns
-        -------
-        bool
-            True if file appears to be SwiftComp format, False otherwise.
-        """
-        try:
-            if isinstance(file_path_or_buffer, str):
-                with open(file_path_or_buffer, 'r') as f:
-                    # Read first few lines to check SwiftComp format markers
-                    lines = [f.readline() for _ in range(5)]
-            else:
-                pos = file_path_or_buffer.tell()
-                lines = [file_path_or_buffer.readline() for _ in range(5)]
-                file_path_or_buffer.seek(pos)
-            
-            # SwiftComp format typically has:
-            # Line 1: format_version
-            # Line 2: analysis_type
-            # Comments use '#'
-            if len(lines) < 2:
-                return False
-            
-            # Check for SwiftComp-specific keywords or structure
-            # Format version line may contain numbers
-            try:
-                # Look for '#' comments or specific SwiftComp keywords
-                for line in lines:
-                    if '#' in line or 'analysis' in line.lower():
-                        return True
-                    
-                # Check if first line contains version number
-                parts = lines[0].strip().split()
-                if len(parts) > 0:
-                    float(parts[0])  # SwiftComp starts with version number
-                    return True
-                    
-            except (ValueError, IndexError):
-                pass
-            
-            return False
-            
-        except Exception:
-            return False
 
 
 class SwiftCompWriter(BaseFormatWriter):
@@ -257,59 +204,3 @@ class SwiftCompWriter(BaseFormatWriter):
                 macro_responses=macro_responses, load_type=load_type,
                 sfi=sfi, sff=sff, version=version, **kwargs
             )
-    
-    def write_output(
-        self,
-        file_path_or_buffer,
-        data: Any,
-        **kwargs
-    ) -> None:
-        """Write SwiftComp output file.
-        
-        Note: SwiftComp output writing is not typically supported.
-        This method is provided for interface completeness.
-        
-        Parameters
-        ----------
-        file_path_or_buffer : str or file-like
-            Path to file or file buffer to write to.
-        data : Any
-            Data to write.
-        **kwargs
-            Additional keyword arguments.
-            
-        Raises
-        ------
-        NotImplementedError
-            SwiftComp output writing is not supported.
-        """
-        raise NotImplementedError("SwiftComp output writing is not supported")
-    
-    def validate(self, sg: StructureGene) -> bool:
-        """Validate structure gene for SwiftComp format writing.
-        
-        Parameters
-        ----------
-        sg : StructureGene
-            Structure gene to validate.
-            
-        Returns
-        -------
-        bool
-            True if structure gene is valid for SwiftComp format, False otherwise.
-        """
-        # Basic validation checks
-        if sg is None:
-            return False
-        
-        # Check required attributes
-        if not hasattr(sg, 'mesh') or sg.mesh is None:
-            return False
-        
-        if not hasattr(sg, 'materials') or not sg.materials:
-            return False
-        
-        if not hasattr(sg, 'mocombos') or not sg.mocombos:
-            return False
-        
-        return True

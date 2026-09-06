@@ -429,62 +429,6 @@ def _writeHeader(sg:StructureGene, file, sfi, sff, version=None):
 
 
 
-
-
-
-
-# def _writeInputMaterialStrength(sg, file, sfi, sff):
-#     for i, m in sg.materials.items():
-#         # print(m.strength)
-#         # print(m.failure_criterion)
-#         # print(m.char_len)
-
-#         # file.write('{} {}'.format(m.failure_criterion, len(m.strength)))
-
-#         strength = []
-#         if m.type == 0:
-#             pass
-#         else:
-#             if m.failure_criterion == 1:
-#                 pass
-#             elif m.failure_criterion == 2:
-#                 pass
-#             elif m.failure_criterion == 3:
-#                 pass
-#             elif m.failure_criterion == 4:
-#                 # Tsai-Wu
-#                 strength = [
-#                     m.strength_constants['xt'], m.strength_constants['yt'], m.strength_constants['zt'],
-#                     m.strength_constants['xc'], m.strength_constants['yc'], m.strength_constants['zc'],
-#                     m.strength_constants['r'], m.strength_constants['t'], m.strength_constants['s'],
-#                 ]
-#             elif m.failure_criterion == 5:
-#                 pass
-
-#         sutl.writeFormatIntegers(
-#             file,
-#             # (m.strength['criterion'], len(m.strength['constants'])),
-#             [m.failure_criterion, len(strength)],
-#             sfi
-#         )
-#         # file.write((sff+'\n').format(m.strength['chara_len']))
-#         sutl.writeFormatFloats(file, [m.char_len,], sff)
-#         # sutl.writeFormatFloats(file, m.strength['constants'], sff[2:-1])
-#         sutl.writeFormatFloats(file, strength, sff)
-#     return
-
-
-
-
-
-
-
-
-
-# def _writeInputDisplacements(sg, file, sff):
-#     sutl.writeFormatFloats(file, sg.global_displacements, sff[2:-1])
-#     sutl.writeFormatFloatsMatrix(file, sg.global_rotations, sff[2:-1])
-
 def _writeDisplacementRotation(
     file,
     displacement:list[float]=None,
@@ -496,19 +440,6 @@ def _writeDisplacementRotation(
     """
     write_displacement_rotation(file, displacement, rotation, sff)
 
-
-
-
-
-
-
-
-
-# def _writeInputLoads(sg, file, sfi, sff):
-#     for load_case in sg.global_loads:
-#         sutl.writeFormatFloats(file, load_case, sff)
-#     file.write('\n')
-#     return
 
 def _writeLoad(
     file, macro_response:smdl.StateCase, model, sff:str='20.12e'):

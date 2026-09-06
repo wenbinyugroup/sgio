@@ -33,7 +33,7 @@ def example_isotropic():
     
     # Method 2: Using setElastic
     aluminum = CauchyContinuumModel(name='Aluminum', isotropy=0)
-    aluminum.setElastic([70e9, 0.33])
+    aluminum.set_elastic([70e9, 0.33])
     print(f"\n{aluminum.name}: E = {aluminum.e1/1e9:.1f} GPa, nu = {aluminum.nu12}")
 
 
@@ -97,12 +97,12 @@ def example_orthotropic():
     # Method 2: Using setElastic with 'lamina' input (4 constants)
     # This assumes plane stress state
     lamina = CauchyContinuumModel(name='Lamina', isotropy=1)
-    lamina.setElastic([150e9, 10e9, 5e9, 0.3], input_type='lamina')
+    lamina.set_elastic([150e9, 10e9, 5e9, 0.3], input_type='lamina')
     print(f"\n{lamina.name}: E1={lamina.e1/1e9:.0f} GPa, E2={lamina.e2/1e9:.0f} GPa")
     
     # Method 3: Using setElastic with 'engineering' input (9 constants)
     wood = CauchyContinuumModel(name='Wood', isotropy=1)
-    wood.setElastic(
+    wood.set_elastic(
         [15e9, 1e9, 0.8e9, 1.2e9, 1e9, 0.08e9, 0.4, 0.45, 0.4],
         input_type='engineering'
     )
@@ -162,7 +162,7 @@ def example_anisotropic():
     
     # Method 2: Using setElastic with 21 constants
     monoclinic = CauchyContinuumModel(name='Monoclinic Crystal', isotropy=2)
-    monoclinic.setElastic(constants_21, input_type='anisotropic')
+    monoclinic.set_elastic(constants_21, input_type='anisotropic')
     print(f"\n{monoclinic.name} initialized with 21 constants")
     
     # Method 3: Using full 6x6 stiffness matrix
@@ -176,7 +176,7 @@ def example_anisotropic():
     ]
     
     custom = CauchyContinuumModel(name='Custom Material', isotropy=2)
-    custom.setElastic(stiff_matrix, input_type='stiffness')
+    custom.set_elastic(stiff_matrix, input_type='stiffness')
     print(f"{custom.name} initialized with full 6x6 matrix")
 
 

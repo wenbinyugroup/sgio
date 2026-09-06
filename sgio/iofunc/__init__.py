@@ -1,6 +1,5 @@
 from . import (
     abaqus,
-    nastran,
     swiftcomp,
     vabs,
 )
@@ -11,6 +10,11 @@ from .layout import (
     merge_sections_from_csv,
     read_section_layout_csv,
     write_merged_sections,
+)
+from .common.material_json import (
+    read_material_from_json,
+    read_materials_from_json,
+    write_material_to_json,
 )
 from .gmsh.bundle import (
     read_config_from_json,
@@ -65,6 +69,9 @@ __all__ = [
     "read_sections_from_json",
     "write_sections_to_json",
     "read_config_from_json",
+    "read_material_from_json",
+    "read_materials_from_json",
+    "write_material_to_json",
     "write_config_to_json",
     "section_model_to_record",
 

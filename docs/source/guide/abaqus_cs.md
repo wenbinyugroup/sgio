@@ -1,33 +1,25 @@
-# Build Cross-section in Abaqus and Export to VABS
+# Build a Cross-Section in Abaqus
 
-## Brief Instruction
+The process mirrors creating [meshed beam cross-sections](https://help.3ds.com/HelpDS.aspx?V=2025&P=dssimulia_established&L=english&contextscope=all&F=simacaeanlrefmap/simaanl-c-meshedsection.htm)
+in Abaqus, then converting the INP file to VABS input.
 
-Overall, the process is similar to creating [meshed beam cross-sections](https://help.3ds.com/HelpDS.aspx?V=2025&P=dssimulia_established&L=english&contextscope=all&F=simacaeanlrefmap/simaanl-c-meshedsection.htm) in Abaqus.
-
-- Part:
-  - Modeling space: 2D planar
-  - Type: Deformable
-  - Base feature: Shell
-- Property:
-  - Material: Any
-  - Section: Solid (Homogeneous, Composite layup)
-- Mesh: Any
-
-Write the Abaqus model to an INP file.
-
-Convert the INP file to a VABS input file using the command:
+| Module | Setting |
+|---|---|
+| Part | 2D Planar, Deformable, Shell |
+| Property | any material; Solid or Composite Layup section |
+| Mesh | no restriction |
 
 ```bash
 python -m sgio convert <filename>.inp <filename>.sg -ff abaqus -tf vabs
 ```
 
-## Detailed Instruction
+The Timoshenko beam model is used by default; add `-m bm1` for
+Euler-Bernoulli. Run `python -m sgio convert -h` for all options, and see
+{doc}`convert`.
 
-### Part module
+## Part
 
-As a cross-section of a slender structure, it is natural to create a "Deformable" "Shell" part in the "2D Planar" modeling space.
-
-<!-- (See Figure {ref}`fig-abaqus-cs-part`) -->
+Create a *Deformable* *Shell* part in *2D Planar* modeling space.
 
 ```{figure} /images/abaqus_cs_create_part.png
 :name: fig-abaqus-cs-part
@@ -35,72 +27,47 @@ As a cross-section of a slender structure, it is natural to create a "Deformable
 :width: 200
 ```
 
-Composite structures can have different materials in different regions.
-A useful tip is to create a base shape, such as a circle, large enough to cover
-the entire cross-section.
-Then, use the "Partition Face" tool to divide the base shape into regions.
+For multi-material sections, create a base shape large enough to cover the
+whole cross-section, then use *Partition Face* to divide it into regions.
 
 ```{figure} /images/abaqus_cs_partition_face.png
 :align: center
 :width: 500
 ```
 
-### Property
+## Property
 
-Any type of material can be used for the cross-section, such as isotropic,
-engineering constants, or orthotropic.
-VABS requires local orientation data and allows additional in-plane rotations
-(fiber angle) for each layer.
-Hence, it is required to use the "Composite Layup" section type.
-Here are instructions for setting up a "Composite Layup" section:
+VABS needs local orientation data and allows an additional in-plane rotation
+(fiber angle) per layer, so use a **Composite Layup** section:
 
-- Each section contains only one ply.
-- Layer orientation is defined by assigning the local $y$ axis, while the local
-  $x$ axis is always normal to the cross-sectional plane.
-  For a composite layer, the local $y$ axis is usually set to be tangent to a
-  base line.
-- To set the fiber angle for each layer, use the column "Rotation Angle".
+- one ply per section
+- layer orientation is set by assigning the local $y$ axis — the local $x$ axis
+  is always normal to the cross-sectional plane. For a composite layer, the
+  local $y$ axis is usually tangent to a base line.
+- set the fiber angle in the *Rotation Angle* column
 
 ```{figure} /images/abaqus_cs_comp_section.png
 :align: center
 :width: 800
 ```
 
-It is okay to use the "Composite Layup" section for all materials.
-However, if a material is isotropic and no local orientation and fiber angle are needed, then it is also acceptable to use the "Solid" section.
+Composite Layup works for every material. A **Solid** section is also
+acceptable for an isotropic material that needs no local orientation or fiber
+angle.
 
 ```{figure} /images/abaqus_cs_solid_section.png
 :align: center
 :width: 500
 ```
 
-### Mesh
+## Mesh and Export
 
-There is no restriction on meshing.
+Mesh the part with no restrictions, then create a job and write the model to an
+INP file.
 
 ```{figure} /images/abaqus_cs_mesh.png
 :align: center
 :width: 700
 ```
 
-### File export
-
-Create a job and write the model to an INP file.
-Then use the command below to convert the INP file to a VABS input file:
-
-```bash
-python -m sgio convert <filename>.inp <filename>.sg -ff abaqus -tf vabs
-```
-
-By default, the Timoshenko beam model will be used.
-To use the Euler-Bernoulli beam model, add the option `-m bm1`:
-
-```bash
-python -m sgio convert <filename>.inp <filename>.sg -ff abaqus -tf vabs -m bm1
-```
-
-To see help messages, use the command:
-
-```bash
-python -m sgio convert -h
-```
+See {doc}`/examples/convert_abaqus_cs_to_vabs` for a worked conversion.

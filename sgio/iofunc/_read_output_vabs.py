@@ -12,7 +12,7 @@ import sgio.iofunc.vabs as _vabs
 import sgio.model as sgmodel
 from sgio.core import StructureGene
 
-from ._helpers import _resolve_num_elements, _safe_parse
+from ._helpers import _resolve_num_elements
 
 logger = logging.getLogger(__name__)
 
@@ -21,7 +21,7 @@ def read_vabs_output_state(
     filename: str, analysis: str, extension: list[str],
     num_cases: int, num_elements: int, sg: StructureGene,
     tool_version: str, **kwargs
-) -> list[sgmodel.StateCase] | None:
+) -> list[sgmodel.StateCase]:
     """Read VABS output state data.
 
     Parameters
@@ -44,8 +44,9 @@ def read_vabs_output_state(
 
     Returns
     -------
-    list[StateCase] or None
-        List of state cases, or None on parse failure.
+    list[StateCase]
+        List of state cases, one per load case. Raises on parse failure
+        instead of silently dropping cases.
     """
     state_cases = [sgmodel.StateCase({}, {}) for _ in range(num_cases)]
     num_elements = _resolve_num_elements(num_elements, sg)
@@ -63,10 +64,7 @@ def read_vabs_output_state(
         with open(f"{filename}.fi", "r") as file:
             for i_case in range(num_cases):
                 _skip_v4_header(file)
-                result = _safe_parse(_vabs._readOutputFailureIndexCase, file, num_elements)
-                if result is None:
-                    return None
-                fi, sr, eids_sr_min = result
+                fi, sr, eids_sr_min = _vabs._readOutputFailureIndexCase(file, num_elements)
                 state_case = state_cases[i_case]
                 state_case.addState(
                     name="fi", state=sgmodel.State(
@@ -89,11 +87,7 @@ def read_vabs_output_state(
         if "u" in extension:
             with open(f"{filename}.U", "r") as file:
                 for i_case in range(num_cases):
-                    u = _safe_parse(
-                        _vabs.read_output_buffer, file, analysis, extension="u", **kwargs,
-                    )
-                    if u is None:
-                        return None
+                    u = _vabs.read_output_buffer(file, analysis, extension="u", **kwargs)
                     state_cases[i_case].addState(
                         name="u", state=sgmodel.State(
                             name="u", data=u, label=["u1", "u2", "u3"], location="node"
@@ -104,12 +98,7 @@ def read_vabs_output_state(
             with open(f"{filename}.ELE", "r") as file:
                 for i_case in range(num_cases):
                     _skip_v4_header(file)
-                    result = _safe_parse(
-                        _vabs._readOutputElementStrainStressCase, file, num_elements,
-                    )
-                    if result is None:
-                        return None
-                    ee, es, eem, esm = result
+                    ee, es, eem, esm = _vabs._readOutputElementStrainStressCase(file, num_elements)
                     state_case = state_cases[i_case]
                     # VABS .ELE strain columns are engineering shear: e11, 2e12, 2e13, e22, 2e23, e33.
                     # See VABS docs: guide/output/dehomo.md.

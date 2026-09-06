@@ -32,18 +32,6 @@ vabs_to_meshio_type = {
     9: 'quad9',
 }
 
-# def read(filename, sgdim:int, nnode:int, nelem:int, **kwargs):
-#     """Reads a Gmsh msh file."""
-#     if is_buffer(filename, 'r'):
-#         mesh = read_buffer(filename, sgdim, nnode, nelem)
-#     else:
-#         with open(filename, 'r') as file:
-#             mesh = read_buffer(file, sgdim, nnode, nelem)
-#     return mesh
-
-
-
-
 def read_buffer(f, sgdim:int, nnode:int, nelem:int, format_flag, **kwargs):
     """Read VABS mesh from buffer into an SGMesh."""
     from sgio.core.numbering import ensure_element_ids, ensure_node_ids

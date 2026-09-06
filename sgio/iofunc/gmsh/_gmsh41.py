@@ -501,15 +501,19 @@ def _write_entities(fh, cells, tag_data, cell_sets, point_data, binary):
         if matching_cell_block.size > 0:
             # entity has a physical tag, write this
             # ASSUMPTION: There is a single physical tag for this
-            try:
+            if "gmsh:physical" in tag_data:
                 physical_tag = tag_data["gmsh:physical"][matching_cell_block[0]][0]
                 if binary:
                     np.array([1], dtype=c_size_t).tofile(fh)
                     np.array([physical_tag], dtype=c_int).tofile(fh)
                 else:
                     fh.write(f"1 {physical_tag} ")
-            except KeyError:
-                pass
+            else:
+                # No physical groups at all (mesh-only output): zero tags.
+                if binary:
+                    np.array([0], dtype=c_size_t).tofile(fh)
+                else:
+                    fh.write("0 ")
         else:
             # The number of physical tags is zero
             if binary:
@@ -977,45 +981,6 @@ def _write_physical_names_ascii(fh, field_data: dict, mocombos: dict = None, sgd
     for name, (phys_id, dim) in names.items():
         fh.write(f'{dim} {phys_id} "{name}"\n')
     fh.write("$EndPhysicalNames\n")
-
-
-def _write_sg_layer_def(fh, mocombos: dict, material_id_map: dict) -> None:
-    """Write $SGLayerDef block mapping layer IDs to material IDs and fiber angles.
-
-    Parameters
-    ----------
-    fh : file
-        File handle (text mode).
-    mocombos : dict
-        Mapping ``{property_id: (material_name, fiber_angle)}``.
-    material_id_map : dict
-        Mapping ``{material_name: material_id_int}`` used to resolve names to IDs.
-    """
-    fh.write("$SGLayerDef\n")
-    fh.write(f"! nlayers\n")
-    fh.write(f"{len(mocombos)}\n")
-    fh.write("! layer_id  material_id  fiber_angle\n")
-    for layer_id, (mat_name, angle) in sorted(mocombos.items()):
-        mat_id = material_id_map.get(mat_name, layer_id)
-        fh.write(f"{layer_id}  {mat_id}  {angle}\n")
-    fh.write("$EndSGLayerDef\n")
-
-
-def _write_sg_config(fh, sg_configs: dict) -> None:
-    """Write $SGConfig block with solver flags.
-
-    Parameters
-    ----------
-    fh : file
-        File handle (text mode).
-    sg_configs : dict
-        Mapping ``{key: value}`` of solver configuration flags.
-    """
-    fh.write("$SGConfig\n")
-    fh.write("! key  value\n")
-    for key, value in sg_configs.items():
-        fh.write(f"{key}  {value}\n")
-    fh.write("$EndSGConfig\n")
 
 
 def _read_sg_layer_def(f) -> dict:

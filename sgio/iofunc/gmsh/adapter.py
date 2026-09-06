@@ -9,7 +9,6 @@ from __future__ import annotations
 from typing import Any, Optional
 
 from ..base import BaseFormatReader, BaseFormatWriter
-from sgio.core.sg import StructureGene
 
 from .mapper_in import map_input_to_mesh
 from .mapper_out import map_model_to_write_payload
@@ -86,39 +85,6 @@ class GmshReader(BaseFormatReader):
             Gmsh output reading is not supported.
         """
         raise NotImplementedError("Gmsh output reading is not applicable")
-    
-    def validate(self, file_path_or_buffer) -> bool:
-        """Validate if file is in Gmsh format.
-        
-        Parameters
-        ----------
-        file_path_or_buffer : str or file-like
-            Path to file or file buffer to validate.
-            
-        Returns
-        -------
-        bool
-            True if file appears to be Gmsh format, False otherwise.
-        """
-        try:
-            if isinstance(file_path_or_buffer, str):
-                with open(file_path_or_buffer, 'rb') as f:
-                    # Read first line to check for Gmsh format marker
-                    line = f.readline().decode().strip()
-            else:
-                pos = file_path_or_buffer.tell()
-                line = file_path_or_buffer.readline()
-                if isinstance(line, bytes):
-                    line = line.decode().strip()
-                else:
-                    line = line.strip()
-                file_path_or_buffer.seek(pos)
-            
-            # Gmsh files start with $MeshFormat or $Comments
-            return line in ['$MeshFormat', '$Comments']
-            
-        except Exception:
-            return False
 
 
 class GmshWriter(BaseFormatWriter):
@@ -188,56 +154,3 @@ class GmshWriter(BaseFormatWriter):
                 write_input_payload(f, payload)
         else:
             write_input_payload(destination, payload)
-    
-    def write_output(
-        self,
-        file_path_or_buffer,
-        data: Any,
-        **kwargs
-    ) -> None:
-        """Write Gmsh output file.
-        
-        Note: Gmsh typically doesn't have separate output files.
-        This method is provided for interface completeness.
-        
-        Parameters
-        ----------
-        file_path_or_buffer : str or file-like
-            Path to file or file buffer to write to.
-        data : Any
-            Data to write.
-        **kwargs
-            Additional keyword arguments.
-            
-        Raises
-        ------
-        NotImplementedError
-            Gmsh output writing is not applicable.
-        """
-        raise NotImplementedError("Gmsh output writing is not applicable")
-    
-    def validate(self, mesh: Any) -> bool:
-        """Validate mesh for Gmsh format writing.
-        
-        Parameters
-        ----------
-        mesh : meshio.Mesh
-            Mesh to validate.
-            
-        Returns
-        -------
-        bool
-            True if mesh is valid for Gmsh format, False otherwise.
-        """
-        # Basic validation checks
-        if mesh is None:
-            return False
-        
-        # Check if mesh has required attributes (meshio.Mesh structure)
-        if not hasattr(mesh, 'points'):
-            return False
-        
-        if not hasattr(mesh, 'cells'):
-            return False
-        
-        return True

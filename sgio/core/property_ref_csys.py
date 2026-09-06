@@ -215,14 +215,12 @@ def property_ref_csys_to_vabs_theta(
 def property_ref_value_to_vabs_theta(
     value: object, model_space: str = ""
 ) -> float:
-    """Convert a stored reference-csys value to VABS ``theta_1``.
-
-    Accepts either the new 9-value representation or a legacy scalar angle.
+    """Convert a stored 9-value reference-csys value to VABS ``theta_1``.
 
     Parameters
     ----------
     value : object
-        Stored cell-data value.
+        Stored cell-data value; must contain exactly 9 values.
     model_space : str, optional
         See :func:`property_ref_csys_to_vabs_theta`.
 
@@ -231,15 +229,19 @@ def property_ref_value_to_vabs_theta(
     float
         VABS ``theta_1`` angle in degrees.
     """
-    array = np.asarray(value, dtype=float)
-    if array.ndim == 0:
-        theta_deg = float(array)
-        return 0.0 if abs(theta_deg) <= _EPS else theta_deg
-    return property_ref_csys_to_vabs_theta(array.reshape(-1), model_space)
+    array = np.asarray(value, dtype=float).reshape(-1)
+    return property_ref_csys_to_vabs_theta(array, model_space)
 
 
 def coerce_property_ref_value_to_csys(value: object) -> np.ndarray:
-    """Normalize one stored legacy or canonical value to the 9-value payload."""
+    """Normalize one stored legacy or canonical value to the 9-value payload.
+
+    The scalar shape is a real on-disk legacy format: some Gmsh ``.msh``
+    files store ``property_ref_csys`` as a single-component ``$ElementData``
+    field carrying the VABS ``theta_1`` angle directly (see
+    ``tests/fixtures/gmsh/sg21_box_quad4_min_gmsh41.msh``), not just an
+    in-memory VABS-reader convenience.
+    """
     array = np.asarray(value, dtype=float).reshape(-1)
     if array.size == 9:
         return normalize_property_ref_csys(array)

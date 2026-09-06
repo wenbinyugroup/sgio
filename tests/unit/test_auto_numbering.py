@@ -6,7 +6,6 @@ Covers:
 - auto_renumber_for_format() is a no-op for compliant IDs
 - ensure_node_ids() and ensure_element_ids() create IDs when missing
 - End-to-end: VABS and SwiftComp write paths auto-renumber non-consecutive IDs
-- _handle_deprecated_parameter() logic
 """
 from __future__ import annotations
 
@@ -18,7 +17,6 @@ import pytest
 
 from sgio.core.mesh import SGMesh
 from sgio.core.numbering import (
-    _handle_deprecated_parameter,
     auto_renumber_for_format,
     ensure_element_ids,
     ensure_node_ids,
@@ -280,37 +278,3 @@ class TestSwiftcompWriteAutoNumbering:
         f = StringIO()
         sc_write_buffer(f, mesh, sgdim=2, model_space="xy")
         assert list(mesh.point_data["node_id"]) == [1, 2, 3]
-
-
-# ---------------------------------------------------------------------------
-# _handle_deprecated_parameter
-# ---------------------------------------------------------------------------
-
-
-@pytest.mark.unit
-class TestHandleDeprecatedParameter:
-    def test_both_none_returns_default(self):
-        result = _handle_deprecated_parameter("old", "new", None, None, default_value=False)
-        assert result is False
-
-    def test_both_none_custom_default(self):
-        result = _handle_deprecated_parameter("old", "new", None, None, default_value=True)
-        assert result is True
-
-    def test_new_only_returns_new(self):
-        result = _handle_deprecated_parameter("old", "new", None, True)
-        assert result is True
-
-    def test_old_only_issues_deprecation_warning(self):
-        with pytest.warns(DeprecationWarning, match="deprecated"):
-            result = _handle_deprecated_parameter("old", "new", True, None)
-        assert result is True
-
-    def test_both_same_value_issues_warning(self):
-        with pytest.warns(DeprecationWarning):
-            result = _handle_deprecated_parameter("old", "new", True, True)
-        assert result is True
-
-    def test_conflicting_values_raises(self):
-        with pytest.raises(ValueError, match="[Cc]onflic"):
-            _handle_deprecated_parameter("old", "new", True, False)

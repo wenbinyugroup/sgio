@@ -477,3 +477,97 @@ def test_map_input_to_structure_gene_applies_3d_orientation_rotation_about_local
     actual_axes = property_ref_csys_to_axes(csys)
     for actual_axis, expected_axis in zip(actual_axes, expected_axes):
         assert np.allclose(actual_axis, expected_axis)
+
+
+def _write_material_input(tmp_path, elastic_data: str) -> str:
+    """Write a minimal 2D input with a customizable ``*Elastic`` data line."""
+    filename = tmp_path / "material.inp"
+    filename.write_text(
+        f"""*Heading
+*Part, name=RVE
+*Node
+1, 0., 0.
+2, 1., 0.
+3, 1., 1.
+4, 0., 1.
+*Element, type=CPE4, elset=FIBRE
+1, 1, 2, 3, 4
+*Material, name=FIBRE_MAT
+*Elastic
+{elastic_data}
+*Solid Section, elset=FIBRE, material=FIBRE_MAT
+,
+*End Part
+""",
+        encoding="utf-8",
+    )
+    return str(filename)
+
+
+@pytest.mark.unit
+def test_map_input_to_structure_gene_ignores_trailing_comma_blank_cell(tmp_path):
+    """A trailing comma on the last populated *Elastic data line produces one
+    blank cell; it must be skipped, not treated as an invalid constant."""
+    filename = _write_material_input(tmp_path, "1.0, 0.3,")
+
+    sg = map_input_to_structure_gene(parse_input_file(filename, sgdim=2, model="BM2"))
+
+    assert sg.materials["FIBRE_MAT"].e == pytest.approx(1.0)
+
+
+@pytest.mark.unit
+def test_map_input_to_structure_gene_rejects_invalid_elastic_constant(tmp_path):
+    """A genuinely non-numeric *Elastic constant must raise, not be dropped
+    silently -- unlike a trailing-comma blank cell, this is real data loss."""
+    filename = _write_material_input(tmp_path, "1.0, not_a_number")
+
+    with pytest.raises(ValueError, match="Invalid elastic constant"):
+        map_input_to_structure_gene(parse_input_file(filename, sgdim=2, model="BM2"))
+
+
+def _write_composite_section_input(tmp_path, angle_token: str) -> str:
+    """Write a minimal 2D input with a customizable composite ply angle."""
+    filename = tmp_path / "composite_section.inp"
+    filename.write_text(
+        f"""*Heading
+*Part, name=RVE
+*Node
+1, 0., 0.
+2, 1., 0.
+3, 1., 1.
+4, 0., 1.
+*Element, type=CPE4, elset=FIBRE
+1, 1, 2, 3, 4
+*Material, name=FIBRE_MAT
+*Elastic
+1.0, 0.3
+*Orientation, name=Ori-1
+1., 0., 0., 0., 1., 0.
+*Solid Section, elset=FIBRE, composite, orientation=Ori-1
+1., 1, FIBRE_MAT, {angle_token}, Ply-1
+*End Part
+""",
+        encoding="utf-8",
+    )
+    return str(filename)
+
+
+@pytest.mark.unit
+def test_map_input_to_structure_gene_rejects_invalid_composite_ply_angle(tmp_path):
+    """A composite ply row that has an angle column but it is not numeric
+    must raise, not silently default to 0 degrees like a genuinely absent
+    angle would."""
+    filename = _write_composite_section_input(tmp_path, "not_an_angle")
+
+    with pytest.raises(ValueError, match="orientation angle"):
+        map_input_to_structure_gene(parse_input_file(filename, sgdim=2, model="BM2"))
+
+
+@pytest.mark.unit
+def test_map_input_to_structure_gene_defaults_composite_ply_angle_when_numeric(tmp_path):
+    """Sanity check: a real numeric composite ply angle still works."""
+    filename = _write_composite_section_input(tmp_path, "30.")
+
+    sg = map_input_to_structure_gene(parse_input_file(filename, sgdim=2, model="BM2"))
+
+    assert list(sg.mocombos.values())[0][1] == pytest.approx(30.0)

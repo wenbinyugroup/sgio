@@ -87,35 +87,6 @@ class StructuralSectionSupport:
             return None
         return row[j]
 
-    @classmethod
-    def _get_matrix_value(
-        cls,
-        name: str,
-        digit_offset: int,
-        matrix: Sequence[Sequence[float]] | None,
-    ) -> float | None:
-        """Resolve a legacy matrix-token query such as ``stf11`` or ``mass23``."""
-
-        try:
-            i = int(name[digit_offset]) - 1
-            j = int(name[digit_offset + 1]) - 1
-        except (IndexError, TypeError, ValueError):
-            return None
-        return cls._get_matrix_entry(matrix, i, j)
-
-    @staticmethod
-    def _get_aliased_value(
-        obj: Any,
-        name: str,
-        alias_map: Mapping[str, str],
-    ) -> tuple[bool, Any]:
-        """Resolve one legacy alias map against an object attribute set."""
-
-        attr_name = alias_map.get(name)
-        if attr_name is None:
-            return False, None
-        return True, getattr(obj, attr_name, None)
-
     @staticmethod
     def _format_scalar(value: Any) -> str:
         """Format one scalar for human-readable repr output."""

@@ -1,8 +1,10 @@
+from __future__ import annotations
+
 from math import atan2, cos, radians, sin, sqrt
 import numpy as np
 
 
-def skew_symmetric_matrix(v):
+def skew_symmetric_matrix(v: list | np.ndarray) -> np.ndarray:
     r"""
     Compute the skew symmetric matrix of a 3x1 vector.
 
@@ -15,6 +17,11 @@ def skew_symmetric_matrix(v):
     -------
     vtilde : array
         3x3 skew symmetric matrix
+
+    Raises
+    ------
+    ValueError
+        If ``v`` is None or is not a 3-element vector.
 
     Examples
     --------
@@ -140,7 +147,7 @@ def floor_absolute(value):
 
 
 
-def angle_to_cosine_2d(angle_degrees):
+def angle_to_cosine_2d(angle_degrees: float) -> list[list[float]]:
     r"""
     Convert an angle in degrees to a 2x2 cosine matrix.
 
@@ -153,6 +160,11 @@ def angle_to_cosine_2d(angle_degrees):
     -------
     cosine_matrix : list of lists
         2x2 cosine matrix
+
+    Raises
+    ------
+    ValueError
+        If ``angle_degrees`` is None or is not a number.
 
     Examples
     --------

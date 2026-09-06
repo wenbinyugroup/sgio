@@ -64,33 +64,33 @@ def test_vabs_output_model_beam(test_case, test_data_dir):
     
     # Verify expected properties exist and are not None
     for prop in expected_properties:
-        value = model.get(prop)
+        value = getattr(model, prop, None)
         assert value is not None, f"Property '{prop}' should not be None"
         logger.info(f"{prop} = {value}")
     
     # Verify some basic properties have reasonable values
     # EA (extension stiffness) should be positive
-    ea = model.get('ea')
+    ea = model.ea
     if ea is not None:
         assert ea > 0, f"EA should be positive, got {ea}"
     
     # GJ (torsional stiffness) should be positive
-    gj = model.get('gj')
+    gj = model.gj
     if gj is not None:
         assert gj > 0, f"GJ should be positive, got {gj}"
     
     # EI22 and EI33 (bending stiffness) should be positive
-    ei22 = model.get('ei22')
+    ei22 = model.ei22
     if ei22 is not None:
         assert ei22 > 0, f"EI22 should be positive, got {ei22}"
     
-    ei33 = model.get('ei33')
+    ei33 = model.ei33
     if ei33 is not None:
         assert ei33 > 0, f"EI33 should be positive, got {ei33}"
     
     # Check optional properties (e.g., shear stiffness for Timoshenko beam)
     for prop in optional_properties:
-        value = model.get(prop)
+        value = getattr(model, prop, None)
         if value is not None:
             logger.info(f"{prop} = {value}")
             # Shear stiffness should be positive if present
@@ -106,9 +106,8 @@ def test_vabs_output_model_properties_access(test_data_dir):
     """Test different ways to access model properties.
     
     This test verifies:
-    1. Properties can be accessed via .get() method
-    2. Properties can be accessed as attributes
-    3. Model can be converted to dict
+    1. Properties can be accessed as attributes
+    2. Model can be converted to dict
     
     Args:
         test_data_dir: Fixture providing test data directory
@@ -124,20 +123,21 @@ def test_vabs_output_model_properties_access(test_data_dir):
     # Read the model
     model = read_output_model(str(fn_in), 'vabs', model_type='BM2')
     
-    # Test .get() method
-    ea_get = model.get('ea')
-    assert ea_get is not None, "EA should be accessible via .get()"
-    
     # Test attribute access
     ea_attr = model.ea
     assert ea_attr is not None, "EA should be accessible as attribute"
-    assert ea_get == ea_attr, "Both access methods should return the same value"
     
     # Test model_dump() for Pydantic models
     if hasattr(model, 'model_dump'):
         model_dict = model.model_dump()
         assert isinstance(model_dict, dict), "model_dump() should return a dict"
-        assert 'ea' in model_dict, "EA should be in model dict"
-    
-    logger.info("✓ All property access methods work correctly")
+        assert model_dict['ea'] == ea_attr, "model_dump() should agree with attributes"
 
+
+@pytest.mark.io
+@pytest.mark.vabs
+def test_vabs_output_model_missing_file_raises(tmp_path):
+    """A missing output file should raise FileNotFoundError, not return None."""
+    missing = tmp_path / "does_not_exist.sg.K"
+    with pytest.raises(FileNotFoundError):
+        read_output_model(str(missing), 'vabs', model_type='BM2')

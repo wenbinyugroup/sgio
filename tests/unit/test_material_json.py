@@ -183,12 +183,6 @@ class TestReadMaterialFromJson:
         assert mat.x12 == 95.0
         assert mat.failure_criterion == 4
 
-    def test_legacy_wrapper_matches_new_codec(self, steel_isotropic_path):
-        """Legacy model-level wrapper should delegate to the new codec module."""
-        from sgio.model.solid import read_material_from_json as legacy_reader
-
-        assert legacy_reader(steel_isotropic_path) == read_material_from_json(steel_isotropic_path)
-
 
 @pytest.mark.unit
 class TestReadMaterialsFromJson:
@@ -371,7 +365,7 @@ class TestJsonRoundTrip:
 
 @pytest.mark.unit
 class TestWriteMaterialToJson:
-    """Test write_to_json method."""
+    """Test write_material_to_json()."""
 
     def test_write_isotropic_material(self, tmp_path, steel_isotropic_path):
         """Test writing an isotropic material to JSON file."""
@@ -536,7 +530,7 @@ class TestWriteMaterialToJson:
         assert '    ' in content  # 4-space indentation
 
     def test_write_creates_directories(self, tmp_path):
-        """Test that write_to_json creates parent directories."""
+        """Test that write_material_to_json creates parent directories."""
         mat = CauchyContinuumModel(
             name="Nested Material",
             isotropy=0,
@@ -573,18 +567,3 @@ class TestWriteMaterialToJson:
         
         # Should be equal
         assert original == restored
-
-    def test_legacy_write_wrapper_delegates_to_codec(self, tmp_path):
-        """Legacy model method should remain available as a compatibility wrapper."""
-        mat = CauchyContinuumModel(
-            name="Wrapper Material",
-            isotropy=0,
-            e=200e9,
-            nu=0.3,
-        )
-
-        json_file = tmp_path / "wrapper.json"
-        mat.write_to_json(str(json_file))
-
-        restored = read_material_from_json(str(json_file))
-        assert "Wrapper Material" in restored

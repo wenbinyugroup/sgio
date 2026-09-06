@@ -180,60 +180,16 @@ class TestEulerBernoulliBeamModelComputedProperties:
 
 
 @pytest.mark.unit
-class TestEulerBernoulliBeamModelBackwardCompatibility:
-    """Test backward compatibility with existing API."""
+class TestEulerBernoulliBeamModelSafety:
+    """Test safe access behavior for the Euler-Bernoulli beam model (BM1)."""
 
-    def test_default_get_returns_none_for_missing_matrix_entries(self):
+    def test_default_matrix_queries_return_none(self):
         """Default objects should not raise when matrix-backed properties are missing."""
         beam = EulerBernoulliBeamModel()
 
-        assert beam.get('ms11') is None
-        assert beam.get('stf11') is None
-        assert beam.get('cmp11') is None
-
-    def test_get_method_basic_properties(self):
-        """Test the get() method for basic properties."""
-        beam = EulerBernoulliBeamModel(
-            mu=1000.0,
-            ea=2.1e11,
-            gj=8.1e10,
-            ei22=1e9,
-            ei33=2e9,
-            xm2=0.1,
-            xm3=-0.05
-        )
-
-        assert beam.get('mu') == 1000.0
-        assert beam.get('ea') == 2.1e11
-        assert beam.get('gj') == 8.1e10
-        assert beam.get('ei22') == 1e9
-        assert beam.get('ei33') == 2e9
-        assert beam.get('mc2') == 0.1  # alias for xm2
-        assert beam.get('mc3') == -0.05  # alias for xm3
-
-    def test_get_method_multiple_properties(self):
-        """Test the get() method with multiple properties."""
-        beam = EulerBernoulliBeamModel(mu=1000.0, ea=2.1e11, gj=8.1e10)
-
-        props = beam.get(['mu', 'ea', 'gj'])
-        assert props == [1000.0, 2.1e11, 8.1e10]
-
-    def test_get_all_method(self):
-        """Test the getAll() method."""
-        beam = EulerBernoulliBeamModel(
-            mu=1000.0,
-            ea=2.1e11,
-            gj=8.1e10,
-            ei22=1e9,
-            ei33=2e9
-        )
-
-        all_props = beam.getAll()
-        assert isinstance(all_props, dict)
-        assert 'mu' in all_props
-        assert 'ea' in all_props
-        assert all_props['mu'] == 1000.0
-        assert all_props['ea'] == 2.1e11
+        assert beam.get_section_matrix_component(SectionMatrixKind.MASS, 1, 1) is None
+        assert beam.get_section_matrix_component(SectionMatrixKind.STIFFNESS, 1, 1) is None
+        assert beam.get_section_matrix_component(SectionMatrixKind.COMPLIANCE, 1, 1) is None
 
     def test_repr_method(self):
         """Test the __repr__ method still works."""
@@ -308,15 +264,18 @@ class TestEulerBernoulliBeamModelSerialization:
 class TestTimoshenkoBeamModelSafety:
     """Test safe access behavior for the Timoshenko beam model (BM2)."""
 
-    def test_default_get_returns_none_for_missing_matrix_entries(self):
+    def test_default_matrix_queries_return_none(self):
         """Default objects should not raise when matrix-backed properties are missing."""
         beam = TimoshenkoBeamModel()
 
-        assert beam.get('ms11') is None
-        assert beam.get('stf11') is None
-        assert beam.get('stf11c') is None
-        assert beam.get('cmp11') is None
-        assert beam.get('cmp11c') is None
+        for kind in (
+            SectionMatrixKind.MASS,
+            SectionMatrixKind.STIFFNESS,
+            SectionMatrixKind.CLASSICAL_STIFFNESS,
+            SectionMatrixKind.COMPLIANCE,
+            SectionMatrixKind.CLASSICAL_COMPLIANCE,
+        ):
+            assert beam.get_section_matrix_component(kind, 1, 1) is None
 
     def test_default_repr_does_not_crash(self):
         """Default repr should handle absent matrices cleanly."""
@@ -359,22 +318,24 @@ class TestTimoshenkoBeamModelSafety:
 class TestKirchhoffLovePlateShellModelSafety:
     """Test safe access behavior for the Kirchhoff-Love shell model (PL1)."""
 
-    def test_default_get_returns_none_for_missing_matrix_entries(self):
+    def test_default_matrix_queries_return_none(self):
         """Default shell objects should not raise when matrix-backed properties are missing."""
         shell = KirchhoffLovePlateShellModel()
 
-        assert shell.get('stf11c') is None
-        assert shell.get('stf11gr') is None
-        assert shell.get('mass11') is None
+        assert shell.get_section_matrix_component(SectionMatrixKind.STIFFNESS, 1, 1) is None
+        assert shell.get_section_matrix_component(
+            SectionMatrixKind.GEOMETRIC_STIFFNESS, 1, 1) is None
+        assert shell.get_section_matrix_component(SectionMatrixKind.MASS, 1, 1) is None
 
-    def test_get_uses_geometric_stiffness_when_available(self):
-        """Geometric corrected refined stiffness should be preferred when present."""
+    def test_classical_and_geometric_stiffness_are_separate_kinds(self):
+        """Geometrically corrected stiffness is its own kind, not a fallback."""
         shell = KirchhoffLovePlateShellModel()
         shell.stff = [[1.0] * 6 for _ in range(6)]
         shell.stff_geo = [[2.0] * 6 for _ in range(6)]
 
-        assert shell.get('stf11gr') == 2.0
-        assert shell.get('stf11c') == 1.0
+        assert shell.get_section_matrix_component(
+            SectionMatrixKind.GEOMETRIC_STIFFNESS, 1, 1) == 2.0
+        assert shell.get_section_matrix_component(SectionMatrixKind.STIFFNESS, 1, 1) == 1.0
 
     def test_default_repr_does_not_crash(self):
         """Default shell repr should handle absent matrices and constants cleanly."""
@@ -641,25 +602,6 @@ class TestCauchyContinuumModel:
         assert solid.strength_constants == strength
         assert solid.x1t == pytest.approx(1500.0)
         assert solid.x12 == pytest.approx(160.0)
-
-    def test_get_method_aliases(self):
-        """get() exposes legacy names for properties."""
-        solid = CauchyContinuumModel(
-            density=1500.0,
-            temperature=20.0,
-            isotropy=1,
-            e1=100e9,
-            nu12=0.3,
-            stff=[[1.0 if i == j else 0.0 for j in range(6)] for i in range(6)],
-            cte=[1e-6] * 6,
-        )
-
-        assert solid.get('density') == 1500.0
-        assert solid.get('temperature') == 20.0
-        assert solid.get('e') == 100e9
-        assert solid.get('nu') == pytest.approx(0.3)
-        assert solid.get('c11') == 1.0
-        assert solid.get('alpha') == pytest.approx(1e-6)
 
     def test_typed_material_queries_and_setters(self):
         """Typed material API should cover matrix, thermal, and setter flows."""

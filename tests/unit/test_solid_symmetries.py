@@ -37,7 +37,7 @@ class TestIsotropicMaterial:
     def test_setElastic_isotropic(self):
         """Test setElastic with isotropic constants."""
         mat = CauchyContinuumModel(name='Aluminum', isotropy=0)
-        mat.setElastic([70e9, 0.33])
+        mat.set_elastic([70e9, 0.33])
         
         assert mat.e1 == 70e9
         assert mat.nu12 == 0.33
@@ -80,7 +80,7 @@ class TestTransverseIsotropicMaterial:
     def test_setElastic_transverse(self):
         """Test setElastic with transverse isotropic constants."""
         mat = CauchyContinuumModel(name='Composite', isotropy=3)
-        mat.setElastic([150e9, 10e9, 5e9, 0.3, 0.4], input_type='transverse_isotropic')
+        mat.set_elastic([150e9, 10e9, 5e9, 0.3, 0.4], input_type='transverse_isotropic')
         
         assert mat.e1 == 150e9
         assert mat.e2 == 10e9
@@ -114,7 +114,7 @@ class TestOrthotropicMaterial:
     def test_setElastic_engineering(self):
         """Test setElastic with engineering constants."""
         mat = CauchyContinuumModel(name='Wood', isotropy=1)
-        mat.setElastic(
+        mat.set_elastic(
             [150e9, 10e9, 10e9, 5e9, 5e9, 3e9, 0.3, 0.3, 0.4],
             input_type='engineering'
         )
@@ -127,7 +127,7 @@ class TestOrthotropicMaterial:
     def test_setElastic_lamina(self):
         """Test setElastic with lamina input (4 constants)."""
         mat = CauchyContinuumModel(name='Lamina', isotropy=1)
-        mat.setElastic([150e9, 10e9, 5e9, 0.3], input_type='lamina')
+        mat.set_elastic([150e9, 10e9, 5e9, 0.3], input_type='lamina')
         
         assert mat.e1 == 150e9
         assert mat.e2 == 10e9
@@ -182,7 +182,7 @@ class TestAnisotropicMaterial:
         ]
         
         mat = CauchyContinuumModel(name='Crystal', isotropy=2)
-        mat.setElastic(constants, input_type='anisotropic')
+        mat.set_elastic(constants, input_type='anisotropic')
         
         assert mat.stff is not None
         assert mat.stff[0][0] == 100e9
@@ -199,7 +199,7 @@ class TestAnisotropicMaterial:
         ]
         
         mat = CauchyContinuumModel(name='Custom', isotropy=2)
-        mat.setElastic(stiff_matrix, input_type='stiffness')
+        mat.set_elastic(stiff_matrix, input_type='stiffness')
         
         assert mat.stff is not None
         assert mat.stff[0][0] == 100e9
@@ -235,59 +235,51 @@ class TestInputValidation:
         """Test error when isotropic constants are missing."""
         mat = CauchyContinuumModel(name='Test', isotropy=0)
         with pytest.raises(ValueError):
-            mat.setElastic([200e9])  # Missing nu
+            mat.set_elastic([200e9])  # Missing nu
             
     def test_orthotropic_missing_constants(self):
         """Test error when orthotropic constants are missing."""
         mat = CauchyContinuumModel(name='Test', isotropy=1)
         with pytest.raises(ValueError):
-            mat.setElastic([150e9, 10e9, 10e9])  # Only 3 values
+            mat.set_elastic([150e9, 10e9, 10e9])  # Only 3 values
             
     def test_anisotropic_wrong_count(self):
         """Test error when anisotropic constants have wrong count."""
         mat = CauchyContinuumModel(name='Test', isotropy=2)
         with pytest.raises(ValueError):
-            mat.setElastic([100e9] * 20, input_type='anisotropic')  # Need 21
+            mat.set_elastic([100e9] * 20, input_type='anisotropic')  # Need 21
             
     def test_transverse_missing_constants(self):
         """Test error when transverse isotropic constants are missing."""
         mat = CauchyContinuumModel(name='Test', isotropy=3)
         with pytest.raises(ValueError):
-            mat.setElastic([150e9, 10e9, 5e9])  # Only 3 values, need 5
+            mat.set_elastic([150e9, 10e9, 5e9])  # Only 3 values, need 5
 
 
 class TestBackwardCompatibility:
     """Test backward compatibility with existing code."""
-    
-    def test_legacy_get_set(self):
-        """Test legacy get/set methods."""
-        mat = CauchyContinuumModel(name='Legacy', isotropy=0)
-        mat.set('elastic', [200e9, 0.3])
         
-        assert mat.get('e') == 200e9
-        assert mat.get('nu') == 0.3
-        
-    def test_legacy_isotropy_setting(self):
-        """Test legacy isotropy setting with strings."""
+    def test_isotropy_setting_from_strings(self):
+        """set_isotropy() accepts the documented string shorthands."""
         mat = CauchyContinuumModel(name='Test')
-        
-        mat.set('isotropy', 'isotropic')
+
+        mat.set_isotropy('isotropic')
         assert mat.isotropy == 0
-        
-        mat.set('isotropy', 'orthotropic')
+
+        mat.set_isotropy('orthotropic')
         assert mat.isotropy == 1
-        
-        mat.set('isotropy', 'anisotropic')
+
+        mat.set_isotropy('anisotropic')
         assert mat.isotropy == 2
-        
-        mat.set('isotropy', 'transverse')
+
+        mat.set_isotropy('transverse')
         assert mat.isotropy == 3
 
     def test_legacy_integer_input_type_for_orthotropic_elastic(self):
         """Legacy integer isotropy values should still drive orthotropic parsing."""
         mat = CauchyContinuumModel(name='LegacyOrtho', isotropy=1)
 
-        mat.setElastic(
+        mat.set_elastic(
             [150e9, 10e9, 10e9, 5e9, 5e9, 3e9, 0.3, 0.3, 0.4],
             1,
         )
@@ -309,7 +301,7 @@ class TestBackwardCompatibility:
         ]
         mat = CauchyContinuumModel(name='LegacyAniso', isotropy=2)
 
-        mat.setElastic(constants, 2)
+        mat.set_elastic(constants, 2)
 
         assert mat.stff is not None
         assert mat.stff[0][0] == 100e9
@@ -318,7 +310,7 @@ class TestBackwardCompatibility:
         """Older descriptive input labels should map to engineering constants."""
         mat = CauchyContinuumModel(name='BuilderOrtho', isotropy=1)
 
-        mat.setElastic(
+        mat.set_elastic(
             [150e9, 10e9, 10e9, 5e9, 5e9, 3e9, 0.3, 0.3, 0.4],
             input_type='engineering constants',
         )

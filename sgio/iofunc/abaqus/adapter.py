@@ -6,7 +6,7 @@ and BaseFormatWriter abstract base classes for Abaqus format I/O operations.
 
 from __future__ import annotations
 
-from typing import Any, Optional
+from typing import Any
 
 from ..base import BaseFormatReader, BaseFormatWriter
 from sgio.core.sg import StructureGene
@@ -85,48 +85,6 @@ class AbaqusReader(BaseFormatReader):
             Abaqus output reading is not supported.
         """
         raise NotImplementedError("Abaqus output reading is handled by Abaqus")
-    
-    def validate(self, file_path_or_buffer) -> bool:
-        """Validate if file is in Abaqus format.
-        
-        Parameters
-        ----------
-        file_path_or_buffer : str or file-like
-            Path to file to validate.
-            
-        Returns
-        -------
-        bool
-            True if file appears to be Abaqus format, False otherwise.
-        """
-        try:
-            if isinstance(file_path_or_buffer, str):
-                with open(file_path_or_buffer, 'r') as f:
-                    # Read first few lines to check for Abaqus format markers
-                    lines = [f.readline() for _ in range(10)]
-            else:
-                pos = file_path_or_buffer.tell()
-                lines = [file_path_or_buffer.readline() for _ in range(10)]
-                file_path_or_buffer.seek(pos)
-            
-            # Abaqus files typically have:
-            # - *Heading or *HEADING keyword
-            # - *Node, *Element, *Material keywords
-            # - Comments start with **
-            abaqus_keywords = ['*heading', '*node', '*element', '*material', '*part', '*assembly']
-            
-            for line in lines:
-                line_lower = line.lower().strip()
-                if any(keyword in line_lower for keyword in abaqus_keywords):
-                    return True
-                # Check for comment lines
-                if line_lower.startswith('**'):
-                    continue
-            
-            return False
-            
-        except Exception:
-            return False
 
 
 class AbaqusWriter(BaseFormatWriter):
@@ -173,56 +131,3 @@ class AbaqusWriter(BaseFormatWriter):
             Abaqus input writing is not implemented.
         """
         raise NotImplementedError("Abaqus input writing is not currently implemented")
-    
-    def write_output(
-        self,
-        file_path_or_buffer,
-        data: Any,
-        **kwargs
-    ) -> None:
-        """Write Abaqus output file.
-        
-        Note: Abaqus output writing is handled by Abaqus itself.
-        This method is provided for interface completeness.
-        
-        Parameters
-        ----------
-        file_path_or_buffer : str or file-like
-            Path to file to write to.
-        data : Any
-            Data to write.
-        **kwargs
-            Additional keyword arguments.
-            
-        Raises
-        ------
-        NotImplementedError
-            Abaqus output writing is handled by Abaqus.
-        """
-        raise NotImplementedError("Abaqus output writing is handled by Abaqus")
-    
-    def validate(self, sg: StructureGene) -> bool:
-        """Validate structure gene for Abaqus format writing.
-        
-        Parameters
-        ----------
-        sg : StructureGene
-            Structure gene to validate.
-            
-        Returns
-        -------
-        bool
-            True if structure gene is valid for Abaqus format, False otherwise.
-        """
-        # Basic validation checks
-        if sg is None:
-            return False
-        
-        # Check required attributes
-        if not hasattr(sg, 'mesh') or sg.mesh is None:
-            return False
-        
-        if not hasattr(sg, 'materials') or not sg.materials:
-            return False
-        
-        return True

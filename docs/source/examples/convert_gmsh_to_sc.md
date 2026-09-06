@@ -11,7 +11,7 @@ The mesh alone does not carry materials or analysis settings, so the example
 uses the **SG-on-Gmsh bundle** convention: the `.msh` file supplies the mesh and
 physical groups, `sections.json` supplies the section/material payloads, and
 `config.json` supplies the analysis configuration. See
-{doc}`/guide/sg_on_gmsh_spec` for the bundle layout.
+{doc}`/ref/sg_on_gmsh` for the bundle layout.
 
 ```{literalinclude} ../../../examples/convert_gmsh_to_sc/run.py
 :language: python

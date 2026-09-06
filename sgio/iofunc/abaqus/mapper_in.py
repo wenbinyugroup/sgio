@@ -579,10 +579,17 @@ def _process_material(material_block: Any, inprw: inpRW, materials: dict[str, di
     elastic_constants = []
     for row in elastic[0].data:
         for value in row:
+            if str(value).strip() == "":
+                # Abaqus data lines are comma-terminated; the trailing comma
+                # on the last populated line produces one blank cell.
+                continue
             try:
                 elastic_constants.append(float(value))
-            except ValueError:
-                continue
+            except ValueError as exc:
+                raise ValueError(
+                    f"Invalid elastic constant {value!r} for material {name!r} "
+                    f"in '*Elastic' data."
+                ) from exc
 
     materials[name] = {
         "id": 0,
@@ -618,11 +625,21 @@ def _process_section(
     angle = 0.0
     try:
         if "composite" in params:
-            angle = float(section_block.data[0][-2])
+            angle_token = section_block.data[0][-2]
         else:
-            angle = float(section_block.data[-2])
-    except (ValueError, IndexError):
-        angle = 0.0
+            angle_token = section_block.data[-2]
+    except IndexError:
+        # No angle column/row present at all: an ordinary section without a
+        # layup angle. 0 degrees is Abaqus's own implicit default.
+        angle_token = None
+    if angle_token is not None:
+        try:
+            angle = float(angle_token)
+        except ValueError as exc:
+            raise ValueError(
+                f"Invalid section orientation angle {angle_token!r} for "
+                f"elset {elset_name!r} in '*Solid Section'/'*Shell Section' data."
+            ) from exc
 
     if material_name not in used_materials:
         used_materials.append(material_name)

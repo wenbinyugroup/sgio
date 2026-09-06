@@ -18,91 +18,6 @@ from .format_requirements import FormatNumberingRequirements, get_numbering_requ
 _module_logger = logging.getLogger(__name__)
 
 
-def _handle_deprecated_parameter(
-    old_name: str,
-    new_name: str,
-    old_value: Optional[bool],
-    new_value: Optional[bool],
-    default_value: bool = False
-) -> bool:
-    """Handle deprecated parameter with backward compatibility.
-    
-    This helper function manages the transition from old parameter names to new ones,
-    issuing deprecation warnings when old names are used while maintaining backward
-    compatibility.
-    
-    Parameters
-    ----------
-    old_name : str
-        Name of the deprecated parameter (e.g., 'renumber_nodes').
-    new_name : str
-        Name of the new parameter (e.g., 'use_sequential_node_ids').
-    old_value : bool or None
-        Value passed to the deprecated parameter.
-    new_value : bool or None
-        Value passed to the new parameter.
-    default_value : bool, default False
-        Default value to use if neither parameter is specified.
-        
-    Returns
-    -------
-    bool
-        The resolved parameter value.
-        
-    Raises
-    ------
-    ValueError
-        If both old and new parameters are specified with conflicting values.
-        
-    Warns
-    -----
-    DeprecationWarning
-        If the old parameter name is used.
-        
-    Examples
-    --------
-    >>> # In a function signature
-    >>> def write_mesh(renumber_nodes=None, use_sequential_node_ids=None):
-    ...     renumber = _handle_deprecated_parameter(
-    ...         'renumber_nodes', 'use_sequential_node_ids',
-    ...         renumber_nodes, use_sequential_node_ids, default_value=False
-    ...     )
-    """
-    # Both None - use default
-    if old_value is None and new_value is None:
-        return default_value
-    
-    # Only new parameter specified - use it directly
-    if old_value is None and new_value is not None:
-        return new_value
-    
-    # Only old parameter specified - issue deprecation warning
-    if old_value is not None and new_value is None:
-        warnings.warn(
-            f"Parameter '{old_name}' is deprecated and will be removed in a future version. "
-            f"Use '{new_name}' instead.",
-            DeprecationWarning,
-            stacklevel=3
-        )
-        return old_value
-    
-    # Both specified - check for conflicts
-    if old_value != new_value:
-        raise ValueError(
-            f"Conflicting values for '{old_name}' ({old_value}) and '{new_name}' ({new_value}). "
-            f"Please use only '{new_name}' as '{old_name}' is deprecated."
-        )
-    
-    # Both specified with same value - issue warning but accept
-    warnings.warn(
-        f"Parameter '{old_name}' is deprecated and will be removed in a future version. "
-        f"Use only '{new_name}' instead.",
-        DeprecationWarning,
-        stacklevel=3
-    )
-    return new_value
-
-
 def validate_node_ids(
     node_ids: Union[List[int], ArrayLike],
     n_nodes: Optional[int] = None,
@@ -360,10 +275,6 @@ def ensure_node_ids(mesh) -> None:
         If ``mesh.point_data['node_id']`` exists but its length does not match
         the number of points.
     """
-    # Ensure point_data exists
-    if not hasattr(mesh, "point_data") or mesh.point_data is None:
-        mesh.point_data = {}
-
     n_nodes = len(mesh.points)
     node_ids = mesh.point_data.get("node_id", None)
 
@@ -432,7 +343,7 @@ def auto_renumber_for_format(
         )
 
     # Elements
-    element_ids = mesh.cell_data.get("element_id", []) if hasattr(mesh, "cell_data") else []
+    element_ids = mesh.cell_data.get("element_id", [])
     if not _meets_requirements(element_ids, requirements, "elements"):
         _renumber_elements_sequential(mesh, requirements)
         elements_renumbered = True

@@ -26,22 +26,17 @@ class BaseFormatReader(ABC):
     ----------
     format_name : str
         Name of the format (e.g., 'vabs', 'swiftcomp', 'gmsh', 'abaqus')
-    supported_versions : list[str]
-        List of supported format versions
     """
-    
-    def __init__(self, format_name: str, supported_versions: Optional[list[str]] = None):
+
+    def __init__(self, format_name: str):
         """Initialize the format reader.
-        
+
         Parameters
         ----------
         format_name : str
             Name of the format
-        supported_versions : list[str], optional
-            List of supported versions
         """
         self.format_name = format_name
-        self.supported_versions = supported_versions or []
     
     @abstractmethod
     def read_input(
@@ -105,23 +100,6 @@ class BaseFormatReader(ABC):
             If the file cannot be read
         """
         pass
-    
-    def validate_version(self, version: str) -> bool:
-        """Check if the format version is supported.
-        
-        Parameters
-        ----------
-        version : str
-            Version string to validate
-            
-        Returns
-        -------
-        bool
-            True if version is supported
-        """
-        if not self.supported_versions:
-            return True  # No version restrictions
-        return version in self.supported_versions
 
 
 class BaseFormatWriter(ABC):
@@ -182,21 +160,6 @@ class BaseFormatWriter(ABC):
             If the file cannot be written
         """
         pass
-    
-    def get_version(self, requested_version: Optional[str] = None) -> str:
-        """Get the version to use for writing.
-        
-        Parameters
-        ----------
-        requested_version : str, optional
-            Requested version, or None to use default
-            
-        Returns
-        -------
-        str
-            Version to use
-        """
-        return requested_version or self.default_version or ''
 
 
 class FormatRegistry:

@@ -13,6 +13,7 @@ from sgio.core.property_ref_csys import (
 
 from . import _gmsh22
 from . import _gmsh41
+from ._common import normalize_additional_rotation_fields
 from .keywords import DEFAULT_FORMAT_VERSION
 
 
@@ -58,7 +59,7 @@ def _prepare_gmsh41_mesh(mesh: Any, sgdim: int) -> None:
     ]
 
     _normalize_local_coordinate_fields(mesh)
-    _normalize_additional_rotation_fields(mesh)
+    normalize_additional_rotation_fields(mesh.cell_data, mesh.cells)
 
 
 def _normalize_local_coordinate_fields(mesh: Any) -> None:
@@ -72,45 +73,5 @@ def _normalize_local_coordinate_fields(mesh: Any) -> None:
         np.asarray(block, dtype=float).copy() for block in mesh.cell_data["element_local_csys"]
     ]
 
-    try:
-        axis_data = build_property_ref_axis_cell_data(mesh.cell_data["element_local_csys"])
-    except (TypeError, ValueError):
-        return
-
+    axis_data = build_property_ref_axis_cell_data(mesh.cell_data["element_local_csys"])
     mesh.cell_data.update(axis_data)
-
-
-def _normalize_additional_rotation_fields(mesh: Any) -> None:
-    """Normalize legacy and canonical additional-rotation fields before writing."""
-    rotation_1 = mesh.cell_data.get("additional_rotation_1")
-    rotation_2 = mesh.cell_data.get("additional_rotation_2")
-    rotation_3 = mesh.cell_data.get("additional_rotation_3")
-    legacy_rotation = mesh.cell_data.get("additional_rotation")
-
-    if rotation_1 is None and legacy_rotation is not None:
-        rotation_1 = [np.asarray(block, dtype=float) for block in legacy_rotation]
-
-    if rotation_1 is None and rotation_2 is None and rotation_3 is None:
-        return
-
-    reference_blocks = rotation_1 or rotation_2 or rotation_3
-    assert reference_blocks is not None
-
-    def _zeros_like_reference() -> list[np.ndarray]:
-        return [np.zeros(len(np.asarray(block)), dtype=float) for block in reference_blocks]
-
-    mesh.cell_data["additional_rotation_1"] = (
-        [np.asarray(block, dtype=float) for block in rotation_1]
-        if rotation_1 is not None
-        else _zeros_like_reference()
-    )
-    mesh.cell_data["additional_rotation_2"] = (
-        [np.asarray(block, dtype=float) for block in rotation_2]
-        if rotation_2 is not None
-        else _zeros_like_reference()
-    )
-    mesh.cell_data["additional_rotation_3"] = (
-        [np.asarray(block, dtype=float) for block in rotation_3]
-        if rotation_3 is not None
-        else _zeros_like_reference()
-    )

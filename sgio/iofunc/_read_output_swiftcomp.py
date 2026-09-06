@@ -12,7 +12,7 @@ import sgio.iofunc.swiftcomp as _swiftcomp
 import sgio.model as sgmodel
 from sgio.core import StructureGene
 
-from ._helpers import _resolve_num_elements, _safe_parse
+from ._helpers import _resolve_num_elements
 
 logger = logging.getLogger(__name__)
 
@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
 def read_swiftcomp_output_state(
     filename: str, analysis: str, model_type: str, extension: list[str],
     num_cases: int, num_elements: int, sg: StructureGene, **kwargs
-) -> list[sgmodel.StateCase] | None:
+):
     """Read SwiftComp output state data.
 
     Parameters
@@ -44,8 +44,12 @@ def read_swiftcomp_output_state(
 
     Returns
     -------
-    list[StateCase] or None
-        List of state cases, or None on parse failure.
+    list[StateCase]
+        List of state cases, one per load case, for ``'d'``/``'l'`` analysis.
+        Raises on parse failure instead of silently dropping cases.
+    object
+        The raw failure-index payload returned by the underlying SwiftComp
+        reader, for ``'fi'`` analysis.
     """
     state_cases = [sgmodel.StateCase({}, {}) for _ in range(num_cases)]
 
@@ -62,9 +66,7 @@ def read_swiftcomp_output_state(
             logger.info(f'reading displacement... {filename}.u')
             with open(f"{filename}.u", "r") as file:
                 for i_case in range(num_cases):
-                    u = _safe_parse(_swiftcomp._read_output_node_disp_case, file, sg.nnodes)
-                    if u is None:
-                        return None
+                    u = _swiftcomp._read_output_node_disp_case(file, sg.nnodes)
                     state_cases[i_case].addState(
                         name="u", state=sgmodel.State(
                             name="u", data=u, label=["u1", "u2", "u3"], location="node"
@@ -75,13 +77,9 @@ def read_swiftcomp_output_state(
             logger.info(f'reading element node strain and stress... {filename}.sn')
             with open(f"{filename}.sn", "r") as file:
                 for i_case in range(num_cases):
-                    result = _safe_parse(
-                        _swiftcomp._read_output_node_strain_stress_case_global_gmsh,
+                    strains, stresses = _swiftcomp._read_output_node_strain_stress_case_global_gmsh(
                         file, num_elements, sg,
                     )
-                    if result is None:
-                        return None
-                    strains, stresses = result
                     state_cases[i_case].addState(
                         name='e', state=sgmodel.State(
                             name='e', data=strains,
@@ -101,13 +99,9 @@ def read_swiftcomp_output_state(
             logger.info(f'reading element node strain and stress in material c/s... {filename}.snm')
             with open(f"{filename}.snm", "r") as file:
                 for i_case in range(num_cases):
-                    result = _safe_parse(
-                        _swiftcomp._read_output_node_strain_stress_case_global_gmsh,
+                    strains, stresses = _swiftcomp._read_output_node_strain_stress_case_global_gmsh(
                         file, num_elements, sg,
                     )
-                    if result is None:
-                        return None
-                    strains, stresses = result
                     state_cases[i_case].addState(
                         name='em', state=sgmodel.State(
                             name='em', data=strains,

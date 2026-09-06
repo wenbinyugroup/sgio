@@ -90,10 +90,7 @@ def build_sg_1d(
         # print(_lyr_np)
 
         # Check used material-orientation combination first
-        try:
-            _lyr_m_name = sgdb_map[_lyr_m_name]
-        except KeyError:
-            pass
+        _lyr_m_name = sgdb_map.get(_lyr_m_name, _lyr_m_name)
 
         logger.debug(f'checking material {_lyr_m_name}...')
 
@@ -129,7 +126,6 @@ def build_sg_1d(
     sg.smdim = smdl.getModelDim(model)
     sg.analysis_config.model = int(model[2:]) - 1  # model (0: classical, 1: shear refined)
     sg.trans_element = 1  # Always include element orientation data
-    # sg.geo_correct = geo_correct
     sg.initial_curvature = [k11, k22]
     sg.lame_params = [lame1, lame2]
 
@@ -150,9 +146,6 @@ def build_sg_1d(
         }[physics]
     else:
         sg.analysis_config.physics = physics
-    # sg.degen_element = 0
-    # sg.trans_element = 0
-    # sg.nonuniform_temperature = 0
 
 
 
@@ -169,28 +162,14 @@ def build_sg_1d(
         mesh_size = min_thk
     pan = 0.0  # Translation of the origin from the midplane
 
-    # nply = len(ld_layer)
-    # tthk = thickness * nply
     ht = tt / 2.0
-    # print tthk
-
-    # nodes_major = np.array([-ht + pan, ])
-    # nid = 1
-    glb_orientation = {
-        'a': [1, 0, 0],
-        'b': [0, 1, 0],
-        'c': [0, 0, 0]
-    }
 
     points = []
     cells = []
     point_data = {}
     cell_data = []
 
-    nid1 = 1
-    eid = 0
     yprev = -ht - pan
-    # sg.nodes[nid1] = [yprev, ]
     points.append([0, 0, yprev])  # First point
 
     cell_type = 'line{}'.format(elem_type) if elem_type > 2 else 'line'
@@ -199,13 +178,10 @@ def build_sg_1d(
         ne = 0
         t = lyr['ply_thickness'] * lyr['number_of_plies']
 
-        _lyr_glo = lyr.get('global_orientation', copy.copy(glb_orientation))
-
         if mesh_size > 0:
             ne = int(round(t / mesh_size))  # number of element for this layer
         if ne == 0:
             ne += 1
-        # lyr['nelem'] = ne
         ns = np.linspace(yprev, yprev+t, ne+1)  # end points of elements
 
         for i in range(ne):
@@ -214,30 +190,15 @@ def build_sg_1d(
             cells.append([len(points)-2, len(points)-1])
             cell_data.append(lyr['mocombo'])
 
-            # nid2 = nid1 + elem_type - 1
-            # sg.nodes[nid2] = [ns[i+1], ]
-            eid = eid + 1
-            # sg.elements[eid] = [nid1, nid2]
-
-            # sg.elem_prop[eid] = lyr['mocombo']
-            # sg.prop_elem[lyr['mocombo']].append(eid)
-            # sg.elem_orient[eid] = [_lyr_glo['a'], _lyr_glo['b'], _lyr_glo['c']]
-            # sg.elementids1d.append(eid)
-
-            # nid1 = nid2
-
         yprev = yprev + t
 
     # Change the order of each element
     if elem_type > 2:
-        # for eid in sg.elements.keys():
         for _ei in range(len(cells)):
             _n1i = cells[_ei][0]
             _n2i = cells[_ei][1]
             _y3n1 = points[_n1i][2]
             _y3n2 = points[_n2i][2]
-            # nid3 = nid1 + 1
-            # sg.elements[eid].append(nid3)
             if elem_type == 4:
                 pass
             else:
@@ -254,22 +215,10 @@ def build_sg_1d(
                     # node 5
                     points.append([0, 0, _y3q2])
                     cells[_ei].append(len(points)-1)
-                    # nid = nid + 1
-                    # nid5 = nid3 + 1
-                    # nid4 = nid5 + 1
-                    # sg.nodes[nid3] = [nq1y3, ]
-                    # sg.nodes[nid5] = [nq2y3, ]
-                    # sg.nodes[nid4] = [nq3y3, ]
-                    # sg.elements[eid].append(nid3)
-                    # sg.elements[eid].append(nid4)
-                    # sg.elements[eid].append(nid5)
                 else:
                     # node 3
                     points.append([0, 0, _y3q2])
                     cells[_ei].append(len(points)-1)
-                    # sg.nodes[nid3] = [nq2y3, ]
-
-    # sg.summary()
 
     cells = [(cell_type, cells)]
     cell_data = {'property_id': [cell_data,]}
@@ -318,19 +267,11 @@ def generate_layer_list(layup_design):
         _lyr_ply_thk = layer_design['ply_thickness']
         layer['ply_thickness'] = _lyr_ply_thk
 
-        try:
-            _lyr_ipo = layer_design['in-plane_rotation']
-        except KeyError:
-            try:
-                _lyr_ipo = layer_design['in-plane_orientation']
-            except KeyError:
-                _lyr_ipo = 0
+        _lyr_ipo = layer_design.get(
+            'in-plane_rotation', layer_design.get('in-plane_orientation', 0))
         layer['in-plane_rotation'] = _lyr_ipo
 
-        try:
-            _lyr_np = layer_design['number_of_plies']
-        except KeyError:
-            _lyr_np = 1
+        _lyr_np = layer_design.get('number_of_plies', 1)
         layer['number_of_plies'] = _lyr_np
 
         # print(_lyr_np)

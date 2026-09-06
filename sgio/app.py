@@ -214,14 +214,6 @@ def cli(*args: str) -> None:
         '-mo', '--mesh-only', action='store_true',
         help='Mesh only conversion.'
     )
-    parser.add_argument(
-        '-rn', '--renumber-nodes', action='store_true',
-        help='Renumber nodes (deprecated).'
-    )
-    parser.add_argument(
-        '-re', '--renumber-elements', action='store_true',
-        help='Renumber elements (deprecated).'
-    )
 
     parsed_args = root_parser.parse_args(args[1:])
 
@@ -300,8 +292,6 @@ def main(command: str, **kwargs: Any) -> None:
                 prop_ref_y=kwargs.get('material_ref_y', 'x'),
                 model_type=kwargs.get('model', 'bm2'),
                 mesh_only=kwargs.get('mesh_only', False),
-                renum_node=kwargs.get('renumber_nodes', False),
-                renum_elem=kwargs.get('renumber_elements', False),
             )
             
             logger.info('Conversion completed successfully')
@@ -317,12 +307,6 @@ def main(command: str, **kwargs: Any) -> None:
             logger.error(f'Unknown command: {command}')
             raise ValueError(f'Unknown command: {command}')
             
-    except KeyError as e:
-        logger.error(f'Missing required argument: {e}')
-        raise
-    except (FileNotFoundError, NotImplementedError, ValueError) as e:
-        # Re-raise these exceptions as they have good error messages
-        raise
     except Exception as e:
         logger.error(f'Error executing {command}: {e}', exc_info=True)
         raise
