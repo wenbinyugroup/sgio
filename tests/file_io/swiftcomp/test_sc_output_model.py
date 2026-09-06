@@ -75,54 +75,39 @@ def test_swiftcomp_output_model(test_case, test_data_dir):
     
     # Verify expected properties exist and are not None
     for prop in expected_properties:
-        value = model.get(prop)
+        value = getattr(model, prop, None)
         assert value is not None, f"Property '{prop}' should not be None"
         logger.info(f"{prop} = {value}")
     
     # Verify beam model properties have reasonable values
     if model_type in ['BM1', 'BM2']:
         # EA (extension stiffness) should be positive
-        ea = model.get('ea')
+        ea = model.ea
         if ea is not None:
             assert ea > 0, f"EA should be positive, got {ea}"
         
         # GJ (torsional stiffness) should be positive
-        gj = model.get('gj')
+        gj = model.gj
         if gj is not None:
             assert gj > 0, f"GJ should be positive, got {gj}"
         
         # EI22 and EI33 (bending stiffness) should be positive
-        ei22 = model.get('ei22')
+        ei22 = model.ei22
         if ei22 is not None:
             assert ei22 > 0, f"EI22 should be positive, got {ei22}"
         
-        ei33 = model.get('ei33')
+        ei33 = model.ei33
         if ei33 is not None:
             assert ei33 > 0, f"EI33 should be positive, got {ei33}"
         
         # Check optional properties (e.g., shear stiffness for Timoshenko beam)
         for prop in optional_properties:
-            value = model.get(prop)
+            value = getattr(model, prop, None)
             if value is not None:
                 logger.info(f"{prop} = {value}")
                 # Shear stiffness should be positive if present
                 if prop in ['ga22', 'ga33']:
                     assert value > 0, f"{prop} should be positive, got {value}"
-    
-    # Verify plate model properties
-    elif model_type in ['PL1', 'PL2']:
-        # A, B, D matrices should exist
-        a = model.get('a')
-        if a is not None:
-            logger.info(f"A matrix shape: {a.shape if hasattr(a, 'shape') else 'scalar'}")
-        
-        b = model.get('b')
-        if b is not None:
-            logger.info(f"B matrix shape: {b.shape if hasattr(b, 'shape') else 'scalar'}")
-        
-        d = model.get('d')
-        if d is not None:
-            logger.info(f"D matrix shape: {d.shape if hasattr(d, 'shape') else 'scalar'}")
     
     logger.info(f"✓ Successfully read {model_type} model from {fn_base}")
 
@@ -133,9 +118,8 @@ def test_swiftcomp_output_model_properties_access(test_data_dir):
     """Test different ways to access model properties.
     
     This test verifies:
-    1. Properties can be accessed via .get() method
-    2. Properties can be accessed as attributes
-    3. Model can be converted to dict
+    1. Properties can be accessed as attributes
+    2. Model can be converted to dict
     
     Args:
         test_data_dir: Fixture providing test data directory
@@ -151,20 +135,15 @@ def test_swiftcomp_output_model_properties_access(test_data_dir):
     # Read the model
     model = read_output_model(str(fn_in), 'sc', model_type='BM2')
     
-    # Test .get() method
-    ea_get = model.get('ea')
-    assert ea_get is not None, "EA should be accessible via .get()"
-    
     # Test attribute access
     ea_attr = model.ea
     assert ea_attr is not None, "EA should be accessible as attribute"
-    assert ea_get == ea_attr, "Both access methods should return the same value"
     
     # Test model_dump() for Pydantic models
     if hasattr(model, 'model_dump'):
         model_dict = model.model_dump()
         assert isinstance(model_dict, dict), "model_dump() should return a dict"
-        assert 'ea' in model_dict, "EA should be in model dict"
+        assert model_dict['ea'] == ea_attr, "model_dump() should agree with attributes"
     
     logger.info("✓ All property access methods work correctly")
 

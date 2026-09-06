@@ -214,14 +214,6 @@ def cli(*args: str) -> None:
         '-mo', '--mesh-only', action='store_true',
         help='Mesh only conversion.'
     )
-    parser.add_argument(
-        '-rn', '--renumber-nodes', action='store_true',
-        help='Renumber nodes (deprecated).'
-    )
-    parser.add_argument(
-        '-re', '--renumber-elements', action='store_true',
-        help='Renumber elements (deprecated).'
-    )
 
     parsed_args = root_parser.parse_args(args[1:])
 
@@ -300,8 +292,6 @@ def main(command: str, **kwargs: Any) -> None:
                 prop_ref_y=kwargs.get('material_ref_y', 'x'),
                 model_type=kwargs.get('model', 'bm2'),
                 mesh_only=kwargs.get('mesh_only', False),
-                renum_node=kwargs.get('renumber_nodes', False),
-                renum_elem=kwargs.get('renumber_elements', False),
             )
             
             logger.info('Conversion completed successfully')

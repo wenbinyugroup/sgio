@@ -5,25 +5,17 @@ import sgio.model as sgmodel
 import numpy as np
 import pytest
 
-from sgio.model.general import (
-    SectionResponse,
-    State,
-    StateCase,
-    StructureResponseCase,
-    StructureResponseCases,
-)
 from sgio.model.protocols import getModelDim
-from sgio.model.response import StructureResponseCases as ResponseCasesFromModule
+from sgio.model.state import State, StateCase
 from sgio.model.state import StateCase as StateCaseFromModule
 
 
-class TestGeneralModuleCompatibility:
-    """Test phase-1 compatibility shells and explicit re-exports."""
+class TestModelReExports:
+    """Test that the canonical model objects are re-exported consistently."""
 
-    def test_compatibility_shell_and_new_modules_export_same_objects(self):
-        """Legacy and new import paths should resolve to the same objects."""
+    def test_package_re_exports_are_the_same_objects(self):
+        """``sgio``, ``sgio.model`` and the defining module must agree."""
         assert StateCase is StateCaseFromModule
-        assert StructureResponseCases is ResponseCasesFromModule
         assert sgmodel.StateCase is StateCase
         assert sgmodel.getModelDim is getModelDim
         assert sgio.StateCase is StateCase
@@ -117,73 +109,3 @@ class TestStateCase:
         assert payload['case'] == {'station': 9, 'mode': 2}
         assert payload['states']['rotation']['data'][0] == [1.0, 0.0, 0.0]
         assert payload['states']['rotation']['label'][0] == 'c11'
-
-
-class TestStructureResponseCases:
-    """Test structured response case containers."""
-
-    def test_add_response_case_stores_objects(self):
-        """addResponseCase should create StructureResponseCase objects."""
-        cases = StructureResponseCases()
-        cases.loc_tags = ['x1']
-        cases.cond_tags = ['load_case']
-
-        response = SectionResponse()
-        response.load = [1.0, 2.0, 3.0]
-
-        cases.addResponseCase([0.5], [2], response)
-
-        assert len(cases.responses) == 1
-        resp_case = cases.responses[0]
-        assert isinstance(resp_case, StructureResponseCase)
-        assert resp_case.getLocation('x1') == 0.5
-        assert resp_case.getCondition('load_case') == 2
-        assert resp_case.response is response
-
-    def test_response_case_keeps_legacy_mapping_access(self):
-        """StructureResponseCase should remain readable via legacy dict-style access."""
-        response = SectionResponse()
-        response.load = [10.0]
-        resp_case = StructureResponseCase(
-            loc={'station': 1},
-            cond={'mode': 3},
-            response=response,
-        )
-
-        assert 'response' in resp_case
-        assert 'station' in resp_case
-        assert resp_case['response'] is response
-        assert resp_case['station'] == 1
-        assert resp_case['mode'] == 3
-
-    def test_get_responses_by_loc_cond_handles_object_cases(self):
-        """Location/condition filtering should work on object-backed cases."""
-        cases = StructureResponseCases()
-        cases.loc_tags = ['station']
-        cases.cond_tags = ['mode']
-
-        resp_1 = SectionResponse()
-        resp_2 = SectionResponse()
-
-        cases.addResponseCase([1], [100], resp_1)
-        cases.addResponseCase([2], [200], resp_2)
-
-        found = cases.getResponsesByLocCond(station=2, mode=200)
-
-        assert found == [cases.responses[1]]
-        assert found[0].response is resp_2
-
-    def test_get_responses_by_loc_cond_coerces_legacy_dict_cases(self):
-        """Filtering should still work if legacy dict payloads are present."""
-        cases = StructureResponseCases()
-        cases.loc_tags = ['station']
-        cases.cond_tags = ['mode']
-
-        response = SectionResponse()
-        cases.responses.append({'station': 3, 'mode': 9, 'response': response})
-
-        found = cases.getResponsesByLocCond(station=3, mode=9)
-
-        assert len(found) == 1
-        assert isinstance(found[0], StructureResponseCase)
-        assert found[0].response is response

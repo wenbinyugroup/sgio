@@ -485,8 +485,6 @@ def convert_file_format(
     str_format_int: str = '8d',
     str_format_float: str = '20.12e',
     mesh_only: bool = False,
-    renum_node: bool = False,
-    renum_elem: bool = False,
     sections_json: str | None = None,
     config_json: str | None = None,
 ) -> StructureGene:
@@ -537,8 +535,6 @@ def convert_file_format(
         String formating floats, by default '20.12e'
     mesh_only : bool, optional
         If write meshing data only, by default False
-    renum_elem : bool, optional
-        If renumber elements, by default False
     sections_json : str, optional
         Path to a ``sections.json`` sidecar. Required when ``file_format_in``
         is ``'gmsh'``, since a bare ``.msh`` carries mesh data only; see
@@ -569,12 +565,6 @@ def convert_file_format(
 
     if sg is None:
         raise ValueError("Input file is not a valid SG file.")
-
-    if renum_node or renum_elem:
-        logger.warning(
-            "Parameters renum_node/renum_elem are deprecated and ignored. "
-            "Numbering is now handled automatically based on format requirements."
-        )
 
     write(
         sg=sg,

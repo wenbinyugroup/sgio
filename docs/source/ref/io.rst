@@ -51,6 +51,7 @@ Sections, materials, and configuration
     write_config_to_json
     read_material_from_json
     read_materials_from_json
+    write_material_to_json
     section_model_to_record
 
 

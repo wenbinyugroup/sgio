@@ -125,7 +125,7 @@ usage: sgio convert [-h] [--loglevelcmd {debug,info,warning,error,critical}]
                     [-ffv FROM_FORMAT_VERSION] [-tf TO_FORMAT]
                     [-tfv TO_FORMAT_VERSION] [-a {h,d,fi}]
                     [-d {1,2,3}] [-ms {x,y,z,xy,yz,zx}] [-mry {x,y,z}]
-                    [-m {sd1,pl1,pl2,bm1,bm2}] [-mo] [-rn] [-re]
+                    [-m {sd1,pl1,pl2,bm1,bm2}] [-mo]
                     input_file output_file
 
 positional arguments:
@@ -158,14 +158,10 @@ options:
   -m, --model {sd1,pl1,pl2,bm1,bm2}
                         CS/SG model type.
   -mo, --mesh-only      Mesh only conversion.
-  -rn, --renumber-nodes
-                        Renumber nodes (deprecated).
-  -re, --renumber-elements
-                        Renumber elements (deprecated).
 ```
 
-**Note:** `-rn` / `-re` are deprecated. Numbering is now adjusted automatically
-to meet the requirements of the target format.
+**Note:** Node and element numbering is adjusted automatically to meet the
+requirements of the target format.
 
 ##### Build 1D SG
 

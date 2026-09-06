@@ -63,11 +63,3 @@ class VtkWriter(BaseFormatWriter):
             raise TypeError("VTK/VTU export requires a filesystem path, not a file-like object.")
         payload = map_model_to_write_payload(model_obj, file_format=self._file_format)
         write_input_payload(destination, payload, binary=binary)
-
-    def validate(self, model_obj: Any) -> bool:
-        """Return whether ``model_obj`` satisfies the mesh-only writer contract."""
-        try:
-            map_model_to_write_payload(model_obj, file_format=self._file_format)
-        except (TypeError, ValueError):
-            return False
-        return True

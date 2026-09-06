@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from typing import ClassVar
 
-from ._deprecations import warn_model_deprecation
 from .query_types import SectionCenter, SectionMatrixKind
 from .section_common import (
     KIRCHHOFF_LOVE_SHELL_SCHEMA,
@@ -113,40 +112,6 @@ class KirchhoffLovePlateShellModel(StructuralSectionSupport):
 
     def __call__(self, x):
         ...
-
-
-    def set(self, name, value, **kwargs):
-        """Compatibility setter retained for legacy string callers."""
-        warn_model_deprecation('KirchhoffLovePlateShellModel.set')
-        ...
-
-    def get(self, name):
-        """Compatibility query API retained for legacy string callers."""
-        warn_model_deprecation('KirchhoffLovePlateShellModel.get')
-
-        # Stiffness
-        if name.startswith('stf'):
-            if name[-1] == 'c':
-                return self._get_matrix_value(name, 3, self.stff)
-            elif name[-1] == 'r':
-                if name[-2] == 'g':
-                    entry = self._get_matrix_value(name, 3, self.stff_geo)
-                    if entry is not None:
-                        return entry
-                    else:
-                        return self._get_matrix_value(name, 3, self.stff)
-
-        elif name.startswith('mass'):
-            return self._get_matrix_value(name, 4, self.mass)
-
-        return
-
-
-
-
-
-
-
 
 
 class ReissnerMindlinPlateShellModel(StructuralSectionSupport):

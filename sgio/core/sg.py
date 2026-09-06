@@ -70,43 +70,8 @@ class StructureGene:
         Dimension of the space containing SG.
     analysis_config : SGAnalysisConfig
         Analysis configuration object.
-    analysis : int
-        Analysis configurations (legacy proxy to ``analysis_config.analysis``).
-        * 0 - homogenization (default)
-        * 1 - dehomogenization/localization/recover
-        * 2 - failure (SwiftComp only)
     fn_gmsh_msh : str
         File name of the Gmsh mesh file.
-    physics : int
-        Physics included in the analysis (legacy proxy to
-        ``analysis_config.physics``).
-        * 0 - elastic (default)
-        * 1 - thermoelastic
-        * 2 - conduction
-        * 3 - piezoelectric/piezomagnetic
-        * 4 - thermopiezoelectric/thermopiezomagnetic
-        * 5 - piezoelectromagnetic
-        * 6 - thermopiezoelectromagnetic
-    model : int
-        Macroscopic structural model (legacy proxy to
-        ``analysis_config.model``).
-        * 0 - classical (default)
-        * 1 - refined (e.g., generalized Timoshenko)
-        * 2 - Vlasov model (beam only)
-        * 3 - trapeze effect (beam only)
-    geo_correct : bool
-        Flag of geometrically corrected shell model (legacy proxy to
-        ``analysis_config.geo_correct``).
-    do_damping : int
-        Flag of damping computation (legacy proxy to
-        ``analysis_config.do_damping``).
-    is_temp_nonuniform : int
-        Flag of uniform temperature (legacy proxy to
-        ``analysis_config.is_temp_nonuniform``).
-    force_flag : int
-        Force flag (legacy proxy to ``analysis_config.force_flag``).
-    steer_flag : int
-        Steer flag (legacy proxy to ``analysis_config.steer_flag``).
     initial_twist : float
         Initial twist (beam only).
     initial_curvature : list of float
@@ -292,79 +257,6 @@ class StructureGene:
     @extras.setter
     def extras(self, value: dict[str, Any]) -> None:
         self._fe.extras = value
-
-    @property
-    def analysis(self) -> int:
-        """Legacy proxy for ``analysis_config.analysis``."""
-        return self.analysis_config.analysis
-
-    @analysis.setter
-    def analysis(self, value: int) -> None:
-        self.analysis_config.analysis = value
-
-    @property
-    def physics(self) -> int:
-        """Legacy proxy for ``analysis_config.physics``."""
-        return self.analysis_config.physics
-
-    @physics.setter
-    def physics(self, value: int) -> None:
-        self.analysis_config.physics = value
-
-    @property
-    def model(self) -> int:
-        """Legacy proxy for ``analysis_config.model``."""
-        return self.analysis_config.model
-
-    @model.setter
-    def model(self, value: int) -> None:
-        self.analysis_config.model = value
-
-    @property
-    def geo_correct(self) -> bool:
-        """Legacy proxy for ``analysis_config.geo_correct``."""
-        return self.analysis_config.geo_correct
-
-    @geo_correct.setter
-    def geo_correct(self, value: bool) -> None:
-        self.analysis_config.geo_correct = value
-
-    @property
-    def do_damping(self) -> int:
-        """Legacy proxy for ``analysis_config.do_damping``."""
-        return self.analysis_config.do_damping
-
-    @do_damping.setter
-    def do_damping(self, value: int) -> None:
-        self.analysis_config.do_damping = value
-
-    @property
-    def is_temp_nonuniform(self) -> int:
-        """Legacy proxy for ``analysis_config.is_temp_nonuniform``."""
-        return self.analysis_config.is_temp_nonuniform
-
-    @is_temp_nonuniform.setter
-    def is_temp_nonuniform(self, value: int) -> None:
-        self.analysis_config.is_temp_nonuniform = value
-
-    @property
-    def force_flag(self) -> int:
-        """Legacy proxy for ``analysis_config.force_flag``."""
-        return self.analysis_config.force_flag
-
-    @force_flag.setter
-    def force_flag(self, value: int) -> None:
-        self.analysis_config.force_flag = value
-
-    @property
-    def steer_flag(self) -> int:
-        """Legacy proxy for ``analysis_config.steer_flag``."""
-        return self.analysis_config.steer_flag
-
-    @steer_flag.setter
-    def steer_flag(self, value: int) -> None:
-        self.analysis_config.steer_flag = value
-
 
 
     @property
@@ -691,6 +583,5 @@ class StructureGene:
         """Get the next available section property ID."""
         sections_by_id = self._sections_by_property_id()
         return max(sections_by_id, default=0) + 1
-
 
 
