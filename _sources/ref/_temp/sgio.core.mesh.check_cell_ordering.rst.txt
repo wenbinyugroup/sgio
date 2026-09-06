@@ -1,0 +1,6 @@
+﻿sgio.core.mesh.check\_cell\_ordering
+====================================
+
+.. currentmodule:: sgio.core.mesh
+
+.. autofunction:: check_cell_ordering

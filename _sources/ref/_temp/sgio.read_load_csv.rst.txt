@@ -1,0 +1,6 @@
+﻿sgio.read\_load\_csv
+====================
+
+.. currentmodule:: sgio
+
+.. autofunction:: read_load_csv

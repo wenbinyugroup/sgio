@@ -1,0 +1,6 @@
+﻿sgio.plot\_sg\_matplotlib
+=========================
+
+.. currentmodule:: sgio
+
+.. autofunction:: plot_sg_matplotlib

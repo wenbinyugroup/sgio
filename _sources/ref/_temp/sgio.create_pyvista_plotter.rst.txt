@@ -1,0 +1,6 @@
+﻿sgio.create\_pyvista\_plotter
+=============================
+
+.. currentmodule:: sgio
+
+.. autofunction:: create_pyvista_plotter

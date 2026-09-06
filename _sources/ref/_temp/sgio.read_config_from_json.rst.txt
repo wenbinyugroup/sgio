@@ -1,0 +1,6 @@
+﻿sgio.read\_config\_from\_json
+=============================
+
+.. currentmodule:: sgio
+
+.. autofunction:: read_config_from_json

@@ -1,0 +1,6 @@
+﻿sgio.plot\_model\_2d
+====================
+
+.. currentmodule:: sgio
+
+.. autofunction:: plot_model_2d

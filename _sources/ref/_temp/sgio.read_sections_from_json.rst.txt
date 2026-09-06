@@ -1,0 +1,6 @@
+﻿sgio.read\_sections\_from\_json
+===============================
+
+.. currentmodule:: sgio
+
+.. autofunction:: read_sections_from_json

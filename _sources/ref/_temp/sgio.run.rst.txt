@@ -1,0 +1,6 @@
+﻿sgio.run
+========
+
+.. currentmodule:: sgio
+
+.. autofunction:: run

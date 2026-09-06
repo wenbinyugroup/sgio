@@ -1,0 +1,6 @@
+﻿sgio.ensure\_node\_ids
+======================
+
+.. currentmodule:: sgio
+
+.. autofunction:: ensure_node_ids

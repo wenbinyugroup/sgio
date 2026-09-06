@@ -1,0 +1,6 @@
+﻿sgio.read\_sg\_from\_gmsh\_bundle
+=================================
+
+.. currentmodule:: sgio
+
+.. autofunction:: read_sg_from_gmsh_bundle

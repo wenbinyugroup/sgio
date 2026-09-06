@@ -1,0 +1,14 @@
+[
+  {
+    "name": "matrix",
+    "model": "sd1",
+    "label": "1",
+    "isotropy": 0,
+    "density": 1000.0,
+    "temperature": 0.0,
+    "elastic": {
+      "e1": 1000000000.0,
+      "nu12": 0.3
+    }
+  }
+]

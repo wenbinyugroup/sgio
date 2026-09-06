@@ -1,0 +1,6 @@
+﻿sgio.write\_sections\_to\_json
+==============================
+
+.. currentmodule:: sgio
+
+.. autofunction:: write_sections_to_json

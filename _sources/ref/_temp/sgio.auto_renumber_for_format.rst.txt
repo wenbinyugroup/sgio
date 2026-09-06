@@ -1,0 +1,6 @@
+﻿sgio.auto\_renumber\_for\_format
+================================
+
+.. currentmodule:: sgio
+
+.. autofunction:: auto_renumber_for_format

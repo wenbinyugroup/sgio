@@ -1,0 +1,6 @@
+﻿sgio.merge\_sections\_from\_csv
+===============================
+
+.. currentmodule:: sgio
+
+.. autofunction:: merge_sections_from_csv

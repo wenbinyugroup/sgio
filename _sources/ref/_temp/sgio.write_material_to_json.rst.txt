@@ -1,0 +1,6 @@
+﻿sgio.write\_material\_to\_json
+==============================
+
+.. currentmodule:: sgio
+
+.. autofunction:: write_material_to_json

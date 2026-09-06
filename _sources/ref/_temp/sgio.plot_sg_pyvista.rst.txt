@@ -1,0 +1,6 @@
+﻿sgio.plot\_sg\_pyvista
+======================
+
+.. currentmodule:: sgio
+
+.. autofunction:: plot_sg_pyvista

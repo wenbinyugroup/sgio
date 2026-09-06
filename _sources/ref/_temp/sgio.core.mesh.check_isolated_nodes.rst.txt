@@ -1,0 +1,6 @@
+﻿sgio.core.mesh.check\_isolated\_nodes
+=====================================
+
+.. currentmodule:: sgio.core.mesh
+
+.. autofunction:: check_isolated_nodes

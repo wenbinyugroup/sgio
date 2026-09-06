@@ -1,0 +1,6 @@
+﻿sgio.plot\_matrix
+=================
+
+.. currentmodule:: sgio
+
+.. autofunction:: plot_matrix

@@ -1,0 +1,1151 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Constitutive Behavior &#8212; SGIO</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=a95f357e85573c9b56d5" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=a95f357e85573c9b56d5" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=b45277e4" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../_static/scripts/fontawesome.js?digest=a95f357e85573c9b56d5"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=a95f357e85573c9b56d5" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=a95f357e85573c9b56d5" />
+
+    <script src="../../_static/documentation_options.js?v=39bb1c6d"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'ref/model/constitutive';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="State Class" href="state.html" />
+    <link rel="prev" title="Timoshenko Beam Model" href="bm/timoshenko.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  
+    
+    <script src="../../_static/searchtools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <script src="../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+<aside class="bd-header-announcement" aria-label="Announcement">
+  <div class="bd-header-announcement__content">Documentation is under construction.</div>
+</aside>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">SGIO</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../guide/index.html">
+    Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    Reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../guide/index.html">
+    Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    Reference
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item pst-sidebar-collapse"><button id="pst-collapse-sidebar-button" aria-expanded="true" aria-controls="pst-primary-sidebar"><svg class="pst-icon svg-inline--fa" role="img" aria-hidden="true" focusable="false" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentColor" d="M3 15.5C2.36232 15.5 1.74874 15.2564 1.28478 14.8189C0.820828 14.3815 0.541576 13.7832 0.504167 13.1467L0.5 13L0.5 3C0.499965 2.36232 0.743605 1.74874 1.18107 1.28478C1.61854 0.820828 2.21676 0.541576 2.85333 0.504167L3 0.5L13 0.5C13.6377 0.499965 14.2513 0.743605 14.7152 1.18107C15.1792 1.61854 15.4584 2.21676 15.4958 2.85333L15.5 3L15.5 13C15.5 13.6377 15.2564 14.2513 14.8189 14.7152C14.3815 15.1792 13.7832 15.4584 13.1467 15.4958L13 15.5L3 15.5ZM3 13.8333L10.5 13.8333L10.5 2.16667L3 2.16667C2.79589 2.16669 2.59889 2.24163 2.44636 2.37726C2.29383 2.5129 2.19638 2.69979 2.1725 2.9025L2.16667 3L2.16667 13C2.16669 13.2041 2.24163 13.4011 2.37726 13.5536C2.5129 13.7062 2.69979 13.8036 2.9025 13.8275L3 13.8333ZM6.65583 10.325L6.5775 10.2558L4.91083 8.58917C4.76735 8.44567 4.68116 8.25476 4.66843 8.05223C4.65569 7.84971 4.71729 7.6495 4.84167 7.48917L4.91083 7.41083L6.5775 5.74417C6.72747 5.59471 6.9287 5.50794 7.14032 5.50148C7.35194 5.49502 7.55809 5.56935 7.7169 5.70937C7.8757 5.8494 7.97525 6.04463 7.99533 6.25539C8.01541 6.46616 7.95451 6.67667 7.825 6.84417L7.75583 6.9225L6.67917 8L7.75583 9.0775C7.89931 9.22099 7.98551 9.41191 7.99824 9.61443C8.01097 9.81695 7.94938 10.0172 7.825 10.1775L7.75583 10.2558C7.61234 10.3993 7.42142 10.4855 7.2189 10.4982C7.01638 10.511 6.81617 10.4494 6.65583 10.325Z"/>
+  </svg>
+  <span class="pst-collapse-sidebar-label">Collapse Sidebar</span>
+  <span class="pst-expand-sidebar-label">Expand Sidebar</span>
+</button></div>
+        <div class="sidebar-primary-item">
+
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">Formats</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../formats.html">Formats and Model Types</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sg_on_gmsh.html">SG-on-Gmsh Serialization</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">API</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../sg.html">Structure Gene</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sg_analysis_config.html">Analysis Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../fe_model.html">Finite Element Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../structural_model.html">Structural Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../section.html">Section</a></li>
+
+<li class="toctree-l1 has-children"><a class="reference internal" href="../mesh.html">Mesh Utilities</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../_temp/sgio.SGMesh.html">sgio.SGMesh</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_temp/sgio.validate_node_ids.html">sgio.validate_node_ids</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_temp/sgio.validate_element_ids.html">sgio.validate_element_ids</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_temp/sgio.get_node_id_mapping.html">sgio.get_node_id_mapping</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_temp/sgio.ensure_node_ids.html">sgio.ensure_node_ids</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_temp/sgio.ensure_element_ids.html">sgio.ensure_element_ids</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_temp/sgio.check_duplicate_ids.html">sgio.check_duplicate_ids</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_temp/sgio.check_forbidden_ids.html">sgio.check_forbidden_ids</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_temp/sgio.renumber_elements.html">sgio.renumber_elements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_temp/sgio.auto_renumber_for_format.html">sgio.auto_renumber_for_format</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_temp/sgio.FormatNumberingRequirements.html">sgio.FormatNumberingRequirements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_temp/sgio.normalize_format_name.html">sgio.normalize_format_name</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_temp/sgio.get_numbering_requirements.html">sgio.get_numbering_requirements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_temp/sgio.core.mesh.check_cell_ordering.html">sgio.core.mesh.check_cell_ordering</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_temp/sgio.core.mesh.fix_cell_ordering.html">sgio.core.mesh.fix_cell_ordering</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_temp/sgio.core.mesh.check_isolated_nodes.html">sgio.core.mesh.check_isolated_nodes</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">Model</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 has-children"><a class="reference internal" href="sd/index.html">Solid</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="sd/cauchy.html">Cauchy Continuum Model</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="pl/index.html">Plate and Shell</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="pl/kirchhoff_love.html">Kirchhoff-Love Plate/Shell Model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pl/reissner_mindlin.html">Reissner-Mindlin Plate/Shell Model</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="bm/index.html">Beam</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="bm/euler_bernoulli.html">Euler-Bernoulli Beam Model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bm/timoshenko.html">Timoshenko Beam Model</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Constitutive Behavior</a></li>
+<li class="toctree-l2"><a class="reference internal" href="state.html">State Class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="statecase.html">State Case Class</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../io.html">I/O Functions</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../_temp/sgio.read.html">sgio.read</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_temp/sgio.read_fe_model.html">sgio.read_fe_model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_temp/sgio.read_sg_from_gmsh_bundle.html">sgio.read_sg_from_gmsh_bundle</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_temp/sgio.read_output.html">sgio.read_output</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_temp/sgio.read_output_model.html">sgio.read_output_model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_temp/sgio.read_output_state.html">sgio.read_output_state</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_temp/sgio.write.html">sgio.write</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_temp/sgio.convert.html">sgio.convert</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_temp/sgio.read_sections_from_json.html">sgio.read_sections_from_json</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_temp/sgio.write_sections_to_json.html">sgio.write_sections_to_json</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_temp/sgio.read_config_from_json.html">sgio.read_config_from_json</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_temp/sgio.write_config_to_json.html">sgio.write_config_to_json</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_temp/sgio.read_material_from_json.html">sgio.read_material_from_json</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_temp/sgio.read_materials_from_json.html">sgio.read_materials_from_json</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_temp/sgio.write_material_to_json.html">sgio.write_material_to_json</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_temp/sgio.section_model_to_record.html">sgio.section_model_to_record</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_temp/sgio.read_section_layout_csv.html">sgio.read_section_layout_csv</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_temp/sgio.read_load_csv.html">sgio.read_load_csv</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_temp/sgio.merge_sections.html">sgio.merge_sections</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_temp/sgio.merge_sections_from_csv.html">sgio.merge_sections_from_csv</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_temp/sgio.write_merged_sections.html">sgio.write_merged_sections</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_temp/sgio.add_cell_dict_data_to_mesh.html">sgio.add_cell_dict_data_to_mesh</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_temp/sgio.add_point_dict_data_to_mesh.html">sgio.add_point_dict_data_to_mesh</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_temp/sgio.run.html">sgio.run</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../plot.html">Plot Functions</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../_temp/sgio.plot_sg_matplotlib.html">sgio.plot_sg_matplotlib</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_temp/sgio.plot_sg_plotly.html">sgio.plot_sg_plotly</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_temp/sgio.plot_sg_2d.html">sgio.plot_sg_2d</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_temp/sgio.plot_model_2d.html">sgio.plot_model_2d</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_temp/sgio.plot_sg_2d_plotly.html">sgio.plot_sg_2d_plotly</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_temp/sgio.plot_model_2d_plotly.html">sgio.plot_model_2d_plotly</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_temp/sgio.plot_sg_3d_beam.html">sgio.plot_sg_3d_beam</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_temp/sgio.plot_sg_3d_beam_plotly.html">sgio.plot_sg_3d_beam_plotly</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_temp/sgio.plot_sg_pyvista.html">sgio.plot_sg_pyvista</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_temp/sgio.create_pyvista_plotter.html">sgio.create_pyvista_plotter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_temp/sgio.create_pyvista_local_axis_multiblock.html">sgio.create_pyvista_local_axis_multiblock</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_temp/sgio.plot_pyvista_local_axes.html">sgio.plot_pyvista_local_axes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_temp/sgio.plot_matrix.html">sgio.plot_matrix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_temp/sgio.plot_matrix_bar3d.html">sgio.plot_matrix_bar3d</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../_temp/sgio.plot_model_matrix.html">sgio.plot_model_matrix</a></li>
+</ul>
+</details></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">Reference</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="index.html" class="nav-link">Model</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Constitutive Behavior</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="constitutive-behavior">
+<h1>Constitutive Behavior<a class="headerlink" href="#constitutive-behavior" title="Link to this heading">#</a></h1>
+<p>The constitutive layer describes <em>what a material does</em>, independently of the
+structural model that uses it. A structural model holds a
+<code class="xref py py-class docutils literal notranslate"><span class="pre">MaterialBehaviorMap</span></code> binding physics channels to behaviors.</p>
+<section id="protocols">
+<h2>Protocols<a class="headerlink" href="#protocols" title="Link to this heading">#</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="sgio.model.Model">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">sgio.model.</span></span><span class="sig-name descname"><span class="pre">Model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sgio.model.Model" title="Link to this definition">#</a></dt>
+<dd><p>Protocol shared by legacy model-like objects.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="sgio.model.Model.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sgio.model.Model.get" title="Link to this definition">#</a></dt>
+<dd><p>Get model parameter (property) given a name.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="sgio.model.ConstitutiveBehaviorProtocol">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">sgio.model.</span></span><span class="sig-name descname"><span class="pre">ConstitutiveBehaviorProtocol</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sgio.model.ConstitutiveBehaviorProtocol" title="Link to this definition">#</a></dt>
+<dd><p>Protocol for stateless or stateful constitutive behaviors.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="sgio.model.ConstitutiveBehaviorProtocol.export_payload">
+<span class="sig-name descname"><span class="pre">export_payload</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Any</span></span></span><a class="headerlink" href="#sgio.model.ConstitutiveBehaviorProtocol.export_payload" title="Link to this definition">#</a></dt>
+<dd><p>Return the payload currently backing this behavior.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="sgio.model.ConstitutiveBehaviorProtocol.descriptor">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">descriptor</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#sgio.model.ConstitutiveBehaviorDescriptor" title="sgio.model.constitutive.ConstitutiveBehaviorDescriptor"><span class="pre">ConstitutiveBehaviorDescriptor</span></a></em><a class="headerlink" href="#sgio.model.ConstitutiveBehaviorProtocol.descriptor" title="Link to this definition">#</a></dt>
+<dd><p>Return the static behavior descriptor.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="sgio.model.HistoryDependentBehaviorProtocol">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">sgio.model.</span></span><span class="sig-name descname"><span class="pre">HistoryDependentBehaviorProtocol</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sgio.model.HistoryDependentBehaviorProtocol" title="Link to this definition">#</a></dt>
+<dd><p>Protocol for future history-dependent constitutive behaviors.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="sgio.model.HistoryDependentBehaviorProtocol.describe_consistent_tangent">
+<span class="sig-name descname"><span class="pre">describe_consistent_tangent</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#sgio.model.HistoryDependentBehaviorProtocol.describe_consistent_tangent" title="Link to this definition">#</a></dt>
+<dd><p>Describe the tangent quantity exposed by the behavior.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sgio.model.HistoryDependentBehaviorProtocol.describe_update_rule">
+<span class="sig-name descname"><span class="pre">describe_update_rule</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#sgio.model.HistoryDependentBehaviorProtocol.describe_update_rule" title="Link to this definition">#</a></dt>
+<dd><p>Describe the update law boundary used by the behavior.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sgio.model.HistoryDependentBehaviorProtocol.initialize_history_state">
+<span class="sig-name descname"><span class="pre">initialize_history_state</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#sgio.model.HistoryDependentBehaviorProtocol.initialize_history_state" title="Link to this definition">#</a></dt>
+<dd><p>Return one initialized history-state payload.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="behaviors-and-descriptors">
+<h2>Behaviors and Descriptors<a class="headerlink" href="#behaviors-and-descriptors" title="Link to this heading">#</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="sgio.model.LinearElasticConstitutiveBehavior">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">sgio.model.</span></span><span class="sig-name descname"><span class="pre">LinearElasticConstitutiveBehavior</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">payload</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">LinearElasticBehavior</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sgio.model.LinearElasticConstitutiveBehavior" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Adapter exposing current linear elasticity through the generic behavior seam.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>payload</strong> (<em>LinearElasticBehavior</em>) – Linear-elastic payload snapshot.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="sgio.model.LinearElasticConstitutiveBehavior.export_payload">
+<span class="sig-name descname"><span class="pre">export_payload</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">LinearElasticBehavior</span></span></span><a class="headerlink" href="#sgio.model.LinearElasticConstitutiveBehavior.export_payload" title="Link to this definition">#</a></dt>
+<dd><p>Return the wrapped linear-elastic payload.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="sgio.model.LinearElasticConstitutiveBehavior.descriptor">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">descriptor</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#sgio.model.ConstitutiveBehaviorDescriptor" title="sgio.model.constitutive.ConstitutiveBehaviorDescriptor"><span class="pre">ConstitutiveBehaviorDescriptor</span></a></em><a class="headerlink" href="#sgio.model.LinearElasticConstitutiveBehavior.descriptor" title="Link to this definition">#</a></dt>
+<dd><p>Return the linear-elastic behavior descriptor.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="sgio.model.ConstitutiveBehaviorDescriptor">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">sgio.model.</span></span><span class="sig-name descname"><span class="pre">ConstitutiveBehaviorDescriptor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channels</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#sgio.model.PhysicsChannel" title="sgio.model.constitutive.PhysicsChannel"><span class="pre">PhysicsChannel</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_stateful</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inputs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#sgio.model.BehaviorVariable" title="sgio.model.constitutive.BehaviorVariable"><span class="pre">BehaviorVariable</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outputs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#sgio.model.BehaviorVariable" title="sgio.model.constitutive.BehaviorVariable"><span class="pre">BehaviorVariable</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tangent_outputs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#sgio.model.BehaviorVariable" title="sgio.model.constitutive.BehaviorVariable"><span class="pre">BehaviorVariable</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state_variables</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#sgio.model.BehaviorVariable" title="sgio.model.constitutive.BehaviorVariable"><span class="pre">BehaviorVariable</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">notes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sgio.model.ConstitutiveBehaviorDescriptor" title="Link to this definition">#</a></dt>
+<dd><p>Static descriptor of one constitutive behavior family.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – Behavior family name.</p></li>
+<li><p><strong>channels</strong> (<em>tuple</em><em>[</em><a class="reference internal" href="#sgio.model.PhysicsChannel" title="sgio.model.PhysicsChannel"><em>PhysicsChannel</em></a><em>, </em><em>...</em><em>]</em>) – Physics channels covered by the behavior.</p></li>
+<li><p><strong>is_stateful</strong> (<em>bool</em>) – Whether the behavior carries history variables.</p></li>
+<li><p><strong>inputs</strong> (<em>tuple</em><em>[</em><a class="reference internal" href="#sgio.model.BehaviorVariable" title="sgio.model.BehaviorVariable"><em>BehaviorVariable</em></a><em>, </em><em>...</em><em>]</em><em>, </em><em>optional</em>) – Input variables.</p></li>
+<li><p><strong>outputs</strong> (<em>tuple</em><em>[</em><a class="reference internal" href="#sgio.model.BehaviorVariable" title="sgio.model.BehaviorVariable"><em>BehaviorVariable</em></a><em>, </em><em>...</em><em>]</em><em>, </em><em>optional</em>) – Output variables.</p></li>
+<li><p><strong>tangent_outputs</strong> (<em>tuple</em><em>[</em><a class="reference internal" href="#sgio.model.BehaviorVariable" title="sgio.model.BehaviorVariable"><em>BehaviorVariable</em></a><em>, </em><em>...</em><em>]</em><em>, </em><em>optional</em>) – Tangent outputs or linearization products.</p></li>
+<li><p><strong>state_variables</strong> (<em>tuple</em><em>[</em><a class="reference internal" href="#sgio.model.BehaviorVariable" title="sgio.model.BehaviorVariable"><em>BehaviorVariable</em></a><em>, </em><em>...</em><em>]</em><em>, </em><em>optional</em>) – History variables used by the behavior.</p></li>
+<li><p><strong>notes</strong> (<em>str</em><em>, </em><em>optional</em>) – Additional notes about the behavior boundary.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="sgio.model.MaterialBehaviorMap">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">sgio.model.</span></span><span class="sig-name descname"><span class="pre">MaterialBehaviorMap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mechanical:</span> <span class="pre">~sgio.model.constitutive.ChannelBehaviorSlot</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thermal:</span> <span class="pre">~sgio.model.constitutive.ChannelBehaviorSlot</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">electrical:</span> <span class="pre">~sgio.model.constitutive.ChannelBehaviorSlot</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">magnetic:</span> <span class="pre">~sgio.model.constitutive.ChannelBehaviorSlot</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optical:</span> <span class="pre">~sgio.model.constitutive.ChannelBehaviorSlot</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">couplings:</span> <span class="pre">tuple[~sgio.model.constitutive.ChannelCouplingDescriptor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">...]</span> <span class="pre">=</span> <span class="pre">()</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sgio.model.MaterialBehaviorMap" title="Link to this definition">#</a></dt>
+<dd><p>Container reserving per-channel constitutive behavior slots.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mechanical</strong> (<a class="reference internal" href="#sgio.model.ChannelBehaviorSlot" title="sgio.model.ChannelBehaviorSlot"><em>ChannelBehaviorSlot</em></a>) – Per-channel slots.</p></li>
+<li><p><strong>thermal</strong> (<a class="reference internal" href="#sgio.model.ChannelBehaviorSlot" title="sgio.model.ChannelBehaviorSlot"><em>ChannelBehaviorSlot</em></a>) – Per-channel slots.</p></li>
+<li><p><strong>electrical</strong> (<a class="reference internal" href="#sgio.model.ChannelBehaviorSlot" title="sgio.model.ChannelBehaviorSlot"><em>ChannelBehaviorSlot</em></a>) – Per-channel slots.</p></li>
+<li><p><strong>magnetic</strong> (<a class="reference internal" href="#sgio.model.ChannelBehaviorSlot" title="sgio.model.ChannelBehaviorSlot"><em>ChannelBehaviorSlot</em></a>) – Per-channel slots.</p></li>
+<li><p><strong>optical</strong> (<a class="reference internal" href="#sgio.model.ChannelBehaviorSlot" title="sgio.model.ChannelBehaviorSlot"><em>ChannelBehaviorSlot</em></a>) – Per-channel slots.</p></li>
+<li><p><strong>couplings</strong> (<em>tuple</em><em>[</em><a class="reference internal" href="#sgio.model.ChannelCouplingDescriptor" title="sgio.model.ChannelCouplingDescriptor"><em>ChannelCouplingDescriptor</em></a><em>, </em><em>...</em><em>]</em><em>, </em><em>optional</em>) – Cross-channel couplings carried alongside the slots.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="sgio.model.MaterialBehaviorMap.get_slot">
+<span class="sig-name descname"><span class="pre">get_slot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">channel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#sgio.model.PhysicsChannel" title="sgio.model.constitutive.PhysicsChannel"><span class="pre">PhysicsChannel</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#sgio.model.ChannelBehaviorSlot" title="sgio.model.constitutive.ChannelBehaviorSlot"><span class="pre">ChannelBehaviorSlot</span></a></span></span><a class="headerlink" href="#sgio.model.MaterialBehaviorMap.get_slot" title="Link to this definition">#</a></dt>
+<dd><p>Return one channel slot by enum key.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="sgio.model.BehaviorVariable">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">sgio.model.</span></span><span class="sig-name descname"><span class="pre">BehaviorVariable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#sgio.model.PhysicsChannel" title="sgio.model.constitutive.PhysicsChannel"><span class="pre">PhysicsChannel</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">role</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#sgio.model.BehaviorVariableRole" title="sgio.model.constitutive.BehaviorVariableRole"><span class="pre">BehaviorVariableRole</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sgio.model.BehaviorVariable" title="Link to this definition">#</a></dt>
+<dd><p>One named constitutive variable used by a behavior descriptor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – Variable name.</p></li>
+<li><p><strong>channel</strong> (<a class="reference internal" href="#sgio.model.PhysicsChannel" title="sgio.model.PhysicsChannel"><em>PhysicsChannel</em></a>) – Owning physics channel.</p></li>
+<li><p><strong>role</strong> (<a class="reference internal" href="#sgio.model.BehaviorVariableRole" title="sgio.model.BehaviorVariableRole"><em>BehaviorVariableRole</em></a>) – Variable role.</p></li>
+<li><p><strong>description</strong> (<em>str</em><em>, </em><em>optional</em>) – Human-readable description.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="sgio.model.ChannelBehaviorSlot">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">sgio.model.</span></span><span class="sig-name descname"><span class="pre">ChannelBehaviorSlot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">channel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#sgio.model.PhysicsChannel" title="sgio.model.constitutive.PhysicsChannel"><span class="pre">PhysicsChannel</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">behavior</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#sgio.model.ConstitutiveBehaviorProtocol" title="sgio.model.constitutive.ConstitutiveBehaviorProtocol"><span class="pre">ConstitutiveBehaviorProtocol</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">properties</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sgio.model.ChannelBehaviorSlot" title="Link to this definition">#</a></dt>
+<dd><p>One extensibility slot for a single physics channel.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>channel</strong> (<a class="reference internal" href="#sgio.model.PhysicsChannel" title="sgio.model.PhysicsChannel"><em>PhysicsChannel</em></a>) – Slot channel.</p></li>
+<li><p><strong>behavior</strong> (<a class="reference internal" href="#sgio.model.ConstitutiveBehaviorProtocol" title="sgio.model.ConstitutiveBehaviorProtocol"><em>ConstitutiveBehaviorProtocol</em></a><em> or </em><em>None</em><em>, </em><em>optional</em>) – Attached behavior implementation.</p></li>
+<li><p><strong>properties</strong> (<em>object</em><em> or </em><em>None</em><em>, </em><em>optional</em>) – Auxiliary channel properties not yet promoted to full behaviors.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="sgio.model.ChannelCouplingDescriptor">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">sgio.model.</span></span><span class="sig-name descname"><span class="pre">ChannelCouplingDescriptor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#sgio.model.PhysicsChannel" title="sgio.model.constitutive.PhysicsChannel"><span class="pre">PhysicsChannel</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#sgio.model.PhysicsChannel" title="sgio.model.constitutive.PhysicsChannel"><span class="pre">PhysicsChannel</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sgio.model.ChannelCouplingDescriptor" title="Link to this definition">#</a></dt>
+<dd><p>Descriptor for one cross-channel coupling relation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>source</strong> (<a class="reference internal" href="#sgio.model.PhysicsChannel" title="sgio.model.PhysicsChannel"><em>PhysicsChannel</em></a>) – Driving channel.</p></li>
+<li><p><strong>target</strong> (<a class="reference internal" href="#sgio.model.PhysicsChannel" title="sgio.model.PhysicsChannel"><em>PhysicsChannel</em></a>) – Driven channel.</p></li>
+<li><p><strong>description</strong> (<em>str</em><em>, </em><em>optional</em>) – Human-readable description of the coupling.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="sgio.model.TensorComponent">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">sgio.model.</span></span><span class="sig-name descname"><span class="pre">TensorComponent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">row</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">column</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sgio.model.TensorComponent" title="Link to this definition">#</a></dt>
+<dd><p>Typed material tensor/matrix component selector.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>row</strong> (<em>int</em>) – One-based row index or tensor index.</p></li>
+<li><p><strong>column</strong> (<em>int</em>) – One-based column index or tensor index.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="sgio.model.TensorComponent.to_matrix_indices">
+<span class="sig-name descname"><span class="pre">to_matrix_indices</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#sgio.model.TensorComponent.to_matrix_indices" title="Link to this definition">#</a></dt>
+<dd><p>Return zero-based matrix indices.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sgio.model.TensorComponent.to_voigt_index">
+<span class="sig-name descname"><span class="pre">to_voigt_index</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#sgio.model.TensorComponent.to_voigt_index" title="Link to this definition">#</a></dt>
+<dd><p>Return the zero-based Voigt index for thermal-expansion access.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="enumerations">
+<h2>Enumerations<a class="headerlink" href="#enumerations" title="Link to this heading">#</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="sgio.model.PhysicsChannel">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">sgio.model.</span></span><span class="sig-name descname"><span class="pre">PhysicsChannel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sgio.model.PhysicsChannel" title="Link to this definition">#</a></dt>
+<dd><p>Supported constitutive physics channels.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sgio.model.PhysicsChannel.ELECTRICAL">
+<span class="sig-name descname"><span class="pre">ELECTRICAL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'electrical'</span></em><a class="headerlink" href="#sgio.model.PhysicsChannel.ELECTRICAL" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sgio.model.PhysicsChannel.MAGNETIC">
+<span class="sig-name descname"><span class="pre">MAGNETIC</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'magnetic'</span></em><a class="headerlink" href="#sgio.model.PhysicsChannel.MAGNETIC" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sgio.model.PhysicsChannel.MECHANICAL">
+<span class="sig-name descname"><span class="pre">MECHANICAL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'mechanical'</span></em><a class="headerlink" href="#sgio.model.PhysicsChannel.MECHANICAL" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sgio.model.PhysicsChannel.OPTICAL">
+<span class="sig-name descname"><span class="pre">OPTICAL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'optical'</span></em><a class="headerlink" href="#sgio.model.PhysicsChannel.OPTICAL" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sgio.model.PhysicsChannel.THERMAL">
+<span class="sig-name descname"><span class="pre">THERMAL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'thermal'</span></em><a class="headerlink" href="#sgio.model.PhysicsChannel.THERMAL" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="sgio.model.BehaviorVariableRole">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">sgio.model.</span></span><span class="sig-name descname"><span class="pre">BehaviorVariableRole</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sgio.model.BehaviorVariableRole" title="Link to this definition">#</a></dt>
+<dd><p>Role of one constitutive variable within a behavior descriptor.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sgio.model.BehaviorVariableRole.INPUT">
+<span class="sig-name descname"><span class="pre">INPUT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'input'</span></em><a class="headerlink" href="#sgio.model.BehaviorVariableRole.INPUT" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sgio.model.BehaviorVariableRole.OUTPUT">
+<span class="sig-name descname"><span class="pre">OUTPUT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'output'</span></em><a class="headerlink" href="#sgio.model.BehaviorVariableRole.OUTPUT" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sgio.model.BehaviorVariableRole.STATE">
+<span class="sig-name descname"><span class="pre">STATE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'state'</span></em><a class="headerlink" href="#sgio.model.BehaviorVariableRole.STATE" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sgio.model.BehaviorVariableRole.TANGENT">
+<span class="sig-name descname"><span class="pre">TANGENT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'tangent'</span></em><a class="headerlink" href="#sgio.model.BehaviorVariableRole.TANGENT" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="sgio.model.ElasticInputType">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">sgio.model.</span></span><span class="sig-name descname"><span class="pre">ElasticInputType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sgio.model.ElasticInputType" title="Link to this definition">#</a></dt>
+<dd><p>Typed elastic-input selector for material APIs.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="sgio.model.ElasticInputType.from_value">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#sgio.model.ElasticInputType" title="sgio.model.query_types.ElasticInputType"><span class="pre">ElasticInputType</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#sgio.model.ElasticInputType" title="sgio.model.query_types.ElasticInputType"><span class="pre">ElasticInputType</span></a></span></span><a class="headerlink" href="#sgio.model.ElasticInputType.from_value" title="Link to this definition">#</a></dt>
+<dd><p>Normalize legacy elastic input tokens into one enum value.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>input_type</strong> (<a class="reference internal" href="#sgio.model.ElasticInputType" title="sgio.model.ElasticInputType"><em>ElasticInputType</em></a><em> or </em><em>str</em><em> or </em><em>int</em>) – Legacy or typed elastic input selector.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Normalized enum value.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#sgio.model.ElasticInputType" title="sgio.model.ElasticInputType">ElasticInputType</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sgio.model.ElasticInputType.ANISOTROPIC">
+<span class="sig-name descname"><span class="pre">ANISOTROPIC</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'anisotropic'</span></em><a class="headerlink" href="#sgio.model.ElasticInputType.ANISOTROPIC" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sgio.model.ElasticInputType.AUTO">
+<span class="sig-name descname"><span class="pre">AUTO</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">''</span></em><a class="headerlink" href="#sgio.model.ElasticInputType.AUTO" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sgio.model.ElasticInputType.COMPLIANCE">
+<span class="sig-name descname"><span class="pre">COMPLIANCE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'compliance'</span></em><a class="headerlink" href="#sgio.model.ElasticInputType.COMPLIANCE" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sgio.model.ElasticInputType.ENGINEERING">
+<span class="sig-name descname"><span class="pre">ENGINEERING</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'engineering'</span></em><a class="headerlink" href="#sgio.model.ElasticInputType.ENGINEERING" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sgio.model.ElasticInputType.ISOTROPIC">
+<span class="sig-name descname"><span class="pre">ISOTROPIC</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'isotropic'</span></em><a class="headerlink" href="#sgio.model.ElasticInputType.ISOTROPIC" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sgio.model.ElasticInputType.LAMINA">
+<span class="sig-name descname"><span class="pre">LAMINA</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'lamina'</span></em><a class="headerlink" href="#sgio.model.ElasticInputType.LAMINA" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sgio.model.ElasticInputType.ORTHOTROPIC">
+<span class="sig-name descname"><span class="pre">ORTHOTROPIC</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'orthotropic'</span></em><a class="headerlink" href="#sgio.model.ElasticInputType.ORTHOTROPIC" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sgio.model.ElasticInputType.STIFFNESS">
+<span class="sig-name descname"><span class="pre">STIFFNESS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'stiffness'</span></em><a class="headerlink" href="#sgio.model.ElasticInputType.STIFFNESS" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sgio.model.ElasticInputType.TRANSVERSE_ISOTROPIC">
+<span class="sig-name descname"><span class="pre">TRANSVERSE_ISOTROPIC</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'transverse_isotropic'</span></em><a class="headerlink" href="#sgio.model.ElasticInputType.TRANSVERSE_ISOTROPIC" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="sgio.model.MatrixKind">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">sgio.model.</span></span><span class="sig-name descname"><span class="pre">MatrixKind</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sgio.model.MatrixKind" title="Link to this definition">#</a></dt>
+<dd><p>Typed selector for material matrix views.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sgio.model.MatrixKind.COMPLIANCE">
+<span class="sig-name descname"><span class="pre">COMPLIANCE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'compliance'</span></em><a class="headerlink" href="#sgio.model.MatrixKind.COMPLIANCE" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sgio.model.MatrixKind.STIFFNESS">
+<span class="sig-name descname"><span class="pre">STIFFNESS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'stiffness'</span></em><a class="headerlink" href="#sgio.model.MatrixKind.STIFFNESS" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="sgio.model.SectionMatrixKind">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">sgio.model.</span></span><span class="sig-name descname"><span class="pre">SectionMatrixKind</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sgio.model.SectionMatrixKind" title="Link to this definition">#</a></dt>
+<dd><p>Typed selector for beam/shell section-result matrices.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sgio.model.SectionMatrixKind.CLASSICAL_COMPLIANCE">
+<span class="sig-name descname"><span class="pre">CLASSICAL_COMPLIANCE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'classical_compliance'</span></em><a class="headerlink" href="#sgio.model.SectionMatrixKind.CLASSICAL_COMPLIANCE" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sgio.model.SectionMatrixKind.CLASSICAL_STIFFNESS">
+<span class="sig-name descname"><span class="pre">CLASSICAL_STIFFNESS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'classical_stiffness'</span></em><a class="headerlink" href="#sgio.model.SectionMatrixKind.CLASSICAL_STIFFNESS" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sgio.model.SectionMatrixKind.COMPLIANCE">
+<span class="sig-name descname"><span class="pre">COMPLIANCE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'compliance'</span></em><a class="headerlink" href="#sgio.model.SectionMatrixKind.COMPLIANCE" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sgio.model.SectionMatrixKind.GEOMETRIC_STIFFNESS">
+<span class="sig-name descname"><span class="pre">GEOMETRIC_STIFFNESS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'geometric_stiffness'</span></em><a class="headerlink" href="#sgio.model.SectionMatrixKind.GEOMETRIC_STIFFNESS" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sgio.model.SectionMatrixKind.MASS">
+<span class="sig-name descname"><span class="pre">MASS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'mass'</span></em><a class="headerlink" href="#sgio.model.SectionMatrixKind.MASS" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sgio.model.SectionMatrixKind.MASS_CENTER">
+<span class="sig-name descname"><span class="pre">MASS_CENTER</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'mass_center'</span></em><a class="headerlink" href="#sgio.model.SectionMatrixKind.MASS_CENTER" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sgio.model.SectionMatrixKind.STIFFNESS">
+<span class="sig-name descname"><span class="pre">STIFFNESS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'stiffness'</span></em><a class="headerlink" href="#sgio.model.SectionMatrixKind.STIFFNESS" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="sgio.model.SectionAxis">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">sgio.model.</span></span><span class="sig-name descname"><span class="pre">SectionAxis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sgio.model.SectionAxis" title="Link to this definition">#</a></dt>
+<dd><p>Typed selector for section-result principal axes.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sgio.model.SectionAxis.BENDING">
+<span class="sig-name descname"><span class="pre">BENDING</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'bending'</span></em><a class="headerlink" href="#sgio.model.SectionAxis.BENDING" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sgio.model.SectionAxis.INERTIAL">
+<span class="sig-name descname"><span class="pre">INERTIAL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'inertial'</span></em><a class="headerlink" href="#sgio.model.SectionAxis.INERTIAL" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sgio.model.SectionAxis.SHEAR">
+<span class="sig-name descname"><span class="pre">SHEAR</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'shear'</span></em><a class="headerlink" href="#sgio.model.SectionAxis.SHEAR" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="sgio.model.SectionCenter">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">sgio.model.</span></span><span class="sig-name descname"><span class="pre">SectionCenter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sgio.model.SectionCenter" title="Link to this definition">#</a></dt>
+<dd><p>Typed selector for section-result center locations.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sgio.model.SectionCenter.MASS">
+<span class="sig-name descname"><span class="pre">MASS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'mass'</span></em><a class="headerlink" href="#sgio.model.SectionCenter.MASS" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sgio.model.SectionCenter.SHEAR">
+<span class="sig-name descname"><span class="pre">SHEAR</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'shear'</span></em><a class="headerlink" href="#sgio.model.SectionCenter.SHEAR" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sgio.model.SectionCenter.TENSION">
+<span class="sig-name descname"><span class="pre">TENSION</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'tension'</span></em><a class="headerlink" href="#sgio.model.SectionCenter.TENSION" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="sgio.model.LocationType">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">sgio.model.</span></span><span class="sig-name descname"><span class="pre">LocationType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sgio.model.LocationType" title="Link to this definition">#</a></dt>
+<dd><p>Valid location types for state data.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sgio.model.LocationType.ELEMENT">
+<span class="sig-name descname"><span class="pre">ELEMENT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'element'</span></em><a class="headerlink" href="#sgio.model.LocationType.ELEMENT" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sgio.model.LocationType.ELEMENT_NODE">
+<span class="sig-name descname"><span class="pre">ELEMENT_NODE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'element_node'</span></em><a class="headerlink" href="#sgio.model.LocationType.ELEMENT_NODE" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sgio.model.LocationType.NODE">
+<span class="sig-name descname"><span class="pre">NODE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'node'</span></em><a class="headerlink" href="#sgio.model.LocationType.NODE" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="helper-functions">
+<h2>Helper Functions<a class="headerlink" href="#helper-functions" title="Link to this heading">#</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="sgio.model.getModelDim">
+<span class="sig-prename descclassname"><span class="pre">sgio.model.</span></span><span class="sig-name descname"><span class="pre">getModelDim</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#sgio.model.getModelDim" title="Link to this definition">#</a></dt>
+<dd><p>Infer structural-model dimension from a legacy model label.</p>
+</dd></dl>
+
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="bm/timoshenko.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Timoshenko Beam Model</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="state.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">State Class</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#protocols">Protocols</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sgio.model.Model"><code class="docutils literal notranslate"><span class="pre">Model</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#sgio.model.Model.get"><code class="docutils literal notranslate"><span class="pre">Model.get()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sgio.model.ConstitutiveBehaviorProtocol"><code class="docutils literal notranslate"><span class="pre">ConstitutiveBehaviorProtocol</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#sgio.model.ConstitutiveBehaviorProtocol.export_payload"><code class="docutils literal notranslate"><span class="pre">ConstitutiveBehaviorProtocol.export_payload()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#sgio.model.ConstitutiveBehaviorProtocol.descriptor"><code class="docutils literal notranslate"><span class="pre">ConstitutiveBehaviorProtocol.descriptor</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sgio.model.HistoryDependentBehaviorProtocol"><code class="docutils literal notranslate"><span class="pre">HistoryDependentBehaviorProtocol</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#sgio.model.HistoryDependentBehaviorProtocol.describe_consistent_tangent"><code class="docutils literal notranslate"><span class="pre">HistoryDependentBehaviorProtocol.describe_consistent_tangent()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#sgio.model.HistoryDependentBehaviorProtocol.describe_update_rule"><code class="docutils literal notranslate"><span class="pre">HistoryDependentBehaviorProtocol.describe_update_rule()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#sgio.model.HistoryDependentBehaviorProtocol.initialize_history_state"><code class="docutils literal notranslate"><span class="pre">HistoryDependentBehaviorProtocol.initialize_history_state()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#behaviors-and-descriptors">Behaviors and Descriptors</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sgio.model.LinearElasticConstitutiveBehavior"><code class="docutils literal notranslate"><span class="pre">LinearElasticConstitutiveBehavior</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#sgio.model.LinearElasticConstitutiveBehavior.export_payload"><code class="docutils literal notranslate"><span class="pre">LinearElasticConstitutiveBehavior.export_payload()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#sgio.model.LinearElasticConstitutiveBehavior.descriptor"><code class="docutils literal notranslate"><span class="pre">LinearElasticConstitutiveBehavior.descriptor</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sgio.model.ConstitutiveBehaviorDescriptor"><code class="docutils literal notranslate"><span class="pre">ConstitutiveBehaviorDescriptor</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sgio.model.MaterialBehaviorMap"><code class="docutils literal notranslate"><span class="pre">MaterialBehaviorMap</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#sgio.model.MaterialBehaviorMap.get_slot"><code class="docutils literal notranslate"><span class="pre">MaterialBehaviorMap.get_slot()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sgio.model.BehaviorVariable"><code class="docutils literal notranslate"><span class="pre">BehaviorVariable</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sgio.model.ChannelBehaviorSlot"><code class="docutils literal notranslate"><span class="pre">ChannelBehaviorSlot</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sgio.model.ChannelCouplingDescriptor"><code class="docutils literal notranslate"><span class="pre">ChannelCouplingDescriptor</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sgio.model.TensorComponent"><code class="docutils literal notranslate"><span class="pre">TensorComponent</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#sgio.model.TensorComponent.to_matrix_indices"><code class="docutils literal notranslate"><span class="pre">TensorComponent.to_matrix_indices()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#sgio.model.TensorComponent.to_voigt_index"><code class="docutils literal notranslate"><span class="pre">TensorComponent.to_voigt_index()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#enumerations">Enumerations</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sgio.model.PhysicsChannel"><code class="docutils literal notranslate"><span class="pre">PhysicsChannel</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#sgio.model.PhysicsChannel.ELECTRICAL"><code class="docutils literal notranslate"><span class="pre">PhysicsChannel.ELECTRICAL</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#sgio.model.PhysicsChannel.MAGNETIC"><code class="docutils literal notranslate"><span class="pre">PhysicsChannel.MAGNETIC</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#sgio.model.PhysicsChannel.MECHANICAL"><code class="docutils literal notranslate"><span class="pre">PhysicsChannel.MECHANICAL</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#sgio.model.PhysicsChannel.OPTICAL"><code class="docutils literal notranslate"><span class="pre">PhysicsChannel.OPTICAL</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#sgio.model.PhysicsChannel.THERMAL"><code class="docutils literal notranslate"><span class="pre">PhysicsChannel.THERMAL</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sgio.model.BehaviorVariableRole"><code class="docutils literal notranslate"><span class="pre">BehaviorVariableRole</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#sgio.model.BehaviorVariableRole.INPUT"><code class="docutils literal notranslate"><span class="pre">BehaviorVariableRole.INPUT</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#sgio.model.BehaviorVariableRole.OUTPUT"><code class="docutils literal notranslate"><span class="pre">BehaviorVariableRole.OUTPUT</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#sgio.model.BehaviorVariableRole.STATE"><code class="docutils literal notranslate"><span class="pre">BehaviorVariableRole.STATE</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#sgio.model.BehaviorVariableRole.TANGENT"><code class="docutils literal notranslate"><span class="pre">BehaviorVariableRole.TANGENT</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sgio.model.ElasticInputType"><code class="docutils literal notranslate"><span class="pre">ElasticInputType</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#sgio.model.ElasticInputType.from_value"><code class="docutils literal notranslate"><span class="pre">ElasticInputType.from_value()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#sgio.model.ElasticInputType.ANISOTROPIC"><code class="docutils literal notranslate"><span class="pre">ElasticInputType.ANISOTROPIC</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#sgio.model.ElasticInputType.AUTO"><code class="docutils literal notranslate"><span class="pre">ElasticInputType.AUTO</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#sgio.model.ElasticInputType.COMPLIANCE"><code class="docutils literal notranslate"><span class="pre">ElasticInputType.COMPLIANCE</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#sgio.model.ElasticInputType.ENGINEERING"><code class="docutils literal notranslate"><span class="pre">ElasticInputType.ENGINEERING</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#sgio.model.ElasticInputType.ISOTROPIC"><code class="docutils literal notranslate"><span class="pre">ElasticInputType.ISOTROPIC</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#sgio.model.ElasticInputType.LAMINA"><code class="docutils literal notranslate"><span class="pre">ElasticInputType.LAMINA</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#sgio.model.ElasticInputType.ORTHOTROPIC"><code class="docutils literal notranslate"><span class="pre">ElasticInputType.ORTHOTROPIC</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#sgio.model.ElasticInputType.STIFFNESS"><code class="docutils literal notranslate"><span class="pre">ElasticInputType.STIFFNESS</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#sgio.model.ElasticInputType.TRANSVERSE_ISOTROPIC"><code class="docutils literal notranslate"><span class="pre">ElasticInputType.TRANSVERSE_ISOTROPIC</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sgio.model.MatrixKind"><code class="docutils literal notranslate"><span class="pre">MatrixKind</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#sgio.model.MatrixKind.COMPLIANCE"><code class="docutils literal notranslate"><span class="pre">MatrixKind.COMPLIANCE</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#sgio.model.MatrixKind.STIFFNESS"><code class="docutils literal notranslate"><span class="pre">MatrixKind.STIFFNESS</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sgio.model.SectionMatrixKind"><code class="docutils literal notranslate"><span class="pre">SectionMatrixKind</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#sgio.model.SectionMatrixKind.CLASSICAL_COMPLIANCE"><code class="docutils literal notranslate"><span class="pre">SectionMatrixKind.CLASSICAL_COMPLIANCE</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#sgio.model.SectionMatrixKind.CLASSICAL_STIFFNESS"><code class="docutils literal notranslate"><span class="pre">SectionMatrixKind.CLASSICAL_STIFFNESS</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#sgio.model.SectionMatrixKind.COMPLIANCE"><code class="docutils literal notranslate"><span class="pre">SectionMatrixKind.COMPLIANCE</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#sgio.model.SectionMatrixKind.GEOMETRIC_STIFFNESS"><code class="docutils literal notranslate"><span class="pre">SectionMatrixKind.GEOMETRIC_STIFFNESS</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#sgio.model.SectionMatrixKind.MASS"><code class="docutils literal notranslate"><span class="pre">SectionMatrixKind.MASS</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#sgio.model.SectionMatrixKind.MASS_CENTER"><code class="docutils literal notranslate"><span class="pre">SectionMatrixKind.MASS_CENTER</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#sgio.model.SectionMatrixKind.STIFFNESS"><code class="docutils literal notranslate"><span class="pre">SectionMatrixKind.STIFFNESS</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sgio.model.SectionAxis"><code class="docutils literal notranslate"><span class="pre">SectionAxis</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#sgio.model.SectionAxis.BENDING"><code class="docutils literal notranslate"><span class="pre">SectionAxis.BENDING</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#sgio.model.SectionAxis.INERTIAL"><code class="docutils literal notranslate"><span class="pre">SectionAxis.INERTIAL</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#sgio.model.SectionAxis.SHEAR"><code class="docutils literal notranslate"><span class="pre">SectionAxis.SHEAR</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sgio.model.SectionCenter"><code class="docutils literal notranslate"><span class="pre">SectionCenter</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#sgio.model.SectionCenter.MASS"><code class="docutils literal notranslate"><span class="pre">SectionCenter.MASS</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#sgio.model.SectionCenter.SHEAR"><code class="docutils literal notranslate"><span class="pre">SectionCenter.SHEAR</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#sgio.model.SectionCenter.TENSION"><code class="docutils literal notranslate"><span class="pre">SectionCenter.TENSION</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sgio.model.LocationType"><code class="docutils literal notranslate"><span class="pre">LocationType</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#sgio.model.LocationType.ELEMENT"><code class="docutils literal notranslate"><span class="pre">LocationType.ELEMENT</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#sgio.model.LocationType.ELEMENT_NODE"><code class="docutils literal notranslate"><span class="pre">LocationType.ELEMENT_NODE</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#sgio.model.LocationType.NODE"><code class="docutils literal notranslate"><span class="pre">LocationType.NODE</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#helper-functions">Helper Functions</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sgio.model.getModelDim"><code class="docutils literal notranslate"><span class="pre">getModelDim()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../../_sources/ref/model/constitutive.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=a95f357e85573c9b56d5"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=a95f357e85573c9b56d5"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2026, su tian.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.19.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

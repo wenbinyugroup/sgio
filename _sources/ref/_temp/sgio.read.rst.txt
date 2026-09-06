@@ -1,0 +1,6 @@
+﻿sgio.read
+=========
+
+.. currentmodule:: sgio
+
+.. autofunction:: read

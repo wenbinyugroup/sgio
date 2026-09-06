@@ -1,0 +1,6 @@
+﻿sgio.plot\_sg\_plotly
+=====================
+
+.. currentmodule:: sgio
+
+.. autofunction:: plot_sg_plotly

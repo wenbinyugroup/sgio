@@ -1,0 +1,6 @@
+﻿sgio.section\_model\_to\_record
+===============================
+
+.. currentmodule:: sgio
+
+.. autofunction:: section_model_to_record

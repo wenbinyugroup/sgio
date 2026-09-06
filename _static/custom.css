@@ -1,0 +1,5 @@
+:root {
+    --pst-font-size-base: 16px;
+    --pst-font-family-base: Inter, Roboto, 'Helvetica Neue', 'Arial Nova', 'Nimbus Sans', Arial, sans-serif;
+    --pst-font-family-monospace: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, 'DejaVu Sans Mono', monospace;
+}

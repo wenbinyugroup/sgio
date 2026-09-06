@@ -1,0 +1,6 @@
+﻿sgio.plot\_matrix\_bar3d
+========================
+
+.. currentmodule:: sgio
+
+.. autofunction:: plot_matrix_bar3d

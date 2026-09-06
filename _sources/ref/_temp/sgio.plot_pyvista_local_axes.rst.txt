@@ -1,0 +1,6 @@
+﻿sgio.plot\_pyvista\_local\_axes
+===============================
+
+.. currentmodule:: sgio
+
+.. autofunction:: plot_pyvista_local_axes

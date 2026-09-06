@@ -1,0 +1,6 @@
+﻿sgio.merge\_sections
+====================
+
+.. currentmodule:: sgio
+
+.. autofunction:: merge_sections
