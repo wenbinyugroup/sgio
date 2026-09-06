@@ -39,6 +39,7 @@ extensions = [
     'myst_parser',
     'sphinx_design',
     'sphinx_copybutton',
+    'sphinxcontrib.mermaid',
     # 'sphinx_immaterial',
     'sphinx.ext.autodoc',
     'sphinx.ext.autosummary',

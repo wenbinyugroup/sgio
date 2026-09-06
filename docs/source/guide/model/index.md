@@ -1,6 +1,9 @@
 (guide_model)=
 # Material and Structural Models
 
+The `model_type` argument selects how a mesh is interpreted by the solver. Each
+page below describes the kinematics and constitutive relation of one model.
+
 ```{toctree}
 :hidden:
 
@@ -11,23 +14,12 @@ bm_euler
 bm_timoshenko
 ```
 
-## Solid (SD)
+| Tag | Model | Kind |
+|---|---|---|
+| `SD1` | [](sd_cauchy.md) | solid |
+| `PL1` | [](pl_kirchhoff.md) | plate / shell |
+| `PL2` | [](pl_reissner.md) | plate / shell |
+| `BM1` | [](bm_euler.md) | beam |
+| `BM2` | [](bm_timoshenko.md) | beam |
 
-| Tag | Model |
-|---|---|
-| SD1 | [](sd_cauchy.md) |
-
-
-## Plate and shell (PL)
-
-| Tag | Model |
-|---|---|
-| PL1 | [](pl_kirchhoff.md) |
-| PL2 | [](pl_reissner.md) |
-
-## Beam (BM)
-
-| Tag | Model |
-|---|---|
-| BM1 | [](bm_euler.md) |
-| BM2 | [](bm_timoshenko.md) |
+Which formats accept which models is listed in {doc}`/ref/formats`.

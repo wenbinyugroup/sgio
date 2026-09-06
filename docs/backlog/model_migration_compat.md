@@ -1,4 +1,4 @@
-(guide_model_migration_compat)=
+
 # Model Compatibility Migration Guide
 
 The `sgio.model` refactor keeps a temporary compatibility layer so existing

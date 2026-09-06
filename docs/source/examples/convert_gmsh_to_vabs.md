@@ -9,7 +9,7 @@ mesh.
 ## Solution
 
 The example uses the **SG-on-Gmsh bundle** convention, which keeps the three
-concerns in separate files (see {doc}`/guide/sg_on_gmsh_spec`):
+concerns in separate files (see {doc}`/ref/sg_on_gmsh`):
 
 - `sg21_box_quad4_min_gmsh41.msh` — the section mesh and its physical groups
 - `sections.json` — section and material payloads

@@ -1,6 +1,9 @@
 (guide_model_bm_timoshenko)=
 # Timoshenko Beam Model
 
+`BM2`. Includes transverse shear deformation, so the sectional constitutive
+relation is 6x6.
+
 ## Inertial
 
 ```{math}
@@ -15,8 +18,6 @@
 ```
 
 ## Stiffness
-
-Constitutive relation:
 
 ```{math}
 \begin{Bmatrix}
@@ -34,6 +35,8 @@ C^b_{16} & C^b_{26} & C^b_{36} & C^b_{46} & C^b_{56} & C^b_{66} \\
 \gamma_{11} \\ \gamma_{12} \\ \gamma_{13} \\ \kappa_{11} \\ \kappa_{12} \\ \kappa_{13}
 \end{Bmatrix}
 ```
+
+## Compliance
 
 ```{math}
 \begin{Bmatrix}

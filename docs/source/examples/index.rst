@@ -1,6 +1,9 @@
 Examples
 ========
 
+Each example is a self-contained folder under ``examples/`` in the repository,
+with a runnable ``run.py`` and its input files.
+
 Format conversion
 -----------------
 
@@ -24,10 +27,17 @@ Reading input and output
     read_vabs_output_h
     read_vabs_output_d
     read_sc_output_state
+
+Materials
+---------
+
+..  toctree::
+    :maxdepth: 1
+
     load_cauchy_material_from_json
 
-Visualization
--------------
+Visualization and export
+------------------------
 
 ..  toctree::
     :maxdepth: 1
@@ -36,8 +46,8 @@ Visualization
     plot_css_3d
     preview_sg_mesh
     plot_abaqus_local_csys
-    export_sg_mesh_to_vtu
     merge_section_meshes
+    export_sg_mesh_to_vtu
     view_css_fi_paraview
 
 .. Multiscale workflows
