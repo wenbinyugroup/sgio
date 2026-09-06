@@ -14,3 +14,4 @@ sphinx-gallery
 sphinx-immaterial
 sphinx-prompt
 sphinx-sitemap
+sphinxcontrib-mermaid
