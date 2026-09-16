@@ -115,3 +115,114 @@ class TestSGManifestErrors:
     def test_argument_disagreeing_with_manifest(self, argument):
         with pytest.raises(ValueError, match='disagrees'):
             sgio.read(str(MANIFEST), 'sg_manifest', **argument)
+
+
+@pytest.fixture(scope='module')
+def lam_sg():
+    """Structure gene read from the Abaqus fixture manifest."""
+    return sgio.read(str(MANIFEST), 'sg_manifest')
+
+
+def _write_solver_manifest(sg, tmp_path, fmt, suffix):
+    """Write an SG manifest with a solver model file and return the manifest path."""
+    manifest = tmp_path / f'lam-{fmt}.sg.json'
+    sgio.write(
+        sg, str(manifest), 'sg_manifest',
+        model_file=f'lam.{suffix}', model_file_format=fmt,
+    )
+    return manifest
+
+
+def _edit_manifest(path, **changes):
+    """Rewrite fields of a manifest file in place."""
+    data = json.loads(path.read_text(encoding='utf-8'))
+    data.update(changes)
+    path.write_text(json.dumps(data), encoding='utf-8')
+
+
+@pytest.mark.unit
+class TestSolverManifestRoundTrip:
+    """SwiftComp/VABS model files: write the manifest, read it back."""
+
+    @pytest.mark.parametrize(('fmt', 'suffix'), [('swiftcomp', 'sc'), ('vabs', 'dat')])
+    def test_round_trip_keeps_sg_fields(self, lam_sg, tmp_path, fmt, suffix):
+        manifest = _write_solver_manifest(lam_sg, tmp_path, fmt, suffix)
+
+        sg = sgio.read(str(manifest), 'sg_manifest')
+
+        assert (sg.sgdim, sg.smdim, sg.analysis_config.model) == (2, 1, 0)
+        assert sg.model_space == 'yz'
+        assert (sg.nnodes, sg.nelems, sg.nmates) == (lam_sg.nnodes, lam_sg.nelems, lam_sg.nmates)
+
+    def test_manifest_omits_blocks_owned_by_solver_file(self, lam_sg, tmp_path):
+        manifest = _write_solver_manifest(lam_sg, tmp_path, 'swiftcomp', 'sc')
+
+        data = json.loads(manifest.read_text(encoding='utf-8'))
+
+        assert data == {
+            'sg_manifest_version': 1,
+            'model_file': {'path': 'lam.sc', 'format': 'swiftcomp', 'format_version': '2.1'},
+            'sgdim': 2,
+            'model_type': 'BM1',
+        }
+
+    @pytest.mark.parametrize(
+        ('fmt', 'suffix', 'change', 'match'),
+        [
+            ('swiftcomp', 'sc', {'sgdim': 3}, 'sgdim'),
+            ('swiftcomp', 'sc', {'model_type': 'BM2'}, 'model_type'),
+            ('vabs', 'dat', {'model_type': 'BM2'}, 'model_type'),
+        ],
+    )
+    def test_model_file_header_disagreeing_with_manifest(
+        self, lam_sg, tmp_path, fmt, suffix, change, match
+    ):
+        manifest = _write_solver_manifest(lam_sg, tmp_path, fmt, suffix)
+        _edit_manifest(manifest, **change)
+
+        with pytest.raises(ValueError, match=f'model file {match}'):
+            sgio.read(str(manifest), 'sg_manifest')
+
+    def test_block_owned_by_solver_file(self, lam_sg, tmp_path):
+        manifest = _write_solver_manifest(lam_sg, tmp_path, 'vabs', 'dat')
+        _edit_manifest(manifest, model_space='yz')
+
+        with pytest.raises(ValueError, match='owns'):
+            sgio.read(str(manifest), 'sg_manifest')
+
+    def test_solver_file_requires_format_version(self, lam_sg, tmp_path):
+        manifest = _write_solver_manifest(lam_sg, tmp_path, 'vabs', 'dat')
+        _edit_manifest(manifest, model_file={'path': 'lam.dat', 'format': 'vabs'})
+
+        with pytest.raises(IncompleteModelDataError, match='format_version'):
+            sgio.read(str(manifest), 'sg_manifest')
+
+
+@pytest.mark.unit
+class TestWriteSGManifestErrors:
+    """Invalid manifest write requests fail before any file is written."""
+
+    @pytest.mark.parametrize(
+        ('arguments', 'match'),
+        [
+            ({'model_file_format': 'sc'}, 'model_file'),
+            ({'model_file': 'lam.sc'}, 'model_file_format'),
+            ({'model_file': 'lam.inp', 'model_file_format': 'abaqus'}, 'not supported'),
+            ({'model_file': 'lam.sc', 'model_file_format': 'sc', 'model_type': 'PL1'},
+             'disagrees'),
+        ],
+    )
+    def test_invalid_request(self, lam_sg, tmp_path, arguments, match):
+        manifest = tmp_path / 'lam.sg.json'
+
+        with pytest.raises(ValueError, match=match):
+            sgio.write(lam_sg, str(manifest), 'sg_manifest', **arguments)
+
+        assert list(tmp_path.iterdir()) == []
+
+    def test_absolute_model_file(self, lam_sg, tmp_path):
+        with pytest.raises(ValueError, match='relative'):
+            sgio.write(
+                lam_sg, str(tmp_path / 'lam.sg.json'), 'sg_manifest',
+                model_file=str(tmp_path / 'lam.sc'), model_file_format='sc',
+            )

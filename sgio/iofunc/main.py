@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import logging
+from pathlib import Path
 
 import sgio.iofunc.swiftcomp as _swiftcomp
 import sgio.iofunc.vabs as _vabs
@@ -9,6 +10,7 @@ from sgio._exceptions import IncompleteModelDataError
 from sgio.core import FEModel, StructureGene
 
 from .base import get_format_registry
+from .sg_manifest import WRITABLE_MODEL_FILE_FORMATS, model_type_of, write_sg_manifest
 from ._mesh_convert import (
     mesh_to_sg as _mesh_to_sg,
     parse_model_type as _parse_model_type,
@@ -420,9 +422,9 @@ def write(
     sg: StructureGene, filename: str, file_format: str,
     format_version: str = '', analysis: str = 'h', sg_format: int = 1,
     prop_ref_y: str = 'x',
-    macro_responses: list[sgmodel.StateCase] | None = None, model_type: str = 'SD1',
+    macro_responses: list[sgmodel.StateCase] | None = None, model_type: str | None = None,
     load_type: int = 0, sfi: str = '8d', sff: str = '20.12e', mesh_only: bool = False,
-    binary: bool = False
+    binary: bool = False, model_file: str | None = None, model_file_format: str | None = None,
 ) -> str:
     """Write analysis input.
 
@@ -434,9 +436,11 @@ def write(
         Name of the input file.
     file_format : str
         Format of the SG data file.
-        Choose one from 'vabs', 'sc', 'swiftcomp', 'gmsh', 'vtk', or 'vtu'.
+        Choose one from 'vabs', 'sc', 'swiftcomp', 'gmsh', 'vtk', 'vtu', or
+        'sg_manifest'.
     format_version : str, optional
-        Version of the format. Default is ``''``.
+        Version of the format; for 'sg_manifest', of the model file format.
+        Default is ``''`` (the writer's default version).
     analysis : str, optional
         Indicator of SG analysis.
         Default is ``'h'``.
@@ -452,7 +456,8 @@ def write(
     macro_responses : list[StateCase], optional
         Macroscopic responses. Default is ``None`` (treated as empty).
     model_type : str, optional
-        Type of the macro structural model. Default is ``'SD1'``.
+        Type of the macro structural model. Defaults to the model type of
+        ``sg``; for 'sg_manifest' it must agree with it.
     load_type : int, optional
         Type of the load. Default is 0.
     sfi : str, optional
@@ -463,6 +468,11 @@ def write(
         If True, write meshing data only. Default is False.
     binary : bool, optional
         For Gmsh output, write binary instead of ASCII. Default is False.
+    model_file : str, optional
+        For 'sg_manifest': path of the model file relative to the manifest
+        directory. The model file is written too.
+    model_file_format : str, optional
+        For 'sg_manifest': format of the model file ('vabs' or 'swiftcomp').
 
     Returns
     -------
@@ -482,6 +492,15 @@ def write(
 
     registry = get_format_registry()
     canonical_format = registry.normalize(file_format)
+
+    if canonical_format == 'sg_manifest':
+        return _write_manifest_and_model_file(
+            sg, filename, model_file, model_file_format, model_type,
+            format_version=format_version, analysis=analysis, sg_format=sg_format,
+            prop_ref_y=prop_ref_y, macro_responses=macro_responses, load_type=load_type,
+            sfi=sfi, sff=sff, mesh_only=mesh_only, binary=binary,
+        )
+
     writer = registry.get_writer(canonical_format)
 
     # Formats other than SG-specific solvers (VABS / SwiftComp) get mesh-only
@@ -491,6 +510,9 @@ def write(
 
     if writer is None:
         raise ValueError(f"Unsupported output format: {file_format}")
+
+    if canonical_format in ('swiftcomp', 'vabs') and model_type is None:
+        model_type = model_type_of(sg)
 
     common_kwargs = dict(
         analysis=analysis,
@@ -522,6 +544,47 @@ def write(
 
     writer.write_input(filename, sg, **common_kwargs)
     return filename
+
+
+def _write_manifest_and_model_file(
+    sg: StructureGene,
+    manifest_path: str,
+    model_file: str | None,
+    model_file_format: str | None,
+    model_type: str | None,
+    **write_kwargs,
+) -> str:
+    """Write a model file and the SG manifest that references it."""
+    if not model_file or not model_file_format:
+        raise ValueError("Writing an SG manifest requires model_file and model_file_format.")
+    if Path(model_file).is_absolute():
+        raise ValueError(
+            f"model_file must be relative to the manifest directory; got {model_file!r}."
+        )
+    if model_type is not None and _parse_model_type(model_type) != _parse_model_type(
+        model_type_of(sg)
+    ):
+        raise ValueError(
+            f"Argument model_type={model_type!r} disagrees with the SG model type "
+            f"{model_type_of(sg)!r}."
+        )
+
+    registry = get_format_registry()
+    fmt = registry.normalize(model_file_format)
+    if fmt not in WRITABLE_MODEL_FILE_FORMATS:
+        raise ValueError(
+            f"Writing an SG manifest with a {fmt!r} model file is not supported; "
+            f"supported: {sorted(WRITABLE_MODEL_FILE_FORMATS)}."
+        )
+    writer = registry.get_writer(fmt)
+    version = write_kwargs.pop('format_version') or getattr(writer, 'default_version', None) or ''
+
+    # The manifest records the model file exactly as written.
+    write(
+        sg, str(Path(manifest_path).parent / model_file), fmt,
+        format_version=version, **write_kwargs,
+    )
+    return write_sg_manifest(sg, manifest_path, model_file, fmt, format_version=version)
 
 
 def convert_file_format(
@@ -632,7 +695,7 @@ def convert_file_format(
         analysis=analysis,
         sg_format=vabs_format_version,
         prop_ref_y=prop_ref_y,
-        model_type=model_type or _model_type_of(sg),
+        model_type=model_type,
         sfi=str_format_int,
         sff=str_format_float,
         mesh_only=mesh_only)
@@ -640,12 +703,6 @@ def convert_file_format(
     logger.info('File format converted.')
 
     return sg
-
-
-def _model_type_of(sg: StructureGene) -> str:
-    """Return the model type string (e.g. 'BM1') of a structure gene."""
-    prefix = {1: 'BM', 2: 'PL', 3: 'SD'}[sg.smdim]
-    return f'{prefix}{sg.analysis_config.model + 1}'
 
 
 # Backward compatibility alias.
