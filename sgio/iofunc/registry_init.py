@@ -28,6 +28,7 @@ from .vabs.adapter import VABSReader, VABSWriter
 from .swiftcomp.adapter import SwiftCompReader, SwiftCompWriter
 from .gmsh.adapter import GmshReader, GmshWriter
 from .abaqus.adapter import AbaqusReader, AbaqusWriter
+from .sg_manifest import SGManifestReader
 from .vtk.adapter import VtkWriter
 
 
@@ -62,6 +63,9 @@ def register_all_formats():
     abaqus_writer = AbaqusWriter()
     registry.register_reader('abaqus', abaqus_reader)
     registry.register_writer('abaqus', abaqus_writer)
+
+    # Register the SG manifest (JSON primary file referencing a model file).
+    registry.register_reader('sg_manifest', SGManifestReader())
 
     # Register write-only VTK mesh-export formats.
     registry.register_writer('vtk', VtkWriter('vtk'))

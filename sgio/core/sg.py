@@ -70,6 +70,9 @@ class StructureGene:
         Dimension of the space containing SG.
     analysis_config : SGAnalysisConfig
         Analysis configuration object.
+    model_space : str
+        Mapping from mesh coordinate axes to SG axes ('x', 'y', 'z' for
+        sgdim=1; 'xy', 'yz', 'zx' for sgdim=2; '' when not given).
     fn_gmsh_msh : str
         File name of the Gmsh mesh file.
     initial_twist : float
@@ -129,6 +132,7 @@ class StructureGene:
         self.sgdim = sgdim
         self.smdim = smdim
         self.spdim = sgdim if spdim is None else spdim
+        self.model_space = ''
 
         self.fn_gmsh_msh = self.name + '.msh'
         self.initial_twist = 0.0

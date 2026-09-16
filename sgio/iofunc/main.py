@@ -100,10 +100,11 @@ def read_output_state(
 def read(
     filename: str,
     file_format: str,
-    model_type: str = 'SD1',
+    model_type: str | None = None,
     format_version: str = '',
-    sgdim: int = 3,
+    sgdim: int | None = None,
     sg: StructureGene | None = None,
+    model_space: str | None = None,
     **kwargs
 ) -> StructureGene:
     """Read SG data file.
@@ -114,9 +115,11 @@ def read(
         Name of the SG data file.
     file_format : str
         Format of the SG data file.
-        Choose one from 'abaqus', 'vabs', 'sc', 'swiftcomp', 'gmsh'.
-    model_type : str
-        Type of the macro structural model.
+        Choose one from 'abaqus', 'vabs', 'sc', 'swiftcomp', 'gmsh',
+        'sg_manifest'.
+    model_type : str, optional
+        Type of the macro structural model. Default is 'SD1', except for
+        'sg_manifest', where it must agree with the manifest when given.
         Choose one from
 
         * 'SD1': Cauchy continuum model
@@ -127,10 +130,14 @@ def read(
     format_version : str, optional
         Version of the format.
     sgdim : int, optional
-        Dimension of the geometry. Default is 3.
+        Dimension of the geometry. Default is 3, except for 'sg_manifest',
+        where it must agree with the manifest when given.
         Choose one from 1, 2, 3.
     sg : StructureGene, optional
         Pre-built structure gene object (if not given, one is constructed).
+    model_space : str, optional
+        Mapping from mesh coordinate axes to SG axes, stored on the SG.
+        For 'sg_manifest', it must agree with the manifest when given.
 
     Returns
     -------
@@ -143,18 +150,31 @@ def read(
     registry = get_format_registry()
     canonical_format = registry.normalize(file_format)
 
+    # The manifest is the authority; caller arguments may only confirm it.
+    if canonical_format == 'sg_manifest':
+        return registry.get_reader(canonical_format).read_input(
+            filename, sgdim=sgdim, model_type=model_type, model_space=model_space,
+        )
+
+    # Pre-manifest defaults for model files read without a manifest.
+    model_type = 'SD1' if model_type is None else model_type
+    sgdim = 3 if sgdim is None else sgdim
+
     # A Gmsh model is a bundle: the .msh alone is mesh data. When the sidecars
     # are supplied, assemble the full structure gene from them.
     if canonical_format == 'gmsh' and kwargs.get('sections_json') is not None:
         from .gmsh.bundle import read_sg_from_gmsh_bundle
 
-        return read_sg_from_gmsh_bundle(
+        sg = read_sg_from_gmsh_bundle(
             filename,
             kwargs.pop('sections_json'),
             kwargs.pop('config_json', None),
             model_type=model_type,
             format_version=format_version or '4.1',
         )
+        if model_space is not None:
+            sg.model_space = model_space
+        return sg
     reader = registry.get_reader(canonical_format)
     if reader is None:
         if registry.get_writer(canonical_format) is not None:
@@ -193,6 +213,8 @@ def read(
         sg = StructureGene(sgdim=sgdim, smdim=smdim)
         sg.analysis_config.model = submodel
 
+    if model_space is not None:
+        sg.model_space = model_space
     return sg
 
 
@@ -391,7 +413,8 @@ def write(
     sg_format : {0, 1}, optional
         Format for the VABS input. Default is 1.
     model_space : str, optional
-        Macro model space orientation; passed through to solver writer.
+        Mapping from mesh coordinate axes to SG axes. Defaults to
+        ``sg.model_space``; if both are given they must agree.
     prop_ref_y : str, optional
         Reference axis selector for material orientation. Default is ``'x'``.
     macro_responses : list[StateCase], optional
@@ -424,6 +447,13 @@ def write(
         raise ValueError('structure_gene is None')
     if sg.mesh is None:
         raise ValueError('structure_gene.mesh is None')
+
+    if model_space and sg.model_space and model_space != sg.model_space:
+        raise ValueError(
+            f"Argument model_space={model_space!r} disagrees with "
+            f"sg.model_space={sg.model_space!r}."
+        )
+    model_space = model_space or sg.model_space
 
     registry = get_format_registry()
     canonical_format = registry.normalize(file_format)
@@ -477,10 +507,10 @@ def convert_file_format(
     file_version_in: str = '',
     file_version_out: str = '',
     analysis: str = 'h',
-    sgdim: int = 3,
-    model_space: str = 'xy',
+    sgdim: int | None = None,
+    model_space: str | None = None,
     prop_ref_y: str = 'x',
-    model_type: str = 'SD1',
+    model_type: str | None = None,
     vabs_format_version: int = 1,
     str_format_int: str = '8d',
     str_format_float: str = '20.12e',
@@ -514,12 +544,15 @@ def convert_file_format(
         * 'h': Homogenization
         * 'd' or 'l': Dehomogenization
         * 'fi': Initial failure indices and strength ratios
-    sgdim : int
-        Dimension of the geometry. Default is 3.
+    sgdim : int, optional
+        Dimension of the geometry. See :func:`read` for the default.
         Choose one from 1, 2, 3.
-    model_type : str
-        Type of the macro structural model.
-        Default is 'SD1'.
+    model_space : str, optional
+        Mapping from mesh coordinate axes to SG axes. Default is 'xy' unless
+        the input is an SG manifest.
+    model_type : str, optional
+        Type of the macro structural model. Default is 'SD1' unless the input
+        is an SG manifest, whose model type is then used.
         Choose one from
 
         * 'SD1': Cauchy continuum model
@@ -553,12 +586,18 @@ def convert_file_format(
     if file_name_out is None:
         raise ValueError("Output file name should not be None.")
 
+    # Pre-manifest defaults for model files read without a manifest.
+    if get_format_registry().normalize(file_format_in) != 'sg_manifest':
+        model_space = 'xy' if model_space is None else model_space
+        model_type = 'SD1' if model_type is None else model_type
+
     sg = read(
         filename=file_name_in,
         file_format=file_format_in,
         model_type=model_type,
         format_version=file_version_in,
         sgdim=sgdim,
+        model_space=model_space,
         mesh_only=mesh_only,
         sections_json=sections_json,
         config_json=config_json)
@@ -573,9 +612,8 @@ def convert_file_format(
         format_version=file_version_out,
         analysis=analysis,
         sg_format=vabs_format_version,
-        model_space=model_space,
         prop_ref_y=prop_ref_y,
-        model_type=model_type,
+        model_type=model_type or _model_type_of(sg),
         sfi=str_format_int,
         sff=str_format_float,
         mesh_only=mesh_only)
@@ -583,6 +621,12 @@ def convert_file_format(
     logger.info('File format converted.')
 
     return sg
+
+
+def _model_type_of(sg: StructureGene) -> str:
+    """Return the model type string (e.g. 'BM1') of a structure gene."""
+    prefix = {1: 'BM', 2: 'PL', 3: 'SD'}[sg.smdim]
+    return f'{prefix}{sg.analysis_config.model + 1}'
 
 
 # Backward compatibility alias.
