@@ -251,12 +251,10 @@ def write_merged_sections(
         sgdim = write_kwargs.pop("sgdim", None)
         if sgdim is None:
             sgdim = merged_mesh.cells[0].dim if merged_mesh.cells else 2
-        if "model_space" not in write_kwargs:
-            if sgdim == 1:
-                write_kwargs["model_space"] = "x"
-            elif sgdim == 2:
-                write_kwargs["model_space"] = "xy"
+        default_model_space = {1: "x", 2: "xy"}.get(sgdim, "")
+        model_space = write_kwargs.pop("model_space", default_model_space)
         sg = _mesh_to_sg(merged_mesh, sgdim=sgdim, model_type=model_type)
+        sg.model_space = model_space
         written = write(sg=sg, filename=output_path, file_format=output_format, **write_kwargs)
         logger.info("Wrote merged sections to %s", written)
         return written

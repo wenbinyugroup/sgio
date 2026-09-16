@@ -33,9 +33,10 @@ Theory background for each model is in {doc}`/guide/model/index`.
 
 ## Model Space
 
-For a 2D section embedded in 3D coordinates, `model_space` names the plane the
-section lies in: `xy`, `yz`, or `zx`. It controls how section coordinates are
-projected into solver coordinates on write.
+For a 1D or 2D SG embedded in 3D coordinates, `model_space` names the mesh axes
+the SG lies along: `x`/`y`/`z` or `xy`/`yz`/`zx`. It is given when reading and
+stored on the SG as `sg.model_space`; writers project coordinates from it. VABS
+and SwiftComp inputs define it themselves (`yz` for 2D, `z` for 1D).
 
 ## Conversion Matrix
 

@@ -118,8 +118,8 @@ def read(
         Choose one from 'abaqus', 'vabs', 'sc', 'swiftcomp', 'gmsh',
         'sg_manifest'.
     model_type : str, optional
-        Type of the macro structural model. Default is 'SD1', except for
-        'sg_manifest', where it must agree with the manifest when given.
+        Type of the macro structural model. Required for 'abaqus' and
+        'swiftcomp'; for 'sg_manifest' it must agree with the manifest.
         Choose one from
 
         * 'SD1': Cauchy continuum model
@@ -130,19 +130,26 @@ def read(
     format_version : str, optional
         Version of the format.
     sgdim : int, optional
-        Dimension of the geometry. Default is 3, except for 'sg_manifest',
-        where it must agree with the manifest when given.
+        Dimension of the geometry. Required for 'abaqus'; for 'sg_manifest'
+        it must agree with the manifest.
         Choose one from 1, 2, 3.
     sg : StructureGene, optional
         Pre-built structure gene object (if not given, one is constructed).
     model_space : str, optional
         Mapping from mesh coordinate axes to SG axes, stored on the SG.
-        For 'sg_manifest', it must agree with the manifest when given.
+        Required when the SG is 1D or 2D and the format does not define it
+        ('vabs' and 'swiftcomp' do); for 'sg_manifest' it must agree with the
+        manifest.
 
     Returns
     -------
     StructureGene
         The parsed structure gene object.
+
+    Raises
+    ------
+    IncompleteModelDataError
+        If a required SG argument is missing.
     """
     logger.info('Reading file...')
     logger.debug(locals())
@@ -156,9 +163,15 @@ def read(
             filename, sgdim=sgdim, model_type=model_type, model_space=model_space,
         )
 
-    # Pre-manifest defaults for model files read without a manifest.
-    model_type = 'SD1' if model_type is None else model_type
-    sgdim = 3 if sgdim is None else sgdim
+    given = {'sgdim': sgdim, 'model_type': model_type}
+    missing = [
+        name for name in _REQUIRED_READ_ARGS.get(canonical_format, ()) if given[name] is None
+    ]
+    if missing:
+        raise IncompleteModelDataError(
+            f"Reading {filename} as {canonical_format!r} requires {missing}; "
+            "pass them as arguments or read an SG manifest."
+        )
 
     # A Gmsh model is a bundle: the .msh alone is mesh data. When the sidecars
     # are supplied, assemble the full structure gene from them.
@@ -172,8 +185,7 @@ def read(
             model_type=model_type,
             format_version=format_version or '4.1',
         )
-        if model_space is not None:
-            sg.model_space = model_space
+        _set_model_space(sg, model_space, filename)
         return sg
     reader = registry.get_reader(canonical_format)
     if reader is None:
@@ -186,9 +198,11 @@ def read(
     adapter_kwargs = dict(kwargs)
     if format_version:
         adapter_kwargs.setdefault('format_version', format_version)
-    adapter_kwargs.setdefault('model_type', model_type)
-    adapter_kwargs.setdefault('model', model_type)
-    adapter_kwargs.setdefault('sgdim', sgdim)
+    if model_type is not None:
+        adapter_kwargs.setdefault('model_type', model_type)
+        adapter_kwargs.setdefault('model', model_type)
+    if sgdim is not None:
+        adapter_kwargs.setdefault('sgdim', sgdim)
     result = reader.read_input(filename, **adapter_kwargs)
 
     # SG-specific adapters return ``StructureGene``; mesh-only adapters (Gmsh)
@@ -213,17 +227,38 @@ def read(
         sg = StructureGene(sgdim=sgdim, smdim=smdim)
         sg.analysis_config.model = submodel
 
-    if model_space is not None:
-        sg.model_space = model_space
+    _set_model_space(sg, model_space, filename)
     return sg
+
+
+# SG arguments a model file format cannot supply by itself.
+_REQUIRED_READ_ARGS = {
+    'abaqus': ('sgdim', 'model_type'),
+    'swiftcomp': ('model_type',),
+}
+
+
+def _set_model_space(sg: StructureGene, model_space: str | None, filename: str) -> None:
+    """Store the caller's model space on a freshly read SG; require it when needed."""
+    if model_space is not None:
+        if sg.model_space:
+            raise ValueError(
+                f"{filename} defines model_space={sg.model_space!r}; "
+                "do not pass model_space for this format."
+            )
+        sg.model_space = model_space
+    if sg.sgdim in (1, 2) and not sg.model_space:
+        raise IncompleteModelDataError(
+            f"Reading {filename} as a {sg.sgdim}D SG requires model_space."
+        )
 
 
 def read_fe_model(
     filename: str,
     file_format: str,
-    model_type: str = 'SD1',
+    model_type: str | None = None,
     format_version: str = '',
-    sgdim: int = 3,
+    sgdim: int | None = None,
     **kwargs
 ) -> FEModel:
     """Read an input file and return the generic FE core model.
@@ -243,11 +278,11 @@ def read_fe_model(
         Format of the input file.
         Choose one from 'abaqus', 'vabs', 'sc', 'swiftcomp', 'gmsh'.
     model_type : str, optional
-        Type of the macro structural model. Default is ``'SD1'``.
+        Type of the macro structural model. See :func:`read`.
     format_version : str, optional
         Version of the format.
     sgdim : int, optional
-        Dimension of the geometry. Default is 3.
+        Dimension of the geometry. See :func:`read`.
 
     Returns
     -------
@@ -384,7 +419,7 @@ def read_output(
 def write(
     sg: StructureGene, filename: str, file_format: str,
     format_version: str = '', analysis: str = 'h', sg_format: int = 1,
-    model_space: str = '', prop_ref_y: str = 'x',
+    prop_ref_y: str = 'x',
     macro_responses: list[sgmodel.StateCase] | None = None, model_type: str = 'SD1',
     load_type: int = 0, sfi: str = '8d', sff: str = '20.12e', mesh_only: bool = False,
     binary: bool = False
@@ -412,9 +447,6 @@ def write(
         * 'fi': Initial failure indices and strength ratios
     sg_format : {0, 1}, optional
         Format for the VABS input. Default is 1.
-    model_space : str, optional
-        Mapping from mesh coordinate axes to SG axes. Defaults to
-        ``sg.model_space``; if both are given they must agree.
     prop_ref_y : str, optional
         Reference axis selector for material orientation. Default is ``'x'``.
     macro_responses : list[StateCase], optional
@@ -448,13 +480,6 @@ def write(
     if sg.mesh is None:
         raise ValueError('structure_gene.mesh is None')
 
-    if model_space and sg.model_space and model_space != sg.model_space:
-        raise ValueError(
-            f"Argument model_space={model_space!r} disagrees with "
-            f"sg.model_space={sg.model_space!r}."
-        )
-    model_space = model_space or sg.model_space
-
     registry = get_format_registry()
     canonical_format = registry.normalize(file_format)
     writer = registry.get_writer(canonical_format)
@@ -471,7 +496,7 @@ def write(
         analysis=analysis,
         macro_responses=macro_responses,
         model=model_type,
-        model_space=model_space,
+        model_space=sg.model_space,
         prop_ref_y=prop_ref_y,
         sfi=sfi,
         sff=sff,
@@ -545,14 +570,13 @@ def convert_file_format(
         * 'd' or 'l': Dehomogenization
         * 'fi': Initial failure indices and strength ratios
     sgdim : int, optional
-        Dimension of the geometry. See :func:`read` for the default.
+        Dimension of the geometry. See :func:`read`.
         Choose one from 1, 2, 3.
     model_space : str, optional
-        Mapping from mesh coordinate axes to SG axes. Default is 'xy' unless
-        the input is an SG manifest.
+        Mapping from input mesh coordinate axes to SG axes. See :func:`read`.
     model_type : str, optional
-        Type of the macro structural model. Default is 'SD1' unless the input
-        is an SG manifest, whose model type is then used.
+        Type of the macro structural model. See :func:`read`; when omitted,
+        the model type of the SG that was read is written.
         Choose one from
 
         * 'SD1': Cauchy continuum model
@@ -585,11 +609,6 @@ def convert_file_format(
 
     if file_name_out is None:
         raise ValueError("Output file name should not be None.")
-
-    # Pre-manifest defaults for model files read without a manifest.
-    if get_format_registry().normalize(file_format_in) != 'sg_manifest':
-        model_space = 'xy' if model_space is None else model_space
-        model_type = 'SD1' if model_type is None else model_type
 
     sg = read(
         filename=file_name_in,

@@ -107,7 +107,7 @@ def test_gmsh_xy_section_converts_to_vabs(test_data_dir, temp_dir):
 
     source_sg = read(
         str(src), 'gmsh', format_version='4.1', sgdim=2, model_type='BM2',
-        sections_json=str(sections),
+        model_space='xy', sections_json=str(sections),
     )
 
     convert(
@@ -152,7 +152,7 @@ def test_gmsh_to_vabs_respects_model_space_projection(
 
     source_sg = read(
         str(src), 'gmsh', format_version='4.1', sgdim=2, model_type='BM2',
-        sections_json=str(sections),
+        model_space='xy', sections_json=str(sections),
     )
 
     convert(
@@ -235,12 +235,12 @@ def test_laminate_simple_bundle_to_vabs(test_data_dir, temp_dir):
     )
 
     # --- Write to VABS using xy → yz projection ---------------------------
+    sg.model_space = 'xy'
     write(
         sg=sg,
         filename=str(dst),
         file_format='vabs',
         model_type='BM1',
-        model_space='xy',
     )
 
     # --- Re-read the VABS file and validate the on-disk contract ----------

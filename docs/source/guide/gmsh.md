@@ -85,7 +85,8 @@ sg = sgio.read_sg_from_gmsh_bundle(
     config_json='config.json',
     model_type='BM2',
 )
-sgio.write(sg, 'section.sg', file_format='vabs', model_space='yz')
+sg.model_space = 'yz'
+sgio.write(sg, 'section.sg', file_format='vabs')
 ```
 
 A minimal `sections.json` — one entry per physical group, matched by `name`:

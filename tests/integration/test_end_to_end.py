@@ -78,7 +78,7 @@ def test_build_sg_1d_from_yaml(test_data_dir, legacy_files_dir, tmp_path):
     # Write to output file
     fn_sg = tmp_path / f'{sg_name}.sg'
     try:
-        sgio.write(sg, str(fn_sg), 'sc', format_version=version, model_space='z')
+        sgio.write(sg, str(fn_sg), 'sc', format_version=version)
         assert fn_sg.exists(), "Output file should be created"
     except Exception as e:
         pytest.fail(f"Failed to write SG: {e}")

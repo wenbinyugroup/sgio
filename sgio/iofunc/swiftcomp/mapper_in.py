@@ -16,6 +16,9 @@ def map_input_to_structure_gene(parsed: Mapping[str, Any]) -> StructureGene:
     sg.version = parsed["format_version"]
     sg.smdim = parsed["smdim"]
     sg.sgdim = configs["sgdim"]
+    # Lower-dimensional coordinates are padded at the front, so the SG axes
+    # are the trailing mesh axes.
+    sg.model_space = {1: "z", 2: "yz", 3: ""}[sg.sgdim]
     sg.analysis_config.physics = configs["physics"]
     sg.analysis_config.do_damping = configs.get("do_damping", 0)
     sg.analysis_config.is_temp_nonuniform = configs.get("is_temp_nonuniform", 0)

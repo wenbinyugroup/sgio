@@ -74,6 +74,7 @@ def _model_space_yz_structure_gene() -> "sgio.StructureGene":
         "matrix": sgio.CauchyContinuumModel(name="matrix", e1=1.0, nu12=0.3)
     }
     sg.mocombos[1] = ("matrix", 0.0)
+    sg.model_space = "yz"
     return sg
 
 
@@ -96,6 +97,8 @@ def test_sc_abaqus_conversion(test_data_dir, capsys):
                 _case['ff_in'], _case['ff_out'],
                 file_version_in=_case.get('version_in'),
                 file_version_out=_case.get('version_out'),
+                sgdim=_case.get('sgdim'),
+                model_space=_case.get('model_space'),
                 model_type=_case.get('model'),
             )
 
@@ -129,6 +132,8 @@ def test_convert_to_swiftcomp(test_data_dir, capsys):
                 _case['ff_in'], _case['ff_out'],
                 file_version_in=_case.get('version_in'),
                 file_version_out=_case.get('version_out'),
+                sgdim=_case.get('sgdim'),
+                model_space=_case.get('model_space'),
                 model_type=_case.get('model'),
             )
 
@@ -170,7 +175,6 @@ def test_swiftcomp_roundtrip_preserves_yz_model_space(tmp_path: Path):
         file_format="sc",
         format_version="2.1",
         model_type="PL1",
-        model_space="yz",
     )
     parsed = read(
         str(source),
@@ -185,7 +189,6 @@ def test_swiftcomp_roundtrip_preserves_yz_model_space(tmp_path: Path):
         file_format="sc",
         format_version="2.1",
         model_type="PL1",
-        model_space="yz",
     )
     reparsed = read(
         str(roundtrip),

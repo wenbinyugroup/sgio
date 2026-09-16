@@ -61,15 +61,12 @@ def test_vabs_write_preserves_material_ids_under_shuffled_order(tmp_path: Path):
     }
 
     out_path = tmp_path / "reexport.sg"
-    # model_space only affects node projection, not material numbering, which is
-    # what this test locks.
     sgio.write(
         source_sg,
         str(out_path),
         "vabs",
         format_version="4.0",
         model_type="BM2",
-        model_space="yz",
     )
 
     reread = sgio.read(str(out_path), "vabs", format_version="4.0", model_type="BM2")

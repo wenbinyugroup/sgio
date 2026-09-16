@@ -85,6 +85,12 @@ def test_cli_convert(fn_test_cases, test_data_dir, tmp_path, capsys):
                 cmd.append('-tfv')
                 cmd.append(_case['version_out'])
 
+            if 'sgdim' in _case:
+                cmd.extend(['-d', str(_case['sgdim'])])
+
+            if 'model_space' in _case:
+                cmd.extend(['-ms', _case['model_space']])
+
             if 'model' in _case:
                 cmd.append('-m')
                 cmd.append(_case['model'])

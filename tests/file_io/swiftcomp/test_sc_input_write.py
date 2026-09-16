@@ -58,7 +58,9 @@ def test_write_sc_pl1_from_abaqus(test_data_dir, expected_data_dir, temp_dir):
         pytest.skip(f'Expected file not found: {fn_expected}')
 
     # Read Abaqus model
-    sg = sgio.read(str(fn_in), file_format='abaqus', sgdim=2)
+    sg = sgio.read(
+        str(fn_in), file_format='abaqus', sgdim=2, model_type='pl1', model_space='xy'
+    )
 
     # Configure plate-specific parameters
     sg.initial_curvature = [1, 2]
@@ -66,7 +68,7 @@ def test_write_sc_pl1_from_abaqus(test_data_dir, expected_data_dir, temp_dir):
 
     # Write to SwiftComp format
     fn_out = str(temp_dir / 'sg2_min.sc')
-    sgio.write(sg, filename=fn_out, file_format='sc', model_type='pl1', model_space='xy')
+    sgio.write(sg, filename=fn_out, file_format='sc', model_type='pl1')
 
     # Load both outputs for comparison
     actual = Path(fn_out).read_text()

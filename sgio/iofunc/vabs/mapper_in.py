@@ -31,6 +31,8 @@ def map_input_to_structure_gene(parsed: Mapping[str, Any]) -> StructureGene:
     sg.version = parsed["format_version"]
     sg.smdim = DEFAULT_SMDIM
     sg.sgdim = configs["sgdim"]
+    # VABS cross-section coordinates are read into the y-z plane.
+    sg.model_space = "yz"
     sg.analysis_config.physics = configs["physics"]
     sg.analysis_config.do_damping = configs.get("do_damping", 0)
     sg.analysis_config.is_temp_nonuniform = configs.get("is_temp_nonuniform", 0)

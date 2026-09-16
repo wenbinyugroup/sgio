@@ -109,6 +109,7 @@ def test_vabs_to_gmsh_to_vabs_roundtrip(test_data_dir, temp_dir):
             file_version_in=_case.get('version_in', ''),
             file_version_out=_case.get('version_out', ''),
             model_type=_case.get('model', 'SD1'),
+            model_space=_case.get('model_space'),
             sections_json=str(Path(fn_in).with_suffix('.sections.json')),
         )
 

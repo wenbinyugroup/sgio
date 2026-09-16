@@ -3,6 +3,8 @@
   fn_out: 'sg2_airfoil_vabs41.dat'
   ff_out: 'vabs'
   version_out: '4.1'
+  sgdim: 2
+  model_space: 'xy'
   model: 'BM2'
   solver: 'vabs'
 - fn_in: 'abaqus/sg2_airfoil.inp'
@@ -10,6 +12,8 @@
   fn_out: 'sg2_airfoil_vabs40.dat'
   ff_out: 'vabs'
   version_out: '4.0'
+  sgdim: 2
+  model_space: 'xy'
   model: 'BM2'
   solver: 'vabs40'
 - fn_in: 'abaqus/sg2_i_simple_eo1.inp'
@@ -17,6 +21,8 @@
   fn_out: 'sg2_i_simple_eo1_vabs41.dat'
   ff_out: 'vabs'
   version_out: '4.1'
+  sgdim: 2
+  model_space: 'xy'
   model: 'BM2'
   solver: 'vabs'
 - fn_in: 'abaqus/sg2_i_simple_eo2.inp'
@@ -24,5 +30,7 @@
   fn_out: 'sg2_i_simple_eo2_vabs41.dat'
   ff_out: 'vabs'
   version_out: '4.1'
+  sgdim: 2
+  model_space: 'xy'
   model: 'BM2'
   solver: 'vabs'

@@ -53,5 +53,6 @@ Reasons:
   from the manifest.
 - The manifest is registered as an ordinary format (`sg_manifest`), so `read`/`write`/`convert` and
   the CLI handle it; `model_type` is stored as the same string the API takes (e.g. `"BM1"`).
-- `write`/`convert` lose their `model_space` argument and default `sgdim`/`model_space`; `read`
-  gains `model_space`. This removes the silent `xy` projection that collapsed y-z cross-sections.
+- `write` loses its `model_space` argument; `read`/`convert` take `model_space` as read input and
+  lose their `sgdim`/`model_type`/`model_space` defaults. VABS/SwiftComp readers set the model
+  space themselves. This removes the silent `xy` projection that collapsed y-z cross-sections.

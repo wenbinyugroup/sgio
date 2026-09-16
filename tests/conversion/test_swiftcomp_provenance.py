@@ -47,10 +47,7 @@ def test_swiftcomp_write_preserves_material_ids_under_shuffled_order(tmp_path: P
     }
 
     out_path = tmp_path / "reexport.sg"
-    # model_space only affects node projection, not material numbering.
-    sgio.write(
-        source_sg, str(out_path), "swiftcomp", model_type="SD1", model_space="xy"
-    )
+    sgio.write(source_sg, str(out_path), "swiftcomp", model_type="SD1")
 
     reread = sgio.read(str(out_path), "swiftcomp", model_type="SD1")
 

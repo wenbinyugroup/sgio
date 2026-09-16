@@ -71,6 +71,8 @@ def test_vabs_abaqus_conversion(test_data_dir, capsys):
                 _case['ff_in'], _case['ff_out'],
                 file_version_in=_case.get('version_in'),
                 file_version_out=_case.get('version_out'),
+                sgdim=_case.get('sgdim'),
+                model_space=_case.get('model_space'),
                 model_type=_case.get('model'),
             )
 
@@ -102,6 +104,8 @@ def test_convert_to_vabs_v41(test_data_dir, capsys):
                 _case['ff_in'], _case['ff_out'],
                 file_version_in=_case.get('version_in'),
                 file_version_out=_case.get('version_out'),
+                sgdim=_case.get('sgdim'),
+                model_space=_case.get('model_space'),
                 model_type=_case.get('model'),
             )
 
@@ -132,6 +136,8 @@ def test_convert_to_vabs_v40(test_data_dir, capsys):
                 _case['ff_in'], _case['ff_out'],
                 file_version_in=_case.get('version_in'),
                 file_version_out=_case.get('version_out'),
+                sgdim=_case.get('sgdim'),
+                model_space=_case.get('model_space'),
                 model_type=_case.get('model'),
             )
 
@@ -160,6 +166,7 @@ def test_abaqus_2d_discrete_orientation_survives_vabs_conversion(test_data_dir):
             "vabs",
             model_type="BM2",
             sgdim=2,
+            model_space="xy",
         )
 
         roundtrip = read(

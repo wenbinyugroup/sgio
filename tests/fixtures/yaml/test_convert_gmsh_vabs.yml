@@ -4,6 +4,7 @@
   fn_out: 'uh60a_from_gmsh.sg'
   ff_out: 'vabs'
   version_out: '4.1'
+  model_space: 'yz'
   model: 'BM2'
 
 

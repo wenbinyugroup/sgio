@@ -24,7 +24,9 @@ class TestReadFeModel:
         if not ABAQUS_INP.exists():
             pytest.skip(f"Test fixture not found: {ABAQUS_INP}")
 
-        fe = sgio.read_fe_model(str(ABAQUS_INP), "abaqus", model_type="PL1", sgdim=2)
+        fe = sgio.read_fe_model(
+            str(ABAQUS_INP), "abaqus", model_type="PL1", sgdim=2, model_space="xy"
+        )
         assert isinstance(fe, FEModel)
         assert fe.mesh is not None
         assert len(fe.materials) > 0
@@ -34,8 +36,10 @@ class TestReadFeModel:
         if not ABAQUS_INP.exists():
             pytest.skip(f"Test fixture not found: {ABAQUS_INP}")
 
-        fe = sgio.read_fe_model(str(ABAQUS_INP), "abaqus", model_type="PL1", sgdim=2)
-        sg = sgio.read(str(ABAQUS_INP), "abaqus", model_type="PL1", sgdim=2)
+        fe = sgio.read_fe_model(
+            str(ABAQUS_INP), "abaqus", model_type="PL1", sgdim=2, model_space="xy"
+        )
+        sg = sgio.read(str(ABAQUS_INP), "abaqus", model_type="PL1", sgdim=2, model_space="xy")
 
         # read_fe_model is the FE core of what read() returns.
         assert set(fe.materials) == set(sg.materials)

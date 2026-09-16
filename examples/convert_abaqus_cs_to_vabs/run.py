@@ -17,6 +17,7 @@ sg = sgio.convert(
     'abaqus', # Format of the CS data converted from.
     'vabs', # Format of the CS data converted to.
     sgdim=2, # Cross-section mesh lies in a 2D plane.
+    model_space='xy', # The mesh plane is x-y.
     model_type='bm2', # Structural model: Timoshenko.
 )
 

@@ -66,6 +66,8 @@ def build_sg_1d(
     logger.debug(f'building 1D SG: {name}...')
 
     sg = StructureGene(name, 1)
+    # Layer nodes are placed on the z axis below.
+    sg.model_space = 'z'
 
     # Design
     # ----------------------------------------------------------------

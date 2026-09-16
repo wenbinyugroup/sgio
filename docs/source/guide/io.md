@@ -56,8 +56,9 @@ sg = sgio.read(
 ```
 
 `file_format` and `model_type` identifiers are listed in {doc}`/ref/formats`.
-`sgdim` may be omitted when the format implies it — VABS is always 2D — and is
-required for formats that do not, such as a 3D Abaqus solid:
+`sgdim`, `model_type` and, for a 1D/2D SG, `model_space` may be omitted only
+when the format implies them — a VABS file defines all three. Abaqus input
+requires them:
 
 ```python
 sg = sgio.read('cube.inp', file_format='abaqus', model_type='SD1', sgdim=3)

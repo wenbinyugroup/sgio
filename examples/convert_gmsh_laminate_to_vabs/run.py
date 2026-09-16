@@ -25,12 +25,12 @@ print(sg)
 #   gmsh y -> VABS x3
 # With model_space='xy', the writer also picks ``additional_rotation_2`` from
 # the mesh cell data as the per-layer VABS ``theta_3`` (fiber angle).
+sg.model_space = 'xy'
 sgio.write(
     sg=sg,
     filename=str(output_file),
     file_format='vabs',
     model_type='BM1',
-    model_space='xy',
 )
 
 plotter = sgio.plot_sg_pyvista(

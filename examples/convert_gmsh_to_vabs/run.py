@@ -20,12 +20,13 @@ sg = sgio.read_sg_from_gmsh_bundle(
 
 print(sg)
 
+# Map mesh y-z axes to the VABS cross-section axes.
+sg.model_space = 'yz'
 sgio.write(
     sg=sg,
     filename=str(output_file),
     file_format='vabs',
     model_type='BM1',
-    model_space='yz',
 )
 
 plotter = sgio.plot_sg_pyvista(

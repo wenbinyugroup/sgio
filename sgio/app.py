@@ -191,14 +191,14 @@ def cli(*args: str) -> None:
         help='Analysis type (h=homogenization, d=dehomogenization, fi=failure).'
     )
     parser.add_argument(
-        '-d', '--sgdim', type=int, default=2,
+        '-d', '--sgdim', type=int,
         choices=[1, 2, 3],
-        help='SG dimension (SwiftComp only).'
+        help='SG dimension (required for Abaqus input).'
     )
     parser.add_argument(
-        '-ms', '--model-space', type=case_insensitive_string, default='xy',
+        '-ms', '--model-space', type=case_insensitive_string,
         choices=['x', 'y', 'z', 'xy', 'yz', 'zx'],
-        help='Model space.'
+        help='Mapping from input mesh axes to SG axes (required for 1D/2D Abaqus/Gmsh input).'
     )
     parser.add_argument(
         '-mry', '--material-ref-y', type=case_insensitive_string, default='x',
@@ -206,9 +206,9 @@ def cli(*args: str) -> None:
         help='Axis used as the material reference y-axis.'
     )
     parser.add_argument(
-        '-m', '--model', type=case_insensitive_string, default='bm2',
+        '-m', '--model', type=case_insensitive_string,
         choices=['sd1', 'pl1', 'pl2', 'bm1', 'bm2'],
-        help='CS/SG model type.'
+        help='CS/SG model type (required for Abaqus/SwiftComp input).'
     )
     parser.add_argument(
         '-mo', '--mesh-only', action='store_true',
@@ -287,10 +287,10 @@ def main(command: str, **kwargs: Any) -> None:
                 file_version_in=kwargs.get('from_format_version') or '',
                 file_version_out=kwargs.get('to_format_version') or '',
                 analysis=kwargs.get('analysis', 'h'),
-                sgdim=kwargs.get('sgdim', 2),
-                model_space=kwargs.get('model_space', 'xy'),
+                sgdim=kwargs.get('sgdim'),
+                model_space=kwargs.get('model_space'),
                 prop_ref_y=kwargs.get('material_ref_y', 'x'),
-                model_type=kwargs.get('model', 'bm2'),
+                model_type=kwargs.get('model'),
                 mesh_only=kwargs.get('mesh_only', False),
             )
             
