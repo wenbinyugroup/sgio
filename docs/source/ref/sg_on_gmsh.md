@@ -4,19 +4,18 @@
 Normative specification for SG-oriented Gmsh serialization in `sgio`.
 For the authoring workflow, see {doc}`/guide/gmsh`.
 
-## Bundle Layout
+## Files
 
 | File | Holds |
 |---|---|
-| `main.msh` | mesh topology, geometry, element-wise fields |
-| `sections.json` | section and material payloads |
-| `config.json` | SG analysis configuration |
+| `*.msh` (model file) | mesh topology, geometry, element-wise fields |
+| `*.sg.json` ({doc}`SG manifest <sg_manifest>`) | `sgdim`, model type, model space, analysis configuration, materials, sections |
 
 Design goals: lossless `vabs -> gmsh -> vabs` and `gmsh -> vabs -> gmsh`
 round-trips for supported data, SwiftComp-oriented SG data, and strict
-separation between mesh data, SG semantics, and sidecar payloads.
+separation between mesh data and SG semantics.
 
-## `main.msh`
+## The `.msh` Model File
 
 Carries only data strongly bound to mesh topology, geometry, or element-wise
 fields.
@@ -29,7 +28,7 @@ fields.
 | `$ElementData "additional_rotation_1/2/3"` | per-element additional rotations |
 | `$ElementData "property_ref_csys"`, `"property_ref_axis_y1/y2/y3"` | compatibility and inspection fields |
 
-`main.msh` is **not** the canonical home of section payloads, analysis
+The `.msh` file is **not** the canonical home of materials, sections, analysis
 configuration, or a `.msh`-level public `property_id`.
 
 ### Semantic chain
@@ -100,62 +99,19 @@ Field names, storage location, and per-element ownership are frozen. Unit,
 positive direction, and composition order remain implementation details, but
 must not collapse back into a single `additional_rotation` field.
 
-## `sections.json`
+## Materials, Sections and Configuration
 
-A section catalog, not a second schema. `payload` reuses the serialization of
-the underlying Python model directly; payload field names must not be renamed
-into a parallel JSON schema.
-
-```json
-{
-  "sections": [
-    {
-      "kind": "material",
-      "theory": "cauchy_continuum",
-      "name": "matrix",
-      "id": 101,
-      "payload": {}
-    }
-  ]
-}
-```
-
-Supported payload models: `sgio.model.solid.CauchyContinuumModel`,
-`sgio.model.beam.EulerBernoulliBeamModel`,
-`sgio.model.beam.TimoshenkoBeamModel`,
-`sgio.model.shell.KirchhoffLovePlateShellModel`,
-`sgio.model.shell.ReissnerMindlinPlateShellModel`.
-
-Identity resolution: match by `name` when a usable name exists, fall back to
-`id` only when the name is absent or unmatched. This applies to both material
-and structure sections.
-
-## `config.json`
-
-Serializes `sgio.core.sg_analysis_config.SGAnalysisConfig` directly at the top
-level. Field names and nesting follow that model, not a separate naming scheme.
-
-```json
-{
-  "analysis": 0,
-  "physics": 0,
-  "model": 0,
-  "geo_correct": false,
-  "do_damping": 0,
-  "is_temp_nonuniform": 0,
-  "force_flag": 0,
-  "steer_flag": 0
-}
-```
+These live in the SG manifest; see {doc}`sg_manifest`. A manifest section
+record matches a physical group by `name`, falling back to `id`.
 
 ## Canonical Ownership
 
 | Concern | Canonical owner |
 |---|---|
-| section identity | `main.msh`: `$PhysicalNames` + `$Entities` + `$Elements` |
-| section name | `main.msh`: `$PhysicalNames` |
-| section payload | `sections.json` |
-| analysis config | `config.json` |
+| section identity | `.msh`: `$PhysicalNames` + `$Entities` + `$Elements` |
+| section name | `.msh`: `$PhysicalNames` |
+| materials and section bindings | SG manifest: `materials`, `sections` |
+| `sgdim`, model type, model space, analysis config | SG manifest |
 | element local coordinate system | `$ElementData "element_local_csys"` |
 | per-element additional rotations | `$ElementData "additional_rotation_1/2/3"` |
 
@@ -163,10 +119,10 @@ level. Field names and nesting follow that model, not a separate naming scheme.
 
 | | VABS 2D | SwiftComp 2D | SwiftComp 3D |
 |---|---|---|---|
-| analysis cells in `main.msh` | 2D | 2D | 3D |
+| analysis cells in the `.msh` | 2D | 2D | 3D |
 | physical entity assignment | surface | surface | volume |
-| `sections.json` payloads | required | required | required |
-| `config.json` | required | required | required |
+| manifest `materials`, `sections` | required | required | required |
+| manifest `model_space` | required | required | — |
 | `element_local_csys` | optional | optional | optional |
 | `additional_rotation_1/2/3` | optional | optional | optional |
 | stable `node_id` / `element_id` | optional | optional | optional |
@@ -175,8 +131,8 @@ level. Field names and nesting follow that model, not a separate naming scheme.
 
 `property_id` is hidden from the external contract. It may exist as an internal
 derived detail, but it is not required by the `.msh` contract, must not appear
-in sidecar schemas or public API contracts, and is not user-facing identity.
+in manifest schemas or public API contracts, and is not user-facing identity.
 
-`$SGLayerDef` and `$SGConfig` are legacy blocks. New writers do not emit them;
-readers still consume them for backward compatibility, and migration maps their
-information into `sections.json` and `config.json`.
+`$SGLayerDef` and `$SGConfig` are legacy blocks. Writers do not emit them and
+reading an SG does not apply them: the manifest is the only source of section
+bindings and configuration.

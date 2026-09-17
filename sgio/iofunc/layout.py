@@ -216,7 +216,8 @@ def write_merged_sections(
     **write_kwargs: Any,
 ) -> str:
     """Write a merged section mesh."""
-    from .main import _mesh_to_sg, write
+    from ._mesh_convert import mesh_to_sg as _mesh_to_sg
+    from .main import write
 
     output_path = str(output_file)
     logger.info("Writing merged sections to %s with output_format=%s", output_path, output_format)

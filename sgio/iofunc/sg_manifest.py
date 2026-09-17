@@ -15,6 +15,11 @@ from typing import Any
 from sgio._exceptions import IncompleteModelDataError
 from sgio.core import SGAnalysisConfig, StructureGene
 
+from ._manifest_sections import (
+    materials_to_records,
+    sections_to_records,
+    structure_gene_from_mesh,
+)
 from ._mesh_convert import parse_model_type
 from .base import BaseFormatReader, get_format_registry
 
@@ -22,21 +27,22 @@ MANIFEST_VERSION = 1
 
 _TOP_LEVEL_KEYS = {
     'sg_manifest_version', 'model_file', 'sgdim', 'model_type', 'model_space',
-    'initial_twist', 'initial_curvature', 'oblique', 'sections', 'config',
+    'initial_twist', 'initial_curvature', 'oblique', 'materials', 'sections', 'config',
 }
 _MODEL_FILE_KEYS = {'path', 'format', 'format_version'}
 _BEAM_GEOMETRY_KEYS = ('initial_twist', 'initial_curvature', 'oblique')
-_SOLVER_OWNED = {'sections', 'config', 'model_space', *_BEAM_GEOMETRY_KEYS}
+_SOLVER_OWNED = {'materials', 'sections', 'config', 'model_space', *_BEAM_GEOMETRY_KEYS}
 
 # Blocks each model file format owns; a manifest must not repeat them.
 _OWNED_BLOCKS: dict[str, set[str]] = {
-    'abaqus': {'sections'},
+    'abaqus': {'materials', 'sections'},
+    'gmsh': set(),
     'swiftcomp': _SOLVER_OWNED,
     'vabs': _SOLVER_OWNED,
 }
 
 # Model file formats sgio can write under a manifest (no Abaqus writer exists).
-WRITABLE_MODEL_FILE_FORMATS = {'swiftcomp', 'vabs'}
+WRITABLE_MODEL_FILE_FORMATS = {'gmsh', 'swiftcomp', 'vabs'}
 
 # Formats whose files come in several versions; the manifest must name one.
 _VERSIONED_FORMATS = {'swiftcomp', 'vabs'}
@@ -123,6 +129,9 @@ def read_sg_manifest(
         read_kwargs['format_version'] = model_file['format_version']
     reader = get_format_registry().get_reader(fmt)
     sg = reader.read_input(str(manifest_path.parent / model_file['path']), **read_kwargs)
+    if not isinstance(sg, StructureGene):
+        # Mesh-only formats get their materials and sections from the manifest.
+        sg = structure_gene_from_mesh(sg, data['sgdim'], data['model_type'], data)
 
     # A model file that encodes sgdim or model type must match the manifest.
     if sg.sgdim != data['sgdim']:
@@ -170,7 +179,7 @@ def write_sg_manifest(
         )
 
     entry: dict[str, Any] = {'path': PurePath(model_file).as_posix(), 'format': model_file_format}
-    if format_version:
+    if model_file_format in _VERSIONED_FORMATS:
         entry['format_version'] = format_version
     data: dict[str, Any] = {
         'sg_manifest_version': MANIFEST_VERSION,
@@ -187,6 +196,10 @@ def write_sg_manifest(
         config = asdict(sg.analysis_config)
         config.pop('model')
         data['config'] = config
+    if 'materials' not in owned:
+        data['materials'] = materials_to_records(sg)
+    if 'sections' not in owned:
+        data['sections'] = sections_to_records(sg)
 
     with Path(manifest_path).open('w', encoding='utf-8') as file:
         json.dump(data, file, indent=2)
@@ -263,6 +276,11 @@ def _check_model_file(model_file: Any, manifest_path: Path) -> None:
     if fmt in _VERSIONED_FORMATS and not model_file.get('format_version'):
         raise IncompleteModelDataError(
             f"{manifest_path}: 'model_file.format_version' is required for {fmt!r}."
+        )
+    if fmt not in _VERSIONED_FORMATS and 'format_version' in model_file:
+        raise ValueError(
+            f"{manifest_path}: 'model_file.format_version' does not apply to {fmt!r}; "
+            "the version is read from the file."
         )
 
 

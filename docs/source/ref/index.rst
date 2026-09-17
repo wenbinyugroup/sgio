@@ -8,6 +8,7 @@ API documentation and normative format contracts.
     :caption: Formats
 
     formats
+    sg_manifest
     sg_on_gmsh
 
 ..  toctree::

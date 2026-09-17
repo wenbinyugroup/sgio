@@ -234,7 +234,7 @@ class IncompleteModelDataError(SGIOError):
     Examples
     --------
     >>> raise IncompleteModelDataError(
-    ...     "Gmsh mesh carries no material data; supply sections.json"
+    ...     "Gmsh mesh carries no material data; read it through an SG manifest"
     ... )
-    IncompleteModelDataError: Gmsh mesh carries no material data; supply sections.json
+    IncompleteModelDataError: Gmsh mesh carries no material data; read it through an SG manifest
     """

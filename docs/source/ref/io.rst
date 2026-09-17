@@ -15,7 +15,6 @@ Reading SG data
 
     read
     read_fe_model
-    read_sg_from_gmsh_bundle
 
 
 Reading analysis output
@@ -39,20 +38,15 @@ Writing and converting SG data
     convert
 
 
-Sections, materials, and configuration
---------------------------------------
+Materials
+---------
 
 ..  autosummary::
     :toctree: _temp
 
-    read_sections_from_json
-    write_sections_to_json
-    read_config_from_json
-    write_config_to_json
     read_material_from_json
     read_materials_from_json
     write_material_to_json
-    section_model_to_record
 
 
 Section layout and merging

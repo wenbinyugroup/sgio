@@ -6,32 +6,21 @@ import sgio
 logging.basicConfig(level=logging.INFO)
 cwd = Path(__file__).resolve().parent
 
-main_msh = cwd / 'laminate_simple.msh'
-sections_json = cwd / 'sections.json'
-config_json = cwd / 'config.json'
+# The SG manifest references laminate_simple.msh and adds what the mesh cannot
+# carry: sgdim, model type, model space, materials and sections.
+manifest = cwd / 'laminate_simple.sg.json'
 output_file = cwd / 'laminate_simple.sg'
 
-sg = sgio.read_sg_from_gmsh_bundle(
-    main_msh=main_msh,
-    sections_json=sections_json,
-    config_json=config_json,
-    model_type='BM1',
-)
+sg = sgio.read(str(manifest), 'sg_manifest')
 
 print(sg)
 
-# Gmsh section lives in the xy plane, so the writer projects:
+# The manifest declares model_space='xy', so the writer projects:
 #   gmsh x -> VABS x2
 #   gmsh y -> VABS x3
-# With model_space='xy', the writer also picks ``additional_rotation_2`` from
-# the mesh cell data as the per-layer VABS ``theta_3`` (fiber angle).
-sg.model_space = 'xy'
-sgio.write(
-    sg=sg,
-    filename=str(output_file),
-    file_format='vabs',
-    model_type='BM1',
-)
+# and picks ``additional_rotation_2`` from the mesh cell data as the per-layer
+# VABS ``theta_3`` (fiber angle).
+sgio.write(sg=sg, filename=str(output_file), file_format='vabs')
 
 plotter = sgio.plot_sg_pyvista(
     sg,

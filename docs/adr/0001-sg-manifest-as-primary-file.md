@@ -47,10 +47,13 @@ Reasons:
   model file's axes map to SG axes. It is stored on the SG; mesh coordinates stay as in the model
   file and writers project them.
 - Overlap is judged per block, never per record. Each model file format declares the blocks it
-  owns (Abaqus: sections; SwiftComp/VABS: sections, config, beam geometry and model space; Gmsh:
-  none). The manifest writer omits owned blocks and the reader rejects them. Ownership is static
+  owns (Abaqus: materials, sections; SwiftComp/VABS: materials, sections, config, beam geometry
+  and model space; Gmsh: none). The manifest writer omits owned blocks and the reader rejects them. Ownership is static
   per format, not probed from file content: an `.inp` without `*Material` cannot take `sections`
   from the manifest.
+- Materials and sections are separate blocks: each material is declared once and sections
+  reference it by name with a layup angle, so sections sharing a material do not duplicate it.
+  Beam/shell section stiffness payloads are not part of version 1; no writer consumed them.
 - The manifest is registered as an ordinary format (`sg_manifest`), so `read`/`write`/`convert` and
   the CLI handle it; `model_type` is stored as the same string the API takes (e.g. `"BM1"`).
 - `write` loses its `model_space` argument; `read`/`convert` take `model_space` as read input and

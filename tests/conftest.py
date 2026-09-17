@@ -121,6 +121,32 @@ def gmsh_test_files(test_data_dir):
     return {'root': test_data_dir / "gmsh"}
 
 
+@pytest.fixture
+def copy_manifest(tmp_path):
+    """Return a function copying an SG manifest and its model file into ``tmp_path``.
+
+    Keyword arguments replace top-level manifest fields; ``None`` removes one.
+    """
+    import json
+
+    def _copy(manifest, name='copy.sg.json', **changes):
+        manifest = Path(manifest)
+        data = json.loads(manifest.read_text(encoding='utf-8'))
+        model_file = data['model_file']['path']
+        shutil.copy(manifest.parent / model_file, tmp_path / Path(model_file).name)
+        data['model_file']['path'] = Path(model_file).name
+        for key, value in changes.items():
+            if value is None:
+                data.pop(key, None)
+            else:
+                data[key] = value
+        path = tmp_path / name
+        path.write_text(json.dumps(data), encoding='utf-8')
+        return path
+
+    return _copy
+
+
 # ============================================================================
 # Sample Data Fixtures
 # ============================================================================

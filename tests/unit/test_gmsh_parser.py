@@ -85,10 +85,9 @@ def test_parse_input_buffer_reads_gmsh40_fixture(gmsh_test_files):
 @pytest.mark.unit
 def test_read_gmsh40_mesh_into_structure_gene(gmsh_test_files):
     """The full read path yields a SG with the expected node/element counts."""
-    fixture = gmsh_test_files["root"] / "sg33_tpms_entities_parse_bug.msh"
-    sections = gmsh_test_files["root"] / "sections_sg33_tpms.json"
+    manifest = gmsh_test_files["root"] / "sg33_tpms_entities_parse_bug.sg.json"
 
-    sg = sgio.read_sg_from_gmsh_bundle(fixture, sections, model_type="SD1")
+    sg = sgio.read(str(manifest), "sg_manifest")
 
     assert sg.nnodes == 10841
     assert sg.nelems == 35288
@@ -115,14 +114,9 @@ def test_gmsh_versions_read_into_the_same_mesh_ir(
     """
     from sgio.core.mesh import SGMesh
 
-    fixture = gmsh_test_files["root"] / fixture_name
+    manifest = gmsh_test_files["root"] / fixture_name.replace(".msh", ".sg.json")
 
-    sg = sgio.read_sg_from_gmsh_bundle(
-        fixture,
-        gmsh_test_files["root"] / "sections_sg33_cube_tetra4.json",
-        model_type="SD1",
-        format_version=format_version,
-    )
+    sg = sgio.read(str(manifest), "sg_manifest")
 
     assert type(sg.mesh) is SGMesh
     assert sg.nnodes == 8

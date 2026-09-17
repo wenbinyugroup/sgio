@@ -1,0 +1,29 @@
+{
+  "sg_manifest_version": 1,
+  "model_file": {
+    "path": "sg33_cube_tetra4_min_gmsh41.msh",
+    "format": "gmsh"
+  },
+  "sgdim": 3,
+  "model_type": "SD1",
+  "materials": [
+    {
+      "name": "matrix",
+      "model": "sd1",
+      "label": "1",
+      "isotropy": 0,
+      "density": 1550.0,
+      "elastic": {
+        "e": 70000000000.0,
+        "nu": 0.33
+      }
+    }
+  ],
+  "sections": [
+    {
+      "name": "matrix",
+      "id": 1,
+      "material": "matrix"
+    }
+  ]
+}

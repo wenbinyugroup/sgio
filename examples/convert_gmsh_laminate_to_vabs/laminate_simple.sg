@@ -1,10 +1,10 @@
        1       1  ! format_flag, nlayer
 
-       1       0       0  ! model_flag, damping_flag, thermal_flag
+       0       0       0  ! model_flag, damping_flag, thermal_flag
 
        0       0       0       0  ! curve_flag, oblique_flag, trapeze_flag, vlasov_flag
 
-      53      53       2  ! nnode, nelem, nmate
+      53      53       1  ! nnode, nelem, nmate
 
        1  0.000000000000e+00  0.000000000000e+00  ! nodal coordinates
        2  1.000000000000e+00  0.000000000000e+00
@@ -168,13 +168,9 @@
       52       1  4.500000000000e+01
       53       1  0.000000000000e+00
 
-       1       2  3.000000000000e+01  ! combination id, material id, in-plane rotation angle
+       1       1  3.000000000000e+01  ! combination id, material id, in-plane rotation angle
 
-       1       0  ! material id, anisotropy
-  2.000000000000e+11  3.000000000000e-01
-  0.000000000000e+00
-
-       2       1  ! material id, anisotropy
+       1       1  ! material id, anisotropy
   1.400000000000e+11  9.000000000000e+09  9.000000000000e+09
   4.500000000000e+09  4.500000000000e+09  3.200000000000e+09
   2.800000000000e-01  2.800000000000e-01  3.300000000000e-01

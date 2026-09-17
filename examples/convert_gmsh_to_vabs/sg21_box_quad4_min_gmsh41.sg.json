@@ -1,0 +1,39 @@
+{
+  "sg_manifest_version": 1,
+  "model_file": {
+    "path": "sg21_box_quad4_min_gmsh41.msh",
+    "format": "gmsh"
+  },
+  "sgdim": 2,
+  "model_type": "BM1",
+  "model_space": "yz",
+  "config": {
+    "analysis": 0,
+    "physics": 0,
+    "geo_correct": false,
+    "do_damping": 0,
+    "is_temp_nonuniform": 0,
+    "force_flag": 0,
+    "steer_flag": 0
+  },
+  "materials": [
+    {
+      "name": "matrix",
+      "model": "sd1",
+      "label": "1",
+      "isotropy": 0,
+      "density": 1000.0,
+      "temperature": 0.0,
+      "elastic": {
+        "e1": 1000000000.0,
+        "nu12": 0.3
+      }
+    }
+  ],
+  "sections": [
+    {
+      "name": "matrix",
+      "material": "matrix"
+    }
+  ]
+}

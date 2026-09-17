@@ -17,6 +17,10 @@ The single file an SG manifest references (`.inp`, `.msh`, `.sc`, `.dat`, ...), 
 its format can express: a mesh, and possibly materials, sections or a full solver input.
 _Avoid_: mesh file, host file, main file, main.msh
 
+**Section**:
+A binding of one mesh region (a physical group or element set) to a material and a layup angle.
+_Avoid_: layer, section payload
+
 **Model space**:
 The mapping from a model file's coordinate axes to the SG axes (e.g. `yz` for a cross-section
 drawn in the y-z plane).

@@ -12,6 +12,7 @@ Lookup tables for the identifiers passed to {func}`sgio.read`,
 | `swiftcomp`, `sc` | 2.1, 2.2 | 1D, 2D, 3D | general structure gene analysis |
 | `abaqus` | — | 2D, 3D | `.inp` import; materials, sets, `*Orientation` |
 | `gmsh` | 2.2, 4.1 | 1D, 2D, 3D | mesh carrier; see {doc}`sg_on_gmsh` |
+| `sg_manifest` | 1 | 1D, 2D, 3D | `*.sg.json` referencing one model file; see {doc}`sg_manifest` |
 | `vtk`, `vtu` | — | any | write only; mesh-only export for ParaView |
 
 Abaqus `*Orientation` support is limited to rectangular systems, defined by
@@ -47,8 +48,8 @@ and SwiftComp inputs define it themselves (`yz` for 2D, `z` for 1D).
 | Abaqus | ✓ | ✓ | ✓ | ✓ |
 | Gmsh | ✓* | ✓* | ✓* | ✓ |
 
-\* Mesh data only unless the sidecar bundle supplies materials; see
-{doc}`sg_on_gmsh`.
+\* Through an SG manifest, which supplies the materials; see
+{doc}`sg_manifest`.
 
 ## Supported Analysis Cells
 

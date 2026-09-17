@@ -20,44 +20,26 @@ from sgio.iofunc._mesh_convert import mesh_to_sg
 
 @pytest.mark.unit
 @pytest.mark.parametrize(
-    ('mesh_name', 'sections_name', 'model_type', 'expected_elements', 'expected_sgdim'),
+    ('manifest_name', 'expected_elements', 'expected_sgdim'),
     [
-        (
-            'sg33_cube_boundary_group_bug_min_gmsh41.msh',
-            'sections_sg33_cube_boundary_group.json',
-            'SD1',
-            24,
-            3,
-        ),
+        ('sg33_cube_boundary_group_bug_min_gmsh41.sg.json', 24, 3),
         # Same situation one dimension down, so a fix cannot be a 3D special case.
-        (
-            'sg22_square_boundary_group_bug_min_gmsh41.msh',
-            'sections_sg22_square_boundary_group.json',
-            'PL1',
-            4,
-            2,
-        ),
+        ('sg22_square_boundary_group_bug_min_gmsh41.sg.json', 4, 2),
     ],
 )
 def test_boundary_group_elements_are_not_sg_elements(
     gmsh_test_files,
-    mesh_name,
-    sections_name,
-    model_type,
+    manifest_name,
     expected_elements,
     expected_sgdim,
 ):
     """The undeclared ``boundary`` group must not add elements or materials."""
     root = gmsh_test_files["root"]
 
-    sg = sgio.read_sg_from_gmsh_bundle(
-        root / mesh_name, root / sections_name, model_type=model_type
-    )
+    sg = sgio.read(str(root / manifest_name), 'sg_manifest')
 
     assert sg.nelems == expected_elements
     assert list(sg.materials) == ['matrix']
-    # sgdim is read off the elements that belong to the gene, not off whichever
-    # cell block happens to come first in the file (here a lower-dim one).
     assert sg.sgdim == expected_sgdim
 
 
@@ -66,11 +48,7 @@ def test_boundary_group_removal_leaves_no_isolated_nodes(gmsh_test_files):
     """Dropping the surface group must not orphan nodes in a conforming mesh."""
     root = gmsh_test_files["root"]
 
-    sg = sgio.read_sg_from_gmsh_bundle(
-        root / 'sg33_cube_boundary_group_bug_min_gmsh41.msh',
-        root / 'sections_sg33_cube_boundary_group.json',
-        model_type='SD1',
-    )
+    sg = sgio.read(str(root / 'sg33_cube_boundary_group_bug_min_gmsh41.sg.json'), 'sg_manifest')
 
     assert sg.nnodes == 14
     # Raises if any node lost every referencing element; all 14 stay referenced.
@@ -152,35 +130,12 @@ def test_reading_a_bare_msh_as_a_structure_gene_is_refused(gmsh_test_files):
 
 
 @pytest.mark.unit
-def test_sections_matching_no_element_are_reported(gmsh_test_files, tmp_path):
+def test_sections_matching_no_element_are_reported(gmsh_test_files, copy_manifest):
     """A section set that matches nothing names the groups the mesh actually has."""
-    import json
-
-    sections_path = tmp_path / "sections.json"
-    sections_path.write_text(
-        json.dumps(
-            {
-                "sections": [
-                    {
-                        "kind": "material",
-                        "theory": "cauchy_continuum",
-                        "name": "absent",
-                        "payload": {
-                            "name": "absent",
-                            "model": "sd1",
-                            "isotropy": 0,
-                            "elastic": {"e": 1.0e9, "nu": 0.3},
-                        },
-                    }
-                ]
-            }
-        ),
-        encoding="utf-8",
+    manifest = copy_manifest(
+        gmsh_test_files["root"] / 'sg33_cube_boundary_group_bug_min_gmsh41.sg.json',
+        sections=[{"name": "absent", "material": "matrix"}],
     )
 
     with pytest.raises(IncompleteModelDataError, match="boundary"):
-        sgio.read_sg_from_gmsh_bundle(
-            gmsh_test_files["root"] / 'sg33_cube_boundary_group_bug_min_gmsh41.msh',
-            sections_path,
-            model_type='SD1',
-        )
+        sgio.read(str(manifest), 'sg_manifest')

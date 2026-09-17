@@ -1,32 +1,28 @@
-# Convert VABS To Gmsh Bundle
+# Convert VABS To Gmsh
 
 ## Problem description
 
-This example exports a VABS cross-section file as a standards-compliant
-SG-on-Gmsh bundle.
+This example exports a VABS cross-section file as a Gmsh mesh together with the
+SG manifest that makes it a complete structure gene.
 
 ## Explaination of the solution
 
-The script reads `cs_box_t_vabs41.sg`, writes the mesh-bound file `main.msh`,
-and then writes:
+The script reads `cs_box_t_vabs41.sg` and writes it with
+`sgio.write(..., 'sg_manifest', model_file='main.msh', model_file_format='gmsh')`,
+which produces:
 
-- `sections.json`
-- `config.json`
-
-with the helper in `examples/_bundle_helpers.py`.
-
-This follows the new rule that:
-
-- `main.msh` contains mesh-bound SG data
-- section/material payloads are externalized to `sections.json`
-- analysis settings are externalized to `config.json`
+- `main.msh` — mesh-bound SG data (nodes, elements, physical groups,
+  element-wise fields)
+- `main.sg.json` — the SG manifest: `sgdim`, model type, model space, analysis
+  configuration, materials, and the sections binding physical groups to
+  materials and layup angles
 
 No legacy `$SGLayerDef` or `$SGConfig` blocks are used.
 
 ## Result
 
-After running the script, you get a SG-on-Gmsh bundle in the example
-directory.
+After running the script, `main.sg.json` and `main.msh` are in the example
+directory. `sgio.read('main.sg.json', 'sg_manifest')` reads them back.
 
 Run it with:
 
@@ -39,7 +35,5 @@ uv run python examples/convert_vabs_to_gmsh/run.py
 - `run.py`
 - `cs_box_t_vabs41.sg`
 - `main.msh`
-- `sections.json`
-- `config.json`
-- `_bundle_helpers.py`
-- `cs_box_t_vabs41.msh` (legacy snapshot kept in the directory, not the new canonical output)
+- `main.sg.json`
+- `cs_box_t_vabs41.msh` (legacy snapshot kept in the directory, not the canonical output)

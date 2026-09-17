@@ -99,12 +99,12 @@ def mesh_to_sg(
         Type of the macro structural model.
     section_names : iterable of str, optional
         Names of the sections/materials known from the model data (for the Gmsh
-        bundle these come from ``sections.json``). When ``None`` the mesh is
+        manifest these come from its ``sections``). When ``None`` the mesh is
         wrapped without any sections -- the mesh-only path, used when a mesh is
         carried to a mesh writer rather than to a solver.
     section_ids : iterable of int, optional
         Section ids, used to resolve groups whose name is unavailable or does
-        not match. Names take precedence, mirroring the bundle's own
+        not match. Names take precedence, mirroring the manifest's
         name-then-id matching.
 
     Returns
@@ -136,43 +136,6 @@ def mesh_to_sg(
     _process_materials_from_mesh(sg, mesh, known_names, known_ids)
 
     return sg
-
-
-def restore_sg_from_mesh_extras(sg: StructureGene, mesh) -> None:
-    """Restore SG layer definitions and config from custom mesh attributes.
-
-    Reads ``mesh.sg_layer_defs`` and ``mesh.sg_configs`` (attached by the Gmsh
-    reader from ``$SGLayerDef`` / ``$SGConfig`` blocks) and repopulates the
-    corresponding StructureGene fields.
-
-    Parameters
-    ----------
-    sg : StructureGene
-        Structure gene object to update.
-    mesh : meshio.Mesh
-        Mesh object that may carry ``sg_layer_defs`` and ``sg_configs``.
-    """
-    sg_layer_defs = getattr(mesh, 'sg_layer_defs', {})
-    if sg_layer_defs:
-        names_by_tag = _build_physical_name_map(mesh)
-        # sg_layer_defs: {layer_id: (mat_id, angle)}
-        # mocombos:      {property_id: (material_name, angle)}
-        for layer_id, (mat_id, angle) in sg_layer_defs.items():
-            mat_name = names_by_tag.get(int(mat_id))
-            if mat_name is None:
-                continue
-            sg.mocombos[layer_id] = (mat_name, angle)
-
-    sg_configs = getattr(mesh, 'sg_configs', {})
-    if sg_configs:
-        if 'sgdim' in sg_configs:
-            sg.sgdim = int(sg_configs['sgdim'])
-        if 'model' in sg_configs:
-            sg.analysis_config.model = int(sg_configs['model'])
-        if 'do_damping' in sg_configs:
-            sg.analysis_config.do_damping = int(sg_configs['do_damping'])
-        if 'thermal' in sg_configs:
-            sg.analysis_config.physics = int(sg_configs['thermal'])
 
 
 def _ensure_mesh_data(mesh: SGMesh) -> None:
@@ -231,7 +194,7 @@ def _section_material_name(tag: int, names_by_tag: dict[int, str]) -> str:
     """Return the section identity for one physical tag.
 
     The physical name is the identity token when present; an id-matched group
-    with no name gets a positional stand-in, which the bundle then overwrites
+    with no name gets a positional stand-in, which the manifest section then overwrites
     with the material the section record actually names.
     """
     return names_by_tag.get(tag, f'section_{tag}')

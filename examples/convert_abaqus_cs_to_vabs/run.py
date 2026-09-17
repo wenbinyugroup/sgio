@@ -1,5 +1,4 @@
 import logging
-import sys
 from pathlib import Path
 
 import sgio
@@ -7,9 +6,6 @@ import sgio
 logging.basicConfig(level=logging.INFO)
 
 cwd = Path(__file__).resolve().parent
-sys.path.insert(0, str(cwd.parent))
-
-from _bundle_helpers import write_gmsh_bundle_sidecars
 
 sg = sgio.convert(
     str(cwd / 'sg2_airfoil.inp'),  # Name of the Abaqus inp file.
@@ -21,17 +17,16 @@ sg = sgio.convert(
     model_type='bm2', # Structural model: Timoshenko.
 )
 
-# Export the converted section to a SG-on-Gmsh bundle for visualization or
-# downstream bundle-based workflows.
+# Export the converted section as a Gmsh mesh with its SG manifest, for
+# visualization or downstream Gmsh-based workflows.
 sgio.write(
     sg=sg,
-    filename=str(cwd / 'main.msh'),
-    file_format='gmsh',
+    filename=str(cwd / 'main.sg.json'),
+    file_format='sg_manifest',
     format_version='4.1',
-    model_type='BM2',
-    binary=False,
+    model_file='main.msh',
+    model_file_format='gmsh',
 )
-write_gmsh_bundle_sidecars(sg, cwd)
 
 plotter = sgio.plot_sg_pyvista(
     sg,

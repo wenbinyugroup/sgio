@@ -12,9 +12,7 @@ from sgio.core import FEModel, StructureGene
 from .base import get_format_registry
 from .sg_manifest import WRITABLE_MODEL_FILE_FORMATS, model_type_of, write_sg_manifest
 from ._mesh_convert import (
-    mesh_to_sg as _mesh_to_sg,
     parse_model_type as _parse_model_type,
-    restore_sg_from_mesh_extras as _restore_sg_from_mesh_extras,
 )
 from ._read_output_swiftcomp import read_swiftcomp_output_state as _read_swiftcomp_output_state
 from ._read_output_vabs import read_vabs_output_state as _read_vabs_output_state
@@ -175,20 +173,6 @@ def read(
             "pass them as arguments or read an SG manifest."
         )
 
-    # A Gmsh model is a bundle: the .msh alone is mesh data. When the sidecars
-    # are supplied, assemble the full structure gene from them.
-    if canonical_format == 'gmsh' and kwargs.get('sections_json') is not None:
-        from .gmsh.bundle import read_sg_from_gmsh_bundle
-
-        sg = read_sg_from_gmsh_bundle(
-            filename,
-            kwargs.pop('sections_json'),
-            kwargs.pop('config_json', None),
-            model_type=model_type,
-            format_version=format_version or '4.1',
-        )
-        _set_model_space(sg, model_space, filename)
-        return sg
     reader = registry.get_reader(canonical_format)
     if reader is None:
         if registry.get_writer(canonical_format) is not None:
@@ -211,14 +195,14 @@ def read(
     # return a raw mesh. A mesh alone does not define a structure gene -- it
     # carries no material data and nothing that says which physical groups are
     # sections -- so rather than inventing either, refuse and say what is
-    # missing. Gmsh models are read through ``read_sg_from_gmsh_bundle``.
+    # missing. Gmsh models are read through an SG manifest.
     if isinstance(result, StructureGene):
         sg = result
     elif result is not None:
         raise IncompleteModelDataError(
             f"{filename} carries mesh data only. Building a structure gene also needs "
-            "section/material data; read the Gmsh bundle with "
-            "sgio.read_sg_from_gmsh_bundle(main_msh, sections_json, config_json)."
+            "material and section data; read an SG manifest that references the mesh "
+            "(file_format='sg_manifest')."
         )
     else:
         sg = None
@@ -603,8 +587,6 @@ def convert_file_format(
     str_format_int: str = '8d',
     str_format_float: str = '20.12e',
     mesh_only: bool = False,
-    sections_json: str | None = None,
-    config_json: str | None = None,
 ) -> StructureGene:
     """Convert the Structure Gene data file format.
 
@@ -655,13 +637,6 @@ def convert_file_format(
         String formating floats, by default '20.12e'
     mesh_only : bool, optional
         If write meshing data only, by default False
-    sections_json : str, optional
-        Path to a ``sections.json`` sidecar. Required when ``file_format_in``
-        is ``'gmsh'``, since a bare ``.msh`` carries mesh data only; see
-        :func:`sgio.iofunc.gmsh.bundle.read_sg_from_gmsh_bundle`.
-    config_json : str, optional
-        Path to a ``config.json`` sidecar carrying the analysis config, used
-        together with ``sections_json`` for the Gmsh bundle path.
     """
 
     logger.info('Converting file format...')
@@ -680,9 +655,7 @@ def convert_file_format(
         format_version=file_version_in,
         sgdim=sgdim,
         model_space=model_space,
-        mesh_only=mesh_only,
-        sections_json=sections_json,
-        config_json=config_json)
+        mesh_only=mesh_only)
 
     if sg is None:
         raise ValueError("Input file is not a valid SG file.")

@@ -130,14 +130,14 @@ def _report(sgdim):
 
 
 
-def thermoelastic_sidecars():
-    """sections.json + config.json that drive the CTE-vector-length defect.
+def thermoelastic_manifest():
+    """SG manifest that drives the CTE-vector-length defect.
 
     One isotropic and one orthotropic material, both carrying a 6-component CTE
     vector and a specific heat, plus physics=1 so the writer emits the thermal
     record at all.
     """
-    sections = {"sections": [
+    materials = [
         _material_record("matrix", 1, isotropy=0, density=1200.0,
                          elastic={"e1": 3.5e9, "nu12": 0.35},
                          cte=[58.0e-6, 58.0e-6, 58.0e-6, 0.0, 0.0, 0.0],
@@ -148,18 +148,25 @@ def thermoelastic_sidecars():
                                   "nu12": 0.2, "nu13": 0.2, "nu23": 0.07},
                          cte=[-0.5e-6, 10.0e-6, 10.0e-6, 0.0, 0.0, 0.0],
                          specific_heat=750.0),
-    ]}
-    config = {"analysis": 0, "physics": 1, "model": 0, "geo_correct": False,
-              "do_damping": 0, "is_temp_nonuniform": 0, "force_flag": 0, "steer_flag": 0}
-    _dump_json(os.path.join(OUT_GMSH, "sections_thermoelastic_cte_bug.json"), sections)
-    _dump_json(os.path.join(OUT_GMSH, "config_thermoelastic.json"), config)
+    ]
+    manifest = {
+        "sg_manifest_version": 1,
+        "model_file": {"path": "sg33_cube_two_materials_min_gmsh41.msh", "format": "gmsh"},
+        "sgdim": 3,
+        "model_type": "SD1",
+        "config": {"analysis": 0, "physics": 1, "geo_correct": False, "do_damping": 0,
+                   "is_temp_nonuniform": 0, "force_flag": 0, "steer_flag": 0},
+        "materials": materials,
+        "sections": [{"name": m["name"], "id": int(m["label"]), "material": m["name"]}
+                     for m in materials],
+    }
+    _dump_json(os.path.join(OUT_GMSH, "sg33_cube_two_materials_min_gmsh41.sg.json"), manifest)
 
 
 def _material_record(name, mat_id, **payload):
     record = {"name": name, "model": "sd1", "label": str(mat_id)}
     record.update(payload)
-    return {"kind": "material", "theory": "cauchy_continuum",
-            "name": name, "id": mat_id, "payload": record}
+    return record
 
 
 def _dump_json(path, data):
@@ -264,5 +271,5 @@ if __name__ == "__main__":
     square_with_boundary_group()
     cube_version_variants()
     cube_two_materials()
-    thermoelastic_sidecars()
+    thermoelastic_manifest()
     abaqus_distribution_input()

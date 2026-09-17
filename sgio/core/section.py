@@ -40,7 +40,7 @@ class Section:
         element in ``mesh.cell_data["property_id"]`` and keys the legacy
         ``mocombos`` view; sections read from a mesh are created from it. It is
         an internal implementation detail, not a user-authored field and not
-        part of the public SG-on-Gmsh serialization contract (the sidecars use
+        part of the public SG manifest contract (manifest sections use
         ``name``/``id``, never ``property_id``). For the id a section carried in
         a specific solver file, use :attr:`source_ids` instead.
     source_ids : dict[str, int], optional

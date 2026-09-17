@@ -1,4 +1,4 @@
-# Convert a Gmsh Laminate Bundle to VABS
+# Convert a Gmsh Laminate Mesh to VABS
 
 ## Problem Description
 
@@ -16,22 +16,23 @@ local coordinate system nor a fiber rotation. A real composite layer needs both:
 
 ## Solution
 
-The bundle consists of:
+The input consists of:
 
 - `laminate_simple.msh` — a single curved ply meshed in the Gmsh `xy` plane,
   carrying `$ElementData "element_local_csys"` (the per-element material frame)
   and `$ElementData "additional_rotation_2"` (30° fiber rotation on every
   element).
-- `sections.json` — one orthotropic carbon-fiber material `mat_1`, bound to the
-  ply physical group by its `label` / `id`.
-- `config.json` — Euler-Bernoulli homogenization setup (`model = 1`).
+- `laminate_simple.sg.json` — the SG manifest: Euler-Bernoulli beam model
+  (`BM1`), model space `xy`, and one orthotropic carbon-fiber material `mat_1`
+  bound to the ply physical group by its `id`.
 
 ```{literalinclude} ../../../examples/convert_gmsh_laminate_to_vabs/run.py
 :language: python
 ```
 
-{func}`sgio.read_sg_from_gmsh_bundle` reads the bundle, and {func}`sgio.write`
-emits VABS input with `model_space='xy'`. The writer then:
+{func}`sgio.read` with `'sg_manifest'` reads the manifest and the mesh, and
+{func}`sgio.write` emits VABS input using the manifest's `model_space='xy'`.
+The writer then:
 
 1. Projects nodes from the Gmsh `xy` plane onto the VABS `yz` plane
    (`gmsh_x → x2`, `gmsh_y → x3`, VABS `x1 = 0`).
@@ -55,6 +56,5 @@ uv run python examples/convert_gmsh_laminate_to_vabs/run.py
 
 - [run.py](../../../examples/convert_gmsh_laminate_to_vabs/run.py): Main Python script
 - [laminate_simple.msh](../../../examples/convert_gmsh_laminate_to_vabs/laminate_simple.msh): Gmsh ply mesh with local csys and rotation data
-- [sections.json](../../../examples/convert_gmsh_laminate_to_vabs/sections.json): Orthotropic material definition
-- [config.json](../../../examples/convert_gmsh_laminate_to_vabs/config.json): Analysis configuration
+- [laminate_simple.sg.json](../../../examples/convert_gmsh_laminate_to_vabs/laminate_simple.sg.json): SG manifest
 - [laminate_simple.sg](../../../examples/convert_gmsh_laminate_to_vabs/laminate_simple.sg): Generated VABS input

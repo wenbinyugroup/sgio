@@ -52,8 +52,8 @@ Fixed in this working tree: `mesh_to_sg` now keeps only the cell blocks whose
 physical group resolves to a declared section, so `boundary` is dropped
 instead of counted. Reading a bare `.msh` with no section data now raises
 `IncompleteModelDataError` rather than fabricating a placeholder material —
-so the snippet above must be called via
-`sgio.read_sg_from_gmsh_bundle(fixture, sections_json=..., model_type="SD1")`
+so the mesh is read through its SG manifest,
+`sgio.read("sg33_cube_boundary_group_bug_min_gmsh41.sg.json", "sg_manifest")`,
 to get `sg.nelems == 24`.
 
 The companion `sg22_square_boundary_group_bug_min_gmsh41.msh` (927 bytes) is
@@ -105,23 +105,18 @@ now wraps meshio's parsed mesh in `SGMesh.from_meshio` and runs the same
 all three format versions of the trio yield the same mesh IR
 (`tests/unit/test_gmsh_parser.py::test_gmsh_versions_read_into_the_same_mesh_ir`).
 
-## `sections_thermoelastic_cte_bug.json` + `config_thermoelastic.json`
+## `sg33_cube_two_materials_min_gmsh41.sg.json`
 
-Use with `sg33_cube_two_materials_min_gmsh41.msh` (23 nodes, `matrix` and
+SG manifest for `sg33_cube_two_materials_min_gmsh41.msh` (23 nodes, `matrix` and
 `fibre` at 24 tetrahedra each), which exists so one write covers an isotropic
 and an orthotropic material at once:
 
 ```python
-sg = sgio.read_sg_from_gmsh_bundle(
-    main_msh=".../sg33_cube_two_materials_min_gmsh41.msh",
-    sections_json=".../sections_thermoelastic_cte_bug.json",
-    config_json=".../config_thermoelastic.json",
-    model_type="SD1")
-sgio.write(sg=sg, filename="out.sg", file_format="sc",
-           format_version="2.1", model_type="SD1")
+sg = sgio.read(".../sg33_cube_two_materials_min_gmsh41.sg.json", "sg_manifest")
+sgio.write(sg=sg, filename="out.sg", file_format="sc", format_version="2.1")
 ```
 
-`config_thermoelastic.json` sets `physics: 1` so the writer emits the thermal
+The manifest `config` sets `physics: 1` so the writer emits the thermal
 record at all. Both materials then get **7 numbers** on that line:
 
 ```

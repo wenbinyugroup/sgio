@@ -4,7 +4,8 @@ A `.msh` file that `sgio` can read is not automatically a `.msh` file that
 becomes a physically correct SG. This page covers what to author in Gmsh, and
 what has to be supplied around it.
 
-The field-level contract is specified in {doc}`/ref/sg_on_gmsh`.
+The field-level contract is specified in {doc}`/ref/sg_on_gmsh` and
+{doc}`/ref/sg_manifest`.
 
 ## What the Mesh Must Carry
 
@@ -14,8 +15,8 @@ The field-level contract is specified in {doc}`/ref/sg_on_gmsh`.
 - a mesh dimension matching the target SG
 
 Material definitions, orientation angles, model choice, and solver flags are
-**not** authored in Gmsh — they are supplied through `sgio` or the sidecar
-files of the SG-on-Gmsh bundle.
+**not** authored in Gmsh — they are supplied by the SG manifest that
+references the mesh.
 
 ## 1. Match the Analysis Dimension
 
@@ -45,96 +46,74 @@ A common failure is partitioning geometry in CAD without carrying the region
 meaning onto the final analysis cells. What matters is the tag on the cells the
 solver will use.
 
-## 3. Supply Materials and Orientation
+## 3. Supply Materials, Orientation and the Section Plane
 
 A bare `.msh` carries no materials, ply angles, model selection, or solver
 flags, so `sgio.read(..., file_format='gmsh')` refuses it:
 
 ```text
 IncompleteModelDataError: ... carries mesh data only. Building a structure
-gene also needs section/material data; read the Gmsh bundle with
-sgio.read_sg_from_gmsh_bundle(main_msh, sections_json, config_json).
+gene also needs material and section data; read an SG manifest that
+references the mesh (file_format='sg_manifest').
 ```
 
-The mesh must travel with two sidecar files. Together the three make an
-**SG-on-Gmsh bundle**:
+The mesh travels with an **SG manifest** (`*.sg.json`) that references it:
 
 ```{mermaid}
 flowchart LR
-    MSH["main.msh<br/><i>nodes, elements<br/>physical groups<br/>element_local_csys</i>"]
-    SEC["sections.json<br/><i>materials, orientations</i>"]
-    CFG["config.json<br/><i>analysis configuration</i>"]
+    MAN["section.sg.json<br/><i>sgdim, model type, model space<br/>materials, sections, config</i>"]
+    MSH["section.msh<br/><i>nodes, elements<br/>physical groups<br/>element_local_csys</i>"]
     SG(["StructureGene"])
     OUT["VABS / SwiftComp<br/>input"]
 
+    MAN -- "model_file" --> MSH
+    MAN --> SG
     MSH --> SG
-    SEC --> SG
-    CFG --> SG
     SG -- "sgio.write" --> OUT
 ```
 
-`sections.json` is required; `config.json` is optional and defaults apply
-without it. The field-level contract is in {doc}`/ref/sg_on_gmsh`.
+A minimal manifest — one material, one section per physical group, matched by
+`name`. A 2D section embedded in 3D coordinates needs `model_space` to say which
+plane it lies in:
+
+```json
+{
+  "sg_manifest_version": 1,
+  "model_file": {"path": "section.msh", "format": "gmsh"},
+  "sgdim": 2,
+  "model_type": "BM2",
+  "model_space": "xy",
+  "materials": [
+    {"name": "glass", "model": "sd1", "isotropy": 0, "elastic": {"e": 50.0e9, "nu": 0.25}}
+  ],
+  "sections": [
+    {"name": "skin", "material": "glass", "orientation": 0.0}
+  ]
+}
+```
+
+The whole conversion is then one call, from Python or the CLI:
 
 ```python
 import sgio
 
-sg = sgio.read_sg_from_gmsh_bundle(
-    main_msh='section.msh',
-    sections_json='sections.json',
-    config_json='config.json',
-    model_type='BM2',
-)
-sg.model_space = 'yz'
-sgio.write(sg, 'section.sg', file_format='vabs')
+sgio.convert('section.sg.json', 'section.sg', 'sg_manifest', 'vabs')
 ```
 
-A minimal `sections.json` — one entry per physical group, matched by `name`:
-
-```json
-[
-  {
-    "name": "skin",
-    "model": "sd1",
-    "isotropy": 0,
-    "density": 1000.0,
-    "elastic": {"e1": 50.0e9, "nu12": 0.25}
-  }
-]
+```bash
+sgio convert section.sg.json section.sg -ff sg_manifest -tf vabs
 ```
 
-When a mesh was written by `sgio` it already carries region tags and
-`element_local_csys`, so the round trip needs no extra authoring beyond the
-sidecars it was exported with.
-
-See {doc}`/examples/convert_gmsh_to_vabs` and
-{doc}`/examples/convert_gmsh_to_sc`.
-
-## 4. Set the Section Plane
-
-A 2D section embedded in 3D coordinates needs `model_space` to say which plane
-it lies in. {func}`sgio.convert` takes the bundle sidecars too, so the whole
-conversion is one call:
+A structure gene read from any format can be written as a Gmsh mesh with its
+manifest, so the round trip needs no hand authoring:
 
 ```python
-sgio.convert(
-    file_name_in='section.msh',
-    file_name_out='section.sg',
-    file_format_in='gmsh',
-    file_format_out='vabs',
-    sections_json='sections.json',
-    config_json='config.json',
-    sgdim=2,
-    model_type='BM2',
-    model_space='xy',
-)
+sgio.write(sg, 'section.sg.json', 'sg_manifest',
+           model_file='section.msh', model_file_format='gmsh')
 ```
 
-```{note}
-The `sgio convert` CLI has no flag for the sidecar files, so Gmsh **input**
-must go through the Python API. The CLI handles Gmsh as an output format
-normally.
-```
+The field-level contract is in {doc}`/ref/sg_manifest`. See
+{doc}`/examples/convert_gmsh_to_vabs` and {doc}`/examples/convert_gmsh_to_sc`.
 
 ## Choosing a Source of Truth
 
@@ -144,7 +123,7 @@ data.
 | Strategy | Use when |
 |---|---|
 | **Solver input is canonical** — CAD + Gmsh for the mesh, `sgio` generates the final VABS/SwiftComp file and that file is kept | simplest and most robust; most workflows |
-| **Bundle is canonical** — `.msh` plus `sections.json` / `config.json` kept together and version-controlled as a unit | mesh generation stays external and you want a Gmsh-centered source of truth |
+| **Manifest is canonical** — `.sg.json` plus its `.msh` kept together and version-controlled as a unit | mesh generation stays external and you want a Gmsh-centered source of truth |
 
 Either way the mesh alone is never the source of truth: materials, orientation,
 model choice, and solver flags live outside it.
@@ -154,20 +133,21 @@ model choice, and solver flags live outside it.
 - mesh dimension matches the intended SG dimension
 - analysis element types supported by the target solver
 - physical groups defined on analysis cells
-- every physical group has a matching record in `sections.json`
-- 2D section plane known and passed through `model_space`
+- every analysis physical group has a matching manifest section
+- 2D section plane known and set as the manifest `model_space`
 - `model_type` matches the intended structural model
 
 ## Typical Failure Modes
 
 | Symptom | Likely cause |
 |---|---|
-| All regions collapse into one material | no physical groups; groups on geometry entities but not on analysis cells; `sections.json` names do not match the physical group names |
+| All regions collapse into one material | no physical groups; groups on geometry entities but not on analysis cells; manifest section names do not match the physical group names |
 | Section orientation is wrong | wrong `model_space` |
 | Mesh looks fine in Gmsh, solver input unusable | unsupported cell types; mixed boundary and analysis entities; wrong `sgdim` / `model_type` |
 
 ## See Also
 
 - {doc}`sg` — what a correct SG must contain
-- {doc}`/ref/sg_on_gmsh` — the normative bundle contract
+- {doc}`/ref/sg_manifest` — the SG manifest contract
+- {doc}`/ref/sg_on_gmsh` — the `.msh` field layout
 - {doc}`convert` — conversion API and CLI

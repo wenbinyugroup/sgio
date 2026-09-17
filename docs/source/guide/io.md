@@ -11,7 +11,7 @@ flowchart LR
         VABS_I["VABS<br/>.sg"]
         SC_I["SwiftComp<br/>.sg"]
         ABQ_I["Abaqus<br/>.inp"]
-        GMSH_I["Gmsh bundle<br/>.msh + .json"]
+        GMSH_I["SG manifest<br/>.sg.json + .msh"]
     end
 
     SG(["StructureGene"])
@@ -28,7 +28,7 @@ flowchart LR
     VABS_I -- "read" --> SG
     SC_I -- "read" --> SG
     ABQ_I -- "read" --> SG
-    GMSH_I -- "read_sg_from_gmsh_bundle" --> SG
+    GMSH_I -- "read" --> SG
 
     SG -- "write" --> VABS_O
     SG -- "write" --> SC_O
@@ -38,7 +38,7 @@ flowchart LR
 ```
 
 VTK and VTU are write-only, mesh-only export targets. A bare `.msh` carries no
-material data, so Gmsh input is read as a bundle — see {doc}`gmsh`.
+material data, so Gmsh input is read through an SG manifest — see {doc}`gmsh`.
 
 {func}`sgio.convert` chains a read and a write in one call; see {doc}`convert`.
 

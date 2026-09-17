@@ -8,17 +8,18 @@ SwiftComp input file for 3D solid homogenization.
 ## Solution
 
 The mesh alone does not carry materials or analysis settings, so the example
-uses the **SG-on-Gmsh bundle** convention: the `.msh` file supplies the mesh and
-physical groups, `sections.json` supplies the section/material payloads, and
-`config.json` supplies the analysis configuration. See
-{doc}`/ref/sg_on_gmsh` for the bundle layout.
+uses an **SG manifest**: `sg33_cube_tetra4_min_gmsh41.sg.json` references the
+`.msh` file and supplies `sgdim`, the model type, the analysis configuration,
+the materials, and the sections that bind physical groups to them. See
+{doc}`/ref/sg_manifest`.
 
 ```{literalinclude} ../../../examples/convert_gmsh_to_sc/run.py
 :language: python
 ```
 
-{func}`sgio.read_sg_from_gmsh_bundle` assembles the three files into a single
-{class}`sgio.StructureGene`, and `model_type='SD1'` selects the 3D solid model.
+{func}`sgio.read` with `'sg_manifest'` assembles the manifest and the mesh into a
+{class}`sgio.StructureGene`; the manifest's `model_type` `SD1` selects the 3D
+solid model.
 {func}`sgio.write` then emits SwiftComp 2.1 input.
 
 ## Result
@@ -29,5 +30,4 @@ A SwiftComp 2.1 input file `sg33_cube_tetra4_min_gmsh41.sg` is written and ready
 
 - [run.py](../../../examples/convert_gmsh_to_sc/run.py): Main Python script
 - [sg33_cube_tetra4_min_gmsh41.msh](../../../examples/convert_gmsh_to_sc/sg33_cube_tetra4_min_gmsh41.msh): Gmsh mesh file
-- [sections.json](../../../examples/convert_gmsh_to_sc/sections.json): Section and material definitions
-- [config.json](../../../examples/convert_gmsh_to_sc/config.json): Analysis configuration
+- [sg33_cube_tetra4_min_gmsh41.sg.json](../../../examples/convert_gmsh_to_sc/sg33_cube_tetra4_min_gmsh41.sg.json): SG manifest

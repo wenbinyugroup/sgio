@@ -118,11 +118,9 @@ def test_swiftcomp_thermal_line_length_matches_isotropy(gmsh_test_files, tmp_pat
     branches. Before the fix both lines carried all 6 CTE components plus
     specific heat, so SwiftComp read specific heat out of the wrong column.
     """
-    sg = sgio.read_sg_from_gmsh_bundle(
-        main_msh=gmsh_test_files["root"] / "sg33_cube_two_materials_min_gmsh41.msh",
-        sections_json=gmsh_test_files["root"] / "sections_thermoelastic_cte_bug.json",
-        config_json=gmsh_test_files["root"] / "config_thermoelastic.json",
-        model_type="SD1",
+    sg = sgio.read(
+        str(gmsh_test_files["root"] / "sg33_cube_two_materials_min_gmsh41.sg.json"),
+        "sg_manifest",
     )
 
     out_file = tmp_path / "thermoelastic.sg"
@@ -136,11 +134,9 @@ def test_swiftcomp_thermal_line_length_matches_isotropy(gmsh_test_files, tmp_pat
 @pytest.mark.unit
 def test_swiftcomp_specific_heat_round_trips(gmsh_test_files, tmp_path):
     """write -> read must reproduce specific_heat and cte exactly, not just avoid raising."""
-    sg = sgio.read_sg_from_gmsh_bundle(
-        main_msh=gmsh_test_files["root"] / "sg33_cube_two_materials_min_gmsh41.msh",
-        sections_json=gmsh_test_files["root"] / "sections_thermoelastic_cte_bug.json",
-        config_json=gmsh_test_files["root"] / "config_thermoelastic.json",
-        model_type="SD1",
+    sg = sgio.read(
+        str(gmsh_test_files["root"] / "sg33_cube_two_materials_min_gmsh41.sg.json"),
+        "sg_manifest",
     )
 
     out_file = tmp_path / "thermoelastic.sg"

@@ -1,27 +1,21 @@
-# Convert Gmsh Bundle To SwiftComp
+# Convert Gmsh Mesh To SwiftComp
 
 ## Problem description
 
 This example starts from an external Gmsh mesh and converts it to a SwiftComp
-input file using the new SG-on-Gmsh bundle convention.
+input file.
 
 ## Explaination of the solution
 
-The example uses three files together:
+A `.msh` file carries only the mesh, so the example uses an SG manifest:
 
-- `sg33_cube_tetra4_min_gmsh41.msh`
-- `sections.json`
-- `config.json`
+- `sg33_cube_tetra4_min_gmsh41.msh` — the mesh and its `matrix` physical group
+- `sg33_cube_tetra4_min_gmsh41.sg.json` — the SG manifest referencing the mesh:
+  `sgdim`, `model_type` (`SD1`), analysis configuration, the `matrix` material,
+  and the section binding the physical group to it
 
-`run.py` assembles them with `sgio.read_sg_from_gmsh_bundle(...)` and then
-writes the result to SwiftComp format.
-
-This replaces the old `materials.json`-only path and matches the current
-standard where:
-
-- mesh-bound data stay in `main.msh`
-- material/section payloads live in `sections.json`
-- analysis configuration lives in `config.json`
+`run.py` reads the manifest with `sgio.read(..., 'sg_manifest')` and writes the
+result to SwiftComp format.
 
 ## Result
 
@@ -37,6 +31,5 @@ uv run python examples/convert_gmsh_to_sc/run.py
 
 - `run.py`
 - `sg33_cube_tetra4_min_gmsh41.msh`
+- `sg33_cube_tetra4_min_gmsh41.sg.json`
 - `sg33_cube_tetra4_min_gmsh41.sg`
-- `sections.json`
-- `config.json`

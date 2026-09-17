@@ -4,12 +4,9 @@ from __future__ import annotations
 
 from io import StringIO
 
-import numpy as np
 import pytest
-from meshio import Mesh
 
 import sgio
-from sgio.iofunc._mesh_convert import mesh_to_sg, restore_sg_from_mesh_extras
 from sgio.iofunc.common import build_material_id_map, write_material_combos
 
 
@@ -106,52 +103,3 @@ def test_build_material_id_map_without_provenance_is_positional():
 
     assert build_material_id_map(materials) == {"a": 1, "b": 2, "c": 3}
     assert build_material_id_map(materials, {}, "vabs") == {"a": 1, "b": 2, "c": 3}
-
-
-@pytest.mark.unit
-def test_restore_sg_from_mesh_extras_uses_mesh_field_names():
-    """Gmsh layer definitions should resolve names from mesh field data."""
-    mesh = Mesh(
-        points=np.array(
-            [[0.0, 0.0, 0.0], [1.0, 0.0, 0.0], [0.0, 1.0, 0.0]],
-            dtype=float,
-        ),
-        cells=[("triangle", np.array([[0, 1, 2]], dtype=int))],
-        cell_data={"property_id": [np.array([5], dtype=int)]},
-        field_data={"matrix": np.array([5, 2], dtype=int)},
-    )
-    mesh.sg_layer_defs = {1: (5, 30.0)}
-    mesh.sg_configs = {"sgdim": 2, "model": 1, "do_damping": 1, "thermal": 1}
-
-    sg = mesh_to_sg(mesh, sgdim=2, model_type="PL1", section_names={"matrix"})
-    restore_sg_from_mesh_extras(sg, mesh)
-
-    assert sg.mocombos[1] == ("matrix", 30.0)
-    # The layer definition binds a name; the material payload itself comes from
-    # the section data, so nothing is fabricated here.
-    assert sg.materials == {}
-    assert sg.analysis_config.model == 1
-    assert sg.analysis_config.do_damping == 1
-    assert sg.analysis_config.physics == 1
-
-
-@pytest.mark.unit
-def test_restore_sg_from_mesh_extras_ignores_unresolvable_layer_defs():
-    """A layer definition naming no known physical group must not invent one."""
-    mesh = Mesh(
-        points=np.array(
-            [[0.0, 0.0, 0.0], [1.0, 0.0, 0.0], [0.0, 1.0, 0.0]],
-            dtype=float,
-        ),
-        cells=[("triangle", np.array([[0, 1, 2]], dtype=int))],
-        cell_data={"property_id": [np.array([7], dtype=int)]},
-        field_data={},
-    )
-    mesh.sg_layer_defs = {2: (7, 0.0)}
-    mesh.sg_configs = {}
-
-    sg = mesh_to_sg(mesh, sgdim=2, model_type="PL1")
-    restore_sg_from_mesh_extras(sg, mesh)
-
-    assert dict(sg.mocombos) == {}
-    assert sg.materials == {}

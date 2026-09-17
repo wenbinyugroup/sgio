@@ -4,31 +4,26 @@
 
 This example starts from an Abaqus cross-section mesh in `sg2_airfoil.inp` and
 converts it to a VABS input file. It also exports the converted section as a
-SG-on-Gmsh bundle using the new `main.msh + sections.json + config.json`
-contract.
+Gmsh mesh with its SG manifest.
 
 ## Explaination of the solution
 
 The script does two things:
 
 1. Read the Abaqus model and convert it to `sg2_airfoil.sg`.
-2. Reuse the returned `StructureGene` to write a standards-compliant Gmsh
-   bundle:
-   - `main.msh`
-   - `sections.json`
-   - `config.json`
+2. Reuse the returned `StructureGene` to write `main.msh` and the SG manifest
+   `main.sg.json` that references it.
 
 The Gmsh export does not rely on legacy `$SGLayerDef` or `$SGConfig` blocks.
-Section/material payloads are written to sidecars instead.
+Materials, sections and SG parameters are written to the manifest instead.
 
 ## Result
 
 After running the script, you get:
 
 - `sg2_airfoil.sg` as the VABS input
-- `main.msh` as the mesh-bound SG-on-Gmsh file
-- `sections.json` as the section/material sidecar
-- `config.json` as the analysis-config sidecar
+- `main.msh` as the Gmsh model file
+- `main.sg.json` as the SG manifest
 
 Run it with:
 
@@ -42,8 +37,7 @@ uv run python examples/convert_abaqus_cs_to_vabs/run.py
 - `sg2_airfoil.inp`
 - `sg2_airfoil.sg`
 - `main.msh`
-- `sections.json`
-- `config.json`
+- `main.sg.json`
 - `sg2_airfoil.sg.ech`
 - `sg2_airfoil.sg.K`
 - `sg2_airfoil.sg.K.ech`

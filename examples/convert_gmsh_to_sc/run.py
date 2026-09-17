@@ -6,17 +6,12 @@ import sgio
 logging.basicConfig(level=logging.INFO)
 cwd = Path(__file__).resolve().parent
 
-main_msh = cwd / 'sg33_cube_tetra4_min_gmsh41.msh'
-sections_json = cwd / 'sections.json'
-config_json = cwd / 'config.json'
+manifest = cwd / 'sg33_cube_tetra4_min_gmsh41.sg.json'
 output_file = cwd / 'sg33_cube_tetra4_min_gmsh41.sg'
 
-sg = sgio.read_sg_from_gmsh_bundle(
-    main_msh=main_msh,
-    sections_json=sections_json,
-    config_json=config_json,
-    model_type='SD1',
-)
+# The SG manifest references sg33_cube_tetra4_min_gmsh41.msh and carries the SG parameters,
+# materials and sections the mesh cannot hold.
+sg = sgio.read(str(manifest), 'sg_manifest')
 
 print(sg)
 
@@ -25,7 +20,6 @@ sgio.write(
     filename=str(output_file),
     file_format='sc',
     format_version='2.1',
-    model_type='SD1',
 )
 
 plotter = sgio.plot_sg_pyvista(

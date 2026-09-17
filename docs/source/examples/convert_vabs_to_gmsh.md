@@ -2,7 +2,9 @@
 
 ## Problem Description
 
-Given a VABS cross-section file, export the mesh to Gmsh format for geometry inspection or visualization without running a full format conversion that includes materials.
+Given a VABS cross-section file, export it as a Gmsh mesh for inspection,
+visualization or Gmsh-based workflows, without losing the materials and SG
+parameters the mesh cannot hold.
 
 ## Solution
 
@@ -10,18 +12,24 @@ Given a VABS cross-section file, export the mesh to Gmsh format for geometry ins
 :language: python
 ```
 
-The `mesh_only=True` flag skips material data so the output is a pure mesh file. `model_type='BM2'` is required to correctly interpret the VABS file layout.
+{func}`sgio.write` with `'sg_manifest'` writes the Gmsh model file `main.msh`
+and the SG manifest `main.sg.json` that references it. The manifest carries
+`sgdim`, model type, model space, analysis configuration, materials and
+sections; see {doc}`/ref/sg_manifest`.
 
 ## Result
 
-A Gmsh `.msh` file is written. Open it with:
+`main.msh` opens in Gmsh or ParaView:
 
 ```bash
-gmsh cs_box_t_vabs41.msh
+gmsh main.msh
 ```
 
-or inspect it in ParaView.
+`sgio.read('main.sg.json', 'sg_manifest')` reads the full structure gene back.
 
 ## File List
 
-- [convert_mesh_data_vabs2gmsh.py](../../../examples/convert_vabs_to_gmsh/run.py): Main Python script
+- [run.py](../../../examples/convert_vabs_to_gmsh/run.py): Main Python script
+- [cs_box_t_vabs41.sg](../../../examples/convert_vabs_to_gmsh/cs_box_t_vabs41.sg): VABS input
+- [main.msh](../../../examples/convert_vabs_to_gmsh/main.msh): Generated Gmsh mesh
+- [main.sg.json](../../../examples/convert_vabs_to_gmsh/main.sg.json): Generated SG manifest

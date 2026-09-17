@@ -9,7 +9,7 @@ import numpy as np
 import pytest
 import yaml
 
-from sgio import convert, configure_logging, logger, read, read_sg_from_gmsh_bundle, write
+from sgio import convert, configure_logging, logger, read, write
 
 configure_logging(cout_level='info')
 
@@ -101,32 +101,16 @@ def test_convert_to_gmsh(test_data_dir, capsys):
 @pytest.mark.vabs
 def test_gmsh_xy_section_converts_to_vabs(test_data_dir, temp_dir):
     """A Gmsh section mesh in the ``xy`` plane should convert to VABS."""
-    src = test_data_dir / 'gmsh' / 'laminate_simple.msh'
-    sections = test_data_dir / 'gmsh' / 'sections_laminate_simple.json'
+    manifest = test_data_dir / 'gmsh' / 'laminate_simple.sg.json'
     dst = temp_dir / 'laminate_simple_xy.sg'
 
-    source_sg = read(
-        str(src), 'gmsh', format_version='4.1', sgdim=2, model_type='BM2',
-        model_space='xy', sections_json=str(sections),
-    )
-
-    convert(
-        str(src),
-        str(dst),
-        'gmsh',
-        'vabs',
-        file_version_in='4.1',
-        file_version_out='4.1',
-        sgdim=2,
-        model_space='xy',
-        model_type='BM2',
-        sections_json=str(sections),
-    )
+    source_sg = read(str(manifest), 'sg_manifest')
+    convert(str(manifest), str(dst), 'sg_manifest', 'vabs', file_version_out='4.1')
 
     assert dst.exists(), f'Output file was not created: {dst}'
     assert dst.stat().st_size > 0, f'Output file is empty: {dst}'
 
-    roundtrip = read(str(dst), 'vabs', format_version='4.1', model_type='BM2')
+    roundtrip = read(str(dst), 'vabs', format_version='4.1')
     np.testing.assert_allclose(roundtrip.mesh.points[:, 0], 0.0)
     np.testing.assert_allclose(roundtrip.mesh.points[:, 1], source_sg.mesh.points[:, 0])
     np.testing.assert_allclose(roundtrip.mesh.points[:, 2], source_sg.mesh.points[:, 1])
@@ -142,33 +126,19 @@ def test_gmsh_xy_section_converts_to_vabs(test_data_dir, temp_dir):
 def test_gmsh_to_vabs_respects_model_space_projection(
     test_data_dir,
     temp_dir,
+    copy_manifest,
     model_space,
     expected_axes,
 ):
-    """Gmsh -> VABS conversion should project nodes onto the requested section plane."""
-    src = test_data_dir / 'gmsh' / 'laminate_simple.msh'
-    sections = test_data_dir / 'gmsh' / 'sections_laminate_simple.json'
+    """Gmsh -> VABS conversion should project nodes onto the manifest's model space."""
+    fixture = test_data_dir / 'gmsh' / 'laminate_simple.sg.json'
+    manifest = copy_manifest(fixture, model_space=model_space)
     dst = temp_dir / f'laminate_simple_{model_space}.sg'
 
-    source_sg = read(
-        str(src), 'gmsh', format_version='4.1', sgdim=2, model_type='BM2',
-        model_space='xy', sections_json=str(sections),
-    )
+    source_sg = read(str(fixture), 'sg_manifest')
+    convert(str(manifest), str(dst), 'sg_manifest', 'vabs', file_version_out='4.1')
 
-    convert(
-        str(src),
-        str(dst),
-        'gmsh',
-        'vabs',
-        file_version_in='4.1',
-        file_version_out='4.1',
-        sgdim=2,
-        model_space=model_space,
-        model_type='BM2',
-        sections_json=str(sections),
-    )
-
-    roundtrip = read(str(dst), 'vabs', format_version='4.1', model_type='BM2')
+    roundtrip = read(str(dst), 'vabs', format_version='4.1')
     expected_points = source_sg.mesh.points[:, expected_axes]
 
     np.testing.assert_allclose(roundtrip.mesh.points[:, 0], 0.0)
@@ -179,43 +149,35 @@ def test_gmsh_to_vabs_respects_model_space_projection(
 @pytest.mark.conversion
 @pytest.mark.gmsh
 @pytest.mark.vabs
-def test_laminate_simple_bundle_to_vabs(test_data_dir, temp_dir):
-    """Convert the laminate_simple Gmsh bundle to VABS and validate the full payload.
+def test_laminate_simple_manifest_to_vabs(test_data_dir, temp_dir):
+    """Convert the laminate_simple Gmsh manifest to VABS and validate the full payload.
 
-    Bundle inputs (Gmsh ``xy`` plane):
+    Manifest inputs (Gmsh ``xy`` plane):
 
     * ``laminate_simple.msh`` — mesh + ``element_local_csys`` +
       ``additional_rotation_2`` (= 30° on every element)
-    * ``sections.json`` — one orthotropic material ``mat_1`` (label 1)
-    * ``config.json`` — Euler-Bernoulli homogenization config (model=1)
+    * ``laminate_simple_mat1.sg.json`` — Euler-Bernoulli beam, model space
+      ``xy``, one orthotropic material ``mat_1`` bound to section id 1
 
-    The test exercises the key invariants of the Gmsh-bundle → VABS path:
+    The test exercises the key invariants of the Gmsh manifest → VABS path:
 
     1. Coordinate projection ``xy → yz``: the Gmsh ``z`` is dropped, Gmsh
        ``x`` becomes VABS ``x2`` and Gmsh ``y`` becomes VABS ``x3``.
     2. ``additional_rotation_2`` collapses into the layer ``theta_3`` (30°).
-    3. The sidecar material from ``sections.json`` is bound to the layer; the
+    3. The manifest material is bound to the layer; the
        VABS file references it instead of the Gmsh physical-group name.
-    4. ``element_local_csys`` / ``property_ref_csys`` survive the bundle read
+    4. ``element_local_csys`` / ``property_ref_csys`` survive the manifest read
        and drive the per-element ``theta_1`` written to VABS.
     """
-    bundle_dir = test_data_dir / 'gmsh'
-    main_msh = bundle_dir / 'laminate_simple.msh'
-    sections_json = bundle_dir / 'sections.json'
-    config_json = bundle_dir / 'config.json'
+    manifest = test_data_dir / 'gmsh' / 'laminate_simple_mat1.sg.json'
     dst = temp_dir / 'laminate_simple.sg'
 
-    # --- Read bundle and inspect SG state ---------------------------------
-    sg = read_sg_from_gmsh_bundle(
-        main_msh=main_msh,
-        sections_json=sections_json,
-        config_json=config_json,
-        model_type='BM1',
-    )
+    # --- Read the manifest and inspect SG state ---------------------------
+    sg = read(str(manifest), 'sg_manifest')
 
-    # Bundle config.json drives the analysis config
     assert sg.sgdim == 2
-    assert sg.analysis_config.model == 1
+    assert sg.model_space == 'xy'
+    assert sg.analysis_config.model == 0
 
     # The read step preserves the raw per-element rotation field; folding into
     # ``theta_3`` happens at write time because it depends on ``model_space``.
@@ -235,13 +197,7 @@ def test_laminate_simple_bundle_to_vabs(test_data_dir, temp_dir):
     )
 
     # --- Write to VABS using xy → yz projection ---------------------------
-    sg.model_space = 'xy'
-    write(
-        sg=sg,
-        filename=str(dst),
-        file_format='vabs',
-        model_type='BM1',
-    )
+    write(sg=sg, filename=str(dst), file_format='vabs')
 
     # --- Re-read the VABS file and validate the on-disk contract ----------
     vabs_sg = read(str(dst), 'vabs', format_version='4.1', model_type='BM1')
@@ -263,7 +219,7 @@ def test_laminate_simple_bundle_to_vabs(test_data_dir, temp_dir):
     assert int(layer_id) == 1
     assert float(theta_3) == pytest.approx(30.0)
 
-    # The referenced mate_id resolves to the sidecar material (mat_1) and not
+    # The referenced mate_id resolves to the manifest material (mat_1) and not
     # to the physical-group placeholder. ``build_material_id_map`` is the
     # same mapping the VABS writer uses.
     from sgio.iofunc.common import build_material_id_map

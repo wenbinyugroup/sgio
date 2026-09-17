@@ -21,7 +21,7 @@ The package can be used to:
 **Supported Data Formats**
 
 - For complete SG data:
-  - VABS, SwiftComp, Abaqus, Gmsh (SG-on-Gmsh bundle)
+  - VABS, SwiftComp, Abaqus, Gmsh (through an SG manifest)
 - For mesh data only:
   - All formats supported by meshio
 

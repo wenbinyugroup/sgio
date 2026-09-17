@@ -1,9 +1,9 @@
-# Convert Gmsh Laminate Bundle To VABS
+# Convert Gmsh Laminate Mesh To VABS
 
 ## Problem description
 
 This example starts from an external Gmsh section mesh of a thin composite ply
-and converts it to a VABS input file using the SG-on-Gmsh bundle convention.
+and converts it to a VABS input file through an SG manifest.
 
 It is the orthotropic counterpart of [`convert_gmsh_to_vabs`](../convert_gmsh_to_vabs/):
 the existing example only carries one isotropic material, so its mesh needs
@@ -25,13 +25,12 @@ The example uses:
   - `$ElementData "element_local_csys"`: the per-element material frame.
   - `$ElementData "additional_rotation_2"`: 30° fiber rotation on every
     element.
-- `sections.json` — one orthotropic carbon-fiber material `mat_1`, bound to the
-  ply physical group by its `label` / `id`.
-- `config.json` — Euler-Bernoulli homogenization setup (`model = 1`).
+- `laminate_simple.sg.json` — the SG manifest referencing the mesh: Euler-Bernoulli
+  beam model (`BM1`), `model_space` `xy`, and one orthotropic carbon-fiber
+  material `mat_1` bound to the ply physical group by its `id`.
 
-`run.py` reads the complete bundle with `sgio.read_sg_from_gmsh_bundle(...)`
-and then writes the assembled `StructureGene` to VABS format with
-`model_space='xy'`. The writer:
+`run.py` reads the manifest with `sgio.read(..., 'sg_manifest')` and then
+writes the assembled `StructureGene` to VABS format. The writer:
 
 1. Projects nodes from the Gmsh `xy` plane onto the VABS `yz` plane
    (`gmsh_x → x2`, `gmsh_y → x3`, VABS `x1 = 0`).
@@ -59,5 +58,4 @@ uv run python examples/convert_gmsh_laminate_to_vabs/run.py
 - `run.py`
 - `laminate_simple.msh`
 - `laminate_simple.sg`
-- `sections.json`
-- `config.json`
+- `laminate_simple.sg.json`

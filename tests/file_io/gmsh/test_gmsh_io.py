@@ -11,29 +11,7 @@ import pytest
 from pathlib import Path
 import yaml
 
-from sgio import convert, logger, section_model_to_record, write_sections_to_json
-
-
-def _write_sections_sidecar(sg, msh_path):
-    """Write the bundle section sidecar next to one written ``.msh``.
-
-    A ``.msh`` holds mesh data only, so the Gmsh -> VABS leg of the round
-    trip needs the section payload written alongside it.
-    """
-    sections_path = Path(msh_path).with_suffix('.sections.json')
-    write_sections_to_json(
-        [
-            section_model_to_record(
-                sg.materials[section.material],
-                name=section.name,
-                id=section.property_id,
-                orientation=section.orientation,
-            )
-            for section in sg.sections.values()
-        ],
-        sections_path,
-    )
-    return sections_path
+from sgio import convert, logger, read, write
 
 
 @pytest.mark.io
@@ -51,7 +29,7 @@ def test_vabs_to_gmsh_to_vabs_roundtrip(test_data_dir, temp_dir):
     The test performs a complete round-trip conversion to ensure
     data integrity is maintained.
     """
-    # Step 1: Convert VABS to Gmsh
+    # Step 1: Write each VABS SG as a Gmsh model file with its SG manifest
     fn_test_cases = 'test_convert_vabs_gmsh.yml'
     test_case_path = test_data_dir / 'yaml' / fn_test_cases
 
@@ -70,14 +48,12 @@ def test_vabs_to_gmsh_to_vabs_roundtrip(test_data_dir, temp_dir):
 
         logger.info(f'Converting {fn_in} to {fn_out}...')
 
-        source_sg = convert(
-            fn_in, fn_out,
-            ff_in, ff_out,
-            file_version_in=_case.get('version_in', ''),
-            file_version_out=_case.get('version_out', ''),
-            model_type=_case.get('model', 'SD1'),
+        source_sg = read(fn_in, ff_in, format_version=_case.get('version_in', ''))
+        write(
+            source_sg, str(Path(fn_out).with_suffix('.sg.json')), 'sg_manifest',
+            format_version=_case.get('version_out', ''),
+            model_file=Path(fn_out).name, model_file_format=ff_out,
         )
-        _write_sections_sidecar(source_sg, fn_out)
 
         # Verify the gmsh file was created
         assert Path(fn_out).exists(), f"Failed to create {fn_out}"
@@ -106,11 +82,7 @@ def test_vabs_to_gmsh_to_vabs_roundtrip(test_data_dir, temp_dir):
         sg = convert(
             fn_in, fn_out,
             ff_in, ff_out,
-            file_version_in=_case.get('version_in', ''),
             file_version_out=_case.get('version_out', ''),
-            model_type=_case.get('model', 'SD1'),
-            model_space=_case.get('model_space'),
-            sections_json=str(Path(fn_in).with_suffix('.sections.json')),
         )
 
         # Verify the vabs file was created

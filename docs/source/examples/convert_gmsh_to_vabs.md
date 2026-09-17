@@ -1,4 +1,4 @@
-# Convert a Gmsh Bundle to VABS
+# Convert a Gmsh Mesh to VABS
 
 ## Problem Description
 
@@ -8,18 +8,18 @@ mesh.
 
 ## Solution
 
-The example uses the **SG-on-Gmsh bundle** convention, which keeps the three
-concerns in separate files (see {doc}`/ref/sg_on_gmsh`):
+The example uses an **SG manifest** (see {doc}`/ref/sg_manifest`):
 
 - `sg21_box_quad4_min_gmsh41.msh` — the section mesh and its physical groups
-- `sections.json` — section and material payloads
-- `config.json` — the analysis configuration
+- `sg21_box_quad4_min_gmsh41.sg.json` — the manifest referencing the mesh, with
+  `sgdim`, model type, model space, analysis configuration, materials and
+  sections
 
 ```{literalinclude} ../../../examples/convert_gmsh_to_vabs/run.py
 :language: python
 ```
 
-{func}`sgio.read_sg_from_gmsh_bundle` reads the complete bundle into a
+{func}`sgio.read` with `'sg_manifest'` reads the manifest and the mesh into a
 {class}`sgio.StructureGene`, which {func}`sgio.write` then emits as VABS input.
 This is the recommended path for external CAD + Gmsh workflows.
 
@@ -35,6 +35,5 @@ uv run python examples/convert_gmsh_to_vabs/run.py
 
 - [run.py](../../../examples/convert_gmsh_to_vabs/run.py): Main Python script
 - [sg21_box_quad4_min_gmsh41.msh](../../../examples/convert_gmsh_to_vabs/sg21_box_quad4_min_gmsh41.msh): Gmsh section mesh
-- [sections.json](../../../examples/convert_gmsh_to_vabs/sections.json): Section and material definitions
-- [config.json](../../../examples/convert_gmsh_to_vabs/config.json): Analysis configuration
+- [sg21_box_quad4_min_gmsh41.sg.json](../../../examples/convert_gmsh_to_vabs/sg21_box_quad4_min_gmsh41.sg.json): SG manifest
 - [sg21_box_quad4_min_gmsh41.sg](../../../examples/convert_gmsh_to_vabs/sg21_box_quad4_min_gmsh41.sg): Generated VABS input

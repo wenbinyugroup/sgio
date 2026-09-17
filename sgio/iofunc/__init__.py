@@ -16,14 +16,6 @@ from .common.material_json import (
     read_materials_from_json,
     write_material_to_json,
 )
-from .gmsh.bundle import (
-    read_config_from_json,
-    read_sections_from_json,
-    read_sg_from_gmsh_bundle,
-    section_model_to_record,
-    write_config_to_json,
-    write_sections_to_json,
-)
 from .main import (
     convert,
     read, read_fe_model, read_load_csv,
@@ -65,15 +57,9 @@ __all__ = [
     "merge_sections_from_csv",
     "read_section_layout_csv",
     "write_merged_sections",
-    "read_sg_from_gmsh_bundle",
-    "read_sections_from_json",
-    "write_sections_to_json",
-    "read_config_from_json",
     "read_material_from_json",
     "read_materials_from_json",
     "write_material_to_json",
-    "write_config_to_json",
-    "section_model_to_record",
 
     # Base classes and registry
     "BaseFormatReader",

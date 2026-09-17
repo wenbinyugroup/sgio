@@ -226,3 +226,89 @@ class TestWriteSGManifestErrors:
                 lam_sg, str(tmp_path / 'lam.sg.json'), 'sg_manifest',
                 model_file=str(tmp_path / 'lam.sc'), model_file_format='sc',
             )
+
+
+GMSH_DIR = Path(__file__).parents[1] / 'fixtures' / 'gmsh'
+BOX_MANIFEST = GMSH_DIR / 'sg21_box_quad4_min_gmsh41.sg.json'
+
+
+def _box_materials(*extra_names):
+    """Return the box fixture's material records plus renamed copies."""
+    materials = json.loads(BOX_MANIFEST.read_text(encoding='utf-8'))['materials']
+    return materials + [{**materials[0], 'name': name} for name in extra_names]
+
+
+@pytest.mark.unit
+class TestGmshManifest:
+    """Gmsh model files take materials and sections from the manifest."""
+
+    def test_section_name_match_takes_precedence_over_id(self, copy_manifest):
+        manifest = copy_manifest(
+            BOX_MANIFEST,
+            materials=_box_materials('wrong'),
+            sections=[{'name': 'frp', 'material': 'frp'}, {'id': 1, 'material': 'wrong'}],
+        )
+
+        sg = sgio.read(str(manifest), 'sg_manifest')
+
+        section = next(iter(sg.sections.values()))
+        assert section.material == 'frp'
+        assert section.extras['section_match_source'] == 'name'
+
+    def test_orientation_is_bound_to_the_section(self, copy_manifest):
+        manifest = copy_manifest(
+            BOX_MANIFEST, sections=[{'name': 'frp', 'material': 'frp', 'orientation': 45.0}]
+        )
+
+        sg = sgio.read(str(manifest), 'sg_manifest')
+
+        assert dict(sg.mocombos) == {1: ('frp', 45.0)}
+
+    @pytest.mark.parametrize(
+        ('changes', 'error', 'match'),
+        [
+            ({'sections': [{'name': 'frp', 'material': 'absent'}]}, ValueError, 'undeclared'),
+            ({'sections': [{'name': 'frp', 'material': 'frp'}] * 2}, ValueError, 'Duplicate'),
+            ({'sections': [{'id': 1, 'material': 'frp'}, {'id': 1, 'material': 'frp'}]},
+             ValueError, 'Duplicate'),
+            ({'sections': [{'material': 'frp'}]}, ValueError, "'name' or an 'id'"),
+            ({'sections': [{'name': 'frp', 'material': 'frp', 'angle': 1}]},
+             ValueError, 'angle'),
+            ({'materials': _box_materials('frp')[1:] * 2}, ValueError, 'Duplicate'),
+            ({'sections': None}, IncompleteModelDataError, 'sections'),
+            ({'materials': None}, IncompleteModelDataError, 'materials'),
+            ({'model_file': {'path': 'sg21_box_quad4_min_gmsh41.msh', 'format': 'gmsh',
+                             'format_version': '4.1'}}, ValueError, 'format_version'),
+        ],
+    )
+    def test_invalid_manifest(self, copy_manifest, changes, error, match):
+        manifest = copy_manifest(BOX_MANIFEST, **changes)
+
+        with pytest.raises(error, match=match):
+            sgio.read(str(manifest), 'sg_manifest')
+
+    def test_strut_lattice_keeps_manifest_sgdim(self, tmp_path):
+        import numpy as np
+
+        from sgio.core.mesh import SGMesh
+        from sgio.iofunc._mesh_convert import mesh_to_sg
+
+        # 1D beam elements in a 3D SG: element dimension is not SG dimension.
+        mesh = SGMesh(
+            points=np.array([[0, 0, 0], [1, 0, 0], [1, 1, 0], [1, 1, 1]], dtype=float),
+            cells=[('line', np.array([[0, 1], [1, 2], [2, 3]]))],
+            cell_data={'property_id': [np.array([1, 1, 1])]},
+            field_data={'strut': np.array([1, 1])},
+        )
+        sg = mesh_to_sg(mesh, sgdim=3, model_type='SD1', section_names={'strut'})
+        sg.materials['steel'] = sgio.CauchyContinuumModel(name='steel', e1=200e9, nu12=0.3)
+        sg.mocombos = {1: ('steel', 0.0)}
+        manifest = tmp_path / 'strut.sg.json'
+        sgio.write(
+            sg, str(manifest), 'sg_manifest', model_file='strut.msh', model_file_format='gmsh'
+        )
+
+        result = sgio.read(str(manifest), 'sg_manifest')
+
+        assert (result.sgdim, result.nelems) == (3, 3)
+        assert dict(result.mocombos) == {1: ('steel', 0.0)}

@@ -43,9 +43,9 @@ def test_map_model_to_write_payload_supports_bare_mesh():
 def test_map_model_to_write_payload_extracts_structure_gene_metadata():
     """StructureGene inputs forward the mesh, SG dimension and material combos.
 
-    Under the section-sidecar contract the writer payload no longer carries the
+    Under the SG manifest contract the writer payload no longer carries the
     legacy custom-block metadata (``material_id_map`` / ``sg_configs``); those
-    now live in the ``sections.json`` / ``config.json`` sidecars.
+    now live in the SG manifest.
     """
     sg = sgio.StructureGene()
     sg.sgdim = 2
