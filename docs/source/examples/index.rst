@@ -11,6 +11,7 @@ Format conversion
     :maxdepth: 1
 
     convert_abaqus_cs_to_vabs
+    convert_abaqus_cs_with_sg_manifest
     abaqus_sg_3d
     convert_gmsh_to_vabs
     convert_gmsh_laminate_to_vabs

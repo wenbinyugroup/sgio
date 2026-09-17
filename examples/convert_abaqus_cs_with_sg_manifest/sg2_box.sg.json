@@ -1,0 +1,10 @@
+{
+  "sg_manifest_version": 1,
+  "model_file": {
+    "path": "sg2_box_composite_section.inp",
+    "format": "abaqus"
+  },
+  "sgdim": 2,
+  "model_type": "BM1",
+  "model_space": "xy"
+}
