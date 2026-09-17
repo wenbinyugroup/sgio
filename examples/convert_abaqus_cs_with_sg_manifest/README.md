@@ -10,16 +10,16 @@ parameters either as arguments or from a file.
 
 ## Explaination of the solution
 
-The script does the same conversion in two equivalent ways and asserts that both
-write the same `sg2_box.sc`.
+The same conversion is done in two ways, one script each. Both write the same
+`sg2_box.sc`.
 
-**Method 1: API arguments.**
+**Method 1: API arguments** (`run_1_api.py`).
 `sgio.read(..., 'abaqus', sgdim=2, model_type='BM1', model_space='xy')` reads the
 `.inp` and `sgio.write(sg, 'sg2_box.sc', 'sc')` writes the SwiftComp input.
 Reading it back with `sgio.read('sg2_box.sc', 'sc', model_type='BM1')` still
 needs the model type, because a SwiftComp input does not state it.
 
-**Method 2: SG manifests.**
+**Method 2: SG manifests** (`run_2_manifest.py`).
 `sg2_box.sg.json` references `sg2_box_composite_section.inp` and adds `sgdim`
 (2), `model_type` (`BM1`) and `model_space` (`xy`).
 `sgio.read(..., 'sg_manifest')` reads both files into one `StructureGene`.
@@ -39,12 +39,14 @@ script prints the structure gene read back by each method.
 Run it with:
 
 ```bash
-uv run python examples/convert_abaqus_cs_with_sg_manifest/run.py
+uv run python examples/convert_abaqus_cs_with_sg_manifest/run_1_api.py
+uv run python examples/convert_abaqus_cs_with_sg_manifest/run_2_manifest.py
 ```
 
 ## List of all files
 
-- `run.py`
+- `run_1_api.py`
+- `run_2_manifest.py`
 - `sg2_box_composite_section.inp`
 - `sg2_box.sg.json`
 - `sg2_box.sc`

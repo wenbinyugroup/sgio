@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import io
 import logging
+import os
 from contextlib import redirect_stdout
 from typing import Any
 
@@ -132,7 +133,11 @@ def parse_input_file(
         Raw parser payload containing the native ``inpRW`` object plus caller
         context needed by the mapper.
     """
-    parser = inpRW(filename)
+    # inpRW derives its include-file folder by splitting the given path on the
+    # platform separator, so a path with foreign separators silently resolves
+    # '*Distribution, Input=...' files against the wrong folder. abspath
+    # normalizes both the separators and the folder.
+    parser = inpRW(os.path.abspath(filename))
     stdout_capture = io.StringIO()
     with redirect_stdout(stdout_capture):
         parser.parse()

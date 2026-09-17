@@ -29,10 +29,26 @@ sgio convert input.inp output.sg -ff abaqus -tf vabs -d 2 -m BM2 -ms xy
 | `sgdim` | `-d` | SG dimension, when the input format does not imply it |
 | `model_space` | `-ms` | input mesh axes of a 1D/2D SG (`x`/`y`/`z`, `xy`/`yz`/`zx`), when the input format does not imply it |
 | `analysis` | `-a` | `h`, `d`, or `fi` |
+| `physics` | `-p` | `elastic` or `thermoelastic`; by default the input's own setting is kept |
 | `mesh_only` | `-mo` | convert geometry only |
 
 There are no defaults for these SG arguments: omitting one the input format
 cannot supply raises `IncompleteModelDataError`.
+
+## Thermoelastic Conversion
+
+`physics` selects what the analysis covers. It is the one argument that is
+better left out than defaulted: an input file carries its own setting, and
+overriding it silently would change the analysis the file describes.
+
+```bash
+sgio convert weave.inp weave.sc -ff abaqus -tf sc -d 3 -m SD1 -p thermoelastic
+```
+
+A thermoelastic conversion needs a coefficient of thermal expansion on every
+material. Abaqus `*Expansion` data is read into the material model; a material
+without it raises `ValueError` naming the material, rather than writing a file
+the solver cannot use.
 
 Format identifiers and the conversion matrix are in {doc}`/ref/formats`; the
 full signature is in {ref}`ref_io`.

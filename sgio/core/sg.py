@@ -96,8 +96,9 @@ class StructureGene:
         Number of degenerate elements.
     num_slavenodes : int
         Number of slave nodes.
-    omega : float
-        Omega (see SwiftComp manual).
+    omega : float or None
+        Omega (see SwiftComp manual). ``None`` means it is computed from the
+        mesh bounding box at write time (see :func:`sgio.core.omega.compute_omega`).
     itf_pairs : list
         Interface pairs.
     itf_nodes : list
@@ -142,7 +143,7 @@ class StructureGene:
 
         self.ndim_degen_elem = 0
         self.num_slavenodes = 0
-        self.omega = 1
+        self.omega = None
 
         self.itf_pairs: list = []
         self.itf_nodes: list = []

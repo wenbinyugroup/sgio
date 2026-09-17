@@ -155,3 +155,22 @@ def test_swiftcomp_specific_heat_round_trips(gmsh_test_files, tmp_path):
     fibre = materials_by_specific_heat[750]
     assert fibre.specific_heat == pytest.approx(750.0)
     assert fibre.cte == pytest.approx([-5e-07, 1e-05, 1e-05, 0.0, 0.0, 0.0])
+
+
+@pytest.mark.unit
+@pytest.mark.parametrize(
+    "physics, comment_char, has_ntemp",
+    [(1, "#", True), (3, "!", False)],
+)
+def test_write_material_rejects_missing_cte_for_thermal_physics(
+    physics, comment_char, has_ntemp
+):
+    """A thermal physics run without CTE must name the offending material,
+    not fail deep inside the CTE projection with a bare TypeError."""
+    material = CauchyContinuumModel("MATRIX_MAT", isotropy=0, e1=2561.0, nu12=0.3)
+
+    with pytest.raises(ValueError, match="MATRIX_MAT.*thermal expansion"):
+        write_material(
+            mid=1, material=material, file=StringIO(), analysis="h",
+            physics=physics, comment_char=comment_char, has_ntemp=has_ntemp,
+        )

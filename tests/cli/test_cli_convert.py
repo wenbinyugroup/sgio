@@ -122,3 +122,42 @@ def test_cli_convert_invalid_format():
     result = sbp.run(cmd, capture_output=True, text=True)
     assert result.returncode != 0  # Should fail
 
+
+
+@pytest.mark.cli
+def test_cli_convert_physics_flag(tmp_path):
+    """The -p/--physics flag must reach the written SwiftComp header."""
+    fn_in = tmp_path / 'thermoelastic.inp'
+    fn_in.write_text(
+        """*Heading
+*Node
+1, 0., 0., 0.
+2, 1., 0., 0.
+3, 0., 1., 0.
+4, 0., 0., 1.
+5, 1., 1., 1.
+*Element, type=C3D4, elset=MATRIX
+1, 1, 2, 3, 4
+2, 2, 3, 4, 5
+*Material, name=MATRIX_MAT
+*Elastic
+2561., 0.3
+*Expansion
+6.5e-06,
+*Solid Section, elset=MATRIX, material=MATRIX_MAT
+1.0,
+""",
+        encoding='utf-8',
+    )
+    fn_out = tmp_path / 'thermoelastic.sc'
+
+    result = sbp.run(
+        [sys.executable, '-m', 'sgio', 'convert', str(fn_in), str(fn_out),
+         '-ff', 'abaqus', '-tf', 'sc', '-d', '3', '-m', 'sd1',
+         '-p', 'thermoelastic'],
+        capture_output=True, text=True,
+    )
+
+    assert result.returncode == 0, result.stderr
+    header = next(l for l in fn_out.read_text().splitlines() if l.strip())
+    assert int(header.split()[0]) == 1

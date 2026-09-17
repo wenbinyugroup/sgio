@@ -8,6 +8,7 @@ import sgio.iofunc.vabs as _vabs
 import sgio.model as sgmodel
 from sgio._exceptions import IncompleteModelDataError
 from sgio.core import FEModel, StructureGene
+from sgio.core.sg_analysis_config import resolve_physics
 
 from .base import get_format_registry
 from .sg_manifest import WRITABLE_MODEL_FILE_FORMATS, model_type_of, write_sg_manifest
@@ -583,6 +584,7 @@ def convert_file_format(
     model_space: str | None = None,
     prop_ref_y: str = 'x',
     model_type: str | None = None,
+    physics: int | str | None = None,
     vabs_format_version: int = 1,
     str_format_int: str = '8d',
     str_format_float: str = '20.12e',
@@ -629,6 +631,9 @@ def convert_file_format(
         * 'PL2': Reissner-Mindlin plate/shell model
         * 'BM1': Euler-Bernoulli beam model
         * 'BM2': Timoshenko beam model
+    physics : int or str, optional
+        Physics included in the analysis ('elastic', 'thermoelastic', or the
+        corresponding code). By default the input file's own setting is kept.
     vabs_format_version : int, optional
         Format for the VABS input, by default 1
     str_format_int : str, optional
@@ -659,6 +664,9 @@ def convert_file_format(
 
     if sg is None:
         raise ValueError("Input file is not a valid SG file.")
+
+    if physics is not None:
+        sg.analysis_config.physics = resolve_physics(physics)
 
     write(
         sg=sg,

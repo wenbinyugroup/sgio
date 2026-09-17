@@ -8,6 +8,7 @@ import numpy as np
 import sgio.model as smdl
 from sgio.core.mesh import SGMesh
 from sgio.core.sg import StructureGene
+from sgio.core.sg_analysis_config import resolve_physics
 
 logger = logging.getLogger(__name__)
 
@@ -141,13 +142,7 @@ def build_sg_1d(
 
     # Analysis settings
     # ----------------------------------------------------------------
-    if isinstance(physics, str):
-        sg.analysis_config.physics = {
-            'elastic': 0,
-            'thermoelastic': 1
-        }[physics]
-    else:
-        sg.analysis_config.physics = physics
+    sg.analysis_config.physics = resolve_physics(physics)
 
 
 

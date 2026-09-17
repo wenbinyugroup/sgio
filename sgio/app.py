@@ -211,6 +211,11 @@ def cli(*args: str) -> None:
         help='CS/SG model type (required for Abaqus/SwiftComp input).'
     )
     parser.add_argument(
+        '-p', '--physics', type=case_insensitive_string,
+        choices=['elastic', 'thermoelastic'],
+        help='Physics included in the analysis (default: keep the input file setting).'
+    )
+    parser.add_argument(
         '-mo', '--mesh-only', action='store_true',
         help='Mesh only conversion.'
     )
@@ -291,6 +296,7 @@ def main(command: str, **kwargs: Any) -> None:
                 model_space=kwargs.get('model_space'),
                 prop_ref_y=kwargs.get('material_ref_y', 'x'),
                 model_type=kwargs.get('model'),
+                physics=kwargs.get('physics'),
                 mesh_only=kwargs.get('mesh_only', False),
             )
             

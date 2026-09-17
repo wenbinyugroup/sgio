@@ -12,6 +12,7 @@ from ..base import BaseFormatReader, BaseFormatWriter
 from sgio.core.sg import StructureGene
 import sgio._global as GLOBAL
 import sgio.model as smdl
+from sgio.utils.io import atomic_write
 
 from ._swiftcomp import (
     read_input_buffer,
@@ -190,7 +191,7 @@ class SwiftCompWriter(BaseFormatWriter):
             version = self.default_version
 
         if isinstance(destination, str):
-            with open(destination, 'w', encoding='utf-8') as f:
+            with atomic_write(destination) as f:
                 write_buffer(
                     model_obj, f, analysis=analysis, model=model,
                     model_space=model_space, prop_ref_y=prop_ref_y,

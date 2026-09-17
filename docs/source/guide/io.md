@@ -75,6 +75,13 @@ sgio.write(sg, 'cross_section.sg', file_format='vabs', format_version='4.1')
 Node and element IDs are renumbered automatically when the target format
 requires it, with a warning.
 
+A SwiftComp input also needs `omega`, the SG's measure over the dimensions it
+shares with the macro model. It is computed from the SG bounding box unless
+`sg.omega` is set; see the omega table in {doc}`/ref/formats`.
+
+Writing is atomic: the target file is replaced only once the whole file has
+been written, so a failure part way through leaves any existing file intact.
+
 Pass `mesh_only=True` to write geometry without materials or analysis
 configuration — useful for visualization targets:
 

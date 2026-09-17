@@ -7,25 +7,36 @@ Given a 2D beam cross-section mesh created in Abaqus (`.inp` format), convert it
 ## Solution
 
 The `.inp` file does not state the SG parameters `sgdim`, `model_type` and
-`model_space`. The script supplies them in two equivalent ways and asserts that
-both write the same VABS input:
+`model_space`. There are two ways to supply them, one script each; both write
+the same VABS input.
 
-1. as arguments of {func}`sgio.convert`;
-2. from the SG manifest `sg2_airfoil.sg.json` (see {doc}`/ref/sg_manifest`),
-   which references the `.inp` file:
+`model_type='BM2'` selects the Timoshenko beam model (includes shear
+deformation). Use `'BM1'` for the classical Euler-Bernoulli model.
+
+### Method 1: API arguments
+
+The SG parameters are arguments of {func}`sgio.convert`.
+
+```{literalinclude} ../../../examples/convert_abaqus_cs_to_vabs/run_1_api.py
+:language: python
+```
+
+### Method 2: SG manifest
+
+`sg2_airfoil.sg.json` (see {doc}`/ref/sg_manifest`) references the `.inp` file
+and holds the same parameters, so the conversion takes no SG arguments:
 
 ```{literalinclude} ../../../examples/convert_abaqus_cs_to_vabs/sg2_airfoil.sg.json
 :language: json
 ```
 
-```{literalinclude} ../../../examples/convert_abaqus_cs_to_vabs/run.py
+```{literalinclude} ../../../examples/convert_abaqus_cs_to_vabs/run_2_manifest.py
 :language: python
 ```
 
-`model_type='BM2'` selects the Timoshenko beam model (includes shear deformation). Use `'BM1'` for the classical Euler-Bernoulli model.
-
-The script also writes the section as a Gmsh mesh `main.msh` with its manifest
-`main.sg.json`.
+This script also writes the section as a Gmsh mesh `main.msh` with its manifest
+`main.sg.json`. A `.msh` file holds no materials or SG parameters, so a Gmsh
+export is always written through a manifest.
 
 ## Result
 
@@ -36,6 +47,7 @@ homogenization, see {doc}`plot_abaqus_local_csys`.
 
 ## File List
 
-- [run.py](../../../examples/convert_abaqus_cs_to_vabs/run.py): Main Python script
+- [run_1_api.py](../../../examples/convert_abaqus_cs_to_vabs/run_1_api.py): Conversion with SG arguments
+- [run_2_manifest.py](../../../examples/convert_abaqus_cs_to_vabs/run_2_manifest.py): Conversion through the SG manifest
 - [sg2_airfoil.inp](../../../examples/convert_abaqus_cs_to_vabs/sg2_airfoil.inp): Abaqus cross-section input file
 - [sg2_airfoil.sg.json](../../../examples/convert_abaqus_cs_to_vabs/sg2_airfoil.sg.json): SG manifest for the Abaqus input

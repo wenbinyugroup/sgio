@@ -1,6 +1,46 @@
 from typing import Iterable
+import contextlib
+import os
 import pprint
+import tempfile
 import xml.etree.ElementTree as et
+
+
+@contextlib.contextmanager
+def atomic_write(filename: str, encoding: str = 'utf-8'):
+    """Write a file via a temporary file that is renamed only on success.
+
+    Streaming writers open their target and fill it incrementally, so a
+    failure part way through leaves a truncated file behind -- and truncates
+    a previously valid file the moment it is opened. Writing to a sibling
+    temporary file and renaming it keeps the target untouched until the whole
+    file is written.
+
+    Parameters
+    ----------
+    filename : str
+        Path of the file to write.
+    encoding : str, optional
+        Text encoding, by default ``'utf-8'``.
+
+    Yields
+    ------
+    TextIO
+        The file object to write to.
+    """
+    directory = os.path.dirname(os.path.abspath(filename))
+    handle = tempfile.NamedTemporaryFile(
+        mode='w', encoding=encoding, dir=directory, delete=False,
+        prefix=os.path.basename(filename) + '.', suffix='.tmp',
+    )
+    try:
+        with handle as file:
+            yield file
+    except BaseException:
+        os.remove(handle.name)
+        raise
+    os.replace(handle.name, filename)
+
 
 def convertToPrettyString(v):
     return pprint.pformat(v)

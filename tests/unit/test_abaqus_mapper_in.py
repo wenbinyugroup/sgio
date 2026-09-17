@@ -479,7 +479,7 @@ def test_map_input_to_structure_gene_applies_3d_orientation_rotation_about_local
         assert np.allclose(actual_axis, expected_axis)
 
 
-def _write_material_input(tmp_path, elastic_data: str) -> str:
+def _write_material_input(tmp_path, elastic_data: str, expansion: str = "") -> str:
     """Write a minimal 2D input with a customizable ``*Elastic`` data line."""
     filename = tmp_path / "material.inp"
     filename.write_text(
@@ -495,7 +495,7 @@ def _write_material_input(tmp_path, elastic_data: str) -> str:
 *Material, name=FIBRE_MAT
 *Elastic
 {elastic_data}
-*Solid Section, elset=FIBRE, material=FIBRE_MAT
+{expansion}*Solid Section, elset=FIBRE, material=FIBRE_MAT
 ,
 *End Part
 """,
@@ -521,7 +521,7 @@ def test_map_input_to_structure_gene_rejects_invalid_elastic_constant(tmp_path):
     silently -- unlike a trailing-comma blank cell, this is real data loss."""
     filename = _write_material_input(tmp_path, "1.0, not_a_number")
 
-    with pytest.raises(ValueError, match="Invalid elastic constant"):
+    with pytest.raises(ValueError, match=r"Invalid constant .* in '\*Elastic' data"):
         map_input_to_structure_gene(parse_input_file(filename, sgdim=2, model="BM2"))
 
 
@@ -564,6 +564,39 @@ def test_map_input_to_structure_gene_rejects_invalid_composite_ply_angle(tmp_pat
 
 
 @pytest.mark.unit
+def test_map_input_to_structure_gene_reads_solid_section_thickness_as_no_angle(tmp_path):
+    """An ordinary solid section's data line holds thickness, not an angle.
+
+    Reproduces the TexGen case: the last '*Solid Section' in the file, with a
+    thickness data line, used to be read as an angle and raise TypeError.
+    """
+    filename = tmp_path / "solid_section_thickness.inp"
+    filename.write_text(
+        """*Heading
+*Node
+1, 0., 0.
+2, 1., 0.
+3, 1., 1.
+4, 0., 1.
+*Element, type=CPE4, elset=MATRIX
+1, 1, 2, 3, 4
+*Material, name=MATRIX_MAT
+*Elastic
+1.0, 0.3
+*Solid Section, elset=MATRIX, material=MATRIX_MAT
+1.0,
+""",
+        encoding="utf-8",
+    )
+
+    sg = map_input_to_structure_gene(
+        parse_input_file(str(filename), sgdim=2, model="BM2")
+    )
+
+    assert list(sg.mocombos.values())[0][1] == pytest.approx(0.0)
+
+
+@pytest.mark.unit
 def test_map_input_to_structure_gene_defaults_composite_ply_angle_when_numeric(tmp_path):
     """Sanity check: a real numeric composite ply angle still works."""
     filename = _write_composite_section_input(tmp_path, "30.")
@@ -571,3 +604,65 @@ def test_map_input_to_structure_gene_defaults_composite_ply_angle_when_numeric(t
     sg = map_input_to_structure_gene(parse_input_file(filename, sgdim=2, model="BM2"))
 
     assert list(sg.mocombos.values())[0][1] == pytest.approx(30.0)
+
+
+@pytest.mark.unit
+def test_map_input_to_structure_gene_reads_isotropic_expansion(tmp_path):
+    """A default (ISO) '*Expansion' value fills all three normal CTE terms."""
+    filename = _write_material_input(tmp_path, "1.0, 0.3", "*Expansion\n6.5e-06,\n")
+
+    sg = map_input_to_structure_gene(parse_input_file(filename, sgdim=2, model="BM2"))
+
+    assert sg.materials["FIBRE_MAT"].cte == pytest.approx(
+        [6.5e-06, 6.5e-06, 6.5e-06, 0.0, 0.0, 0.0]
+    )
+
+
+@pytest.mark.unit
+def test_map_input_to_structure_gene_reads_ortho_expansion(tmp_path):
+    """'*Expansion, type=ORTHO' maps its three values onto a11/a22/a33."""
+    filename = _write_material_input(
+        tmp_path, "1.0, 0.3", "*Expansion, type=ORTHO\n-2e-07, 3e-06, 4e-06\n"
+    )
+
+    sg = map_input_to_structure_gene(parse_input_file(filename, sgdim=2, model="BM2"))
+
+    assert sg.materials["FIBRE_MAT"].cte == pytest.approx(
+        [-2e-07, 3e-06, 4e-06, 0.0, 0.0, 0.0]
+    )
+
+
+@pytest.mark.unit
+def test_map_input_to_structure_gene_leaves_cte_unset_without_expansion(tmp_path):
+    """No '*Expansion' means no CTE, not a fabricated zero one."""
+    filename = _write_material_input(tmp_path, "1.0, 0.3")
+
+    sg = map_input_to_structure_gene(parse_input_file(filename, sgdim=2, model="BM2"))
+
+    assert sg.materials["FIBRE_MAT"].cte is None
+
+
+@pytest.mark.unit
+def test_map_input_to_structure_gene_rejects_aniso_expansion(tmp_path):
+    """Abaqus ANISO ordering differs from sgio's Voigt order, so it must raise
+    rather than be silently reordered."""
+    filename = _write_material_input(
+        tmp_path,
+        "1.0, 0.3",
+        "*Expansion, type=ANISO\n1e-06, 2e-06, 3e-06, 0., 0., 0.\n",
+    )
+
+    with pytest.raises(ValueError, match="type=ANISO"):
+        map_input_to_structure_gene(parse_input_file(filename, sgdim=2, model="BM2"))
+
+
+@pytest.mark.unit
+def test_map_input_to_structure_gene_rejects_expansion_with_wrong_count(tmp_path):
+    """An ORTHO expansion with a missing value is malformed data, not a
+    default-to-zero case."""
+    filename = _write_material_input(
+        tmp_path, "1.0, 0.3", "*Expansion, type=ORTHO\n1e-06, 2e-06\n"
+    )
+
+    with pytest.raises(ValueError, match="must have 3 constant"):
+        map_input_to_structure_gene(parse_input_file(filename, sgdim=2, model="BM2"))

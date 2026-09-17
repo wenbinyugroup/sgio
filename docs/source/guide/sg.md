@@ -65,6 +65,10 @@ must contain the properties the target solver requires — isotropic elastic
 constants, orthotropic engineering constants, density, or thermal data as the
 solver setup needs.
 
+A thermoelastic analysis (`physics`) additionally requires a coefficient of
+thermal expansion on every material; writing one without it raises `ValueError`
+naming the material. See {doc}`convert`.
+
 ### 4. Section orientation
 
 Laminated and anisotropic regions need an in-plane orientation per material

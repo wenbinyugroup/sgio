@@ -16,6 +16,7 @@ Format conversion
     convert_gmsh_to_vabs
     convert_gmsh_laminate_to_vabs
     convert_gmsh_to_sc
+    convert_texgen_weave_to_sc
     convert_vabs_to_gmsh
 
 Reading input and output

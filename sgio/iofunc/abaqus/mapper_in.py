@@ -285,6 +285,8 @@ def _build_material_models(materials: Mapping[str, Mapping[str, Any]]) -> dict[s
         model = smdl.CauchyContinuumModel(material_name)
         model.temperature = material_data.get("temperature", 0)
         model.density = material_data.get("density", 0)
+        if material_data["cte"] is not None:
+            model.cte = material_data["cte"]
 
         material_type = material_data["type"]
         elastic = material_data["elastic"]
@@ -564,6 +566,87 @@ def _translate_property_ref_csys(csys: np.ndarray, point_c: np.ndarray) -> np.nd
     return (np.asarray(csys, dtype=float).reshape(3, 3) + point_c).reshape(-1)
 
 
+def _block_constants(block: Any, material_name: str, keyword: str) -> list[float]:
+    """Flatten one Abaqus material data block into plain floats.
+
+    Parameters
+    ----------
+    block : Any
+        inpRW keyword block whose data rows hold the constants.
+    material_name : str
+        Owning material, for error messages.
+    keyword : str
+        Abaqus keyword being read, for error messages.
+
+    Returns
+    -------
+    list of float
+        The block's constants in file order.
+    """
+    constants = []
+    for row in block.data:
+        for value in row:
+            if str(value).strip() == "":
+                # Abaqus data lines are comma-terminated; the trailing comma
+                # on the last populated line produces one blank cell.
+                continue
+            try:
+                constants.append(float(value))
+            except ValueError as exc:
+                raise ValueError(
+                    f"Invalid constant {value!r} for material {material_name!r} "
+                    f"in '{keyword}' data."
+                ) from exc
+    return constants
+
+
+def _process_expansion(material_block: Any, inprw: inpRW, material_name: str) -> list[float] | None:
+    """Read one Abaqus ``*Expansion`` block into a 6-component Voigt CTE.
+
+    Parameters
+    ----------
+    material_block : Any
+        Parent ``*Material`` block.
+    inprw : inpRW
+        Parsed Abaqus input.
+    material_name : str
+        Owning material, for error messages.
+
+    Returns
+    -------
+    list of float or None
+        ``[a11, a22, a33, a23, a13, a12]``, or ``None`` when the material
+        declares no thermal expansion.
+    """
+    expansion = inprw.findKeyword("expansion", parentBlock=material_block, printOutput=INPRW_PRINT)
+    if not expansion:
+        return None
+
+    try:
+        expansion_type = expansion[0].parameter["type"]._value.strip().upper()
+    except KeyError:
+        expansion_type = "ISO"
+
+    # Abaqus ANISO order (a11, a22, a33, a12, a13, a23) differs from sgio's
+    # Voigt order, so it is rejected rather than silently reordered.
+    expected = {"ISO": 1, "ORTHO": 3}.get(expansion_type)
+    if expected is None:
+        raise ValueError(
+            f"Abaqus '*Expansion, type={expansion_type}' for material "
+            f"{material_name!r} is not supported (expected ISO or ORTHO)."
+        )
+
+    constants = _block_constants(expansion[0], material_name, "*Expansion")
+    if len(constants) != expected:
+        raise ValueError(
+            f"Abaqus '*Expansion, type={expansion_type}' for material "
+            f"{material_name!r} must have {expected} constant(s), got {len(constants)}."
+        )
+
+    cte = constants * 3 if expansion_type == "ISO" else constants
+    return cte + [0.0, 0.0, 0.0]
+
+
 def _process_material(material_block: Any, inprw: inpRW, materials: dict[str, dict[str, Any]]) -> None:
     """Extract one Abaqus ``*Material`` block into a raw material record."""
     name = material_block.parameter["name"]._value
@@ -576,24 +659,12 @@ def _process_material(material_block: Any, inprw: inpRW, materials: dict[str, di
     except KeyError:
         elastic_type = "isotropic"
 
-    elastic_constants = []
-    for row in elastic[0].data:
-        for value in row:
-            if str(value).strip() == "":
-                # Abaqus data lines are comma-terminated; the trailing comma
-                # on the last populated line produces one blank cell.
-                continue
-            try:
-                elastic_constants.append(float(value))
-            except ValueError as exc:
-                raise ValueError(
-                    f"Invalid elastic constant {value!r} for material {name!r} "
-                    f"in '*Elastic' data."
-                ) from exc
+    elastic_constants = _block_constants(elastic[0], name, "*Elastic")
 
     materials[name] = {
         "id": 0,
         "density": density_value,
+        "cte": _process_expansion(material_block, inprw, name),
         "type": elastic_type,
         "elastic": list(map(float, elastic_constants)),
     }
@@ -622,22 +693,17 @@ def _process_section(
         orientation_name = str(getattr(orient_name, "_value", orient_name))
         orientation_element_ids.setdefault(orientation_name, set()).update(cell_sets[elset_name])
 
+    # Only a composite section carries a layup angle (the 4th column of each
+    # ply row). An ordinary solid/shell section's data line holds thickness,
+    # not an angle, so 0 degrees applies.
     angle = 0.0
-    try:
-        if "composite" in params:
-            angle_token = section_block.data[0][-2]
-        else:
-            angle_token = section_block.data[-2]
-    except IndexError:
-        # No angle column/row present at all: an ordinary section without a
-        # layup angle. 0 degrees is Abaqus's own implicit default.
-        angle_token = None
-    if angle_token is not None:
+    if "composite" in params:
+        angle_token = section_block.data[0][-2]
         try:
             angle = float(angle_token)
         except ValueError as exc:
             raise ValueError(
-                f"Invalid section orientation angle {angle_token!r} for "
+                f"Invalid composite ply orientation angle {angle_token!r} for "
                 f"elset {elset_name!r} in '*Solid Section'/'*Shell Section' data."
             ) from exc
 

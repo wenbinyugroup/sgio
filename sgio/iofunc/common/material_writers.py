@@ -216,7 +216,15 @@ def write_material(
     definition = material.definition
     thermal = material.thermal
     strength_props = material.strength
-    
+
+    # Every thermal physics branch below reads the CTE; catch a missing one
+    # here, where the material name is still at hand.
+    if analysis == 'h' and physics in (1, 3, 4, 6) and thermal.cte is None:
+        raise ValueError(
+            f'Material {material.name!r} has no thermal expansion coefficients, '
+            f'required by physics={physics}'
+        )
+
     if analysis == 'h':
         # Write material properties for homogenization
         

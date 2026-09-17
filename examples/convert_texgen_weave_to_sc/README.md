@@ -10,18 +10,18 @@ TexGen also places six periodic-constraint driver nodes in the Abaqus deck.
 
 ## Explaination of the solution
 
-`run.py` uses the current SGIO public APIs:
+Both scripts use the current SGIO public APIs:
 
 1. `sgio.convert(...)` reads `plain_weave_3d.inp`, including the external
    orientation distribution in `plain_weave_3d.ori`, and writes a SwiftComp
    2.1 `.sg` file for a three-dimensional Cauchy continuum (`SD1`). The `.inp`
-   does not state the SG dimension or model type, so they are supplied in two
-   equivalent ways, and the script asserts that both write the same `.sg`:
-   - **API arguments**: `sgdim=3, model_type="SD1"` with
-     `file_format_in="abaqus"`.
-   - **SG manifest**: `plain_weave_3d.sg.json` references `plain_weave_3d.inp`
-     and holds the same parameters; convert it with
-     `file_format_in="sg_manifest"` and no SG arguments.
+   states neither the SG dimension nor the model type, so there are two ways to
+   supply them, one script each; both write the same `.sg`:
+   - **Method 1 - API arguments** (`run_1_api.py`): `sgdim=3,
+     model_type="SD1"` with `file_format_in="abaqus"`.
+   - **Method 2 - SG manifest** (`run_2_manifest.py`): `plain_weave_3d.sg.json`
+     references `plain_weave_3d.inp` and holds the same parameters; convert it
+     with `file_format_in="sg_manifest"` and no SG arguments.
 2. `sgio.plot_sg_pyvista(...)` constructs a PyVista scene from the converted
    Structure Gene, colors its voxels with 45% opacity, overlays the
    element-local axes, and writes the scene directly to `pyvista.html`.
@@ -30,7 +30,8 @@ Install the optional visualization dependency and run the conversion:
 
 ```powershell
 uv sync --extra pyvista-html
-uv run python examples/convert_texgen_weave_to_sc/run.py
+uv run python examples/convert_texgen_weave_to_sc/run_1_api.py
+uv run python examples/convert_texgen_weave_to_sc/run_2_manifest.py
 ```
 
 ## Result
@@ -45,6 +46,8 @@ coordinate axes.
 - `plain_weave_3d.inp` - TexGen Abaqus voxel model.
 - `plain_weave_3d.ori` - TexGen per-element orientation distribution.
 - `plain_weave_3d.sg.json` - SG manifest referencing the TexGen Abaqus model.
-- `run.py` - SGIO conversion and PyVista rendering script.
+- `run_1_api.py` - conversion with the SG parameters as arguments, plus
+  PyVista rendering.
+- `run_2_manifest.py` - the same conversion through the SG manifest.
 - `plain_weave_3d_sc21.sg` - generated SwiftComp 2.1 Structure Gene.
 - `pyvista.html` - generated interactive PyVista view.

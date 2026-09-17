@@ -179,3 +179,48 @@ def test_extract_structural_blocks_skips_one_bad_block_without_failing_the_rest(
     assert blocks["boundary"][0]["data"] == [[1, 1, 3], [2, 2]]
     assert blocks["cload"][0]["data"] == [[1, 1, "100.0"]]
     assert blocks["dload"][0]["data"] == [[1, "GRAV", "9.81", "0.", "0.", "-1."]]
+
+
+@pytest.mark.unit
+def test_parse_input_file_resolves_distribution_include_from_foreign_separators(
+    tmp_path,
+):
+    """A path with non-native separators must still resolve '*Distribution,
+    Input=...' includes.
+
+    inpRW derives its include folder by splitting the given path on the
+    platform separator, so passing e.g. a forward-slash path on Windows used
+    to leave the distribution silently empty instead of raising.
+    """
+    (tmp_path / "orient.ori").write_text(
+        "1, 0., 1., 0.,   1., 0., 0.\n", encoding="utf-8"
+    )
+    filename = tmp_path / "distribution_include.inp"
+    filename.write_text(
+        """*Heading
+*Node
+1, 0., 0., 0.
+2, 1., 0., 0.
+3, 0., 1., 0.
+4, 0., 0., 1.
+*Element, type=C3D4, elset=FIBRE
+1, 1, 2, 3, 4
+*Distribution Table, Name=OriTable
+COORD3D,COORD3D
+*Distribution, Location=Element, Table=OriTable, Name=OriVectors, Input=orient.ori
+*Orientation, Name=Ori-1, Definition=coordinates
+OriVectors
+1, 0
+*Material, Name=FIBRE_MAT
+*Elastic
+1.0, 0.3
+*Solid Section, elset=FIBRE, material=FIBRE_MAT, orientation=Ori-1
+1.0,
+""",
+        encoding="utf-8",
+    )
+
+    payload = parse_input_file(filename.as_posix(), sgdim=3, model="SD1")
+
+    distribution = payload["inprw"].findKeyword("distribution", printOutput=False)[0]
+    assert len(distribution.data) == 1

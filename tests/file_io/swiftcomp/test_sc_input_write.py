@@ -108,3 +108,31 @@ def test_write_sc_rejects_property_reference_csys_with_wrong_size():
 
     with pytest.raises(ValueError, match='element 1'):
         sc_write_buffer(StringIO(), mesh, sgdim=2, model_space='xy')
+
+
+@pytest.mark.io
+@pytest.mark.swiftcomp
+def test_write_sc_omega_defaults_to_shared_bounding_box(test_data_dir, temp_dir):
+    """An unset omega is computed from the SG bounding box at write time.
+
+    A 2D SG under a plate model shares one dimension with the macro model
+    (y2), so omega is that extent -- not the 1.0 placeholder, which silently
+    scaled every effective stiffness.
+    """
+    fn_in = test_data_dir / 'abaqus' / 'sg2_min.inp'
+
+    if not fn_in.exists():
+        pytest.skip(f'Input file not found: {fn_in}')
+
+    sg = sgio.read(
+        str(fn_in), file_format='abaqus', sgdim=2, model_type='pl1', model_space='xy'
+    )
+    assert sg.omega is None
+
+    fn_out = str(temp_dir / 'sg2_min_omega.sc')
+    sgio.write(sg, filename=fn_out, file_format='sc', model_type='pl1')
+
+    written_omega = float(Path(fn_out).read_text().split()[-1])
+    x_extent = sg.mesh.points[:, 0].max() - sg.mesh.points[:, 0].min()
+    assert written_omega == pytest.approx(x_extent)
+    assert written_omega != pytest.approx(1.0)

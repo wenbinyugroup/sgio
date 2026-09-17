@@ -10,10 +10,20 @@ cross-section to SwiftComp.
 
 ## Solution
 
-The script does the conversion in two equivalent ways and asserts that both
-write the same `sg2_box.sc`: method 1 passes `sgdim`, `model_type` and
-`model_space` as arguments of {func}`sgio.read`; method 2 keeps them in SG
-manifests.
+The conversion is done in two ways, one script each; both write the same
+`sg2_box.sc`.
+
+### Method 1: API arguments
+
+`sgdim`, `model_type` and `model_space` are arguments of {func}`sgio.read`.
+Reading `sg2_box.sc` back still needs `model_type`, because a SwiftComp input
+does not state it.
+
+```{literalinclude} ../../../examples/convert_abaqus_cs_with_sg_manifest/run_1_api.py
+:language: python
+```
+
+### Method 2: SG manifests
 
 `sg2_box.sg.json` is an SG manifest (see {doc}`/ref/sg_manifest`) that
 references the Abaqus input:
@@ -22,7 +32,7 @@ references the Abaqus input:
 :language: json
 ```
 
-```{literalinclude} ../../../examples/convert_abaqus_cs_with_sg_manifest/run.py
+```{literalinclude} ../../../examples/convert_abaqus_cs_with_sg_manifest/run_2_manifest.py
 :language: python
 ```
 
@@ -31,8 +41,7 @@ references the Abaqus input:
 SwiftComp input and a new manifest. SwiftComp input already holds the materials,
 sections and model space, so the new manifest records only the model file, its
 format version, `sgdim` and `model_type`; reading it back checks the SwiftComp
-header against it. Reading `sg2_box.sc` directly (method 1) still needs
-`model_type`, because a SwiftComp input does not state it.
+header against it, so reading it back needs no arguments.
 
 ## Result
 
@@ -43,12 +52,14 @@ header against it. Reading `sg2_box.sc` directly (method 1) still needs
 ```
 
 ```bash
-uv run python examples/convert_abaqus_cs_with_sg_manifest/run.py
+uv run python examples/convert_abaqus_cs_with_sg_manifest/run_1_api.py
+uv run python examples/convert_abaqus_cs_with_sg_manifest/run_2_manifest.py
 ```
 
 ## File List
 
-- [run.py](../../../examples/convert_abaqus_cs_with_sg_manifest/run.py): Main Python script
+- [run_1_api.py](../../../examples/convert_abaqus_cs_with_sg_manifest/run_1_api.py): Conversion with SG arguments
+- [run_2_manifest.py](../../../examples/convert_abaqus_cs_with_sg_manifest/run_2_manifest.py): Conversion through SG manifests
 - [sg2_box_composite_section.inp](../../../examples/convert_abaqus_cs_with_sg_manifest/sg2_box_composite_section.inp): Abaqus cross-section input
 - [sg2_box.sg.json](../../../examples/convert_abaqus_cs_with_sg_manifest/sg2_box.sg.json): SG manifest for the Abaqus input
 - [sg2_box.sc](../../../examples/convert_abaqus_cs_with_sg_manifest/sg2_box.sc): Generated SwiftComp input

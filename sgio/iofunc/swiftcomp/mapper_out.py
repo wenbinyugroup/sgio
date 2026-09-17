@@ -9,6 +9,7 @@ import numpy as np
 
 import sgio.model as smdl
 from sgio.core.mesh import SGMesh
+from sgio.core.omega import compute_omega
 from sgio.core.property_ref_csys import project_property_ref_csys
 from sgio.core.sg import StructureGene
 
@@ -36,6 +37,13 @@ def map_structure_gene_to_write_payload(
 
     if analysis == "h":
         sg_for_write.mesh = _build_swiftcomp_export_mesh(sg.mesh, sg.sgdim, model_space)
+        if sg_for_write.omega is None:
+            sg_for_write.omega = compute_omega(
+                sg_for_write.mesh.points,
+                sg.sgdim,
+                sg_for_write.smdim,
+                model_space,
+            )
         material_id_map = build_material_id_map(
             sg_for_write.materials, sg_for_write.fe_model.material_source_ids, "swiftcomp"
         )

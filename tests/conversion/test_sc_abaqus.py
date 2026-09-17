@@ -203,3 +203,89 @@ def test_swiftcomp_roundtrip_preserves_yz_model_space(tmp_path: Path):
         reparsed.mesh.cell_data["property_ref_csys"][0],
         parsed.mesh.cell_data["property_ref_csys"][0],
     )
+
+
+_THERMOELASTIC_INP = """*Heading
+*Node
+1, 0., 0., 0.
+2, 1., 0., 0.
+3, 0., 1., 0.
+4, 0., 0., 1.
+5, 1., 1., 1.
+*Element, type=C3D4, elset=MATRIX
+1, 1, 2, 3, 4
+2, 2, 3, 4, 5
+*Material, name=MATRIX_MAT
+*Elastic
+2561., 0.3
+*Expansion
+6.5e-06,
+*Solid Section, elset=MATRIX, material=MATRIX_MAT
+1.0,
+"""
+
+
+def _sc_physics_flag(sc_path: str) -> int:
+    """Return the 'analysis' (physics) code from a SwiftComp input header."""
+    for line in Path(sc_path).read_text().splitlines():
+        if line.strip():
+            return int(line.split()[0])
+    raise AssertionError(f'No header line found in {sc_path}')
+
+
+@pytest.mark.io
+@pytest.mark.parametrize(
+    "physics, expected_flag",
+    [("thermoelastic", 1), (1, 1), (None, 0)],
+)
+def test_convert_sets_physics(tmp_path, physics, expected_flag):
+    """convert() must be able to select the physics; None keeps the input's."""
+    fn_in = tmp_path / 'thermoelastic.inp'
+    fn_in.write_text(_THERMOELASTIC_INP, encoding='utf-8')
+    fn_out = str(tmp_path / 'thermoelastic.sc')
+
+    convert(
+        file_name_in=str(fn_in), file_name_out=fn_out,
+        file_format_in='abaqus', file_format_out='sc',
+        sgdim=3, model_type='sd1', physics=physics,
+    )
+
+    assert _sc_physics_flag(fn_out) == expected_flag
+
+
+@pytest.mark.io
+def test_convert_rejects_unknown_physics(tmp_path):
+    """An unsupported physics name must be named, not silently ignored."""
+    fn_in = tmp_path / 'thermoelastic.inp'
+    fn_in.write_text(_THERMOELASTIC_INP, encoding='utf-8')
+
+    with pytest.raises(ValueError, match="Unsupported physics"):
+        convert(
+            file_name_in=str(fn_in), file_name_out=str(tmp_path / 'out.sc'),
+            file_format_in='abaqus', file_format_out='sc',
+            sgdim=3, model_type='sd1', physics='magnetoelastic',
+        )
+
+
+@pytest.mark.io
+def test_failed_sc_write_leaves_no_partial_file(tmp_path):
+    """A write that fails mid-stream must not leave a partial .sc behind.
+
+    Reproduces the original TexGen case: thermoelastic physics with a
+    material that has no CTE fails only once the material block is reached,
+    long after the mesh has been written.
+    """
+    fn_in = tmp_path / 'no_expansion.inp'
+    fn_in.write_text(
+        _THERMOELASTIC_INP.replace('*Expansion\n6.5e-06,\n', ''), encoding='utf-8'
+    )
+    fn_out = tmp_path / 'no_expansion.sc'
+
+    with pytest.raises(ValueError, match="thermal expansion"):
+        convert(
+            file_name_in=str(fn_in), file_name_out=str(fn_out),
+            file_format_in='abaqus', file_format_out='sc',
+            sgdim=3, model_type='sd1', physics='thermoelastic',
+        )
+
+    assert not fn_out.exists()

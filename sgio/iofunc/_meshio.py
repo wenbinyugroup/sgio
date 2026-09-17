@@ -20,6 +20,7 @@ import numpy as np
 from numpy.typing import ArrayLike
 
 from sgio.core.mesh import SGMesh
+from sgio.core.omega import model_space_axes
 
 
 logger = logging.getLogger(__name__)
@@ -198,33 +199,13 @@ def _write_nodes(
     """
     sfi = '{:' + int_fmt + '}'
     sff = ''.join(['{:' + float_fmt + '}', ] * sgdim)
+    axes = model_space_axes(sgdim, model_space)
 
     for i, ncoord in enumerate(points):
         nid = node_id[i] if len(node_id) > 0 else i + 1
         f.write(sfi.format(nid))  # node id
 
-        if sgdim == 1:
-            if model_space == 'x':
-                f.write(sff.format(ncoord[0]))
-            elif model_space == 'y':
-                f.write(sff.format(ncoord[1]))
-            elif model_space == 'z':
-                f.write(sff.format(ncoord[2]))
-            else:
-                raise ValueError(f"Invalid model space: {model_space}")
-
-        elif sgdim == 2:
-            if model_space == 'xy':
-                f.write(sff.format(ncoord[0], ncoord[1]))
-            elif model_space == 'yz':
-                f.write(sff.format(ncoord[1], ncoord[2]))
-            elif model_space == 'zx':
-                f.write(sff.format(ncoord[2], ncoord[0]))
-            else:
-                raise ValueError(f"Invalid model space: {model_space}")
-
-        elif sgdim == 3:
-            f.write(sff.format(*ncoord))
+        f.write(sff.format(*(ncoord[axis] for axis in axes)))
 
         # Add comment
         if i == 0:
