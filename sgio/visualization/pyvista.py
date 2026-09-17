@@ -92,6 +92,7 @@ def create_pyvista_plotter(
     *,
     scalars: str | None = None,
     show_edges: bool = True,
+    opacity: float = 1.0,
     show_local_axes: bool = False,
     max_local_axes: int = 500,
     local_axis_scale: float | None = None,
@@ -106,6 +107,8 @@ def create_pyvista_plotter(
         Point- or cell-data array used to color the mesh.
     show_edges : bool, optional
         Show mesh edges. Default is ``True``.
+    opacity : float, optional
+        Mesh opacity from 0 (transparent) to 1 (opaque). Default is ``1.0``.
     show_local_axes : bool, optional
         Overlay red ``y1``, green ``y2``, and blue ``y3`` element axes.
     max_local_axes : int, optional
@@ -138,6 +141,7 @@ def create_pyvista_plotter(
         mesh,
         scalars=scalars,
         show_edges=show_edges,
+        opacity=opacity,
         show_local_axes=show_local_axes,
         max_local_axes=max_local_axes,
         local_axis_scale=local_axis_scale,
@@ -152,6 +156,7 @@ def plot_sg_pyvista(
     *,
     scalars: str | None = "property_id",
     show_edges: bool = True,
+    opacity: float = 1.0,
     show_local_axes: bool = False,
     max_local_axes: int = 500,
     local_axis_scale: float | None = None,
@@ -177,6 +182,8 @@ def plot_sg_pyvista(
         the mesh uncolored.
     show_edges : bool, optional
         Show mesh edges. Default is ``True``.
+    opacity : float, optional
+        Mesh opacity from 0 (transparent) to 1 (opaque). Default is ``1.0``.
     show_local_axes : bool, optional
         Draw sampled element-local y1/y2/y3 arrows. Default is ``False``.
     max_local_axes : int, optional
@@ -217,6 +224,7 @@ def plot_sg_pyvista(
         sg.mesh,
         scalars=scalars,
         show_edges=show_edges,
+        opacity=opacity,
         show_local_axes=show_local_axes,
         max_local_axes=max_local_axes,
         local_axis_scale=local_axis_scale,
@@ -242,6 +250,7 @@ def _create_pyvista_scene(
     *,
     scalars: str | None,
     show_edges: bool,
+    opacity: float,
     show_local_axes: bool,
     max_local_axes: int,
     local_axis_scale: float | None,
@@ -251,6 +260,8 @@ def _create_pyvista_scene(
     """Create one scene and return property-legend entries for HTML export."""
     if not isinstance(mesh, SGMesh):
         raise TypeError(f"mesh must be an SGMesh; got {type(mesh).__name__}.")
+    if not 0.0 <= opacity <= 1.0:
+        raise ValueError("opacity must be between 0 and 1.")
 
     pyvista = _import_pyvista()
     grid = mesh.to_pyvista()
@@ -263,9 +274,13 @@ def _create_pyvista_scene(
             plotter,
             grid,
             show_edges=show_edges and not widgets,
+            opacity=opacity,
         )
     else:
-        mesh_kwargs: dict[str, Any] = {"show_edges": show_edges and not widgets}
+        mesh_kwargs: dict[str, Any] = {
+            "show_edges": show_edges and not widgets,
+            "opacity": opacity,
+        }
         if scalars is not None:
             mesh_kwargs["scalars"] = scalars
         mesh_actor = plotter.add_mesh(grid, **mesh_kwargs)
@@ -298,6 +313,7 @@ def _add_property_id_mesh(
     grid: pyvista.UnstructuredGrid,
     *,
     show_edges: bool,
+    opacity: float,
 ) -> tuple[Any, list[tuple[str, str]]]:
     """Add mesh cells with a discrete property-ID color map and legend."""
     property_ids = np.unique(np.asarray(grid.cell_data["property_id"]))
@@ -311,6 +327,7 @@ def _add_property_id_mesh(
         clim=(-0.5, len(property_ids) - 0.5),
         categories=True,
         show_edges=show_edges,
+        opacity=opacity,
         show_scalar_bar=False,
     )
     legend = [

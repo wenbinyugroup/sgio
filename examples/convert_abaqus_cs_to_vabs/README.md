@@ -8,14 +8,22 @@ Gmsh mesh with its SG manifest.
 
 ## Explaination of the solution
 
-The script does two things:
+The `.inp` file carries the mesh, materials and sections, but not the SG
+parameters: `sgdim` (2), `model_type` (`BM2`, Timoshenko) and `model_space`
+(`xy`, the plane the section is drawn in). The script supplies them in two
+equivalent ways:
 
-1. Read the Abaqus model and convert it to `sg2_airfoil.sg`.
-2. Reuse the returned `StructureGene` to write `main.msh` and the SG manifest
-   `main.sg.json` that references it.
+1. **API arguments**: `sgio.convert(..., 'abaqus', 'vabs', sgdim=2,
+   model_space='xy', model_type='BM2')`.
+2. **SG manifest**: `sg2_airfoil.sg.json` references `sg2_airfoil.inp` and holds
+   the same parameters, so `sgio.convert('sg2_airfoil.sg.json', ...,
+   'sg_manifest', 'vabs')` needs no SG arguments.
 
-The Gmsh export does not rely on legacy `$SGLayerDef` or `$SGConfig` blocks.
-Materials, sections and SG parameters are written to the manifest instead.
+The script asserts that both methods write the same `sg2_airfoil.sg`.
+
+It then reuses the returned `StructureGene` to write `main.msh` and the SG
+manifest `main.sg.json` that references it. A `.msh` file holds no materials or
+SG parameters, so a Gmsh export is always written through a manifest.
 
 ## Result
 
@@ -35,6 +43,7 @@ uv run python examples/convert_abaqus_cs_to_vabs/run.py
 
 - `run.py`
 - `sg2_airfoil.inp`
+- `sg2_airfoil.sg.json`
 - `sg2_airfoil.sg`
 - `main.msh`
 - `main.sg.json`

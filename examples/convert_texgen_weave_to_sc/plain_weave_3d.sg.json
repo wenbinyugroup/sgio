@@ -1,0 +1,9 @@
+{
+  "sg_manifest_version": 1,
+  "model_file": {
+    "path": "plain_weave_3d.inp",
+    "format": "abaqus"
+  },
+  "sgdim": 3,
+  "model_type": "SD1"
+}

@@ -10,6 +10,11 @@ cross-section to SwiftComp.
 
 ## Solution
 
+The script does the conversion in two equivalent ways and asserts that both
+write the same `sg2_box.sc`: method 1 passes `sgdim`, `model_type` and
+`model_space` as arguments of {func}`sgio.read`; method 2 keeps them in SG
+manifests.
+
 `sg2_box.sg.json` is an SG manifest (see {doc}`/ref/sg_manifest`) that
 references the Abaqus input:
 
@@ -26,7 +31,8 @@ references the Abaqus input:
 SwiftComp input and a new manifest. SwiftComp input already holds the materials,
 sections and model space, so the new manifest records only the model file, its
 format version, `sgdim` and `model_type`; reading it back checks the SwiftComp
-header against it.
+header against it. Reading `sg2_box.sc` directly (method 1) still needs
+`model_type`, because a SwiftComp input does not state it.
 
 ## Result
 

@@ -83,6 +83,39 @@ def test_plot_sg_pyvista_returns_a_scene_for_a_structure_gene():
 
 @pytest.mark.unit
 @pytest.mark.visualization
+def test_plot_sg_pyvista_applies_mesh_opacity():
+    """The high-level plotter should pass opacity to the SG mesh actor."""
+    pyvista = pytest.importorskip("pyvista")
+    sg = StructureGene(name="sample", sgdim=2)
+    sg.mesh = _sample_mesh()
+
+    plotter = plot_sg_pyvista(sg, opacity=0.45)
+    try:
+        mesh_actor = next(
+            actor
+            for actor in plotter.actors.values()
+            if isinstance(
+                getattr(getattr(actor, "mapper", None), "dataset", None),
+                pyvista.UnstructuredGrid,
+            )
+        )
+        assert mesh_actor.prop.opacity == pytest.approx(0.45)
+    finally:
+        plotter.close()
+
+
+@pytest.mark.unit
+def test_plot_sg_pyvista_rejects_invalid_opacity():
+    """Opacity outside the normalized interval should be rejected."""
+    sg = StructureGene(name="sample", sgdim=2)
+    sg.mesh = _sample_mesh()
+
+    with pytest.raises(ValueError, match="opacity must be between 0 and 1"):
+        plot_sg_pyvista(sg, opacity=1.1)
+
+
+@pytest.mark.unit
+@pytest.mark.visualization
 def test_plot_sg_pyvista_adds_desktop_visibility_widgets():
     """High-level desktop controls must manage faces, edges, nodes, and axes."""
     pytest.importorskip("pyvista")

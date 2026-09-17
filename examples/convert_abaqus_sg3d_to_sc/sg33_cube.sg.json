@@ -1,0 +1,9 @@
+{
+  "sg_manifest_version": 1,
+  "model_file": {
+    "path": "sg33_cube.inp",
+    "format": "abaqus"
+  },
+  "sgdim": 3,
+  "model_type": "SD1"
+}
