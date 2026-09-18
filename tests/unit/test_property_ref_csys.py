@@ -31,7 +31,7 @@ from sgio.iofunc.vabs._mesh import (
 @pytest.mark.unit
 def test_vabs_theta_roundtrip_uses_internal_nine_value_representation():
     """VABS theta values should normalize to the internal 9-value representation."""
-    cell_prop_id, cell_csys = _read_property_id_ref_csys(
+    cell_prop_id, cell_csys, _ = _read_property_id_ref_csys(
         StringIO("1 7 90.0\n"),
         nelem=1,
         cells=[("quad", np.array([[0, 1, 2, 3]], dtype=int))],
@@ -47,6 +47,63 @@ def test_vabs_theta_roundtrip_uses_internal_nine_value_representation():
     )
     assert property_ref_csys_to_vabs_theta(cell_csys[0][0]) == pytest.approx(90.0)
 
+
+
+def _read_old_format(lines: str, nelem: int):
+    """Read old-format VABS element lines for ``nelem`` 4-node elements."""
+    return _read_property_id_ref_csys(
+        StringIO(lines),
+        nelem=nelem,
+        cells=[("quad", np.zeros((nelem, 4), dtype=int))],
+        elem_id_to_cell_id={i + 1: (0, i) for i in range(nelem)},
+        format_flag=0,
+    )
+
+
+@pytest.mark.unit
+class TestVabsOldFormatPropertyLines:
+    """Old format: ``elem_id mate_id theta_3 theta_1(9)``."""
+
+    def test_unique_material_theta_3_pairs_become_layers(self):
+        lines = (
+            "1 2 45.0 0 540 0 0 0 0 0 0 0\n"
+            "2 2 -45.0 0 540 0 0 0 0 0 0 0\n"
+            "3 2 45.0 0 540 0 0 0 0 0 0 0\n"
+            "4 1 45.0 0 540 0 0 0 0 0 0 0\n"
+        )
+
+        cell_prop_id, _, layers = _read_old_format(lines, 4)
+
+        assert layers == {1: (2, 45.0), 2: (2, -45.0), 3: (1, 45.0)}
+        np.testing.assert_array_equal(cell_prop_id[0], [1, 2, 1, 3])
+
+    def test_theta_1_is_read_from_fourth_column(self):
+        cell_prop_id, cell_csys, _ = _read_old_format(
+            "1 1 15.0 90.0 540 0 0 0 0 0 0 0\n", 1)
+
+        assert property_ref_csys_to_vabs_theta(cell_csys[0][0]) == pytest.approx(90.0)
+
+    def test_equal_nodal_theta_1_is_uniform(self):
+        _, cell_csys, _ = _read_old_format(
+            "1 1 15 270 270 270 270 270 270 270 270 270\n", 1)
+
+        theta_1 = property_ref_csys_to_vabs_theta(cell_csys[0][0]) % 360.0
+        assert theta_1 == pytest.approx(270.0)
+
+    def test_varying_nodal_theta_1_is_rejected(self):
+        with pytest.raises(ValueError, match="Element 1"):
+            _read_old_format("1 1 0 10 20 30 40 0 0 0 0 0\n", 1)
+
+    def test_new_format_has_no_inline_layers(self):
+        _, _, layers = _read_property_id_ref_csys(
+            StringIO("1 7 90.0\n"),
+            nelem=1,
+            cells=[("quad", np.array([[0, 1, 2, 3]], dtype=int))],
+            elem_id_to_cell_id={1: (0, 0)},
+            format_flag=1,
+        )
+
+        assert layers == {}
 
 @pytest.mark.unit
 @pytest.mark.parametrize(

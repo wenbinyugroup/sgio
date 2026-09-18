@@ -79,13 +79,11 @@ def _readMesh(file, sgdim:int, nnode:int, nelem:int, format_flag):
 
     logger.debug('reading mesh...')
 
-    mesh = read_buffer(
+    return read_buffer(
         file,
         sgdim=sgdim, nnode=nnode, nelem=nelem,
         format_flag=format_flag
     )
-
-    return mesh
 
 
 

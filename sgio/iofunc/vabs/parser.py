@@ -33,17 +33,20 @@ def parse_input_buffer(file: TextIO, format_version: str) -> dict[str, Any]:
         material-angle combinations, and material reader state.
     """
     configs = _readHeader(file)
-    mesh = _readMesh(
+    mesh, material_rotation_combinations = _readMesh(
         file,
         sgdim=configs["sgdim"],
         nnode=configs["num_nodes"],
         nelem=configs["num_elements"],
         format_flag=configs["format"],
     )
-    material_rotation_combinations = _readMaterialRotationCombinations(
-        file,
-        configs["num_mat_angle3_comb"],
-    )
+    # Old-format layers come from the element lines; only the new format
+    # has a separate layer block (nlayer is unused otherwise)
+    if configs["format"] == 1:
+        material_rotation_combinations = _readMaterialRotationCombinations(
+            file,
+            configs["num_mat_angle3_comb"],
+        )
     materials, material_id_pairs = _readMaterials(file, configs["num_materials"])
 
     return {

@@ -6,10 +6,13 @@ This module tests:
 3. VABS file validation
 """
 
+import shutil
+
+import numpy as np
 import pytest
 from pathlib import Path
 
-from sgio import convert, read, run, logger
+from sgio import convert, read, read_output_model, run, logger
 
 
 @pytest.mark.io
@@ -175,6 +178,33 @@ def test_vabs_solver_execution(test_data_dir, temp_dir):
         # Run the solver
         run(solver, str(fn_out), analysis='h', smdim=case.get('model', None))
 
+
+
+@pytest.mark.io
+@pytest.mark.vabs
+@pytest.mark.requires_solver
+@pytest.mark.skipif(shutil.which('vabs') is None, reason='VABS not installed')
+def test_vabs_old_format_layers_survive_new_format_write(test_data_dir, temp_dir):
+    """Old-format (material, theta_3) pairs must become new-format layers.
+
+    anisopipe.sg is old format with four layups (-45/0/45/90), so a wrong
+    theta_3 or layer mapping changes the stiffness.
+    """
+    fn_orig = temp_dir / 'anisopipe_orig.sg'
+    fn_new = temp_dir / 'anisopipe_new.sg'
+    shutil.copy(test_data_dir / 'vabs' / 'version_4_1' / 'anisopipe.sg', fn_orig)
+    convert(
+        str(fn_orig), str(fn_new), 'vabs', 'vabs',
+        file_version_in='4.1', file_version_out='4.1',
+        model_type='BM2', vabs_format_version=1,
+    )
+
+    run('vabs', str(fn_orig), analysis='h')
+    run('vabs', str(fn_new), analysis='h')
+
+    expected = read_output_model(f'{fn_orig}.K', 'vabs', model_type='BM2').stff
+    actual = read_output_model(f'{fn_new}.K', 'vabs', model_type='BM2').stff
+    np.testing.assert_allclose(actual, expected, rtol=1e-9, atol=1e-9 * np.abs(expected).max())
 
 @pytest.mark.io
 @pytest.mark.vabs

@@ -33,7 +33,17 @@ vabs_to_meshio_type = {
 }
 
 def read_buffer(f, sgdim:int, nnode:int, nelem:int, format_flag, **kwargs):
-    """Read VABS mesh from buffer into an SGMesh."""
+    """Read VABS mesh from buffer into an SGMesh.
+
+    Returns
+    -------
+    mesh : SGMesh
+        The mesh. ``cell_data['property_id']`` holds layer ids.
+    layers : dict[int, tuple[int, float]]
+        ``{layer_id: (material_id, theta_3)}`` built from the element lines of
+        an old-format file; empty for the new format, whose layers follow the
+        element block.
+    """
     from sgio.core.numbering import ensure_element_ids, ensure_node_ids
 
     # Initialize the optional data fields
@@ -61,7 +71,7 @@ def read_buffer(f, sgdim:int, nnode:int, nelem:int, format_flag, **kwargs):
     cell_data['element_id'] = elem_ids
 
     # Read local coordinate system for sectional properties
-    cell_prop_id, cell_csys = _read_property_id_ref_csys(
+    cell_prop_id, cell_csys, layers = _read_property_id_ref_csys(
         f, nelem, cells, elem_id_to_cell_id, format_flag)
     cell_data['property_id'] = cell_prop_id
     cell_data['property_ref_csys'] = cell_csys
@@ -79,7 +89,7 @@ def read_buffer(f, sgdim:int, nnode:int, nelem:int, format_flag, **kwargs):
     ensure_node_ids(mesh)
     ensure_element_ids(mesh)
 
-    return mesh
+    return mesh, layers
 
 
 
@@ -148,6 +158,11 @@ def _read_elements(f, nelem:int, point_ids):
 def _read_property_id_ref_csys(file, nelem, cells, elem_id_to_cell_id, format_flag):
     """Read the data block of element property id and reference csys.
 
+    New format (``format_flag`` 1) lines are ``elem_id layer_id theta_1``.
+    Old format lines are ``elem_id mate_id theta_3 theta_1(9)``; each unique
+    ``(mate_id, theta_3)`` pair becomes a layer, numbered from 1 in order of
+    first appearance, so both formats yield layer ids.
+
     Parameters
     ----------
     file : file
@@ -159,20 +174,22 @@ def _read_property_id_ref_csys(file, nelem, cells, elem_id_to_cell_id, format_fl
     elem_id_to_cell_id : dict
         The dictionary of element id to cell id.
     format_flag : int
-        The format flag. 0 for old format, 1 for new format.
+        The format flag. 1 for new format, anything else for old format.
 
     Returns
     -------
     cell_prop_id : list
-        The list of property ids.
+        The list of layer ids.
     cell_csys : list
         The list of reference csys.
+    layers : dict[int, tuple[int, float]]
+        ``{layer_id: (mate_id, theta_3)}`` for the old format; empty otherwise.
     """
 
     cell_prop_id = []
     cell_csys = []
-    # print(cells)
-    # print(cell_ids)
+    layers = {}
+    layer_ids = {}  # (mate_id, theta_3) -> layer_id, old format only
 
     counter = 0
     while counter < nelem:
@@ -183,25 +200,66 @@ def _read_property_id_ref_csys(file, nelem, cells, elem_id_to_cell_id, format_fl
         line = line.split()
 
         elem_id = int(line[0])
-        prop_id = int(line[1])
-        elem_csys = vabs_theta_to_property_ref_csys(sutl.fortran_float(line[2]))
-
         cell_block_id, cell_id = elem_id_to_cell_id[elem_id]
+
+        if format_flag == 1:
+            prop_id = int(line[1])
+            theta_1 = sutl.fortran_float(line[2])
+        else:
+            key = (int(line[1]), sutl.fortran_float(line[2]))
+            if key not in layer_ids:
+                layer_ids[key] = len(layer_ids) + 1
+                layers[layer_ids[key]] = key
+            prop_id = layer_ids[key]
+            nnode = len(cells[cell_block_id][1][cell_id])
+            theta_1 = _old_format_theta_1(
+                [sutl.fortran_float(v) for v in line[3:12]], nnode, elem_id)
 
         if cell_block_id > len(cell_csys) - 1:
             _ncell = len(cells[cell_block_id][1])
-            # print('_ncell =', _ncell)
             cell_prop_id.append(np.zeros(_ncell, dtype=int))
             cell_csys.append(np.zeros((_ncell, 9), dtype=float))
 
-        # print(cell_csys[cell_block_id][cell_id])
-
         cell_prop_id[cell_block_id][cell_id] = prop_id
-        cell_csys[cell_block_id][cell_id] = elem_csys
+        cell_csys[cell_block_id][cell_id] = vabs_theta_to_property_ref_csys(theta_1)
 
         counter += 1
 
-    return cell_prop_id, cell_csys
+    return cell_prop_id, cell_csys, layers
+
+
+def _old_format_theta_1(values: list[float], nnode: int, elem_id: int) -> float:
+    """Reduce old-format nodal ``theta_1(9)`` to one element value.
+
+    Parameters
+    ----------
+    values : list of float
+        The nine ``theta_1`` values of the element line.
+    nnode : int
+        Number of nodes of the element.
+    elem_id : int
+        Element id, used in the error message.
+
+    Returns
+    -------
+    float
+        ``theta_1(1)`` when ``theta_1(2)`` is the uniform marker 540, or when
+        all nodal values are equal.
+
+    Raises
+    ------
+    ValueError
+        If the nodal values differ; sgio stores one ``theta_1`` per element.
+    """
+    if values[1] == 540.0:
+        return values[0]
+    nodal = values[:nnode]
+    if any(v != nodal[0] for v in nodal):
+        raise ValueError(
+            f'Element {elem_id}: nodal theta_1 values {nodal} differ; '
+            'only a uniform theta_1 per element is supported.'
+        )
+    return nodal[0]
 
 
 
