@@ -643,16 +643,43 @@ def test_map_input_to_structure_gene_leaves_cte_unset_without_expansion(tmp_path
 
 
 @pytest.mark.unit
-def test_map_input_to_structure_gene_rejects_aniso_expansion(tmp_path):
-    """Abaqus ANISO ordering differs from sgio's Voigt order, so it must raise
-    rather than be silently reordered."""
+def test_map_input_to_structure_gene_reorders_aniso_expansion(tmp_path):
+    """Abaqus ANISO order (a11, a22, a33, a12, a13, a23) maps onto sgio's
+    (a11, a22, a33, 2a23, 2a13, 2a12). Abaqus shear terms are already
+    engineering (a free C3D8 with a12 = 1e-3, dT = 1 prints E12 = 1e-3)."""
     filename = _write_material_input(
         tmp_path,
         "1.0, 0.3",
-        "*Expansion, type=ANISO\n1e-06, 2e-06, 3e-06, 0., 0., 0.\n",
+        "*Expansion, type=ANISO\n1e-06, 2e-06, 3e-06, 4e-06, 5e-06, 6e-06\n",
     )
 
-    with pytest.raises(ValueError, match="type=ANISO"):
+    sg = map_input_to_structure_gene(parse_input_file(filename, sgdim=2, model="BM2"))
+
+    assert sg.materials["FIBRE_MAT"].cte == pytest.approx(
+        [1e-06, 2e-06, 3e-06, 6e-06, 5e-06, 4e-06]
+    )
+
+
+@pytest.mark.unit
+def test_map_input_to_structure_gene_reads_specific_heat(tmp_path):
+    """'*Specific Heat' fills the material's specific heat."""
+    filename = _write_material_input(
+        tmp_path, "1.0, 0.3", "*Expansion\n6.5e-06,\n*Specific Heat\n900.,\n"
+    )
+
+    sg = map_input_to_structure_gene(parse_input_file(filename, sgdim=2, model="BM2"))
+
+    assert sg.materials["FIBRE_MAT"].specific_heat == pytest.approx(900.0)
+
+
+@pytest.mark.unit
+def test_map_input_to_structure_gene_rejects_temperature_dependent_specific_heat(tmp_path):
+    """A temperature table has more than one value; only a constant is supported."""
+    filename = _write_material_input(
+        tmp_path, "1.0, 0.3", "*Specific Heat\n900., 20.\n1000., 100.\n"
+    )
+
+    with pytest.raises(ValueError, match="Specific Heat"):
         map_input_to_structure_gene(parse_input_file(filename, sgdim=2, model="BM2"))
 
 

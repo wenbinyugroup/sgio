@@ -287,6 +287,8 @@ def _build_material_models(materials: Mapping[str, Mapping[str, Any]]) -> dict[s
         model.density = material_data.get("density", 0)
         if material_data["cte"] is not None:
             model.cte = material_data["cte"]
+        if material_data["specific_heat"] is not None:
+            model.specific_heat = material_data["specific_heat"]
 
         material_type = material_data["type"]
         elastic = material_data["elastic"]
@@ -615,8 +617,8 @@ def _process_expansion(material_block: Any, inprw: inpRW, material_name: str) ->
     Returns
     -------
     list of float or None
-        ``[a11, a22, a33, a23, a13, a12]``, or ``None`` when the material
-        declares no thermal expansion.
+        ``[a11, a22, a33, 2a23, 2a13, 2a12]`` (engineering shear, as in
+        SwiftComp), or ``None`` when the material declares no thermal expansion.
     """
     expansion = inprw.findKeyword("expansion", parentBlock=material_block, printOutput=INPRW_PRINT)
     if not expansion:
@@ -627,13 +629,11 @@ def _process_expansion(material_block: Any, inprw: inpRW, material_name: str) ->
     except KeyError:
         expansion_type = "ISO"
 
-    # Abaqus ANISO order (a11, a22, a33, a12, a13, a23) differs from sgio's
-    # Voigt order, so it is rejected rather than silently reordered.
-    expected = {"ISO": 1, "ORTHO": 3}.get(expansion_type)
+    expected = {"ISO": 1, "ORTHO": 3, "ANISO": 6}.get(expansion_type)
     if expected is None:
         raise ValueError(
             f"Abaqus '*Expansion, type={expansion_type}' for material "
-            f"{material_name!r} is not supported (expected ISO or ORTHO)."
+            f"{material_name!r} is not supported (expected ISO, ORTHO or ANISO)."
         )
 
     constants = _block_constants(expansion[0], material_name, "*Expansion")
@@ -643,8 +643,49 @@ def _process_expansion(material_block: Any, inprw: inpRW, material_name: str) ->
             f"{material_name!r} must have {expected} constant(s), got {len(constants)}."
         )
 
-    cte = constants * 3 if expansion_type == "ISO" else constants
-    return cte + [0.0, 0.0, 0.0]
+    if expansion_type == "ISO":
+        return constants * 3 + [0.0, 0.0, 0.0]
+    if expansion_type == "ORTHO":
+        return constants + [0.0, 0.0, 0.0]
+    # Abaqus ANISO shear terms are engineering like sgio's (a free C3D8 with
+    # a12 = 1e-3, dT = 1 gives E12 = 1e-3); only the order differs.
+    a11, a22, a33, a12, a13, a23 = constants
+    return [a11, a22, a33, a23, a13, a12]
+
+
+def _process_specific_heat(material_block: Any, inprw: inpRW, material_name: str) -> float | None:
+    """Read one Abaqus ``*Specific Heat`` block.
+
+    Parameters
+    ----------
+    material_block : Any
+        Parent ``*Material`` block.
+    inprw : inpRW
+        Parsed Abaqus input.
+    material_name : str
+        Owning material, for error messages.
+
+    Returns
+    -------
+    float or None
+        The specific heat, or ``None`` when the material declares none.
+
+    Raises
+    ------
+    ValueError
+        If the block is not a single constant (e.g. a temperature table).
+    """
+    block = inprw.findKeyword("specific heat", parentBlock=material_block, printOutput=INPRW_PRINT)
+    if not block:
+        return None
+
+    constants = _block_constants(block[0], material_name, "*Specific Heat")
+    if len(constants) != 1:
+        raise ValueError(
+            f"Abaqus '*Specific Heat' for material {material_name!r} must have "
+            f"1 constant, got {len(constants)}."
+        )
+    return constants[0]
 
 
 def _process_material(material_block: Any, inprw: inpRW, materials: dict[str, dict[str, Any]]) -> None:
@@ -665,6 +706,7 @@ def _process_material(material_block: Any, inprw: inpRW, materials: dict[str, di
         "id": 0,
         "density": density_value,
         "cte": _process_expansion(material_block, inprw, name),
+        "specific_heat": _process_specific_heat(material_block, inprw, name),
         "type": elastic_type,
         "elastic": list(map(float, elastic_constants)),
     }
