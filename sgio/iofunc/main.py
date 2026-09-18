@@ -121,8 +121,9 @@ def read(
         Choose one from 'abaqus', 'vabs', 'sc', 'swiftcomp', 'gmsh',
         'sg_manifest'.
     model_type : str, optional
-        Type of the macro structural model. Required for 'abaqus' and
-        'swiftcomp'; for 'sg_manifest' it must agree with the manifest.
+        Type of the macro structural model. Required for 'swiftcomp'; for
+        'abaqus' it may be left out and given to :func:`write` instead; for
+        'sg_manifest' it must agree with the manifest.
         Choose one from
 
         * 'SD1': Cauchy continuum model
@@ -228,7 +229,7 @@ def read(
 
 # SG arguments a model file format cannot supply by itself.
 _REQUIRED_READ_ARGS = {
-    'abaqus': ('sgdim', 'model_type'),
+    'abaqus': ('sgdim',),
     'swiftcomp': ('model_type',),
 }
 
@@ -524,8 +525,15 @@ def write(
     if writer is None:
         raise ValueError(f"Unsupported output format: {file_format}")
 
-    if canonical_format in ('swiftcomp', 'vabs') and model_type is None:
-        model_type = model_type_of(sg)
+    if canonical_format in ('swiftcomp', 'vabs'):
+        if model_type is None:
+            model_type = model_type_of(sg)
+        else:
+            # Writers read the submodel from the SG; write the requested one
+            # without changing the caller's SG.
+            sg = copy.copy(sg)
+            sg.analysis_config = copy.copy(sg.analysis_config)
+            sg.smdim, sg.analysis_config.model = _parse_model_type(model_type)
 
     common_kwargs = dict(
         analysis=analysis,

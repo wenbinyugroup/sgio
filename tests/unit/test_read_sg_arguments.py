@@ -24,13 +24,24 @@ class TestRequiredArguments:
         ('arguments', 'missing'),
         [
             ({'model_type': 'PL1', 'model_space': 'xy'}, 'sgdim'),
-            ({'sgdim': 2, 'model_space': 'xy'}, 'model_type'),
             ({'sgdim': 2, 'model_type': 'PL1'}, 'model_space'),
         ],
     )
     def test_abaqus_requires_sg_arguments(self, arguments, missing):
         with pytest.raises(IncompleteModelDataError, match=missing):
             sgio.read(str(ABAQUS_2D), 'abaqus', **arguments)
+
+    def test_abaqus_model_type_deferred_to_write(self, tmp_path):
+        """An Abaqus SG read without model_type needs it at write time."""
+        sg = sgio.read(str(ABAQUS_2D), 'abaqus', sgdim=2, model_space='xy')
+        assert sg.smdim is None
+
+        with pytest.raises(IncompleteModelDataError, match='smdim'):
+            sgio.write(sg, str(tmp_path / 'no_model.sc'), 'sc')
+
+        sc_file = tmp_path / 'pl2.sc'
+        sgio.write(sg, str(sc_file), 'sc', model_type='PL2')
+        assert sc_file.read_text().split()[0] == '1'
 
     def test_swiftcomp_requires_model_type(self, tmp_path):
         sc_file = tmp_path / 'isorect.sc'

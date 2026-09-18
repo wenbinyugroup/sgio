@@ -111,7 +111,7 @@ def _extract_structural_blocks(parser: inpRW) -> dict[str, list[dict[str, Any]]]
 def parse_input_file(
     filename: str,
     sgdim: int = 2,
-    model: int | str = 1,
+    model: int | str | None = None,
     **kwargs: Any,
 ) -> dict[str, Any]:
     """Parse an Abaqus input file into a raw intermediate payload.
@@ -123,7 +123,7 @@ def parse_input_file(
     sgdim : int, optional
         Structure-gene geometry dimension.
     model : int or str, optional
-        Macro model selector.
+        Macro model selector; ``None`` leaves the macro model unset.
     **kwargs : dict[str, Any]
         Extra adapter options retained in the payload for mapper use.
 

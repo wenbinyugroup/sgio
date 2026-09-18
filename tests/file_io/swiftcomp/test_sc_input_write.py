@@ -136,3 +136,27 @@ def test_write_sc_omega_defaults_to_shared_bounding_box(test_data_dir, temp_dir)
     x_extent = sg.mesh.points[:, 0].max() - sg.mesh.points[:, 0].min()
     assert written_omega == pytest.approx(x_extent)
     assert written_omega != pytest.approx(1.0)
+
+
+@pytest.mark.io
+@pytest.mark.swiftcomp
+def test_write_sc_model_type_sets_submodel(test_data_dir, temp_dir):
+    """A model_type given to write sets the submodel written, not just smdim.
+
+    One SG read once is written for another macro model; before, the
+    submodel came from the SG, so 'pl2' was silently written as Kirchhoff-Love.
+    """
+    fn_in = test_data_dir / 'abaqus' / 'sg2_min.inp'
+
+    if not fn_in.exists():
+        pytest.skip(f'Input file not found: {fn_in}')
+
+    sg = sgio.read(
+        str(fn_in), file_format='abaqus', sgdim=2, model_type='pl1', model_space='xy'
+    )
+
+    fn_out = str(temp_dir / 'sg2_min_pl2.sc')
+    sgio.write(sg, filename=fn_out, file_format='sc', model_type='pl2')
+
+    assert Path(fn_out).read_text().split()[0] == '1'
+    assert (sg.smdim, sg.analysis_config.model) == (2, 0)

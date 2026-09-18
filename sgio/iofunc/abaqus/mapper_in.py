@@ -91,7 +91,9 @@ def map_input_to_structure_gene(parsed: Mapping[str, Any]) -> StructureGene:
     """
     fe = map_input_to_fe_model(parsed)
     sg = StructureGene.from_fe(fe, sgdim=int(parsed["sgdim"]))
-    sg.smdim, sg.analysis_config.model = parse_model_type(parsed["model"])
+    # Without a model type the macro model stays unset until write time.
+    if parsed["model"] is not None:
+        sg.smdim, sg.analysis_config.model = parse_model_type(parsed["model"])
     return sg
 
 

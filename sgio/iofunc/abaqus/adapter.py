@@ -34,7 +34,7 @@ class AbaqusReader(BaseFormatReader):
         self,
         file_path_or_buffer,
         sgdim: int = 2,
-        model: int | str = 1,
+        model: int | str | None = None,
         **kwargs
     ) -> StructureGene:
         """Read Abaqus input file.
@@ -47,7 +47,8 @@ class AbaqusReader(BaseFormatReader):
         sgdim : int, optional
             Structure gene dimension, by default 2.
         model : int or str, optional
-            Model type (1, 2, 3 or 'BM', 'PL', 'SD'), by default 1.
+            Model type (1, 2, 3 or 'BM', 'PL', 'SD'). By default the macro
+            model is left unset.
         **kwargs
             Additional keyword arguments.
             
