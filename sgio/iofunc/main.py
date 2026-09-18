@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import copy
 import logging
 from pathlib import Path
 
@@ -106,6 +107,7 @@ def read(
     sgdim: int | None = None,
     sg: StructureGene | None = None,
     model_space: str | None = None,
+    omega: float | None = None,
     **kwargs
 ) -> StructureGene:
     """Read SG data file.
@@ -141,6 +143,9 @@ def read(
         Required when the SG is 1D or 2D and the format does not define it
         ('vabs' and 'swiftcomp' do); for 'sg_manifest' it must agree with the
         manifest.
+    omega : float, optional
+        SG measure written to SwiftComp input, stored on the SG. By default
+        it is computed from the mesh bounding box at write time.
 
     Returns
     -------
@@ -160,9 +165,11 @@ def read(
 
     # The manifest is the authority; caller arguments may only confirm it.
     if canonical_format == 'sg_manifest':
-        return registry.get_reader(canonical_format).read_input(
+        sg = registry.get_reader(canonical_format).read_input(
             filename, sgdim=sgdim, model_type=model_type, model_space=model_space,
         )
+        _set_omega(sg, omega)
+        return sg
 
     given = {'sgdim': sgdim, 'model_type': model_type}
     missing = [
@@ -215,6 +222,7 @@ def read(
         sg.analysis_config.model = submodel
 
     _set_model_space(sg, model_space, filename)
+    _set_omega(sg, omega)
     return sg
 
 
@@ -223,6 +231,15 @@ _REQUIRED_READ_ARGS = {
     'abaqus': ('sgdim', 'model_type'),
     'swiftcomp': ('model_type',),
 }
+
+
+def _set_omega(sg: StructureGene, omega: float | None) -> None:
+    """Store a caller-given omega on the SG; ``None`` keeps the bounding-box default."""
+    if omega is None:
+        return
+    if omega <= 0:
+        raise ValueError(f"omega must be positive; got {omega}.")
+    sg.omega = omega
 
 
 def _set_model_space(sg: StructureGene, model_space: str | None, filename: str) -> None:
@@ -410,6 +427,7 @@ def write(
     macro_responses: list[sgmodel.StateCase] | None = None, model_type: str | None = None,
     load_type: int = 0, sfi: str = '8d', sff: str = '20.12e', mesh_only: bool = False,
     binary: bool = False, model_file: str | None = None, model_file_format: str | None = None,
+    omega: float | None = None,
 ) -> str:
     """Write analysis input.
 
@@ -458,6 +476,9 @@ def write(
         directory. The model file is written too.
     model_file_format : str, optional
         For 'sg_manifest': format of the model file ('vabs' or 'swiftcomp').
+    omega : float, optional
+        SG measure written to SwiftComp input; overrides ``sg.omega`` for this
+        write without changing ``sg``. Only valid for 'swiftcomp' output.
 
     Returns
     -------
@@ -483,8 +504,15 @@ def write(
             sg, filename, model_file, model_file_format, model_type,
             format_version=format_version, analysis=analysis, sg_format=sg_format,
             prop_ref_y=prop_ref_y, macro_responses=macro_responses, load_type=load_type,
-            sfi=sfi, sff=sff, mesh_only=mesh_only, binary=binary,
+            sfi=sfi, sff=sff, mesh_only=mesh_only, binary=binary, omega=omega,
         )
+
+    if omega is not None:
+        # omega is a SwiftComp-only quantity; do not silently drop it.
+        if canonical_format != 'swiftcomp':
+            raise ValueError(f"omega applies to SwiftComp output only, not {file_format!r}.")
+        sg = copy.copy(sg)
+        _set_omega(sg, omega)
 
     writer = registry.get_writer(canonical_format)
 
@@ -585,6 +613,7 @@ def convert_file_format(
     prop_ref_y: str = 'x',
     model_type: str | None = None,
     physics: int | str | None = None,
+    omega: float | None = None,
     vabs_format_version: int = 1,
     str_format_int: str = '8d',
     str_format_float: str = '20.12e',
@@ -634,6 +663,9 @@ def convert_file_format(
     physics : int or str, optional
         Physics included in the analysis ('elastic', 'thermoelastic', or the
         corresponding code). By default the input file's own setting is kept.
+    omega : float, optional
+        SG measure written to SwiftComp output. By default it is computed from
+        the mesh bounding box.
     vabs_format_version : int, optional
         Format for the VABS input, by default 1
     str_format_int : str, optional
@@ -679,7 +711,8 @@ def convert_file_format(
         model_type=model_type,
         sfi=str_format_int,
         sff=str_format_float,
-        mesh_only=mesh_only)
+        mesh_only=mesh_only,
+        omega=omega)
 
     logger.info('File format converted.')
 

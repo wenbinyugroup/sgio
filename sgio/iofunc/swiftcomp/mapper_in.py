@@ -42,6 +42,7 @@ def map_input_to_structure_gene(parsed: Mapping[str, Any]) -> StructureGene:
 
     sg.mesh = parsed["mesh"]
     sg.materials = parsed["materials"]
+    sg.omega = parsed["omega"]
     sg.mocombos = _map_material_rotation_combinations(
         parsed["material_rotation_combinations"],
         parsed["material_id_pairs"],

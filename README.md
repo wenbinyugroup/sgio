@@ -85,19 +85,49 @@ sgio.convert(
     file_name_out='cross-section.sg',
     file_format_in='abaqus',
     file_format_out='vabs',
+    sgdim=2,
     model_type='BM2',
+    model_space='xy',
 )
 ```
+
+#### Example: Convert a 3D Textile SG from Abaqus to SwiftComp
+
+```python
+import sgio
+
+sgio.convert(
+    file_name_in='plain_weave.inp',
+    file_name_out='plain_weave.sc',
+    file_format_in='abaqus',
+    file_format_out='sc',
+    sgdim=3,
+    model_type='SD1',
+    physics='thermoelastic',
+)
+```
+
+SwiftComp's `omega` is computed from the SG bounding box; pass `omega=...` to
+`sgio.read`, `sgio.write` or `sgio.convert` to give it by hand.
 
 ### Command Line Interface
 
 #### Example: Convert Cross-Sectional Data from Abaqus (.inp) to VABS Input
 
-Suppose a cross-section has been built in Abaqus and output to `cross-section.inp`.
+Suppose a cross-section has been built in Abaqus (in the x-y plane) and output
+to `cross-section.inp`.
 To convert the data to the VABS input (Timoshenko model) `cross-section.sg`:
 ```shell
-python -m sgio convert cross-section.inp cross-section.sg -ff abaqus -tf vabs -m bm2
+python -m sgio convert cross-section.inp cross-section.sg -ff abaqus -tf vabs -d 2 -m bm2 -ms xy
 ```
+
+#### Example: Convert a 3D SG from Abaqus to a Thermoelastic SwiftComp Input
+
+```shell
+python -m sgio convert plain_weave.inp plain_weave.sc -ff abaqus -tf sc -d 3 -m sd1 -p thermoelastic
+```
+
+Add `--omega <value>` to override the omega computed from the bounding box.
 
 #### Complete Options
 
@@ -123,9 +153,10 @@ usage: sgio convert [-h] [--loglevelcmd {debug,info,warning,error,critical}]
                     [--loglevelfile {debug,info,warning,error,critical}]
                     [--logfile LOGFILE] [-ff FROM_FORMAT]
                     [-ffv FROM_FORMAT_VERSION] [-tf TO_FORMAT]
-                    [-tfv TO_FORMAT_VERSION] [-a {h,d,fi}]
-                    [-d {1,2,3}] [-ms {x,y,z,xy,yz,zx}] [-mry {x,y,z}]
-                    [-m {sd1,pl1,pl2,bm1,bm2}] [-mo]
+                    [-tfv TO_FORMAT_VERSION] [-a {h,d,fi}] [-d {1,2,3}]
+                    [-ms {x,y,z,xy,yz,zx}] [-mry {x,y,z}]
+                    [-m {sd1,pl1,pl2,bm1,bm2}] [-p {elastic,thermoelastic}]
+                    [--omega OMEGA] [-mo]
                     input_file output_file
 
 positional arguments:
@@ -150,13 +181,20 @@ options:
   -a, --analysis {h,d,fi}
                         Analysis type (h=homogenization, d=dehomogenization,
                         fi=failure).
-  -d, --sgdim {1,2,3}   SG dimension (SwiftComp only).
+  -d, --sgdim {1,2,3}   SG dimension (required for Abaqus input).
   -ms, --model-space {x,y,z,xy,yz,zx}
-                        Model space.
+                        Mapping from input mesh axes to SG axes (required for
+                        1D/2D Abaqus/Gmsh input).
   -mry, --material-ref-y {x,y,z}
                         Axis used as the material reference y-axis.
   -m, --model {sd1,pl1,pl2,bm1,bm2}
-                        CS/SG model type.
+                        CS/SG model type (required for Abaqus/SwiftComp
+                        input).
+  -p, --physics {elastic,thermoelastic}
+                        Physics included in the analysis (default: keep the
+                        input file setting).
+  --omega OMEGA         SG measure written to SwiftComp output (default: the
+                        input file value, else the mesh bounding box).
   -mo, --mesh-only      Mesh only conversion.
 ```
 

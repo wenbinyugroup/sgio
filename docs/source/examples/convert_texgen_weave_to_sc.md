@@ -45,7 +45,8 @@ Three things the deck carries are read without extra arguments:
 - the `*Expansion` thermal expansion data of both materials;
 - `omega`, which is not in the deck at all — it is computed from the SG
   bounding box, a volume here because a 3D SG shares all three dimensions with
-  the `SD1` model. See the omega table in {doc}`/ref/formats`.
+  the `SD1` model. See the omega table in {doc}`/ref/formats`; pass
+  `--omega` (or `omega=` in Python) to give it by hand.
 
 {func}`sgio.plot_sg_pyvista` then renders the converted SG, overlaying each
 element's local axes so the yarn directions can be inspected.

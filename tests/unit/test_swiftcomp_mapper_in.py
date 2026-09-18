@@ -34,6 +34,7 @@ def test_map_input_to_structure_gene_maps_beam_specific_fields():
         "material_rotation_combinations": {7: (3, 45.0)},
         "materials": {"mat_a": {"density": 1.0}},
         "material_id_pairs": [("mat_a", 3)],
+        "omega": 2.5,
     }
 
     sg = map_input_to_structure_gene(parsed)
@@ -53,6 +54,7 @@ def test_map_input_to_structure_gene_maps_beam_specific_fields():
     assert sg.initial_curvature == [0.5, 0.75]
     assert sg.oblique == [0.8, 0.2]
     assert sg.mocombos[7] == ("mat_a", 45.0)
+    assert sg.omega == 2.5
 
 
 @pytest.mark.unit
@@ -77,6 +79,7 @@ def test_map_input_to_structure_gene_maps_shell_specific_fields():
         "material_rotation_combinations": {},
         "materials": {},
         "material_id_pairs": [],
+        "omega": 2.5,
     }
 
     sg = map_input_to_structure_gene(parsed)

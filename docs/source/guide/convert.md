@@ -30,6 +30,7 @@ sgio convert input.inp output.sg -ff abaqus -tf vabs -d 2 -m BM2 -ms xy
 | `model_space` | `-ms` | input mesh axes of a 1D/2D SG (`x`/`y`/`z`, `xy`/`yz`/`zx`), when the input format does not imply it |
 | `analysis` | `-a` | `h`, `d`, or `fi` |
 | `physics` | `-p` | `elastic` or `thermoelastic`; by default the input's own setting is kept |
+| `omega` | `--omega` | SwiftComp `omega`; by default the input's own value, else computed from the bounding box |
 | `mesh_only` | `-mo` | convert geometry only |
 
 There are no defaults for these SG arguments: omitting one the input format

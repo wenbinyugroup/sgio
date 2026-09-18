@@ -80,3 +80,43 @@ def test_texgen_writes_thermoelastic_swiftcomp(tmp_path, model_type, smdim):
     expected_omega = compute_omega(sg.mesh.points, 3, smdim)
     assert _sc_numbers(lines[-1])[0] == pytest.approx(expected_omega)
     assert _sc_numbers(lines[-1])[0] != pytest.approx(1.0)
+
+
+@pytest.mark.integration
+@pytest.mark.io
+class TestManualOmega:
+    """A caller-given omega replaces the bounding-box value."""
+
+    def test_convert_writes_given_omega(self, tmp_path):
+        fn_out = tmp_path / 'plain_weave.sc'
+
+        sgio.convert(
+            file_name_in=str(INPUT_FILE), file_name_out=str(fn_out),
+            file_format_in='abaqus', file_format_out='sc',
+            sgdim=3, model_type='sd1', physics='thermoelastic', omega=2.5,
+        )
+
+        last = fn_out.read_text().strip().splitlines()[-1]
+        assert _sc_numbers(last)[0] == pytest.approx(2.5)
+
+    def test_read_stores_given_omega(self):
+        sg = sgio.read(str(INPUT_FILE), 'abaqus', sgdim=3, model_type='sd1', omega=2.5)
+
+        assert sg.omega == 2.5
+
+    def test_write_override_leaves_sg_unchanged(self, texgen_sg, tmp_path):
+        texgen_sg.analysis_config.physics = 1
+        fn_out = tmp_path / 'plain_weave.sc'
+
+        sgio.write(texgen_sg, str(fn_out), 'sc', omega=2.5)
+
+        assert _sc_numbers(fn_out.read_text().strip().splitlines()[-1])[0] == pytest.approx(2.5)
+        assert texgen_sg.omega is None
+
+    def test_write_rejects_omega_for_non_swiftcomp(self, texgen_sg, tmp_path):
+        with pytest.raises(ValueError, match='SwiftComp output only'):
+            sgio.write(texgen_sg, str(tmp_path / 'x.vtk'), 'vtk', omega=2.5)
+
+    def test_rejects_non_positive_omega(self):
+        with pytest.raises(ValueError, match='positive'):
+            sgio.read(str(INPUT_FILE), 'abaqus', sgdim=3, model_type='sd1', omega=0)

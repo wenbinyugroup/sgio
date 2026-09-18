@@ -77,7 +77,13 @@ requires it, with a warning.
 
 A SwiftComp input also needs `omega`, the SG's measure over the dimensions it
 shares with the macro model. It is computed from the SG bounding box unless
-`sg.omega` is set; see the omega table in {doc}`/ref/formats`.
+`sg.omega` is set; see the omega table in {doc}`/ref/formats`. To give it by
+hand, pass `omega` to `sgio.read` (stored on the SG) or to `sgio.write` (used
+for that write only, leaving `sg` unchanged):
+
+```python
+sgio.write(sg, 'weave.sc', file_format='sc', omega=44.54)
+```
 
 Writing is atomic: the target file is replaced only once the whole file has
 been written, so a failure part way through leaves any existing file intact.

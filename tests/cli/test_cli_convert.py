@@ -161,3 +161,43 @@ def test_cli_convert_physics_flag(tmp_path):
     assert result.returncode == 0, result.stderr
     header = next(l for l in fn_out.read_text().splitlines() if l.strip())
     assert int(header.split()[0]) == 1
+
+
+@pytest.mark.cli
+def test_cli_convert_omega_survives_sc_roundtrip(tmp_path):
+    """--omega is written, and a later sc -> sc conversion keeps it."""
+    fn_in = tmp_path / 'omega.inp'
+    fn_in.write_text(
+        """*Heading
+*Node
+1, 0., 0., 0.
+2, 1., 0., 0.
+3, 0., 1., 0.
+4, 0., 0., 1.
+5, 1., 1., 1.
+*Element, type=C3D4, elset=MATRIX
+1, 1, 2, 3, 4
+2, 2, 3, 4, 5
+*Material, name=MATRIX_MAT
+*Elastic
+2561., 0.3
+*Solid Section, elset=MATRIX, material=MATRIX_MAT
+1.0,
+""",
+        encoding='utf-8',
+    )
+    fn_sc = tmp_path / 'omega.sc'
+    fn_sc2 = tmp_path / 'omega_copy.sc'
+
+    for cmd in (
+        [str(fn_in), str(fn_sc), '-ff', 'abaqus', '-d', '3', '--omega', '2.5'],
+        [str(fn_sc), str(fn_sc2), '-ff', 'sc'],
+    ):
+        result = sbp.run(
+            [sys.executable, '-m', 'sgio', 'convert', *cmd, '-tf', 'sc', '-m', 'sd1'],
+            capture_output=True, text=True,
+        )
+        assert result.returncode == 0, result.stderr
+
+    for fn in (fn_sc, fn_sc2):
+        assert float(fn.read_text().strip().splitlines()[-1]) == pytest.approx(2.5)

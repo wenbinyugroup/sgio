@@ -4,6 +4,8 @@ from __future__ import annotations
 
 from typing import Any, TextIO
 
+from sgio.utils.io import fortran_float
+
 from ._input import (
     _readHeader,
     _readMaterialRotationCombinations,
@@ -37,6 +39,7 @@ def parse_input_buffer(
         configs["num_materials"],
         configs["physics"],
     )
+    omega = _read_omega(file)
 
     return {
         "format_version": format_version,
@@ -47,4 +50,14 @@ def parse_input_buffer(
         "material_rotation_combinations": material_rotation_combinations,
         "materials": materials,
         "material_id_pairs": material_id_pairs,
+        "omega": omega,
     }
+
+
+def _read_omega(file: TextIO) -> float:
+    """Read omega, the last record of a SwiftComp input file."""
+    for line in file:
+        line = line.split('!')[0].strip()
+        if line:
+            return fortran_float(line.split()[0])
+    raise ValueError("SwiftComp input ends before the omega record.")

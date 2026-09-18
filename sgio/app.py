@@ -216,6 +216,11 @@ def cli(*args: str) -> None:
         help='Physics included in the analysis (default: keep the input file setting).'
     )
     parser.add_argument(
+        '--omega', type=float,
+        help='SG measure written to SwiftComp output (default: the input file value, '
+             'else the mesh bounding box).'
+    )
+    parser.add_argument(
         '-mo', '--mesh-only', action='store_true',
         help='Mesh only conversion.'
     )
@@ -297,6 +302,7 @@ def main(command: str, **kwargs: Any) -> None:
                 prop_ref_y=kwargs.get('material_ref_y', 'x'),
                 model_type=kwargs.get('model'),
                 physics=kwargs.get('physics'),
+                omega=kwargs.get('omega'),
                 mesh_only=kwargs.get('mesh_only', False),
             )
             

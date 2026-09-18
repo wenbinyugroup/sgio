@@ -73,9 +73,19 @@ macro model spans $y_1, y_2, y_3$ (3D), $y_1, y_2$ (plate/shell) or $y_1$
 | 2D | area | in-plane length | 1.0 |
 | 1D | length | 1.0 | not applicable |
 
-Assign `sg.omega` before writing to override the computed value. A SG that is
-degenerate along a shared dimension raises `ValueError`, as it would make
-SwiftComp divide by zero.
+The computed value is only the fallback. The value written is, in order of
+precedence:
+
+1. the `omega` argument of {func}`sgio.write`, {func}`sgio.convert`, or
+   `--omega` of `sgio convert`;
+2. `sg.omega`, set by the `omega` argument of {func}`sgio.read`, by reading a
+   SwiftComp input (which carries its own omega), or by assignment;
+3. the bounding box, as above.
+
+`omega` must be positive, and it applies to SwiftComp output only; passing it
+when writing another format raises `ValueError`. A SG that is degenerate along
+a shared dimension raises `ValueError` too, as it would make SwiftComp divide
+by zero.
 
 ## Conversion Matrix
 
