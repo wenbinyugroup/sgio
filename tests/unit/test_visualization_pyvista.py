@@ -150,6 +150,19 @@ def test_plot_sg_pyvista_rejects_widgets_for_offline_html(tmp_path):
 
 @pytest.mark.unit
 @pytest.mark.visualization
+def test_plot_sg_pyvista_html_without_trame_points_to_sgio_extra(tmp_path, monkeypatch):
+    """A missing trame must name the sgio extra that provides it."""
+    pytest.importorskip("pyvista")
+    monkeypatch.setitem(sys.modules, "trame_vtk", None)
+    sg = StructureGene(name="sample", sgdim=2)
+    sg.mesh = _sample_mesh()
+
+    with pytest.raises(ImportError, match=r"sgio\[pyvista-html\]"):
+        plot_sg_pyvista(sg, output_html=tmp_path / "scene.html")
+
+
+@pytest.mark.unit
+@pytest.mark.visualization
 def test_plot_sg_pyvista_writes_local_axis_html_when_trame_is_installed(tmp_path):
     """The high-level PyVista entry point must preserve HTML plot guidance."""
     pytest.importorskip("trame")
@@ -270,7 +283,7 @@ def test_create_pyvista_plotter_imports_pyvista_lazily(monkeypatch):
     """Importing visualization stays usable without installing PyVista."""
     monkeypatch.setitem(sys.modules, "pyvista", None)
 
-    with pytest.raises(ImportError, match="uv sync --extra pyvista"):
+    with pytest.raises(ImportError, match=r'sgio\[pyvista\]'):
         create_pyvista_plotter(_sample_mesh())
 
 

@@ -211,7 +211,8 @@ def plot_sg_pyvista(
     ValueError
         If ``sg`` has no mesh or plotting options are invalid.
     ImportError
-        If the optional ``pyvista`` dependency is not installed.
+        If the optional ``pyvista`` dependency is not installed, or if
+        ``output_html`` is given without the ``pyvista-html`` extra.
     """
     if not isinstance(sg, StructureGene):
         raise TypeError(f"sg must be a StructureGene; got {type(sg).__name__}.")
@@ -232,9 +233,7 @@ def plot_sg_pyvista(
         widgets=widgets,
     )
     if output_html is not None:
-        html_path = Path(output_html)
-        html_path.parent.mkdir(parents=True, exist_ok=True)
-        plotter.export_html(str(html_path))
+        html_path = _export_html(plotter, output_html)
         _add_html_overlay(
             html_path,
             property_legend=property_legend,
@@ -483,7 +482,8 @@ def plot_pyvista_local_axes(
     Raises
     ------
     ImportError
-        If the optional ``pyvista`` dependency is not installed.
+        If the optional ``pyvista`` dependency is not installed, or if
+        ``output_html`` is given without the ``pyvista-html`` extra.
     FileNotFoundError
         If ``vtm_file`` does not exist.
     ValueError
@@ -522,13 +522,25 @@ def plot_pyvista_local_axes(
     plotter.view_yz()
 
     if output_html is not None:
-        html_path = Path(output_html)
-        html_path.parent.mkdir(parents=True, exist_ok=True)
-        plotter.export_html(str(html_path))
-        _add_html_overlay(html_path)
+        _add_html_overlay(_export_html(plotter, output_html))
     if show:
         plotter.show()
     return plotter
+
+
+def _export_html(plotter: pyvista.Plotter, output_html: str | Path) -> Path:
+    """Export ``plotter`` to HTML, pointing a missing trame at the sgio extra."""
+    html_path = Path(output_html)
+    html_path.parent.mkdir(parents=True, exist_ok=True)
+    try:
+        plotter.export_html(str(html_path))
+    except ImportError as exc:
+        raise ImportError(
+            "HTML export requires the optional trame dependencies. "
+            "Install them with 'pip install \"sgio[pyvista-html]\"' "
+            "or 'uv add \"sgio[pyvista-html]\"'."
+        ) from exc
+    return html_path
 
 
 def _import_pyvista() -> Any:
@@ -538,7 +550,8 @@ def _import_pyvista() -> Any:
     except ModuleNotFoundError as exc:
         raise ImportError(
             "PyVista visualization requires the optional dependency. "
-            "Install it with 'uv sync --extra pyvista'."
+            "Install it with 'pip install \"sgio[pyvista]\"' "
+            "or 'uv add \"sgio[pyvista]\"'."
         ) from exc
     return pyvista
 
