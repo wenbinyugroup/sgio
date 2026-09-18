@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from typing import Optional
 
 
-@dataclass(slots=True)
+@dataclass
 class MaterialDefinition:
     """Identity and inertial metadata for a material definition.
 
@@ -26,7 +26,7 @@ class MaterialDefinition:
     temperature: float = 0.0
 
 
-@dataclass(slots=True)
+@dataclass
 class LinearElasticBehavior:
     """Linear-elastic behavior payload used by ``CauchyContinuumModel``.
 
@@ -60,7 +60,7 @@ class LinearElasticBehavior:
     cmpl: list[list[float]] | None = None
 
 
-@dataclass(slots=True)
+@dataclass
 class ThermalProperties:
     """Thermal-material properties grouped away from the outer compatibility shell.
 
@@ -82,7 +82,7 @@ class ThermalProperties:
     f_eff: float = 0.0
 
 
-@dataclass(slots=True)
+@dataclass
 class StrengthProperties:
     """Strength and failure parameters grouped for explicit responsibility boundaries.
 

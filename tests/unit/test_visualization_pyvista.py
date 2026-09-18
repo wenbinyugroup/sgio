@@ -129,7 +129,9 @@ def test_plot_sg_pyvista_adds_desktop_visibility_widgets():
         widgets=True,
     )
     try:
-        assert len(plotter.widgets.button_widgets) == 4
+        # PyVista < 0.47 (the last line supporting Python 3.9) has no Plotter.widgets
+        widgets = getattr(plotter, "widgets", plotter)
+        assert len(widgets.button_widgets) == 4
         assert plotter.actors["_sgio_edges"].GetVisibility() == 1
         assert plotter.actors["_sgio_nodes"].GetVisibility() == 0
     finally:

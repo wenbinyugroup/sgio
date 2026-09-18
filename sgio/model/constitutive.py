@@ -26,7 +26,7 @@ class BehaviorVariableRole(str, Enum):
     TANGENT = "tangent"
 
 
-@dataclass(frozen=True, slots=True)
+@dataclass(frozen=True)
 class BehaviorVariable:
     """One named constitutive variable used by a behavior descriptor.
 
@@ -48,7 +48,7 @@ class BehaviorVariable:
     description: str = ""
 
 
-@dataclass(frozen=True, slots=True)
+@dataclass(frozen=True)
 class ChannelCouplingDescriptor:
     """Descriptor for one cross-channel coupling relation.
 
@@ -67,7 +67,7 @@ class ChannelCouplingDescriptor:
     description: str = ""
 
 
-@dataclass(frozen=True, slots=True)
+@dataclass(frozen=True)
 class ConstitutiveBehaviorDescriptor:
     """Static descriptor of one constitutive behavior family.
 
@@ -159,7 +159,7 @@ _LINEAR_ELASTIC_DESCRIPTOR = ConstitutiveBehaviorDescriptor(
 )
 
 
-@dataclass(slots=True)
+@dataclass
 class LinearElasticConstitutiveBehavior:
     """Adapter exposing current linear elasticity through the generic behavior seam.
 
@@ -183,7 +183,7 @@ class LinearElasticConstitutiveBehavior:
         return self.payload
 
 
-@dataclass(slots=True)
+@dataclass
 class ChannelBehaviorSlot:
     """One extensibility slot for a single physics channel.
 
@@ -202,7 +202,7 @@ class ChannelBehaviorSlot:
     properties: Any | None = None
 
 
-@dataclass(slots=True)
+@dataclass
 class MaterialBehaviorMap:
     """Container reserving per-channel constitutive behavior slots.
 

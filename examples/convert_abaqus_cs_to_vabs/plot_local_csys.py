@@ -57,6 +57,7 @@ def main() -> None:
         str(args.input),
         file_format="abaqus",
         sgdim=2,
+        model_space="xy",
         model_type="BM2",
     )
     plotter = sgio.create_pyvista_plotter(

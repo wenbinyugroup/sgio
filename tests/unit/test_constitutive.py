@@ -17,7 +17,7 @@ from sgio.model.query_types import ElasticInputType
 from sgio.model.solid import CauchyContinuumModel
 
 
-@dataclass(slots=True)
+@dataclass
 class DummyElectricalBehavior:
     """Small stateless behavior used to verify channel attachment."""
 
@@ -39,7 +39,7 @@ class DummyElectricalBehavior:
         return self.payload
 
 
-@dataclass(slots=True)
+@dataclass
 class DummyViscoBehavior:
     """Small history-dependent behavior used to verify the future seam."""
 
