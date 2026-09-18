@@ -167,3 +167,22 @@ def test_swiftcomp_output_model_phi_pia_branches(test_data_dir):
     model_rotated = read_output_model(str(rotated), 'sc', model_type='BM2')
     assert model_rotated.phi_pia == pytest.approx(63.079756027134785)
 
+
+
+@pytest.mark.io
+@pytest.mark.swiftcomp
+@pytest.mark.parametrize("rel_path, stff11, nu12", [
+    ('sg1-sd1-laminate-n5/Laminate_nSG1_3D_n5.sc.k', None, 0.78721572),
+    ('sg1-sd1-part1-n5/Part-1_nSG1_3D_n5.sc.k', 1.1470204e11, 0.97203868),
+    ('sg1-sd1-layup4-n5/layup-4_nSG1_3D_n5.sc.k', None, 0.60933158),
+])
+def test_swiftcomp_sd1_output_with_poisson_ratio_above_half(
+        rel_path, stff11, nu12, test_data_dir):
+    """Laminate effective nu can exceed 0.5; valid SwiftComp output must read."""
+    model = read_output_model(
+        str(test_data_dir / 'swiftcomp' / rel_path), 'sc', model_type='SD1')
+
+    assert model.nu12 == pytest.approx(nu12)
+    assert model.density == 0
+    if stff11 is not None:
+        assert model.stff[0][0] == pytest.approx(stff11)

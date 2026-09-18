@@ -442,6 +442,20 @@ class TestCauchyContinuumModel:
         with pytest.raises(ValidationError):
             CauchyContinuumModel(nu13=-1.5)
 
+    def test_isotropic_poisson_ratio_checked_on_assignment(self):
+        """The isotropic range also applies when nu is assigned later."""
+        solid = CauchyContinuumModel(isotropy=0)
+
+        with pytest.raises(ValidationError):
+            solid.nu12 = 0.6
+
+    @pytest.mark.parametrize("isotropy", [1, 2, 3])
+    def test_non_isotropic_poisson_ratio_above_half_accepted(self, isotropy):
+        """(-1, 0.5) only bounds isotropic materials; laminates exceed 0.5."""
+        solid = CauchyContinuumModel(isotropy=isotropy, nu12=0.97, nu13=0.03, nu23=0.16)
+
+        assert solid.nu12 == pytest.approx(0.97)
+
     def test_invalid_stiffness_matrix(self):
         """Stiffness/compliance matrices must be 6x6."""
         with pytest.raises(ValidationError) as exc_info:

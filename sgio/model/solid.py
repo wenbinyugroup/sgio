@@ -5,7 +5,7 @@ from typing import Iterable, Optional, List, Literal, Sequence, Union, cast
 FloatSequence = Sequence[float]
 MatrixSequence = Sequence[Sequence[float]]
 ElasticInput = Union[FloatSequence, MatrixSequence]
-from pydantic import BaseModel, Field, field_validator, ConfigDict, PrivateAttr
+from pydantic import BaseModel, Field, field_validator, model_validator, ConfigDict, PrivateAttr
 
 from .constitutive import (
     ConstitutiveBehaviorProtocol,
@@ -763,13 +763,20 @@ class CauchyContinuumModel(BaseModel):
                     raise ValueError(f'Row {i} must have 6 columns')
         return v
 
-    @field_validator('nu12', 'nu13', 'nu23')
-    @classmethod
-    def validate_poisson_ratio(cls, v):
-        """Validate that Poisson's ratios are in valid range."""
-        if v is not None and not (-1 < v < 0.5):
-            raise ValueError('Poisson ratio must be in range (-1, 0.5)')
-        return v
+    @model_validator(mode='after')
+    def validate_isotropic_poisson_ratio(self):
+        """Validate that an isotropic Poisson's ratio is in (-1, 0.5).
+
+        The bound is the positive-definiteness condition of isotropic
+        materials only; orthotropic/anisotropic engineering constants (e.g.
+        laminate effective properties) can exceed 0.5.
+        """
+        if self.isotropy != 0:
+            return self
+        for v in (self.nu12, self.nu13, self.nu23):
+            if v is not None and not (-1 < v < 0.5):
+                raise ValueError('Isotropic Poisson ratio must be in range (-1, 0.5)')
+        return self
 
     @field_validator('cte')
     @classmethod
