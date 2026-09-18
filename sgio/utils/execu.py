@@ -70,8 +70,10 @@ def run(cmd: Union[List[str], tuple], timeout: int) -> sbp.CompletedProcess:
     
     # Handle batch scripts on Windows - always work with a copy
     cmd = list(cmd)  # Convert to list (makes a copy)
-    cmd_name = cmd[0].lower()
-    if cmd_name.endswith(('.bat', '.cmd')):
+    # Identify the solver by executable name before cmd[0] is replaced by
+    # a cmd.exe wrapper or a resolved full path
+    solver = os.path.splitext(os.path.basename(cmd[0]))[0].lower()
+    if cmd[0].lower().endswith(('.bat', '.cmd')):
         # Wrap batch script with cmd.exe /c
         cmd = ['cmd.exe', '/c'] + cmd
 
@@ -101,52 +103,8 @@ def run(cmd: Union[List[str], tuple], timeout: int) -> sbp.CompletedProcess:
         logger.debug(f'stdout:\n{out.stdout}')
         logger.debug(f'stderr: {out.stderr}')
 
-        cmd_name = cmd[0].lower()
-
-        if cmd_name.startswith(MSG_COMMANDS):
-            message = getScVabsMessage(out.stdout)
-
-            logger.debug(f'message:\n{message}')
-
-            # Check if message has content before accessing indices
-            if not message:
-                logger.warning('Empty message from solver output')
-                return out
-
-            # Success - check last two lines
-            success_found = False
-            if len(message) >= 2 and 'finished successfully' in message[-2]:
-                logger.debug(message[-2])
-                success_found = True
-            elif len(message) >= 1 and 'finished successfully' in message[-1]:
-                logger.debug(message[-1])
-                success_found = True
-
-            if success_found:
-                return out
-
-            # Errors - check last line
-            last_message = message[-1]
-            
-            if 'license' in last_message:
-                if cmd_name.startswith('s'):
-                    raise SwiftCompLicenseError(last_message)
-                elif cmd_name.startswith('v'):
-                    raise VABSLicenseError(last_message)
-
-            elif 'I/O error' in last_message:
-                if cmd_name.startswith('s'):
-                    raise SwiftCompIOError(last_message)
-                elif cmd_name.startswith('v'):
-                    raise VABSIOError(last_message)
-
-            else:
-                scmd = ' '.join(cmd)
-                err_message = f'Something wrong with <{scmd}>...'
-                if cmd_name.startswith('s'):
-                    raise SwiftCompError(err_message)
-                elif cmd_name.startswith('v'):
-                    raise VABSError(err_message)
+        if solver.startswith(MSG_COMMANDS):
+            _check_solver_output(solver, out.stdout, cmd)
 
         return out
 
@@ -184,6 +142,53 @@ def run(cmd: Union[List[str], tuple], timeout: int) -> sbp.CompletedProcess:
         raise
 
 
+def _check_solver_output(solver: str, stdout: str, cmd: List[str]) -> None:
+    """Raise if SwiftComp/VABS output does not report a successful run.
+
+    The solvers exit with code 0 even on failure, so the last output lines
+    are the only reliable success signal.
+
+    Parameters
+    ----------
+    solver : str
+        Lower-case executable name without extension (e.g. ``'swiftcomp'``).
+    stdout : str
+        Standard output of the solver run.
+    cmd : list of str
+        Executed command, used in the error message.
+
+    Raises
+    ------
+    SwiftCompLicenseError, VABSLicenseError
+        If the last output line reports a license problem.
+    SwiftCompIOError, VABSIOError
+        If the last output line reports an I/O error.
+    SwiftCompError, VABSError
+        If the output is empty or does not end with 'finished successfully'.
+    """
+    if solver.startswith('v'):
+        license_error, io_error, solver_error = VABSLicenseError, VABSIOError, VABSError
+    else:
+        license_error, io_error, solver_error = (
+            SwiftCompLicenseError, SwiftCompIOError, SwiftCompError)
+
+    message = getScVabsMessage(stdout)
+    logger.debug(f'message:\n{message}')
+
+    # Success is reported on one of the last two lines
+    if any('finished successfully' in line for line in message[-2:]):
+        return
+
+    scmd = ' '.join(cmd)
+    if not message:
+        raise solver_error(f'No output from <{scmd}>')
+
+    last_message = message[-1]
+    if 'license' in last_message:
+        raise license_error(last_message)
+    if 'I/O error' in last_message:
+        raise io_error(last_message)
+    raise solver_error(f'Something wrong with <{scmd}>: {last_message}')
 
 
 def getScVabsMessage(stdout: str) -> List[str]:

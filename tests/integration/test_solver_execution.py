@@ -2,6 +2,8 @@
 
 This module tests the execution of external solvers (VABS, SwiftComp) with timeout handling.
 """
+import shutil
+
 import pytest
 from pathlib import Path
 
@@ -110,3 +112,21 @@ def test_solver_execution_timeout_mechanism():
     
     logger.info("✓ Timeout mechanism is available")
 
+
+
+@pytest.mark.integration
+@pytest.mark.requires_solver
+@pytest.mark.skipif(shutil.which('SwiftComp') is None, reason='SwiftComp not installed')
+def test_swiftcomp_failure_is_detected(tmp_path):
+    """SwiftComp exits with code 0 on a negative Jacobian; run() must still raise."""
+    import sgio
+    from sgio._exceptions import SwiftCompError
+
+    # Projecting the y-z cross section onto x-y flips element orientation
+    inp = Path(__file__).parents[1] / 'fixtures' / 'abaqus' / 'sg2d-user-lam.inp'
+    sg = sgio.read(str(inp), 'abaqus', model_type='BM1', sgdim=2, model_space='xy')
+    sc_file = str(tmp_path / 'bad.sc')
+    sgio.write(sg, sc_file, 'sc')
+
+    with pytest.raises(SwiftCompError, match='Jacobian'):
+        sgio.run('SwiftComp', sc_file, 'h', smdim=1)
