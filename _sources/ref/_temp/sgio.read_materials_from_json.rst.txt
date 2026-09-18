@@ -1,0 +1,6 @@
+﻿sgio.read\_materials\_from\_json
+================================
+
+.. currentmodule:: sgio
+
+.. autofunction:: read_materials_from_json

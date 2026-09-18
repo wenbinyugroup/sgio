@@ -1,0 +1,10 @@
+{
+  "sg_manifest_version": 1,
+  "model_file": {
+    "path": "sg2_box.sc",
+    "format": "swiftcomp",
+    "format_version": "2.1"
+  },
+  "sgdim": 2,
+  "model_type": "BM1"
+}

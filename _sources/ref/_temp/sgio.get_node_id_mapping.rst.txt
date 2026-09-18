@@ -1,0 +1,6 @@
+﻿sgio.get\_node\_id\_mapping
+===========================
+
+.. currentmodule:: sgio
+
+.. autofunction:: get_node_id_mapping

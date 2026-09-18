@@ -1,0 +1,30 @@
+﻿sgio.SGMesh
+===========
+
+.. currentmodule:: sgio
+
+.. autoclass:: SGMesh
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~SGMesh.__init__
+      ~SGMesh.add_cell_data_from_dict
+      ~SGMesh.add_point_data_from_dict
+      ~SGMesh.copy
+      ~SGMesh.from_meshio
+      ~SGMesh.from_pyvista
+      ~SGMesh.get_cell_block_by_type
+      ~SGMesh.to_meshio
+      ~SGMesh.to_pyvista
+   
+   
+
+   
+   
+   

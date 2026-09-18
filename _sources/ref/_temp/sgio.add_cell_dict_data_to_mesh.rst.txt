@@ -1,0 +1,6 @@
+﻿sgio.add\_cell\_dict\_data\_to\_mesh
+====================================
+
+.. currentmodule:: sgio
+
+.. autofunction:: add_cell_dict_data_to_mesh

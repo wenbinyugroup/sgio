@@ -1,0 +1,6 @@
+﻿sgio.normalize\_format\_name
+============================
+
+.. currentmodule:: sgio
+
+.. autofunction:: normalize_format_name

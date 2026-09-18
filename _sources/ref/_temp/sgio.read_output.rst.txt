@@ -1,0 +1,6 @@
+﻿sgio.read\_output
+=================
+
+.. currentmodule:: sgio
+
+.. autofunction:: read_output
