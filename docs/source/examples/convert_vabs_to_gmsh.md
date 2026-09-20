@@ -1,3 +1,5 @@
+<!-- Generated from examples/convert_vabs_to_gmsh/README.md. Do not edit; edit the README instead. -->
+
 # Convert VABS Cross-Section Mesh to Gmsh
 
 ## Problem Description

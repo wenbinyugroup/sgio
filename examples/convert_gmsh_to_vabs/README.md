@@ -1,42 +1,40 @@
-# Convert Gmsh Mesh To VABS
+# Convert a Gmsh Mesh to VABS
 
-## Problem description
+## Problem Description
 
-This example starts from an external Gmsh section mesh and converts it to a
-VABS input file.
+An external CAD + Gmsh workflow produces a 2D section mesh. Convert it into a
+VABS input file, with materials and analysis settings supplied alongside the
+mesh.
 
-## Explaination of the solution
+## Solution
 
-The example uses:
+The example uses an **SG manifest** (see {doc}`/ref/sg_manifest`):
 
-- `sg21_box_quad4_min_gmsh41.msh` — the section mesh in the `yz` plane
-- `sg21_box_quad4_min_gmsh41.sg.json` — the SG manifest referencing the mesh:
-  `sgdim`, `model_type` (`BM1`), `model_space` (`yz`), analysis configuration,
-  the `matrix` material, and the section binding the physical group to it
+- `sg21_box_quad4_min_gmsh41.msh` — the section mesh and its physical groups
+- `sg21_box_quad4_min_gmsh41.sg.json` — the manifest referencing the mesh, with
+  `sgdim`, model type, model space, analysis configuration, materials and
+  sections
 
-`run.py` reads the manifest with `sgio.read(..., 'sg_manifest')` and writes the
-assembled `StructureGene` to VABS format.
+<!-- code: run.py -->
 
-This is the recommended path for external CAD + Gmsh workflows: the mesh stays
-a plain Gmsh file and the manifest holds everything the mesh cannot.
+{func}`sgio.read` with `'sg_manifest'` reads the manifest and the mesh into a
+{class}`sgio.StructureGene`, which {func}`sgio.write` then emits as VABS input.
+This is the recommended path for external CAD + Gmsh workflows.
 
 ## Result
 
-After running the script, you get `sg21_box_quad4_min_gmsh41.sg`.
-
-Run it with:
+`sg21_box_quad4_min_gmsh41.sg` is written, ready for VABS.
 
 ```bash
 uv run python examples/convert_gmsh_to_vabs/run.py
 ```
 
-## List of all files
+![](pyvista.png)
 
-- `run.py`
-- `sg21_box_quad4_min_gmsh41.msh`
-- `sg21_box_quad4_min_gmsh41.sg.json`
-- `sg21_box_quad4_min_gmsh41.sg`
-- `sg21_box_quad4_min_gmsh41.sg.ech`
-- `sg21_box_quad4_min_gmsh41.sg.K`
-- `sg21_box_quad4_min_gmsh41.sg.opt`
-- `sg21_box_quad4_min_gmsh41.sg.v0`
+## File List
+
+- [run.py](run.py): Main Python script
+- [sg21_box_quad4_min_gmsh41.msh](sg21_box_quad4_min_gmsh41.msh): Gmsh section mesh
+- [sg21_box_quad4_min_gmsh41.sg.json](sg21_box_quad4_min_gmsh41.sg.json): SG manifest
+- [sg21_box_quad4_min_gmsh41.sg](sg21_box_quad4_min_gmsh41.sg): Generated VABS input
+- [pyvista.png](pyvista.png): PyVista mesh preview

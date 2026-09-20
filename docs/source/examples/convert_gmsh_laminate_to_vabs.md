@@ -1,3 +1,5 @@
+<!-- Generated from examples/convert_gmsh_laminate_to_vabs/README.md. Do not edit; edit the README instead. -->
+
 # Convert a Gmsh Laminate Mesh to VABS
 
 ## Problem Description

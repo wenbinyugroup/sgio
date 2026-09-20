@@ -1,3 +1,5 @@
+<!-- Generated from examples/convert_gmsh_to_sc/README.md. Do not edit; edit the README instead. -->
+
 # Convert Gmsh Mesh to SwiftComp
 
 ## Problem Description

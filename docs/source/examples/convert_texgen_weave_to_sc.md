@@ -1,3 +1,5 @@
+<!-- Generated from examples/convert_texgen_weave_to_sc/README.md. Do not edit; edit the README instead. -->
+
 # Convert a TexGen Weave to SwiftComp
 
 ## Problem Description

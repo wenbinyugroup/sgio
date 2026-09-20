@@ -79,16 +79,43 @@ make clean                  # Clean build files
 # Built docs are in docs/build/html/
 ```
 
+Every page is MyST markdown. The only reStructuredText left is `ref/_temp/`,
+which autosummary generates and Sphinx overwrites.
+
+Autodoc directives (`autoclass`, `autofunction`, `automodule`, `autosummary`,
+`currentmodule`) emit reStructuredText, which MyST does not parse, so they must
+run inside an `eval-rst` block and keep rst syntax there:
+
+````markdown
+```{eval-rst}
+.. autoclass:: sgio.StructureGene
+   :members:
+```
+````
+
+Other directives (`toctree`, `figure`, `note`, `literalinclude`, ...) use plain
+MyST syntax: ```` ```{toctree} ```` with `:option: value` lines.
+
 ### Examples
 
-Document each example in the following structure:
-- Problem description
-- Explaination of the solution (mainly how to use sgio to tackle this problem)
-- Result
-- List of all files (download link)
+`examples/<name>/README.md` is the single source of truth. `docs/gen_examples.py`
+rewrites it into `docs/source/examples/<name>.md` on every build (hooked into
+`conf.py`), so never edit the generated page — it carries a `<!-- Generated from
+... -->` header and is overwritten. Pages without that header are hand-written and
+are left alone, as are the examples they reference.
 
-One file for one example.
-Use myst markdown.
+Add a new example to `docs/source/examples/index.rst` by hand; the toctree is
+curated, not generated.
+
+Write the README as plain markdown so it also reads well on GitHub:
+
+- Structure: Problem description, Explaination of the solution (mainly how to use
+  sgio to tackle this problem), Result, List of all files.
+- Paths are relative to the example folder; the generator repoints them.
+- `<!-- code: run.py -->` on its own line becomes a `literalinclude` of that file.
+- `![caption](img.png)` becomes a `figure`; an optional title sets the width,
+  as in `![](preview.png "70%")`.
+- MyST roles such as `` {func}`sgio.read` `` pass through unchanged.
 
 
 ## Test Structure

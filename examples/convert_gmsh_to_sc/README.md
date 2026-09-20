@@ -1,35 +1,34 @@
-# Convert Gmsh Mesh To SwiftComp
+# Convert Gmsh Mesh to SwiftComp
 
-## Problem description
+## Problem Description
 
-This example starts from an external Gmsh mesh and converts it to a SwiftComp
-input file.
+Given a 3D tetrahedral mesh generated in Gmsh (`.msh` format), convert it to a
+SwiftComp input file for 3D solid homogenization.
 
-## Explaination of the solution
+## Solution
 
-A `.msh` file carries only the mesh, so the example uses an SG manifest:
+The mesh alone does not carry materials or analysis settings, so the example
+uses an **SG manifest**: `sg33_cube_tetra4_min_gmsh41.sg.json` references the
+`.msh` file and supplies `sgdim`, the model type, the analysis configuration,
+the materials, and the sections that bind physical groups to them. See
+{doc}`/ref/sg_manifest`.
 
-- `sg33_cube_tetra4_min_gmsh41.msh` — the mesh and its `matrix` physical group
-- `sg33_cube_tetra4_min_gmsh41.sg.json` — the SG manifest referencing the mesh:
-  `sgdim`, `model_type` (`SD1`), analysis configuration, the `matrix` material,
-  and the section binding the physical group to it
+<!-- code: run.py -->
 
-`run.py` reads the manifest with `sgio.read(..., 'sg_manifest')` and writes the
-result to SwiftComp format.
+{func}`sgio.read` with `'sg_manifest'` assembles the manifest and the mesh into a
+{class}`sgio.StructureGene`; the manifest's `model_type` `SD1` selects the 3D
+solid model.
+{func}`sgio.write` then emits SwiftComp 2.1 input.
 
 ## Result
 
-After running the script, you get `sg33_cube_tetra4_min_gmsh41.sg`.
+A SwiftComp 2.1 input file `sg33_cube_tetra4_min_gmsh41.sg` is written and ready for homogenization.
 
-Run it with:
+![](pyvista.png)
 
-```bash
-uv run python examples/convert_gmsh_to_sc/run.py
-```
+## File List
 
-## List of all files
-
-- `run.py`
-- `sg33_cube_tetra4_min_gmsh41.msh`
-- `sg33_cube_tetra4_min_gmsh41.sg.json`
-- `sg33_cube_tetra4_min_gmsh41.sg`
+- [run.py](run.py): Main Python script
+- [sg33_cube_tetra4_min_gmsh41.msh](sg33_cube_tetra4_min_gmsh41.msh): Gmsh mesh file
+- [sg33_cube_tetra4_min_gmsh41.sg.json](sg33_cube_tetra4_min_gmsh41.sg.json): SG manifest
+- [pyvista.png](pyvista.png): PyVista mesh preview

@@ -13,11 +13,17 @@
 import os
 import sys
 from datetime import datetime
+from pathlib import Path
 sys.path.append(os.path.abspath(os.path.join('..', '..', 'sgio')))
 sys.path.append(os.path.abspath(os.path.join('..', '..')))
 sys.path.append(os.path.abspath('.'))
 sys.path.append('.')
+sys.path.append(os.path.abspath('..'))
 print(f'sys.path: {sys.path}')
+
+# Regenerate the example pages from the READMEs in examples/ before the build.
+from gen_examples import generate
+generate(Path(os.path.abspath(os.path.join('..', '..'))))
 
 # -- Project information -----------------------------------------------------
 

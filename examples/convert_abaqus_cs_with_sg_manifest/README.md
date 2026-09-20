@@ -1,53 +1,58 @@
-# Convert Abaqus Cross-Section With An SG Manifest
+# Convert an Abaqus Cross-Section with an SG Manifest
 
-## Problem description
+## Problem Description
 
 An Abaqus `.inp` file carries the mesh, materials and composite sections of a
 beam cross-section, but not the SG parameters: it cannot state that the model is
-a 2D SG, which beam model to use, or which plane the section is drawn in.
-Convert the cross-section to SwiftComp and read the result back, supplying those
-parameters either as arguments or from a file.
+a 2D SG, which beam model to use, or which plane the section is drawn in. Store
+those parameters in a file instead of passing them as arguments, and convert the
+cross-section to SwiftComp.
 
-## Explaination of the solution
+## Solution
 
-The same conversion is done in two ways, one script each. Both write the same
+The conversion is done in two ways, one script each; both write the same
 `sg2_box.sc`.
 
-**Method 1: API arguments** (`run_1_api.py`).
-`sgio.read(..., 'abaqus', sgdim=2, model_type='BM1', model_space='xy')` reads the
-`.inp` and `sgio.write(sg, 'sg2_box.sc', 'sc')` writes the SwiftComp input.
-Reading it back with `sgio.read('sg2_box.sc', 'sc', model_type='BM1')` still
-needs the model type, because a SwiftComp input does not state it.
+### Method 1: API arguments
 
-**Method 2: SG manifests** (`run_2_manifest.py`).
-`sg2_box.sg.json` references `sg2_box_composite_section.inp` and adds `sgdim`
-(2), `model_type` (`BM1`) and `model_space` (`xy`).
-`sgio.read(..., 'sg_manifest')` reads both files into one `StructureGene`.
+`sgdim`, `model_type` and `model_space` are arguments of {func}`sgio.read`.
+Reading `sg2_box.sc` back still needs `model_type`, because a SwiftComp input
+does not state it.
 
-`sgio.write(..., 'sg_manifest', model_file='sg2_box.sc', model_file_format='swiftcomp')`
-then writes the SwiftComp input and a second manifest, `sg2_box_sc.sg.json`.
-SwiftComp input already holds the materials, sections and model space, so that
-manifest only records the model file, its format version, `sgdim` and
-`model_type`. Reading it back needs no arguments and checks the SwiftComp header
-against the manifest.
+<!-- code: run_1_api.py -->
+
+### Method 2: SG manifests
+
+`sg2_box.sg.json` is an SG manifest (see {doc}`/ref/sg_manifest`) that
+references the Abaqus input:
+
+<!-- code: sg2_box.sg.json -->
+
+<!-- code: run_2_manifest.py -->
+
+{func}`sgio.read` with `'sg_manifest'` reads the manifest and the `.inp` into one
+{class}`sgio.StructureGene`. {func}`sgio.write` with `'sg_manifest'` writes the
+SwiftComp input and a new manifest. SwiftComp input already holds the materials,
+sections and model space, so the new manifest records only the model file, its
+format version, `sgdim` and `model_type`; reading it back checks the SwiftComp
+header against it, so reading it back needs no arguments.
 
 ## Result
 
-After running the script, you get `sg2_box.sc` and `sg2_box_sc.sg.json`; the
-script prints the structure gene read back by each method.
+`sg2_box.sc` and its manifest `sg2_box_sc.sg.json` are written:
 
-Run it with:
+<!-- code: sg2_box_sc.sg.json -->
 
 ```bash
 uv run python examples/convert_abaqus_cs_with_sg_manifest/run_1_api.py
 uv run python examples/convert_abaqus_cs_with_sg_manifest/run_2_manifest.py
 ```
 
-## List of all files
+## File List
 
-- `run_1_api.py`
-- `run_2_manifest.py`
-- `sg2_box_composite_section.inp`
-- `sg2_box.sg.json`
-- `sg2_box.sc`
-- `sg2_box_sc.sg.json`
+- [run_1_api.py](run_1_api.py): Conversion with SG arguments
+- [run_2_manifest.py](run_2_manifest.py): Conversion through SG manifests
+- [sg2_box_composite_section.inp](sg2_box_composite_section.inp): Abaqus cross-section input
+- [sg2_box.sg.json](sg2_box.sg.json): SG manifest for the Abaqus input
+- [sg2_box.sc](sg2_box.sc): Generated SwiftComp input
+- [sg2_box_sc.sg.json](sg2_box_sc.sg.json): Generated SG manifest for the SwiftComp input

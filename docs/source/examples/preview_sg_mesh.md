@@ -1,3 +1,5 @@
+<!-- Generated from examples/preview_sg_mesh/README.md. Do not edit; edit the README instead. -->
+
 # Preview an SG Mesh with PyVista
 
 ## Problem Description

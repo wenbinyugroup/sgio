@@ -1,61 +1,61 @@
-# Convert Gmsh Laminate Mesh To VABS
+# Convert a Gmsh Laminate Mesh to VABS
 
-## Problem description
+## Problem Description
 
-This example starts from an external Gmsh section mesh of a thin composite ply
-and converts it to a VABS input file through an SG manifest.
+Convert an external Gmsh section mesh of a thin composite ply into a VABS input
+file.
 
-It is the orthotropic counterpart of [`convert_gmsh_to_vabs`](../convert_gmsh_to_vabs/):
-the existing example only carries one isotropic material, so its mesh needs
-neither a per-element local coordinate system nor a fiber rotation field. A
-real composite layer needs both:
+This is the orthotropic counterpart of {doc}`convert_gmsh_to_vabs`. That example
+carries a single isotropic material, so its mesh needs neither a per-element
+local coordinate system nor a fiber rotation. A real composite layer needs both:
 
-- `element_local_csys` — the local material frame on each element, used by
-  VABS to compute the per-element `theta_1` (layer plane angle).
-- `additional_rotation_2` — a per-element scalar that, for a Gmsh section in
-  the `xy` plane, maps to the layer-level VABS `theta_3` (fiber direction
-  angle).
+- `element_local_csys` — the local material frame on each element, used by VABS
+  to compute the per-element `theta_1` (layer plane angle).
+- `additional_rotation_2` — a per-element scalar that, for a Gmsh section in the
+  `xy` plane, maps to the layer-level VABS `theta_3` (fiber direction angle).
 
-## Explaination of the solution
+## Solution
 
-The example uses:
+The input consists of:
 
-- `laminate_simple.msh` — a single curved ply meshed in the Gmsh `xy` plane.
-  The mesh carries:
-  - `$ElementData "element_local_csys"`: the per-element material frame.
-  - `$ElementData "additional_rotation_2"`: 30° fiber rotation on every
-    element.
-- `laminate_simple.sg.json` — the SG manifest referencing the mesh: Euler-Bernoulli
-  beam model (`BM1`), `model_space` `xy`, and one orthotropic carbon-fiber
-  material `mat_1` bound to the ply physical group by its `id`.
+- `laminate_simple.msh` — a single curved ply meshed in the Gmsh `xy` plane,
+  carrying `$ElementData "element_local_csys"` (the per-element material frame)
+  and `$ElementData "additional_rotation_2"` (30° fiber rotation on every
+  element).
+- `laminate_simple.sg.json` — the SG manifest: Euler-Bernoulli beam model
+  (`BM1`), model space `xy`, and one orthotropic carbon-fiber material `mat_1`
+  bound to the ply physical group by its `id`.
 
-`run.py` reads the manifest with `sgio.read(..., 'sg_manifest')` and then
-writes the assembled `StructureGene` to VABS format. The writer:
+<!-- code: run.py -->
+
+{func}`sgio.read` with `'sg_manifest'` reads the manifest and the mesh, and
+{func}`sgio.write` emits VABS input using the manifest's `model_space='xy'`.
+The writer then:
 
 1. Projects nodes from the Gmsh `xy` plane onto the VABS `yz` plane
    (`gmsh_x → x2`, `gmsh_y → x3`, VABS `x1 = 0`).
-2. Picks `additional_rotation_2` from `cell_data` as the per-layer
-   `theta_3` (the mapping depends on `model_space`: `xy → rotation_2`,
-   `yz → rotation_3`, `zx → rotation_1`). All elements that share one
-   `property_id` must carry the same rotation value, since VABS allows only
-   one `theta_3` per layer.
-3. Translates `element_local_csys` into the per-element `theta_1` column of
-   the VABS property block.
+2. Picks `additional_rotation_2` from `cell_data` as the per-layer `theta_3`.
+   The mapping depends on `model_space`: `xy → rotation_2`, `yz → rotation_3`,
+   `zx → rotation_1`. All elements sharing one `property_id` must carry the same
+   rotation value, since VABS allows only one `theta_3` per layer.
+3. Translates `element_local_csys` into the per-element `theta_1` column of the
+   VABS property block.
 
 ## Result
 
-After running the script, you get `laminate_simple.sg` ready for VABS. The
-single layer in the VABS file points at material `mat_1` with `theta_3 = 30°`.
-
-Run it with:
+`laminate_simple.sg` is written, ready for VABS. Its single layer points at
+material `mat_1` with `theta_3 = 30°`.
 
 ```bash
 uv run python examples/convert_gmsh_laminate_to_vabs/run.py
 ```
 
-## List of all files
+![](pyvista.png)
 
-- `run.py`
-- `laminate_simple.msh`
-- `laminate_simple.sg`
-- `laminate_simple.sg.json`
+## File List
+
+- [run.py](run.py): Main Python script
+- [laminate_simple.msh](laminate_simple.msh): Gmsh ply mesh with local csys and rotation data
+- [laminate_simple.sg.json](laminate_simple.sg.json): SG manifest
+- [laminate_simple.sg](laminate_simple.sg): Generated VABS input
+- [pyvista.png](pyvista.png): PyVista mesh and local-axis preview

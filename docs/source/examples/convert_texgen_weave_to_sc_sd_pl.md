@@ -1,3 +1,5 @@
+<!-- Generated from examples/convert_texgen_weave_to_sc_sd_pl/README.md. Do not edit; edit the README instead. -->
+
 # Convert a TexGen Weave to SwiftComp Solid and Plate SGs
 
 ## Problem Description

@@ -1,3 +1,5 @@
+<!-- Generated from examples/convert_abaqus_cs_with_sg_manifest/README.md. Do not edit; edit the README instead. -->
+
 # Convert an Abaqus Cross-Section with an SG Manifest
 
 ## Problem Description

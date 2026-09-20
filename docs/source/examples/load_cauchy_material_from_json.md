@@ -1,3 +1,5 @@
+<!-- Generated from examples/load_cauchy_material_from_json/README.md. Do not edit; edit the README instead. -->
+
 # Load Cauchy Continuum Material from JSON
 
 ## Problem Description

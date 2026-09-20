@@ -1,39 +1,36 @@
-# Convert VABS To Gmsh
+# Convert VABS Cross-Section Mesh to Gmsh
 
-## Problem description
+## Problem Description
 
-This example exports a VABS cross-section file as a Gmsh mesh together with the
-SG manifest that makes it a complete structure gene.
+Given a VABS cross-section file, export it as a Gmsh mesh for inspection,
+visualization or Gmsh-based workflows, without losing the materials and SG
+parameters the mesh cannot hold.
 
-## Explaination of the solution
+## Solution
 
-The script reads `cs_box_t_vabs41.sg` and writes it with
-`sgio.write(..., 'sg_manifest', model_file='main.msh', model_file_format='gmsh')`,
-which produces:
+<!-- code: run.py -->
 
-- `main.msh` — mesh-bound SG data (nodes, elements, physical groups,
-  element-wise fields)
-- `main.sg.json` — the SG manifest: `sgdim`, model type, model space, analysis
-  configuration, materials, and the sections binding physical groups to
-  materials and layup angles
-
-No legacy `$SGLayerDef` or `$SGConfig` blocks are used.
+{func}`sgio.write` with `'sg_manifest'` writes the Gmsh model file `main.msh`
+and the SG manifest `main.sg.json` that references it. The manifest carries
+`sgdim`, model type, model space, analysis configuration, materials and
+sections; see {doc}`/ref/sg_manifest`.
 
 ## Result
 
-After running the script, `main.sg.json` and `main.msh` are in the example
-directory. `sgio.read('main.sg.json', 'sg_manifest')` reads them back.
-
-Run it with:
+`main.msh` opens in Gmsh or ParaView:
 
 ```bash
-uv run python examples/convert_vabs_to_gmsh/run.py
+gmsh main.msh
 ```
 
-## List of all files
+`sgio.read('main.sg.json', 'sg_manifest')` reads the full structure gene back.
 
-- `run.py`
-- `cs_box_t_vabs41.sg`
-- `main.msh`
-- `main.sg.json`
-- `cs_box_t_vabs41.msh` (legacy snapshot kept in the directory, not the canonical output)
+![](pyvista.png)
+
+## File List
+
+- [run.py](run.py): Main Python script
+- [cs_box_t_vabs41.sg](cs_box_t_vabs41.sg): VABS input
+- [main.msh](main.msh): Generated Gmsh mesh
+- [main.sg.json](main.sg.json): Generated SG manifest
+- [pyvista.png](pyvista.png): PyVista mesh preview

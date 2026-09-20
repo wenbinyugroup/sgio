@@ -1,3 +1,5 @@
+<!-- Generated from examples/multiscale_beam/README.md. Do not edit; edit the README instead. -->
+
 # Multiscale Beam: Micro Homogenization to Macro Assembly
 
 ## Problem Description

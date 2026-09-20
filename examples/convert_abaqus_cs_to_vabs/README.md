@@ -1,69 +1,50 @@
-# Convert Abaqus Cross-Section To VABS
+# Convert Abaqus Cross-Section to VABS
 
-## Problem description
+## Problem Description
 
-This example starts from an Abaqus cross-section mesh in `sg2_airfoil.inp` and
-converts it to a VABS input file. It also exports the converted section as a
-Gmsh mesh with its SG manifest.
+Given a 2D beam cross-section mesh created in Abaqus (`.inp` format), convert it to a VABS input file for beam property homogenization using the Timoshenko beam model.
 
-## Explaination of the solution
+## Solution
 
-The `.inp` file carries the mesh, materials and sections, but not the SG
-parameters: `sgdim` (2), `model_type` (`BM2`, Timoshenko) and `model_space`
-(`xy`, the plane the section is drawn in). There are two ways to supply them,
-one script each. Both write the same `sg2_airfoil.sg`.
+The `.inp` file does not state the SG parameters `sgdim`, `model_type` and
+`model_space`. There are two ways to supply them, one script each; both write
+the same VABS input.
 
-**Method 1 — API arguments** (`run_1_api.py`): pass them to `sgio.convert`:
+`model_type='BM2'` selects the Timoshenko beam model (includes shear
+deformation). Use `'BM1'` for the classical Euler-Bernoulli model.
 
-```python
-sgio.convert(
-    'sg2_airfoil.inp', 'sg2_airfoil.sg', 'abaqus', 'vabs',
-    sgdim=2, model_space='xy', model_type='BM2',
-)
-```
+### Method 1: API arguments
 
-**Method 2 — SG manifest** (`run_2_manifest.py`): `sg2_airfoil.sg.json`
-references `sg2_airfoil.inp` and holds the same parameters, so the conversion
-takes no SG arguments:
+The SG parameters are arguments of {func}`sgio.convert`.
 
-```python
-sgio.convert('sg2_airfoil.sg.json', 'sg2_airfoil.sg', 'sg_manifest', 'vabs')
-```
+<!-- code: run_1_api.py -->
 
-`run_2_manifest.py` then reuses the returned `StructureGene` to write
-`main.msh` and the SG manifest `main.sg.json` that references it. A `.msh` file
-holds no materials or SG parameters, so a Gmsh export is always written through
-a manifest — there is no API-argument counterpart.
+### Method 2: SG manifest
+
+`sg2_airfoil.sg.json` (see {doc}`/ref/sg_manifest`) references the `.inp` file
+and holds the same parameters, so the conversion takes no SG arguments:
+
+<!-- code: sg2_airfoil.sg.json -->
+
+<!-- code: run_2_manifest.py -->
+
+This script also writes the section as a Gmsh mesh `main.msh` with its manifest
+`main.sg.json`. A `.msh` file holds no materials or SG parameters, so a Gmsh
+export is always written through a manifest.
 
 ## Result
 
-After running the script, you get:
+A VABS input file `sg2_airfoil.sg` is written to the example directory and can be passed directly to VABS for homogenization.
 
-- `sg2_airfoil.sg` as the VABS input
-- `main.msh` as the Gmsh model file
-- `main.sg.json` as the SG manifest
+To inspect the Abaqus mesh and its per-element material directions before
+homogenization, see {doc}`plot_abaqus_local_csys`.
 
-Run it with:
+![](pyvista.png)
 
-```bash
-uv run python examples/convert_abaqus_cs_to_vabs/run_1_api.py
-uv run python examples/convert_abaqus_cs_to_vabs/run_2_manifest.py
-```
+## File List
 
-## List of all files
-
-- `run_1_api.py`
-- `run_2_manifest.py`
-- `sg2_airfoil.inp`
-- `sg2_airfoil.sg.json`
-- `sg2_airfoil.sg`
-- `main.msh`
-- `main.sg.json`
-- `sg2_airfoil.sg.ech`
-- `sg2_airfoil.sg.K`
-- `sg2_airfoil.sg.K.ech`
-- `sg2_airfoil.sg.opt`
-- `sg2_airfoil.sg.v0`
-- `sg2_airfoil.sg.v1S`
-- `sg2_airfoil.sg.v22`
-- `sg2_airfoil.msh` (legacy snapshot kept in the directory, not the new canonical output)
+- [run_1_api.py](run_1_api.py): Conversion with SG arguments
+- [run_2_manifest.py](run_2_manifest.py): Conversion through the SG manifest
+- [sg2_airfoil.inp](sg2_airfoil.inp): Abaqus cross-section input file
+- [sg2_airfoil.sg.json](sg2_airfoil.sg.json): SG manifest for the Abaqus input
+- [pyvista.png](pyvista.png): PyVista mesh and local-axis preview

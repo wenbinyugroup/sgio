@@ -1,3 +1,5 @@
+<!-- Generated from examples/view_css_fi_paraview/README.md. Do not edit; edit the README instead. -->
+
 # View Blade Cross-Section Failure Results in ParaView
 
 ## Problem Description

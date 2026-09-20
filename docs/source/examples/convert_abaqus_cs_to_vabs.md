@@ -1,3 +1,5 @@
+<!-- Generated from examples/convert_abaqus_cs_to_vabs/README.md. Do not edit; edit the README instead. -->
+
 # Convert Abaqus Cross-Section to VABS
 
 ## Problem Description

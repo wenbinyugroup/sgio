@@ -1,42 +1,25 @@
-# Load Cauchy Material from JSON
+# Load Cauchy Continuum Material from JSON
 
-## Problem description
+## Problem Description
 
-This example shows how to load a `CauchyContinuumModel` from the standard
-material/section JSON schema and write it back without falling back to the old
-flat `model_dump()` layout.
+Given a JSON file containing orthotropic material constants (elastic moduli, Poisson's ratios, shear moduli, etc.), instantiate a `CauchyContinuumModel` object for use in downstream analysis or serialization.
 
-## Explaination of the solution
+## Solution
 
-The canonical input is `sections.json`. It stores one material record using the
-grouped schema:
+<!-- code: run.py -->
 
-- top-level identity and metadata such as `name`, `model`, `label`
-- grouped elastic constants under `elastic`
-- grouped strength constants under `strength`
-- semantic failure-criterion tokens such as `tsai-wu`
-
-`run.py` reads that record through `sgio.read_material_from_json(...)`, builds
-one `CauchyContinuumModel`, and writes it back with
-`sgio.write_material_to_json(...)`.
-
-`material.json` is kept in the directory only as a legacy flat snapshot. It is
-not the canonical example input anymore.
+{func}`sgio.read_material_from_json` parses one standard JSON material record
+and validates it against the model's field definitions, returning a mapping of
+material name to model object. `write_material_to_json` performs the reverse
+round-trip.
 
 ## Result
 
-After running the script, you get `material_out.json` written with the same
-standard grouped schema as the input.
+The script prints the loaded material, selected engineering constants (`e1`,
+`g12`, `nu12`), and the re-serialized JSON. It also writes `material_out.json`
+next to the script.
 
-Run it with:
+## File List
 
-```bash
-uv run python examples/load_cauchy_material_from_json/run.py
-```
-
-## List of all files
-
-- `run.py`
-- `sections.json`
-- `material_out.json`
-- `material.json` (legacy flat snapshot, not the canonical input)
+- [run.py](run.py): Main Python script
+- [sections.json](sections.json): Orthotropic carbon/epoxy material definition
