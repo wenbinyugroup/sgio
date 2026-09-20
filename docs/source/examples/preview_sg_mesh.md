@@ -42,8 +42,17 @@ the X axis (`cpos="yz"`).
 :width: 70%
 ```
 
+The high-level {func}`sgio.plot_sg_pyvista` call also writes a view with the
+sampled element-local axes:
+
+```{figure} ../../../examples/preview_sg_mesh/pyvista.png
+:align: center
+:width: 70%
+```
+
 ## File List
 
 - [run.py](../../../examples/preview_sg_mesh/run.py): Main Python script
 - [sg21t_tri3.sg](../../../examples/preview_sg_mesh/sg21t_tri3.sg): Input VABS cross-section (triangular mesh)
 - [preview.png](../../../examples/preview_sg_mesh/preview.png): Generated preview image
+- [pyvista.png](../../../examples/preview_sg_mesh/pyvista.png): High-level PyVista preview

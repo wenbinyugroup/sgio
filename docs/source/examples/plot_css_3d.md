@@ -3,42 +3,40 @@
 ## Problem Description
 
 A blade is described by a layout CSV listing `(spanwise_location, section_name)`
-pairs, with each section stored as a VABS input (`.sg`) plus its homogenization
-result (`.sg.K`). We want to view all sections together in 3D, positioned along
-the span, and interact with the result smoothly even for dense meshes.
+pairs, with each section stored as a Gmsh mesh (`.msh`). We want a static 3D
+view of all section meshes positioned along the span.
 
 ## Solution
 
-{func}`sgio.plot_sg_3d_beam_plotly` reads the layout CSV, loads each section and
-its analysis result, and renders them as an interactive plotly figure written to
-a standalone HTML file. Open the HTML in a browser to rotate, zoom, and pan.
+First, `run.py` uses {func}`sgio.merge_sections_from_csv` to create
+`blade_merged.msh`. Then `run_plot_3d.py` reads the merged mesh and renders it
+off-screen with PyVista.
+
+```{literalinclude} ../../../examples/plot_css/run.py
+:language: python
+```
 
 ```{literalinclude} ../../../examples/plot_css/run_plot_3d.py
 :language: python
 ```
 
-Key arguments:
-
-- `csv_file` / `section_dir` — the layout table and where the section files live
-- `input_format` / `model_type` — how to read each section (`vabs`, `BM2` here)
-- `aspect_mode='data'` — preserve true relative proportions of span vs. chord
-- `output_html` — write a self-contained interactive HTML file
-
-{func}`sgio.plot_sg_3d_beam` is the matplotlib equivalent, useful for static
-figures; the plotly version is preferable for interactive inspection of large
-meshes.
-
 ## Result
 
-`blade_3d.html` is written and opened in the default browser, showing every
-cross-section placed at its spanwise station.
+`blade_3d.png` shows every cross-section placed at its spanwise station.
 
 ```bash
+uv run python examples/plot_css/run.py
 uv run python examples/plot_css/run_plot_3d.py
+```
+
+```{figure} ../../../examples/plot_css/blade_3d.png
+:align: center
+:width: 90%
 ```
 
 ## File List
 
 - [run_plot_3d.py](../../../examples/plot_css/run_plot_3d.py): Main Python script
 - [blade.csv](../../../examples/plot_css/blade.csv): Blade cross-section layout file
+- [blade_3d.png](../../../examples/plot_css/blade_3d.png): Generated PyVista screenshot
 - `cs/`: Directory of per-section VABS inputs and results

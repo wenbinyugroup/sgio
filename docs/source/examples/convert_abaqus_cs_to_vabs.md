@@ -45,9 +45,15 @@ A VABS input file `sg2_airfoil.sg` is written to the example directory and can b
 To inspect the Abaqus mesh and its per-element material directions before
 homogenization, see {doc}`plot_abaqus_local_csys`.
 
+```{figure} ../../../examples/convert_abaqus_cs_to_vabs/pyvista.png
+:align: center
+:width: 80%
+```
+
 ## File List
 
 - [run_1_api.py](../../../examples/convert_abaqus_cs_to_vabs/run_1_api.py): Conversion with SG arguments
 - [run_2_manifest.py](../../../examples/convert_abaqus_cs_to_vabs/run_2_manifest.py): Conversion through the SG manifest
 - [sg2_airfoil.inp](../../../examples/convert_abaqus_cs_to_vabs/sg2_airfoil.inp): Abaqus cross-section input file
 - [sg2_airfoil.sg.json](../../../examples/convert_abaqus_cs_to_vabs/sg2_airfoil.sg.json): SG manifest for the Abaqus input
+- [pyvista.png](../../../examples/convert_abaqus_cs_to_vabs/pyvista.png): PyVista mesh and local-axis preview

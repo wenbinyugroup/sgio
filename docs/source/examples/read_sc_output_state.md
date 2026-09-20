@@ -20,9 +20,15 @@ A Gmsh `.msh` file is written with stress components as cell data. Open it with:
 gmsh sg31t_hex20_sc21.msh
 ```
 
+```{figure} ../../../examples/read_sc_output_d/pyvista.png
+:align: center
+:width: 80%
+```
+
 ## File List
 
 - [run.py](../../../examples/read_sc_output_d/run.py): Main Python script
 - [sg31t_hex20_sc21.sg](../../../examples/read_sc_output_d/sg31t_hex20_sc21.sg): SwiftComp 3D input file
 - [sg31t_hex20_sc21.sg.sn](../../../examples/read_sc_output_d/sg31t_hex20_sc21.sg.sn): SwiftComp dehomogenization output (node data)
 - [sg31t_hex20_sc21.sg.snm](../../../examples/read_sc_output_d/sg31t_hex20_sc21.sg.snm): SwiftComp dehomogenization output (material-frame node data)
+- [pyvista.png](../../../examples/read_sc_output_d/pyvista.png): PyVista stress-field preview

@@ -3,7 +3,7 @@
 ## Problem description
 
 This example converts TexGen's Abaqus input deck to a SwiftComp Structure Gene
-and produces an interactive PyVista HTML view of the converted model.
+and produces a PyVista PNG view of the converted model.
 
 The committed `32 x 32 x 8` voxel model contains 8,192 C3D8R elements.
 TexGen also places six periodic-constraint driver nodes in the Abaqus deck.
@@ -24,21 +24,20 @@ Both scripts use the current SGIO public APIs:
      with `file_format_in="sg_manifest"` and no SG arguments.
 2. `sgio.plot_sg_pyvista(...)` constructs a PyVista scene from the converted
    Structure Gene, colors its voxels with 45% opacity, overlays the
-   element-local axes, and writes the scene directly to `pyvista.html`.
+   element-local axes, and writes the scene directly to `pyvista.png`.
 
 Install the optional visualization dependency and run the conversion:
 
 ```powershell
-uv sync --extra pyvista-html
+uv sync --extra pyvista
 uv run python examples/convert_texgen_weave_to_sc/run_1_api.py
 uv run python examples/convert_texgen_weave_to_sc/run_2_manifest.py
 ```
 
 ## Result
 
-The conversion produces `plain_weave_3d_sc21.sg`. Open `pyvista.html` in a web
-browser to inspect the matrix and yarn regions together with their local
-coordinate axes.
+The conversion produces `plain_weave_3d_sc21.sg` and `pyvista.png`, which shows
+the matrix and yarn regions together with their local coordinate axes.
 
 ## List of all files
 
@@ -50,4 +49,4 @@ coordinate axes.
   PyVista rendering.
 - `run_2_manifest.py` - the same conversion through the SG manifest.
 - `plain_weave_3d_sc21.sg` - generated SwiftComp 2.1 Structure Gene.
-- `pyvista.html` - generated interactive PyVista view.
+- `pyvista.png` - generated PyVista screenshot.

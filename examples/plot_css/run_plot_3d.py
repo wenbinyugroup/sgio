@@ -1,29 +1,51 @@
-"""Example: 3D Plot of Multiple Cross-Sections Along a Blade Span (HTML).
+"""Render merged blade cross-sections to a PNG image with PyVista.
 
-Reads a layout CSV listing (spanwise_location, section_name) pairs, loads
-each section's VABS input (.sg) and analysis result (.sg.K), then renders
-them as an interactive 3D plotly figure written to an HTML file. Open the
-HTML in a browser to rotate / zoom / pan smoothly even for dense meshes.
+Run ``run.py`` first to merge the section meshes into ``blade_merged.msh``.
+This script reads that mesh and creates an off-screen PyVista screenshot.
 """
-import logging
-import webbrowser
+from __future__ import annotations
+
 from pathlib import Path
 
-from sgio import plot_sg_3d_beam_plotly
+import meshio
+import pyvista as pv
 
-logging.basicConfig(level=logging.INFO)
 
-output_html = Path('blade_3d.html').resolve()
+EXAMPLE_DIR = Path(__file__).resolve().parent
+INPUT_FILE = EXAMPLE_DIR / "blade_merged.msh"
+OUTPUT_PNG = EXAMPLE_DIR / "blade_3d.png"
 
-plot_sg_3d_beam_plotly(
-    csv_file='blade.csv',
-    section_dir='cs',
-    input_format='vabs',
-    model_type='BM2',
-    aspect_mode='data',
-    output_html=str(output_html),
-    title='Blade cross-sections',
-)
 
-print(f'Wrote {output_html}')
-webbrowser.open(output_html.as_uri())
+def main() -> None:
+    """Read the merged mesh and save a PyVista PNG screenshot."""
+    mesh = meshio.read(INPUT_FILE)
+    grid = pv.from_meshio(mesh)
+    grid.clear_data()
+    surface = grid.extract_surface(algorithm="dataset_surface")
+    boundaries = surface.extract_feature_edges(
+        boundary_edges=True,
+        feature_edges=False,
+        manifold_edges=False,
+        non_manifold_edges=False,
+    )
+
+    plotter = pv.Plotter(off_screen=True, window_size=(1600, 900))
+    plotter.set_background("#f2f4f7")
+    plotter.add_mesh(
+        surface,
+        show_edges=False,
+        color="#4c78a8",
+        opacity=0.45,
+        lighting=False,
+    )
+    plotter.add_mesh(boundaries, color="#17365d", line_width=3)
+    plotter.add_axes()
+    plotter.view_isometric()
+    plotter.camera.zoom(1.5)
+    plotter.show(screenshot=str(OUTPUT_PNG), auto_close=False)
+    plotter.close()
+    print(f"Wrote PyVista screenshot: {OUTPUT_PNG}")
+
+
+if __name__ == "__main__":
+    main()

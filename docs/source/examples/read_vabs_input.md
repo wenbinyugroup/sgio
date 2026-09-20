@@ -16,7 +16,13 @@ Given a VABS cross-section input file, read it into a structure gene object to i
 
 The script prints the node count, element count, material count, and the full structure gene object to the console.
 
+```{figure} ../../../examples/read_vabs_input/pyvista.png
+:align: center
+:width: 80%
+```
+
 ## File List
 
 - [run.py](../../../examples/read_vabs_input/run.py): Main Python script
 - [sg21eb_tri3_vabs40.sg](../../../examples/read_vabs_input/sg21eb_tri3_vabs40.sg): VABS 4.0 cross-section input file
+- [pyvista.png](../../../examples/read_vabs_input/pyvista.png): PyVista mesh preview

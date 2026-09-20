@@ -66,13 +66,18 @@ The materials then carry their CTE into the SwiftComp input. See
 ## Result
 
 `plain_weave_3d_sc21.sg` is written and ready for homogenization, alongside
-`pyvista.html`. Open the HTML file in a browser to inspect the matrix and yarn
-regions with their local coordinate axes.
+`pyvista.png`, which shows the matrix and yarn regions with their local
+coordinate axes.
+
+```{figure} ../../../examples/convert_texgen_weave_to_sc/pyvista.png
+:align: center
+:width: 80%
+```
 
 Running the example needs the optional visualization dependency:
 
 ```bash
-uv sync --extra pyvista-html
+uv sync --extra pyvista
 uv run python examples/convert_texgen_weave_to_sc/run_1_api.py
 uv run python examples/convert_texgen_weave_to_sc/run_2_manifest.py
 ```
@@ -85,3 +90,4 @@ uv run python examples/convert_texgen_weave_to_sc/run_2_manifest.py
 - [plain_weave_3d.ori](../../../examples/convert_texgen_weave_to_sc/plain_weave_3d.ori): per-element orientation distribution
 - [plain_weave_3d.sg.json](../../../examples/convert_texgen_weave_to_sc/plain_weave_3d.sg.json): SG manifest referencing the deck
 - [plain_weave_3d_sc21.sg](../../../examples/convert_texgen_weave_to_sc/plain_weave_3d_sc21.sg): generated SwiftComp 2.1 Structure Gene
+- [pyvista.png](../../../examples/convert_texgen_weave_to_sc/pyvista.png): generated PyVista screenshot

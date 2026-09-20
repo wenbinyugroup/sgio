@@ -10,6 +10,10 @@ neutral axis, shear center, and principal axes.
 """
 from pathlib import Path
 
+import matplotlib
+
+matplotlib.use('Agg')
+
 import matplotlib.pyplot as plt
 import sgio
 from sgio import plot_sg_2d, plot_model_2d, plot_matrix, plot_matrix_bar3d
@@ -26,7 +30,11 @@ cs = sgio.read(input_file, 'vabs')
 plotter = sgio.plot_sg_pyvista(
     cs,
     show_local_axes=True,
-    output_html=Path(__file__).resolve().parent / 'pyvista.html',
+)
+plotter.off_screen = True
+plotter.show(
+    screenshot=str(Path(__file__).resolve().parent / 'pyvista.png'),
+    auto_close=False,
 )
 plotter.close()
 

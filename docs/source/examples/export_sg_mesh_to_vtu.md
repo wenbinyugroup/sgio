@@ -30,8 +30,8 @@ because those containers have no lossless VTK/VTU mapping in this interface.
 It does not implement `sgio.read(..., file_format="vtu")`.
 
 Use the separate `plot.py` example to read the Structure Gene through the
-high-level {func}`sgio.plot_sg_pyvista` interface and produce a browser scene.
-The VTM written by `run.py` remains complete for ParaView; the browser scene
+high-level {func}`sgio.plot_sg_pyvista` interface and produce a PNG screenshot.
+The VTM written by `run.py` remains complete for ParaView; the PNG scene
 samples local-axis glyphs for responsive rendering.
 
 ```powershell
@@ -40,7 +40,7 @@ uv run python examples/export_sg_mesh_to_vtu/plot.py
 
 For a desktop inspection window, run `plot_desktop.py`. Its checkboxes toggle
 the local axes, faces, edges, and nodes independently. Desktop widgets require
-a live PyVista window, so they are deliberately separate from the HTML export.
+a live PyVista window, so they are deliberately separate from the PNG export.
 
 ```powershell
 uv run python examples/export_sg_mesh_to_vtu/plot_desktop.py
@@ -50,16 +50,21 @@ uv run python examples/export_sg_mesh_to_vtu/plot_desktop.py
 
 The script creates `sg21t_tri3.vtu` and `sg21t_tri3_local_axes.vtm`. Open the
 VTM in ParaView to inspect the complete local-axis arrows, or open
-`pyvista.html` after running `plot.py` for sampled browser rendering. Run
+`pyvista.png` after running `plot.py` for sampled rendering. Run
 `plot_desktop.py` for the desktop visibility controls.
+
+```{figure} ../../../examples/export_sg_mesh_to_vtu/pyvista.png
+:align: center
+:width: 80%
+```
 
 ## List of all files
 
 - [run.py](../../../examples/export_sg_mesh_to_vtu/run.py): VTU/VTM export script.
-- [plot.py](../../../examples/export_sg_mesh_to_vtu/plot.py): High-level PyVista HTML plot.
+- [plot.py](../../../examples/export_sg_mesh_to_vtu/plot.py): High-level PyVista PNG plot.
 - [plot_desktop.py](../../../examples/export_sg_mesh_to_vtu/plot_desktop.py):
   High-level PyVista desktop plot with visibility controls.
 - [sg21t_tri3.sg](../../../examples/preview_sg_mesh/sg21t_tri3.sg): Existing VABS input.
 - `sg21t_tri3.vtu`: Generated VTU mesh.
 - `sg21t_tri3_local_axes.vtm`: Generated complete local-axis scene.
-- `pyvista.html`: Generated sampled browser scene.
+- [pyvista.png](../../../examples/export_sg_mesh_to_vtu/pyvista.png): Generated sampled scene.

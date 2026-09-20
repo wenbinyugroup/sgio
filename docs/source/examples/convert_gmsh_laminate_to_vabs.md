@@ -52,9 +52,15 @@ material `mat_1` with `theta_3 = 30°`.
 uv run python examples/convert_gmsh_laminate_to_vabs/run.py
 ```
 
+```{figure} ../../../examples/convert_gmsh_laminate_to_vabs/pyvista.png
+:align: center
+:width: 80%
+```
+
 ## File List
 
 - [run.py](../../../examples/convert_gmsh_laminate_to_vabs/run.py): Main Python script
 - [laminate_simple.msh](../../../examples/convert_gmsh_laminate_to_vabs/laminate_simple.msh): Gmsh ply mesh with local csys and rotation data
 - [laminate_simple.sg.json](../../../examples/convert_gmsh_laminate_to_vabs/laminate_simple.sg.json): SG manifest
 - [laminate_simple.sg](../../../examples/convert_gmsh_laminate_to_vabs/laminate_simple.sg): Generated VABS input
+- [pyvista.png](../../../examples/convert_gmsh_laminate_to_vabs/pyvista.png): PyVista mesh and local-axis preview

@@ -27,9 +27,15 @@ gmsh main.msh
 
 `sgio.read('main.sg.json', 'sg_manifest')` reads the full structure gene back.
 
+```{figure} ../../../examples/convert_vabs_to_gmsh/pyvista.png
+:align: center
+:width: 80%
+```
+
 ## File List
 
 - [run.py](../../../examples/convert_vabs_to_gmsh/run.py): Main Python script
 - [cs_box_t_vabs41.sg](../../../examples/convert_vabs_to_gmsh/cs_box_t_vabs41.sg): VABS input
 - [main.msh](../../../examples/convert_vabs_to_gmsh/main.msh): Generated Gmsh mesh
 - [main.sg.json](../../../examples/convert_vabs_to_gmsh/main.sg.json): Generated SG manifest
+- [pyvista.png](../../../examples/convert_vabs_to_gmsh/pyvista.png): PyVista mesh preview

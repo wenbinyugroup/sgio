@@ -50,6 +50,12 @@ Result
 
 A SwiftComp 2.1 input file ``sg33_cube_sc21.sg`` is written and ready for homogenization.
 
+.. figure:: ../../../examples/convert_abaqus_sg3d_to_sc/pyvista.png
+   :align: center
+   :width: 80%
+
+   PyVista preview of the converted three-dimensional Structure Gene.
+
 File List
 ----------
 
@@ -57,3 +63,4 @@ File List
 * :download:`sg33_cube.sg.json <../../../examples/convert_abaqus_sg3d_to_sc/sg33_cube.sg.json>` — SG manifest for the Abaqus input
 * :download:`run_1_api.py <../../../examples/convert_abaqus_sg3d_to_sc/run_1_api.py>` — conversion with SG arguments
 * :download:`run_2_manifest.py <../../../examples/convert_abaqus_sg3d_to_sc/run_2_manifest.py>` — conversion through the SG manifest
+* :download:`pyvista.png <../../../examples/convert_abaqus_sg3d_to_sc/pyvista.png>` — generated PyVista screenshot

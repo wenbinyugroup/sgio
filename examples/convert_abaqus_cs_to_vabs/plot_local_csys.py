@@ -1,12 +1,11 @@
-"""Export an Abaqus cross-section and its local axes as interactive HTML.
+"""Export an Abaqus cross-section and its local axes as a PNG image.
 
 The script reads ``sg2_airfoil.inp`` and uses sgio's PyVista scene factory to
-render the mesh with sampled element local coordinate systems. The exported
-HTML can be opened in a browser for interactive inspection.
+render the mesh with sampled element local coordinate systems.
 
-Install the HTML-export extra before running it::
+Install the PyVista extra before running it::
 
-    uv sync --extra pyvista-html
+    uv sync --extra pyvista
 """
 from __future__ import annotations
 
@@ -17,7 +16,7 @@ import sgio
 
 
 def parse_args() -> argparse.Namespace:
-    """Parse command-line options for the local-axis HTML export."""
+    """Parse command-line options for the local-axis PNG export."""
     example_dir = Path(__file__).resolve().parent
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
@@ -29,8 +28,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--output",
         type=Path,
-        default=example_dir / "sg2_airfoil_local_csys.html",
-        help="Destination interactive HTML file.",
+        default=example_dir / "sg2_airfoil_local_csys.png",
+        help="Destination PNG file.",
     )
     parser.add_argument(
         "--max-axes",
@@ -48,7 +47,7 @@ def parse_args() -> argparse.Namespace:
 
 
 def main() -> None:
-    """Read the requested Abaqus section and export its interactive plot."""
+    """Read the requested Abaqus section and export its PNG plot."""
     args = parse_args()
     if not args.input.is_file():
         raise FileNotFoundError(f"Abaqus input file does not exist: {args.input}")
@@ -69,10 +68,11 @@ def main() -> None:
     )
     try:
         args.output.parent.mkdir(parents=True, exist_ok=True)
-        plotter.export_html(str(args.output))
+        plotter.off_screen = True
+        plotter.show(screenshot=str(args.output), auto_close=False)
     finally:
         plotter.close()
-    print(f"Wrote interactive local-coordinate view: {args.output.resolve()}")
+    print(f"Wrote local-coordinate screenshot: {args.output.resolve()}")
 
 
 if __name__ == "__main__":

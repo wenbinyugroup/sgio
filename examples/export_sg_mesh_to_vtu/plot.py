@@ -1,13 +1,12 @@
 """Visualize the example Structure Gene through sgio's high-level PyVista API.
 
 The public ``sgio.plot_sg_pyvista`` interface reads the Structure Gene, draws
-the mesh and sampled element-local axes, and writes interactive HTML with a
-local-axis legend and view controls. ``run.py`` independently writes the full
-VTM local-axis scene for ParaView.
+the mesh and sampled element-local axes, and writes a PNG screenshot. ``run.py``
+independently writes the full VTM local-axis scene for ParaView.
 
-Install the HTML-export dependency before running::
+Install the PyVista dependency before running::
 
-    uv sync --extra pyvista-html
+    uv sync --extra pyvista
     uv run python examples/export_sg_mesh_to_vtu/plot.py
 """
 
@@ -20,11 +19,11 @@ import sgio
 
 EXAMPLE_DIR = Path(__file__).resolve().parent
 INPUT_FILE = EXAMPLE_DIR.parent / "preview_sg_mesh" / "sg21t_tri3.sg"
-OUTPUT_HTML = EXAMPLE_DIR / "pyvista.html"
+OUTPUT_PNG = EXAMPLE_DIR / "pyvista.png"
 
 
 def main() -> None:
-    """Create the requested PyVista scene and interactive HTML output."""
+    """Create the requested PyVista scene and PNG output."""
     sg = sgio.read(
         str(INPUT_FILE),
         file_format="vabs",
@@ -35,10 +34,11 @@ def main() -> None:
     plotter = sgio.plot_sg_pyvista(
         sg,
         show_local_axes=True,
-        output_html=OUTPUT_HTML,
     )
+    plotter.off_screen = True
+    plotter.show(screenshot=str(OUTPUT_PNG), auto_close=False)
     plotter.close()
-    print(f"Wrote interactive PyVista view: {OUTPUT_HTML.resolve()}")
+    print(f"Wrote PyVista screenshot: {OUTPUT_PNG.resolve()}")
 
 
 if __name__ == "__main__":

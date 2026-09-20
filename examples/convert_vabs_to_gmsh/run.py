@@ -28,8 +28,9 @@ sgio.write(
 plotter = sgio.plot_sg_pyvista(
     sg,
     show_local_axes=True,
-    output_html=cwd / "pyvista.html",
 )
+plotter.off_screen = True
+plotter.show(screenshot=str(cwd / "pyvista.png"), auto_close=False)
 plotter.close()
 
 print(sg)

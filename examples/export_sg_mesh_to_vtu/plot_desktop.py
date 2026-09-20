@@ -3,7 +3,7 @@
 This script demonstrates the interactive checkboxes provided by
 ``sgio.plot_sg_pyvista``.  They control local coordinate axes, faces, edges,
 and nodes in a live PyVista window.  They are intentionally separate from the
-offline HTML export in ``plot.py``.
+off-screen PNG export in ``plot.py``.
 
 Run with::
 

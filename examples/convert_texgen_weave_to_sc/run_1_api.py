@@ -11,11 +11,11 @@ import sgio
 EXAMPLE_DIR = Path(__file__).resolve().parent
 INPUT_FILE = EXAMPLE_DIR / "plain_weave_3d.inp"
 OUTPUT_FILE = EXAMPLE_DIR / "plain_weave_3d_sc21.sg"
-OUTPUT_HTML = EXAMPLE_DIR / "pyvista.html"
+OUTPUT_PNG = EXAMPLE_DIR / "pyvista.png"
 
 
 def main() -> None:
-    """Convert the TexGen model and save an interactive PyVista HTML view."""
+    """Convert the TexGen model and save a PyVista PNG view."""
     # The TexGen deck states neither the SG dimension nor the model type.
     sg = sgio.convert(
         file_name_in=os.fspath(INPUT_FILE),
@@ -32,12 +32,13 @@ def main() -> None:
         show_local_axes=True,
         local_axis_scale=0.15,
         opacity=0.45,
-        output_html=OUTPUT_HTML,
     )
+    plotter.off_screen = True
+    plotter.show(screenshot=str(OUTPUT_PNG), auto_close=False)
     plotter.close()
 
     print(f"Wrote SwiftComp SG: {OUTPUT_FILE}")
-    print(f"Wrote interactive PyVista view: {OUTPUT_HTML}")
+    print(f"Wrote PyVista screenshot: {OUTPUT_PNG}")
 
 
 if __name__ == "__main__":

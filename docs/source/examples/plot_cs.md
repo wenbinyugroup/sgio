@@ -24,8 +24,16 @@ The script displays a matplotlib window showing the cross-section geometry with:
 :align: center
 ```
 
+The same section and its sampled element-local axes are rendered with PyVista:
+
+```{figure} ../../../examples/plot_cs/pyvista.png
+:align: center
+:width: 80%
+```
+
 ## File List
 
 - [run.py](../../../examples/plot_cs/run.py): Main Python script
 - [sg21eb_tri3_vabs40.sg](../../../examples/plot_cs/sg21eb_tri3_vabs40.sg): VABS cross-section input file
 - [sg21eb_tri3_vabs40.sg.K](../../../examples/plot_cs/sg21eb_tri3_vabs40.sg.K): VABS beam properties output
+- [pyvista.png](../../../examples/plot_cs/pyvista.png): PyVista mesh and local-axis preview

@@ -31,9 +31,15 @@ This is the recommended path for external CAD + Gmsh workflows.
 uv run python examples/convert_gmsh_to_vabs/run.py
 ```
 
+```{figure} ../../../examples/convert_gmsh_to_vabs/pyvista.png
+:align: center
+:width: 80%
+```
+
 ## File List
 
 - [run.py](../../../examples/convert_gmsh_to_vabs/run.py): Main Python script
 - [sg21_box_quad4_min_gmsh41.msh](../../../examples/convert_gmsh_to_vabs/sg21_box_quad4_min_gmsh41.msh): Gmsh section mesh
 - [sg21_box_quad4_min_gmsh41.sg.json](../../../examples/convert_gmsh_to_vabs/sg21_box_quad4_min_gmsh41.sg.json): SG manifest
 - [sg21_box_quad4_min_gmsh41.sg](../../../examples/convert_gmsh_to_vabs/sg21_box_quad4_min_gmsh41.sg): Generated VABS input
+- [pyvista.png](../../../examples/convert_gmsh_to_vabs/pyvista.png): PyVista mesh preview

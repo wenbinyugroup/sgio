@@ -24,8 +24,14 @@ gmsh cs_box_t_vabs41_local.msh
 :align: center
 ```
 
+```{figure} ../../../examples/read_vabs_output_d/pyvista.png
+:align: center
+:width: 80%
+```
+
 ## File List
 
 - [run.py](../../../examples/read_vabs_output_d/run.py): Main Python script
 - [cs_box_t_vabs41.sg](../../../examples/read_vabs_output_d/cs_box_t_vabs41.sg): VABS cross-section input file
 - [cs_box_t_vabs41.sg.ELE](../../../examples/read_vabs_output_d/cs_box_t_vabs41.sg.ELE): VABS dehomogenization element output
+- [pyvista.png](../../../examples/read_vabs_output_d/pyvista.png): PyVista stress-field preview
