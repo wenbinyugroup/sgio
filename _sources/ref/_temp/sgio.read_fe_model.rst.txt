@@ -1,0 +1,6 @@
+﻿sgio.read\_fe\_model
+====================
+
+.. currentmodule:: sgio
+
+.. autofunction:: read_fe_model

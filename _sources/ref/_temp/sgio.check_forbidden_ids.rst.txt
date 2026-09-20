@@ -1,0 +1,6 @@
+﻿sgio.check\_forbidden\_ids
+==========================
+
+.. currentmodule:: sgio
+
+.. autofunction:: check_forbidden_ids

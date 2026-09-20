@@ -1,0 +1,6 @@
+﻿sgio.write\_merged\_sections
+============================
+
+.. currentmodule:: sgio
+
+.. autofunction:: write_merged_sections

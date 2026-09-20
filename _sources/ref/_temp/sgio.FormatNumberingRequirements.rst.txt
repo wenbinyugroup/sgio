@@ -1,0 +1,33 @@
+﻿sgio.FormatNumberingRequirements
+================================
+
+.. currentmodule:: sgio
+
+.. autoclass:: FormatNumberingRequirements
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~FormatNumberingRequirements.__init__
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~FormatNumberingRequirements.allows_zero_id
+      ~FormatNumberingRequirements.name
+      ~FormatNumberingRequirements.nodes_consecutive
+      ~FormatNumberingRequirements.nodes_start_from
+      ~FormatNumberingRequirements.elements_consecutive
+      ~FormatNumberingRequirements.elements_start_from
+   
+   

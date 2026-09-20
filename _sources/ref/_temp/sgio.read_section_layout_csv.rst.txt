@@ -1,0 +1,6 @@
+﻿sgio.read\_section\_layout\_csv
+===============================
+
+.. currentmodule:: sgio
+
+.. autofunction:: read_section_layout_csv

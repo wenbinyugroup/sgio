@@ -1,0 +1,6 @@
+﻿sgio.plot\_sg\_3d\_beam
+=======================
+
+.. currentmodule:: sgio
+
+.. autofunction:: plot_sg_3d_beam

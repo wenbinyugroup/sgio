@@ -1,0 +1,6 @@
+﻿sgio.renumber\_elements
+=======================
+
+.. currentmodule:: sgio
+
+.. autofunction:: renumber_elements

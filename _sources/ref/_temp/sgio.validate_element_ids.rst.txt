@@ -1,0 +1,6 @@
+﻿sgio.validate\_element\_ids
+===========================
+
+.. currentmodule:: sgio
+
+.. autofunction:: validate_element_ids

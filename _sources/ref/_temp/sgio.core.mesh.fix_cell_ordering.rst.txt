@@ -1,0 +1,6 @@
+﻿sgio.core.mesh.fix\_cell\_ordering
+==================================
+
+.. currentmodule:: sgio.core.mesh
+
+.. autofunction:: fix_cell_ordering

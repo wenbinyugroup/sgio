@@ -1,0 +1,33 @@
+*Heading
+Cantilever macro beam model for the multiscale example.
+** Straight B31 beam along +x; tip transverse load; root encastre.
+** The nominal beam section below is a placeholder: the runnable example
+** overrides the effective section stiffness with VABS homogenization output.
+*Node
+1,  0.0, 0.0, 0.0
+2,  1.0, 0.0, 0.0
+3,  2.0, 0.0, 0.0
+4,  3.0, 0.0, 0.0
+5,  4.0, 0.0, 0.0
+*Element, type=B31, elset=BEAM
+1, 1, 2
+2, 2, 3
+3, 3, 4
+4, 4, 5
+*Nset, nset=ROOT
+1
+*Nset, nset=TIP
+5
+*Material, name=NOMINAL
+*Elastic
+70000.0, 0.3
+*Beam Section, elset=BEAM, material=NOMINAL, section=RECT
+0.1, 0.1
+0.0, 0.0, -1.0
+*Step, name=TipLoad, nlgeom=NO
+*Static
+*Boundary
+ROOT, ENCASTRE
+*Cload
+TIP, 2, -1000.0
+*End Step

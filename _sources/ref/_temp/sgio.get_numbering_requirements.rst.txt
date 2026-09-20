@@ -1,0 +1,6 @@
+﻿sgio.get\_numbering\_requirements
+=================================
+
+.. currentmodule:: sgio
+
+.. autofunction:: get_numbering_requirements
